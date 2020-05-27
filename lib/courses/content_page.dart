@@ -3,11 +3,15 @@ import 'package:coach_app/YT_player/pdf_player.dart';
 import 'package:coach_app/YT_player/quiz_player.dart';
 import 'package:coach_app/YT_player/yt_player.dart';
 import 'package:coach_app/courses/FormGeneration/form_generator.dart';
+import 'package:coach_app/noInternet/noInternet.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ContentPage extends StatefulWidget {
   final DatabaseReference reference;
@@ -21,155 +25,172 @@ class _ContentPageState extends State<ContentPage> {
   int length;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.symmetric(
-            vertical: MediaQuery.of(context).size.height / 20),
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xff519ddb), Color(0xff54d179)])),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Container(
-                child: Text(
-                  widget.title,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.portLligatSans(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
+    return StreamBuilder<ConnectivityResult>(
+      stream: Connectivity().onConnectivityChanged,
+      builder: (BuildContext context, snapshot) {
+        if (snapshot.hasData) {
+          print(snapshot.data);
+          if (snapshot.data == ConnectivityResult.none) {
+            return NoInternet();
+          }
+          return Scaffold(
+            body: Container(
+              padding: EdgeInsets.symmetric(
+                  vertical: MediaQuery.of(context).size.height / 20),
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                        color: Colors.grey.shade200,
+                        offset: Offset(2, 4),
+                        blurRadius: 5,
+                        spreadRadius: 2)
+                  ],
+                  gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Color(0xff519ddb), Color(0xff54d179)])),
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      child: Text(
+                        widget.title,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.portLligatSans(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 12,
-              child: StreamBuilder<Event>(
-                stream: widget.reference.onValue,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    Chapters chapter =
-                        Chapters.fromJson(snapshot.data.snapshot.value);
-                    length = chapter.content?.length ?? 0;
-                    return ListView.builder(
-                      itemCount: length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              child: Icon(
-                                chapter.content[index].kind == 'Youtube Video'
-                                    ? Icons.videocam
-                                    : chapter.content[index].kind == 'PDF'
-                                        ? Icons.library_books
-                                        : Icons.question_answer,
-                                color: Colors.white,
-                              ),
-                            ),
-                            title: Text(
-                              '${chapter.content[index].title}',
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                            trailing: Icon(
-                              Icons.chevron_right,
-                              color: Colors.blue,
-                            ),
-                            onTap: () {
-                              if (chapter.content[index].kind ==
-                                  'Youtube Video') {
-                                Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) => YTPlayer(
-                                        id: chapter.content[index].yid),
-                                  ),
-                                );
-                              } else if (chapter.content[index].kind == 'PDF') {
-                                Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) => PDFPlayer(
-                                      link: chapter.content[index].link,
+                  Expanded(
+                    flex: 12,
+                    child: StreamBuilder<Event>(
+                      stream: widget.reference.onValue,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          Chapters chapter =
+                              Chapters.fromJson(snapshot.data.snapshot.value);
+                          length = chapter.content?.length ?? 0;
+                          return ListView.builder(
+                            itemCount: length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Card(
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    child: Icon(
+                                      chapter.content[index].kind ==
+                                              'Youtube Video'
+                                          ? Icons.videocam
+                                          : chapter.content[index].kind == 'PDF'
+                                              ? Icons.library_books
+                                              : Icons.question_answer,
+                                      color: Colors.white,
                                     ),
                                   ),
-                                );
-                              } else if (chapter.content[index].kind ==
-                                  'Quiz') {
-                                Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) => Quiz(
-                                      reference: widget.reference.child('content/$index'),
-                                    ),
+                                  title: Text(
+                                    '${chapter.content[index].title}',
+                                    style: TextStyle(color: Colors.blue),
                                   ),
-                                );
-                              }
+                                  trailing: Icon(
+                                    Icons.chevron_right,
+                                    color: Colors.blue,
+                                  ),
+                                  onTap: () {
+                                    if (chapter.content[index].kind ==
+                                        'Youtube Video') {
+                                      Navigator.of(context).push(
+                                        CupertinoPageRoute(
+                                          builder: (context) => YTPlayer(
+                                              id: chapter.content[index].yid),
+                                        ),
+                                      );
+                                    } else if (chapter.content[index].kind ==
+                                        'PDF') {
+                                      Navigator.of(context).push(
+                                        CupertinoPageRoute(
+                                          builder: (context) => PDFPlayer(
+                                            link: chapter.content[index].link,
+                                          ),
+                                        ),
+                                      );
+                                    } else if (chapter.content[index].kind ==
+                                        'Quiz') {
+                                      Navigator.of(context).push(
+                                        CupertinoPageRoute(
+                                          builder: (context) => Quiz(
+                                            reference: widget.reference
+                                                .child('content/$index'),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  onLongPress: () => addContent(
+                                      context, widget.reference, index,
+                                      title: chapter.content[index].title,
+                                      link: chapter.content[index].kind ==
+                                              'Youtube Video'
+                                          ? chapter.content[index].yid
+                                          : chapter.content[index].kind == 'PDF'
+                                              ? chapter.content[index].link
+                                              : '',
+                                      description:
+                                          chapter.content[index].description,
+                                      type: chapter.content[index].kind),
+                                ),
+                              );
                             },
-                            onLongPress: () => addContent(
-                                context, widget.reference, index,
-                                title: chapter.content[index].title,
-                                link: chapter.content[index].kind ==
-                                        'Youtube Video'
-                                    ? chapter.content[index].yid
-                                    : chapter.content[index].kind == 'PDF'
-                                        ? chapter.content[index].link
-                                        : '',
-                                description: chapter.content[index].description,
-                                type: chapter.content[index].kind),
-                          ),
-                        );
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text('${snapshot.error}'),
+                          );
+                        } else {
+                          return ListView.builder(
+                            itemCount: 3,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Card(
+                                child: ListTile(
+                                  title: PlaceholderLines(
+                                    count: 1,
+                                    animate: true,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }
                       },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text('${snapshot.error}'),
-                    );
-                  } else {
-                    return ListView.builder(
-                      itemCount: 3,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          child: ListTile(
-                            title: PlaceholderLines(
-                              count: 1,
-                              animate: true,
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                },
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50.0),
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Color(0xff519ddb), Color(0xff54d179)])),
-            child: Icon(Icons.add)),
-        onPressed: () => addContent(context, widget.reference, length),
-      ),
+            floatingActionButton: FloatingActionButton(
+              child: Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50.0),
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Color(0xff519ddb), Color(0xff54d179)])),
+                  child: Icon(Icons.add)),
+              onPressed: () => addContent(context, widget.reference, length),
+            ),
+          );
+        } else {
+          return NoInternet();
+        }
+      },
     );
   }
 
@@ -262,7 +283,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Type',
+                        'Type'.tr(),
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 15),
                       ),
@@ -276,7 +297,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                         items: ['Youtube Video', 'Quiz', 'PDF']
                             .map(
                               (e) => DropdownMenuItem(
-                                child: Text(e),
+                                child: Text(e.tr()),
                                 value: e,
                               ),
                             )
@@ -296,7 +317,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Title',
+                        'Title'.tr(),
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 15),
                       ),
@@ -320,7 +341,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Description',
+                        'Description'.tr(),
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 15),
                       ),
@@ -346,8 +367,8 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                           children: <Widget>[
                             Text(
                               type == 'Youtube Video'
-                                  ? 'Youtube Video Id'
-                                  : 'Google Drive Link',
+                                  ? 'Youtube Video Id'.tr()
+                                  : 'Google Drive Link'.tr(),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),
@@ -396,7 +417,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                     },
                     color: Colors.white,
                     child: Text(
-                      'Add Content',
+                      'Add Content'.tr(),
                       style: TextStyle(
                         color: Colors.black,
                       ),

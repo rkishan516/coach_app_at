@@ -24,6 +24,9 @@ class FireBaseAuth {
       final FirebaseUser user =
           (await _auth.signInWithCredential(credential)).user;
       print("signed in " + user.email);
+      user.getIdToken(refresh: true).then((value){
+        print(value.claims);
+      });
       return user;
     } catch (e) {
       print(e.message);

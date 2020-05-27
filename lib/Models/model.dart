@@ -168,7 +168,7 @@ class Content {
     data['link'] = this.link;
     data['title'] = this.title;
     data['description'] = this.description;
-    data['quizModel'] = this.quizModel.toJson();
+    data['quizModel'] = this.quizModel?.toJson();
     return data;
   }
 }
@@ -343,13 +343,30 @@ class Course {
 class QuizModel {
   String title;
   String description;
+  Duration testTime;
   List<QuestionModel> questions;
 
-  QuizModel({this.title, this.description, this.questions});
+  QuizModel({this.title, this.description, this.questions, this.testTime});
+
+  Duration parseDuration(String s) {
+    int hours = 0;
+    int minutes = 0;
+    int micros;
+    List<String> parts = s.split(':');
+    if (parts.length > 2) {
+      hours = int.parse(parts[parts.length - 3]);
+    }
+    if (parts.length > 1) {
+      minutes = int.parse(parts[parts.length - 2]);
+    }
+    micros = (double.parse(parts[parts.length - 1]) * 1000000).round();
+    return Duration(hours: hours, minutes: minutes, microseconds: micros);
+  }
 
   QuizModel.fromJson(Map<dynamic, dynamic> json) {
     title = json['title'];
     description = json['description'];
+    testTime = parseDuration(json['testTime']);
     questions = List<QuestionModel>();
     if (json['questions'] != null) {
       json['questions'].forEach((v) {
@@ -362,6 +379,7 @@ class QuizModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['title'] = this.title;
     data['description'] = this.description;
+    data['testTime'] = this.testTime?.toString();
     if (this.questions != null) {
       data['questions'] = this.questions.map((v) => v.toJson()).toList();
     }

@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AdminSubjectPage extends StatefulWidget {
   final String courseId;
@@ -45,7 +46,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
                 child: RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
-                    text: 'Subjects',
+                    text: 'Subjects'.tr(),
                     style: GoogleFonts.portLligatSans(
                       fontSize: 30,
                       fontWeight: FontWeight.w700,
@@ -60,7 +61,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
               child: StreamBuilder<Event>(
                 stream: FirebaseDatabase.instance
                     .reference()
-                    .child('institute/0/courses/${widget.courseId}')
+                    .child('institute/0/branches/0/courses/${widget.courseId}')
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -88,7 +89,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
                                   reference: FirebaseDatabase.instance
                                       .reference()
                                       .child(
-                                          'institute/0/courses/${courses.id}/subjects/$index'),
+                                          'institute/0/branches/0/courses/${courses.id}/subjects/$index'),
                                 ),
                               ),
                             );
@@ -184,7 +185,7 @@ addSubject(BuildContext context, String courseId, int length,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Subject Name',
+                      'Subject Name'.tr(),
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
@@ -208,7 +209,7 @@ addSubject(BuildContext context, String courseId, int length,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Mentors',
+                      'Mentors'.tr(),
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
@@ -219,7 +220,7 @@ addSubject(BuildContext context, String courseId, int length,
                       controller: mentorTextEditingController,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Seprated With comma',
+                        hintText: 'Seprated With comma'.tr(),
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
                       ),
@@ -239,13 +240,13 @@ addSubject(BuildContext context, String courseId, int length,
                               FirebaseDatabase.instance
                                   .reference()
                                   .child(
-                                      'institute/0/courses/$courseId/subjects/$length')
+                                      'institute/0/branches/0/courses/$courseId/subjects/$length')
                                   .remove();
 
                               Navigator.of(context).pop();
                             },
                             child: Text(
-                              'Remove',
+                              'Remove'.tr(),
                             ),
                           ),
                     FlatButton(
@@ -264,13 +265,13 @@ addSubject(BuildContext context, String courseId, int length,
                           FirebaseDatabase.instance
                               .reference()
                               .child(
-                                  'institute/0/courses/$courseId/subjects/$length')
+                                  'institute/0/branches/0/courses/$courseId/subjects/$length')
                               .set(subject.toJson());
                         }
                         Navigator.of(context).pop();
                       },
                       child: Text(
-                        'Add Subject',
+                        'Add Subject'.tr(),
                       ),
                     ),
                   ],

@@ -1,4 +1,5 @@
 import 'package:coach_app/Models/model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
@@ -19,6 +20,7 @@ class _FormGeneratorState extends State<FormGenerator> {
   bool isError = false;
   List<Widget> formFields = List<Widget>();
   List<QuestionModel> formFieldsModals = List<QuestionModel>();
+  Duration testTime = Duration();
 
   @override
   void initState() {
@@ -35,7 +37,7 @@ class _FormGeneratorState extends State<FormGenerator> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'FormBuilder',
+          'Build New Quiz',
         ),
         elevation: 5.0,
         backgroundColor: Colors.white,
@@ -54,6 +56,10 @@ class _FormGeneratorState extends State<FormGenerator> {
               ),
             ),
           ),
+          CupertinoTimerPicker(
+            onTimerDurationChanged: (duration) => testTime = duration,
+            mode: CupertinoTimerPickerMode.hms,
+          ),
           FormBuilder(
             autovalidate: true,
             child: ListView.builder(
@@ -68,129 +74,125 @@ class _FormGeneratorState extends State<FormGenerator> {
               padding: EdgeInsets.all(30.0),
               child: Column(
                 children: <Widget>[
-                      DropdownButton(
-                        value: dropDownValue,
-                        items: <String>[
-                          'Short Paragraph',
-                          'Long Paragraph',
-                          'Single Choice',
-                          'Multiple Choice',
-                          'True False',
-                          'Fill In the Blank'
-                        ].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (e) => setState(
-                          () {
-                            dropDownValue = e;
-                            label = e + ' label';
-                            if (e == 'Single Choice' ||
-                                e == 'Multiple Choice') {
-                              haveChoices = true;
-                            } else {
-                              haveChoices = false;
-                            }
-                          },
-                        ),
+                  DropdownButton(
+                    value: dropDownValue,
+                    items: <String>[
+                      'Short Paragraph',
+                      'Long Paragraph',
+                      'Single Choice',
+                      'Multiple Choice',
+                      'True False',
+                      'Fill In the Blank'
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (e) => setState(
+                      () {
+                        dropDownValue = e;
+                        label = e + ' label';
+                        if (e == 'Single Choice' || e == 'Multiple Choice') {
+                          haveChoices = true;
+                        } else {
+                          haveChoices = false;
+                        }
+                      },
+                    ),
+                  ),
+                  Center(
+                    child: Container(
+                      width: 200,
+                      child: TextField(
+                        decoration: InputDecoration(hintText: 'Label Text'),
+                        controller: _textEditingController,
+                        onChanged: (val) {
+                          label = val;
+                        },
                       ),
-                      Center(
-                        child: Container(
-                          width: 200,
-                          child: TextField(
-                            decoration: InputDecoration(hintText: 'Label Text'),
-                            controller: _textEditingController,
-                            onChanged: (val) {
-                              label = val;
-                            },
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.add),
-                        onPressed: () {
-                          formFieldsModals.forEach((element) {
-                            if (element.question == label) {
-                              label += formFields.length.toString();
-                            }
-                          });
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      formFieldsModals.forEach((element) {
+                        if (element.question == label) {
+                          label += formFields.length.toString();
+                        }
+                      });
 
-                          var choice =
-                              choices.map((e) => e?.text).toSet().toList();
-                          choice.remove('');
-                          setState(
-                            () {
-                              formFields.add(
-                                getRequiredFormWidget(dropDownValue, label,
-                                    choices: choice),
-                              );
-                              _textEditingController.text = '';
-                            },
+                      var choice = choices.map((e) => e?.text).toSet().toList();
+                      choice.remove('');
+                      setState(
+                        () {
+                          formFields.add(
+                            getRequiredFormWidget(dropDownValue, label,
+                                choices: choice),
                           );
-                          formFieldsModals.add(
-                            QuestionModel(
-                                question: label,
-                                type: dropDownValue,
-                                choices: choice,
-                                answer: ''),
-                          );
+                          _textEditingController.text = '';
                         },
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      haveChoices
-                          ? ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: choices.length,
-                              itemBuilder: (context, index) {
-                                return Container(
-                                  margin: EdgeInsets.symmetric(vertical: 10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        'Choice $index',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      TextField(
-                                        controller: choices[index],
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          fillColor: Color(0xfff3f3f4),
-                                          filled: true,
-                                        ),
-                                      )
-                                    ],
+                      );
+                      formFieldsModals.add(
+                        QuestionModel(
+                            question: label,
+                            type: dropDownValue,
+                            choices: choice,
+                            answer: ''),
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  haveChoices
+                      ? ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: choices.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: EdgeInsets.symmetric(vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    'Choice $index',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15),
                                   ),
-                                );
-                              },
-                            )
-                          : Container(),
-                    ] +
-                    [
-                      RaisedButton(
-                        child: Icon(
-                          Icons.loupe,
-                          color: Colors.yellow,
-                        ),
-                        color: Colors.white,
-                        onPressed: () {
-                          QuizModel form = QuizModel(
-                            questions: formFieldsModals,
-                          );
-                          Navigator.of(context).pop(form);
-                        },
-                      )
-                    ],
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  TextField(
+                                    controller: choices[index],
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      fillColor: Color(0xfff3f3f4),
+                                      filled: true,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                          },
+                        )
+                      : Container(),
+                  RaisedButton(
+                    child: Icon(
+                      Icons.loupe,
+                      color: Colors.yellow,
+                    ),
+                    color: Colors.white,
+                    onPressed: () {
+                      QuizModel form = QuizModel(
+                        questions: formFieldsModals,
+                        testTime: testTime,
+                      );
+                      Navigator.of(context).pop(form);
+                    },
+                  )
+                ],
               ),
             ),
           ),

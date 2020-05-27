@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:coach_app/courses/subject_page.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AdminCoursePage extends StatefulWidget {
   @override
@@ -42,7 +43,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                 child: RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
-                    text: 'Your Courses',
+                    text: 'Your Courses'.tr(),
                     style: GoogleFonts.portLligatSans(
                       fontSize: 30,
                       fontWeight: FontWeight.w700,
@@ -57,7 +58,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
               child: StreamBuilder<Event>(
                 stream: FirebaseDatabase.instance
                     .reference()
-                    .child('institute/0/courses')
+                    .child('institute/0/branches/0/courses')
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -192,7 +193,7 @@ addCourse(BuildContext context,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Course Name',
+                      'Course Name'.tr(),
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
@@ -216,7 +217,7 @@ addCourse(BuildContext context,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Course Description',
+                      'Course Description'.tr(),
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
@@ -240,7 +241,7 @@ addCourse(BuildContext context,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Medium',
+                      'Medium'.tr(),
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
@@ -264,7 +265,7 @@ addCourse(BuildContext context,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Fee',
+                      'Fee'.tr(),
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
@@ -289,7 +290,7 @@ addCourse(BuildContext context,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Batches',
+                      'Batches'.tr(),
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
@@ -300,7 +301,7 @@ addCourse(BuildContext context,
                       controller: batchTextEditingController,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Seprated With comma',
+                        hintText: 'Seprated With comma'.tr(),
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
                       ),
@@ -319,13 +320,13 @@ addCourse(BuildContext context,
                             onPressed: () {
                               FirebaseDatabase.instance
                                   .reference()
-                                  .child('institute/0/courses/$id')
+                                  .child('institute/0/branches/0/courses/$id')
                                   .remove();
 
                               Navigator.of(context).pop();
                             },
                             child: Text(
-                              'Remove',
+                              'Remove'.tr(),
                             ),
                           ),
                     FlatButton(
@@ -357,13 +358,13 @@ addCourse(BuildContext context,
                           );
                           FirebaseDatabase.instance
                               .reference()
-                              .child('institute/0/courses/${course.id}')
+                              .child('institute/0/branches/0/courses/${course.id}')
                               .set(course.toJson());
                         }
                         Navigator.of(context).pop();
                       },
                       child: Text(
-                        'Add Course',
+                        'Add Course'.tr()
                       ),
                     ),
                   ],

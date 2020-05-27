@@ -7,7 +7,7 @@ import 'package:flutter_signin_button/button_view.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 class WelcomePage extends StatefulWidget {
   WelcomePage({Key key, this.title}) : super(key: key);
 
@@ -71,12 +71,13 @@ class _WelcomePageState extends State<WelcomePage> {
             _title(),
             SignInButton(
               Buttons.Google,
+              text: 'Sign In With Google'.tr(),
               onPressed: () {
                 FireBaseAuth.instance.signInWithGoogle().then(
                   (value) {
                     FirebaseDatabase.instance
                         .reference()
-                        .child('institute/0/teachers')
+                        .child('institute/0/branches/0/teachers')
                         .orderByChild('email')
                         .equalTo(value.email)
                         .once()
@@ -93,7 +94,11 @@ class _WelcomePageState extends State<WelcomePage> {
                                     ),
                                 (route) => false)
                             : _skey.currentState.showSnackBar(
-                                SnackBar(content: Text('Unregisterd Teacher! Can not login as Teacher')));
+                                SnackBar(
+                                  content: Text(
+                                      'Unregisterd Teacher! Can not login as Teacher').tr(),
+                                ),
+                              );
                       },
                     );
                   },

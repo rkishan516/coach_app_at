@@ -59,7 +59,7 @@ class _CoursePageState extends State<CoursePage> {
               child: StreamBuilder<Event>(
                 stream: FirebaseDatabase.instance
                     .reference()
-                    .child('institute/0/courses')
+                    .child('institute/0/branches/0/courses')
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {

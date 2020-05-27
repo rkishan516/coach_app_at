@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_placeholder_textlines/flutter_placeholder_textlines.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ChapterPage extends StatefulWidget {
   final DatabaseReference reference;
@@ -186,7 +187,7 @@ addChapter(BuildContext context, DatabaseReference reference, int length,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Chapter Name',
+                      'Chapter Name'.tr(),
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
@@ -210,7 +211,7 @@ addChapter(BuildContext context, DatabaseReference reference, int length,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Chapter Description',
+                      'Chapter Description'.tr(),
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
@@ -241,7 +242,7 @@ addChapter(BuildContext context, DatabaseReference reference, int length,
                               Navigator.of(context).pop();
                             },
                             child: Text(
-                              'Remove',
+                              'Remove'.tr(),
                             ),
                           ),
                     FlatButton(
@@ -260,7 +261,7 @@ addChapter(BuildContext context, DatabaseReference reference, int length,
                         Navigator.of(context).pop();
                       },
                       child: Text(
-                        'Add Chapter',
+                        'Add Chapter'.tr(),
                       ),
                     ),
                   ],

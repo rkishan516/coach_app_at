@@ -81,7 +81,7 @@ class _SubjectPageState extends State<SubjectPage> {
                             title: widget.course
                                 .subjects[widget.tCourse.subjects[index]].name,
                             reference: FirebaseDatabase.instance.reference().child(
-                                'institute/0/courses/${widget.tCourse.id}/subjects/${widget.tCourse.subjects[index]}'),
+                                'institute/0/branches/0/courses/${widget.tCourse.id}/subjects/${widget.tCourse.subjects[index]}'),
                           ),
                         ),
                       );
