@@ -66,7 +66,7 @@ class _WelcomePageState extends State<WelcomePage> {
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xff519ddb), Color(0xff54d179)])),
+                colors: [Colors.orange, Colors.deepOrange])),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -80,8 +80,8 @@ class _WelcomePageState extends State<WelcomePage> {
                   (value) {
                     Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
                       builder: (context) {
-                        return FutureBuilder(
-                          future: value.getIdToken(refresh: true),
+                        return StreamBuilder(
+                          stream: value.getIdToken(refresh: true).asStream(),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               if (snapshot.data.claims['admin']) {

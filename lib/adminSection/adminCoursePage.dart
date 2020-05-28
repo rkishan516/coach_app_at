@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/adminSection/adminSubjectPage.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -14,6 +16,7 @@ class AdminCoursePage extends StatefulWidget {
 }
 
 class _AdminCoursePageState extends State<AdminCoursePage> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +37,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xff519ddb), Color(0xff54d179)])),
+                colors: [Colors.orange, Colors.deepOrange])),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -73,11 +76,11 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                           child: ListTile(
                             title: Text(
                               '${courses[index].name}',
-                              style: TextStyle(color: Colors.blue),
+                              style: TextStyle(color: Colors.orange),
                             ),
                             trailing: Icon(
                               Icons.chevron_right,
-                              color: Colors.blue,
+                              color: Colors.orange,
                             ),
                             onTap: () => Navigator.of(context).push(
                               CupertinoPageRoute(
@@ -99,10 +102,11 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                         );
                       },
                     );
-                  }else if(snapshot.hasError){
-                    return Center(child: Text('${snapshot.error}'),);
-                  } 
-                  else {
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('${snapshot.error}'),
+                    );
+                  } else {
                     return ListView.builder(
                       itemCount: 3,
                       itemBuilder: (BuildContext context, int index) {
@@ -123,6 +127,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
           ],
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: Container(
             height: double.infinity,
@@ -132,8 +137,11 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                 gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Color(0xff519ddb), Color(0xff54d179)])),
-            child: Icon(Icons.add)),
+                    colors: [Colors.orange, Colors.deepOrange])),
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+            )),
         onPressed: () => addCourse(context),
       ),
     );
@@ -358,14 +366,13 @@ addCourse(BuildContext context,
                           );
                           FirebaseDatabase.instance
                               .reference()
-                              .child('institute/0/branches/0/courses/${course.id}')
+                              .child(
+                                  'institute/0/branches/0/courses/${course.id}')
                               .set(course.toJson());
                         }
                         Navigator.of(context).pop();
                       },
-                      child: Text(
-                        'Add Course'.tr()
-                      ),
+                      child: Text('Add Course'.tr()),
                     ),
                   ],
                 ),

@@ -51,7 +51,7 @@ class _ContentPageState extends State<ContentPage> {
                   gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [Color(0xff519ddb), Color(0xff54d179)])),
+                      colors: [Colors.orange, Colors.deepOrange])),
               child: Column(
                 children: <Widget>[
                   Expanded(
@@ -93,14 +93,15 @@ class _ContentPageState extends State<ContentPage> {
                                               : Icons.question_answer,
                                       color: Colors.white,
                                     ),
+                                    backgroundColor: Colors.orange,
                                   ),
                                   title: Text(
                                     '${chapter.content[index].title}',
-                                    style: TextStyle(color: Colors.blue),
+                                    style: TextStyle(color: Colors.orange),
                                   ),
                                   trailing: Icon(
                                     Icons.chevron_right,
-                                    color: Colors.blue,
+                                    color: Colors.orange,
                                   ),
                                   onTap: () {
                                     if (chapter.content[index].kind ==
@@ -173,6 +174,7 @@ class _ContentPageState extends State<ContentPage> {
                 ],
               ),
             ),
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             floatingActionButton: FloatingActionButton(
               child: Container(
                   height: double.infinity,
@@ -182,7 +184,7 @@ class _ContentPageState extends State<ContentPage> {
                       gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [Color(0xff519ddb), Color(0xff54d179)])),
+                          colors: [Colors.orange, Colors.deepOrange])),
                   child: Icon(Icons.add)),
               onPressed: () => addContent(context, widget.reference, length),
             ),

@@ -35,7 +35,7 @@ class _CoursePageState extends State<CoursePage> {
               gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Color(0xff519ddb), Color(0xff54d179)])),
+                  colors: [Colors.orange, Colors.deepOrange])),
           child: Column(
             children: <Widget>[
               Expanded(

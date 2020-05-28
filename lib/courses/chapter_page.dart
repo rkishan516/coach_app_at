@@ -40,7 +40,7 @@ class _ChapterPageState extends State<ChapterPage> {
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xff519ddb), Color(0xff54d179)])),
+                colors: [Colors.orange, Colors.deepOrange])),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -76,11 +76,11 @@ class _ChapterPageState extends State<ChapterPage> {
                             child: ListTile(
                               title: Text(
                                 '${subjects.chapters[index].name}',
-                                style: TextStyle(color: Colors.blue),
+                                style: TextStyle(color: Colors.orange),
                               ),
                               trailing: Icon(
                                 Icons.chevron_right,
-                                color: Colors.blue,
+                                color: Colors.orange,
                               ),
                               onTap: () => Navigator.of(context).push(
                                 CupertinoPageRoute(
@@ -125,6 +125,7 @@ class _ChapterPageState extends State<ChapterPage> {
           ],
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: Container(
             height: double.infinity,
@@ -134,8 +135,11 @@ class _ChapterPageState extends State<ChapterPage> {
                 gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Color(0xff519ddb), Color(0xff54d179)])),
-            child: Icon(Icons.add)),
+                    colors: [Colors.orange, Colors.deepOrange])),
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+            )),
         onPressed: () => addChapter(context, widget.reference, length),
       ),
     );
