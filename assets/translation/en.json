@@ -44,5 +44,10 @@
     "Google Drive Link": "Google ड्राइव लिंक",
     "Status": "स्थिति",
     "Existing Student": "मौजूदा छात्र",
-    "New Student": "नया विद्यार्थी"
+    "New Student": "नया विद्यार्थी",
+    "Register" : "आवेदन करे",
+    "Class" : "कक्षा",
+    "Institute Code" : "संस्थान संख्या",
+    "Registration Successful" : "पंजीकरण सफल",
+    "Buy Course @ Rs." : "पाठ्यक्रम खरीदें @ रु"
 }

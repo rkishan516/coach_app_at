@@ -9,9 +9,22 @@ class RegistrationPage extends StatefulWidget {
 class _RegistrationPageState extends State<RegistrationPage> {
   TextEditingController nameTextEditingController,
       addressTextEditingController,
-      phoneTextEditingController;
+      phoneTextEditingController,
+      classTextEditingController,
+      instituteCodeTextEditingController;
   String status = 'New Student';
   DateTime dob;
+
+  @override
+  void initState() {
+    nameTextEditingController = TextEditingController();
+    addressTextEditingController = TextEditingController();
+    phoneTextEditingController = TextEditingController();
+    classTextEditingController = TextEditingController();
+    instituteCodeTextEditingController = TextEditingController();
+    dob = DateTime.now();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +68,52 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
                 TextField(
                   controller: addressTextEditingController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    fillColor: Color(0xfff3f3f4),
+                    filled: true,
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Class'.tr(),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                TextField(
+                  controller: classTextEditingController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    fillColor: Color(0xfff3f3f4),
+                    filled: true,
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Institute Code'.tr(),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                TextField(
+                  controller: instituteCodeTextEditingController,
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     fillColor: Color(0xfff3f3f4),
@@ -146,6 +205,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ],
             ),
           ),
+          RaisedButton(
+            color: Colors.orange,
+            onPressed: () {},
+            child: Text('Register'.tr()),
+          )
         ],
       ),
     );

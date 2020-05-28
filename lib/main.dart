@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
               if (snapshot.data == ConnectivityResult.none) {
                 return NoInternet();
               }
-              return RegistrationPage();
+              return WelcomePage();
             } else {
               return Scaffold(
                 body: Center(child: Text('Internet Connectivity Checking').tr()),

@@ -1,5 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Student/course_page.dart' as st_cp;
+import 'package:coach_app/Student/registration_form.dart';
 import 'package:coach_app/adminSection/adminCoursePage.dart';
 import 'package:coach_app/courses/course_page.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -8,6 +10,7 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+
 class WelcomePage extends StatefulWidget {
   WelcomePage({Key key, this.title}) : super(key: key);
 
@@ -75,32 +78,49 @@ class _WelcomePageState extends State<WelcomePage> {
               onPressed: () {
                 FireBaseAuth.instance.signInWithGoogle().then(
                   (value) {
-                    FirebaseDatabase.instance
-                        .reference()
-                        .child('institute/0/branches/0/teachers')
-                        .orderByChild('email')
-                        .equalTo(value.email)
-                        .once()
-                        .then(
-                      (val) {
-                        print(val.value);
-                        val.value != null
-                            ? Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (context) => AdminCoursePage()
-                                    // CoursePage(
-                                    //   teacher: Teacher.fromJson(val.value[0]),
-                                    // ),
-                                    ),
-                                (route) => false)
-                            : _skey.currentState.showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      'Unregisterd Teacher! Can not login as Teacher').tr(),
-                                ),
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                      builder: (context) {
+                        return FutureBuilder(
+                          future: value.getIdToken(refresh: true),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              if (snapshot.data.claims['admin']) {
+                                return AdminCoursePage();
+                              } else if (snapshot.data.claims['teacher']) {
+                                return StreamBuilder(
+                                  stream: FirebaseDatabase.instance
+                                      .reference()
+                                      .child('institute/0/branches/0/teachers')
+                                      .orderByChild('email')
+                                      .equalTo(value.email)
+                                      .onValue,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return CoursePage(
+                                        teacher: Teacher.fromJson(
+                                            snapshot.data.value[0]),
+                                      );
+                                    } else {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                  },
+                                );
+                              }else if(snapshot.data.claims['student']){
+                                return st_cp.CoursePage(student: Student());
+                              }else{
+                                return RegistrationPage();
+                              }
+                            } else {
+                              return Center(
+                                child: CircularProgressIndicator(),
                               );
+                            }
+                          },
+                        );
                       },
-                    );
+                    ), (route) => false);
                   },
                 );
               },

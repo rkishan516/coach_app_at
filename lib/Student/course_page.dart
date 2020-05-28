@@ -1,8 +1,9 @@
 import 'package:coach_app/Models/model.dart';
-import 'package:coach_app/courses/subject_page.dart';
+import 'package:coach_app/Student/subject_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CoursePage extends StatefulWidget {
   final Student student;
@@ -43,7 +44,7 @@ class _CoursePageState extends State<CoursePage> {
                   child: RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
-                      text: 'Your Courses',
+                      text: 'Your Courses'.tr(),
                       style: GoogleFonts.portLligatSans(
                         fontSize: 30,
                         fontWeight: FontWeight.w700,
@@ -70,7 +71,9 @@ class _CoursePageState extends State<CoursePage> {
                         ),
                         onTap: () => Navigator.of(context).push(
                           CupertinoPageRoute(
-                            builder: (context) => SubjectPage(),
+                            builder: (context) => SubjectPage(
+                              courseID: widget.student.course[index].courseID.toString(),
+                            ),
                           ),
                         ),
                       ),

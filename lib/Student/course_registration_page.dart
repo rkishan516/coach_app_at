@@ -1,5 +1,6 @@
 import 'package:coach_app/Models/model.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CourseRegistrationPage extends StatefulWidget {
   final Courses course;
@@ -62,7 +63,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                     children: <Widget>[
                       Center(
                           child: Text(
-                        'Course Description',
+                        'Course Description'.tr(),
                         style: TextStyle(fontSize: 22.0),
                       )),
                       SizedBox(height: 20.0),
@@ -74,7 +75,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                       SizedBox(height: 20.0),
                       Center(
                         child: Text(
-                          'Mentors',
+                          'Mentors'.tr(),
                           style: TextStyle(fontSize: 22.0),
                         ),
                       ),
@@ -97,9 +98,9 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
               ),
               Card(
                 child: FlatButton(
-                  child: Text('Buy Course @ Rs. ${widget.course.price}'),
+                  child: Text('Buy Course @ Rs.'.tr() + ' ${widget.course.price}'),
                   onPressed: () {
-                    Scaffold.of(context).showSnackBar(SnackBar(content: Text('Registration Successful',style: TextStyle(color: Colors.blue),)));
+                    Scaffold.of(context).showSnackBar(SnackBar(content: Text('Registration Successful'.tr(),style: TextStyle(color: Colors.blue),)));
                   },
                 ),
               ),

@@ -90,7 +90,7 @@ class _AllCoursePageState extends State<AllCoursePage> {
                   stream: FirebaseDatabase.instance
                       .reference()
                       .child('institute')
-                      .child("0")
+                      .child("0/branch/0")
                       .onValue,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {

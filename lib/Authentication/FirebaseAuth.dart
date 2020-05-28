@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -24,8 +26,11 @@ class FireBaseAuth {
       final FirebaseUser user =
           (await _auth.signInWithCredential(credential)).user;
       print("signed in " + user.email);
-      user.getIdToken(refresh: true).then((value){
-        print(value.claims);
+      Timer(Duration(seconds: 0), () {
+        user.getIdToken(refresh: true).then((value) {
+          print('...................');
+          print(value.claims['admin']);
+        });
       });
       return user;
     } catch (e) {
