@@ -7,43 +7,13 @@ import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AllCoursePage extends StatefulWidget {
+  DatabaseReference ref;
+  AllCoursePage({@required this.ref});
   @override
   _AllCoursePageState createState() => _AllCoursePageState();
 }
 
 class _AllCoursePageState extends State<AllCoursePage> {
-  List<String> courses = [
-    '1st',
-    '2nd',
-    '3rd',
-    '4th',
-    '5th',
-    '6th',
-    '7th',
-    '8th',
-    '9th',
-    '10th',
-    '11th PCM',
-    '11th PCB',
-    '12th PCM',
-    '12th PCB'
-  ];
-  List<int> prices = [
-    1000,
-    2000,
-    3000,
-    4000,
-    5000,
-    6000,
-    7000,
-    8000,
-    9000,
-    10000,
-    11000,
-    11000,
-    12000,
-    12000
-  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,21 +57,18 @@ class _AllCoursePageState extends State<AllCoursePage> {
               Expanded(
                 flex: 12,
                 child: StreamBuilder<Event>(
-                  stream: FirebaseDatabase.instance
-                      .reference()
-                      .child('institute/0/branches/0')
-                      .onValue,
+                  stream: widget.ref.onValue,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       Institute institute =
                           Institute.fromJson(snapshot.data.snapshot.value);
                       return ListView.builder(
-                        itemCount: institute.courses.length,
+                        itemCount: institute?.courses?.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Card(
                             child: ListTile(
                               title: Text(
-                                '${institute.courses[index]?.name}',
+                                '${institute.courses[index].name}',
                                 style: TextStyle(color: Colors.blue),
                               ),
                               subtitle: Text(
@@ -118,6 +85,7 @@ class _AllCoursePageState extends State<AllCoursePage> {
                                 CupertinoPageRoute(
                                   builder: (context) => CourseRegistrationPage(
                                     course: institute.courses[index],
+                                    ref: widget.ref,
                                   ),
                                 ),
                               ),

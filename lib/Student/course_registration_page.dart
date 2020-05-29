@@ -1,11 +1,14 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:upi_pay/upi_pay.dart';
 
 class CourseRegistrationPage extends StatefulWidget {
   final Courses course;
-  CourseRegistrationPage({@required this.course});
+  DatabaseReference ref;
+  CourseRegistrationPage({@required this.course, @required this.ref});
   @override
   _CourseRegistrationPageState createState() => _CourseRegistrationPageState();
 }
@@ -102,7 +105,11 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                   child:
                       Text('Buy Course @ Rs.'.tr() + ' ${widget.course.price}'),
                   onPressed: () async {
-                    UpiApplication data = await showDialog(context: context,child: Dialog(child: Screen(),));
+                    UpiApplication data = await showDialog(
+                        context: context,
+                        child: Dialog(
+                          child: Screen(),
+                        ));
                     UpiTransactionResponse txnResponse =
                         await UpiPay.initiateTransaction(
                       amount: "${widget.course.price}.00",
@@ -110,12 +117,24 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                       receiverName: "Kishan",
                       receiverUpiAddress: "rkishan516-1@okhdfcbank",
                       transactionRef:
-                          '${widget.course.name.hashCode}${widget.course.hashCode}usernameHashcode',
+                          '${widget.course.name.hashCode}${widget.course.hashCode}${FireBaseAuth.instance.user.uid.hashCode}',
                       merchantCode: '1032',
                       transactionNote:
                           'You are purchaing the course ${widget.course.name}.',
                     );
-                    if (txnResponse.status == UpiTransactionStatus.success) {
+                    if (txnResponse.status == UpiTransactionStatus.failure) {
+                      widget.ref
+                          .child(
+                              'students/${FireBaseAuth.instance.user.uid}/course')
+                          .push()
+                          .set({
+                        "Academic Year": DateTime.now().year.toString() +
+                            '-' +
+                            (DateTime.now().year + 1).toString(),
+                        "courseID": widget.course.id,
+                        "courseName": widget.course.name,
+                        "paymentToken": txnResponse.txnRef,
+                      });
                       _globalKey.currentState.showSnackBar(SnackBar(
                           content: Text(
                         'Registration Successful'.tr(),
@@ -192,7 +211,8 @@ class _ScreenState extends State<Screen> {
                                 key: ObjectKey(it.upiApplication),
                                 color: Colors.grey[200],
                                 child: InkWell(
-                                  onTap: () => Navigator.of(context).pop(it.upiApplication),
+                                  onTap: () => Navigator.of(context)
+                                      .pop(it.upiApplication),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     mainAxisAlignment: MainAxisAlignment.center,

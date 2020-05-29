@@ -230,6 +230,7 @@ class Student {
   String phoneNo;
   String photoURL;
   String rollNo;
+  String status;
 
   Student(
       {this.guardianDetails,
@@ -239,7 +240,7 @@ class Student {
       this.name,
       this.phoneNo,
       this.photoURL,
-      this.rollNo});
+      this.rollNo,this.status});
 
   Student.fromJson(Map<dynamic, dynamic> json) {
     guardianDetails = json['Guardian Details'] != null
@@ -248,7 +249,7 @@ class Student {
     address = json['address'];
     if (json['course'] != null) {
       course = new List<Course>();
-      json['course'].forEach((v) {
+      json['course'].forEach((k,v) {
         course.add(new Course.fromJson(v));
       });
     }
@@ -257,6 +258,7 @@ class Student {
     phoneNo = json['phone No'];
     photoURL = json['photoURL'];
     rollNo = json['rollNo'];
+    status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -273,6 +275,7 @@ class Student {
     data['phone No'] = this.phoneNo;
     data['photoURL'] = this.photoURL;
     data['rollNo'] = this.rollNo;
+    data['status'] = this.status;
     return data;
   }
 }
@@ -303,7 +306,7 @@ class Course {
   String academicYear;
   String batch;
   int attendence;
-  int courseID;
+  String courseID;
   String courseName;
   String paymentToken;
   int score;

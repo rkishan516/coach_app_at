@@ -1,3 +1,7 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Student/WaitScreen.dart';
+import 'package:coach_app/Student/all_course_view.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -15,9 +19,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
       instituteCodeTextEditingController;
   String status = 'New Student';
   DateTime dob;
+  GlobalKey<ScaffoldState> _scKey;
 
   @override
   void initState() {
+    _scKey = GlobalKey<ScaffoldState>();
     nameTextEditingController = TextEditingController();
     addressTextEditingController = TextEditingController();
     phoneTextEditingController = TextEditingController();
@@ -30,6 +36,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scKey,
       body: ListView(
         children: <Widget>[
           Container(
@@ -214,8 +221,40 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   phoneTextEditingController.text != '' &&
                   classTextEditingController.text != '' &&
                   instituteCodeTextEditingController.text != '') {
-                    FirebaseDatabase.instance.reference().child('institute/${instituteCodeTextEditingController.text.split('_')[0]}/branches/${instituteCodeTextEditingController.text.split('_')[1]}/students/n').set('');
-                  }
+                Student student = Student(
+                    name: nameTextEditingController.text,
+                    address: addressTextEditingController.text,
+                    phoneNo: phoneTextEditingController.text,
+                    photoURL: FireBaseAuth.instance.user.photoUrl,
+                    email: FireBaseAuth.instance.user.email,
+                    status: status);
+                var insCode =
+                    instituteCodeTextEditingController.text.split('_');
+                DatabaseReference reference = FirebaseDatabase.instance
+                    .reference()
+                    .child('institute/${insCode[0]}/branches/${insCode[1]}/');
+                reference
+                    .child('students/${FireBaseAuth.instance.user.uid}')
+                    .set(student.toJson());
+                if (status == 'Existing Student') {
+                  reference
+                      .child('students/${FireBaseAuth.instance.user.uid}/class')
+                      .set(classTextEditingController.text);
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) {
+                    return WaitScreen();
+                  }));
+                } else {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) {
+                    return AllCoursePage(
+                      ref: reference,
+                    );
+                  }), (route) => false);
+                }
+              } else {
+                _scKey.currentState.showSnackBar(SnackBar(content: Text('Something remains Unfilled')));
+              }
             },
             child: Text('Register'.tr()),
           )

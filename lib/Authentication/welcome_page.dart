@@ -3,6 +3,7 @@ import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Student/course_page.dart' as st_cp;
 import 'package:coach_app/Student/registration_form.dart';
 import 'package:coach_app/adminSection/adminCoursePage.dart';
+import 'package:coach_app/adminSection/studentRequest.dart';
 import 'package:coach_app/courses/course_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_signin_button/button_view.dart';
@@ -112,7 +113,25 @@ class _WelcomePageState extends State<WelcomePage> {
                               } else if (snapshot
                                       .data.claims['previlagelevel'] ==
                                   1) {
-                                return st_cp.CoursePage(student: Student());
+                                return StreamBuilder<Event>(
+                                  stream: FirebaseDatabase.instance
+                                      .reference()
+                                      .child(
+                                          'institute/0/branches/0/students/${value.uid}')
+                                      .onValue,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return StudentsRequests();
+                                      return st_cp.CoursePage(
+                                          student: Student.fromJson(
+                                              snapshot.data.snapshot.value));
+                                    } else {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                  },
+                                );
                               } else {
                                 return RegistrationPage();
                               }
