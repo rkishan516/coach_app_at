@@ -25,7 +25,7 @@ class _WelcomePageState extends State<WelcomePage> {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-          text: 'C',
+          text: 'Guru',
           style: GoogleFonts.portLligatSans(
             fontSize: 30,
             fontWeight: FontWeight.w700,
@@ -33,11 +33,11 @@ class _WelcomePageState extends State<WelcomePage> {
           ),
           children: [
             TextSpan(
-              text: 'oa',
+              text: ' Co',
               style: TextStyle(color: Colors.black, fontSize: 30),
             ),
             TextSpan(
-              text: 'ch',
+              text: 'ol',
               style: TextStyle(color: Colors.white, fontSize: 30),
             ),
           ]),
@@ -81,12 +81,14 @@ class _WelcomePageState extends State<WelcomePage> {
                     Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
                       builder: (context) {
                         return StreamBuilder(
-                          stream: value.getIdToken(refresh: true).asStream(),
+                          stream: value?.getIdToken(refresh: true)?.asStream(),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
-                              if (snapshot.data.claims['admin']) {
+                              if (snapshot.data.claims['previlagelevel'] == 3) {
                                 return AdminCoursePage();
-                              } else if (snapshot.data.claims['teacher']) {
+                              } else if (snapshot
+                                      .data.claims['previlagelevel'] ==
+                                  2) {
                                 return StreamBuilder(
                                   stream: FirebaseDatabase.instance
                                       .reference()
@@ -107,9 +109,11 @@ class _WelcomePageState extends State<WelcomePage> {
                                     }
                                   },
                                 );
-                              }else if(snapshot.data.claims['student']){
+                              } else if (snapshot
+                                      .data.claims['previlagelevel'] ==
+                                  1) {
                                 return st_cp.CoursePage(student: Student());
-                              }else{
+                              } else {
                                 return RegistrationPage();
                               }
                             } else {

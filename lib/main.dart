@@ -1,7 +1,8 @@
 import 'package:coach_app/Authentication/welcome_page.dart';
-import 'package:coach_app/Student/registration_form.dart';
+import 'package:coach_app/Student/all_course_view.dart';
+import 'package:coach_app/XD_Screens/XD_AndroidMobile20.dart';
 import 'package:coach_app/noInternet/noInternet.dart';
-import 'package:connectivity/connectivity.dart';
+import 'package:cross_connectivity/cross_connectivity.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,11 +35,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.orange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: StreamBuilder<ConnectivityResult>(
+      home: StreamBuilder<ConnectivityStatus>(
           stream: Connectivity().onConnectivityChanged,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              if (snapshot.data == ConnectivityResult.none) {
+              if (snapshot.data == ConnectivityStatus.none) {
                 return NoInternet();
               }
               return WelcomePage();

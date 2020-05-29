@@ -35,15 +35,12 @@ dependencies:
   flutter_placeholder_textlines:
   google_fonts:
   firebase_auth:
-  http:
-  path_provider:
   pdf_viewer_plugin:
-  url_launcher:
   flutter_form_builder:
-  connectivity:
+  cross_connectivity:
   easy_localization:
-  square_in_app_payments:
-  flutter_inapp_purchase:
+  upi_pay:
+  adobe_xd:
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,4 @@
-import 'dart:async';
-
+import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/adminSection/adminSubjectPage.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -16,17 +15,29 @@ class AdminCoursePage extends StatefulWidget {
 }
 
 class _AdminCoursePageState extends State<AdminCoursePage> {
-
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
+      drawer: getDrawer(context),
+      appBar: AppBar(
+        title: Text(
+          'Your Courses'.tr(),
+          style: GoogleFonts.portLligatSans(
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0.0,
+        iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
+      ),
       body: Container(
         padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height / 20),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
             boxShadow: <BoxShadow>[
               BoxShadow(
                   color: Colors.grey.shade200,
@@ -40,22 +51,6 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                 colors: [Colors.orange, Colors.deepOrange])),
         child: Column(
           children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Container(
-                child: RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    text: 'Your Courses'.tr(),
-                    style: GoogleFonts.portLligatSans(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
             Expanded(
               flex: 12,
               child: StreamBuilder<Event>(

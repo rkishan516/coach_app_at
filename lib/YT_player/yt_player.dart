@@ -237,7 +237,8 @@ class _YTPlayerState extends State<YTPlayer> {
         ),
       );
     } catch (e) {
-      Navigator.of(context).pop();
+      return Container();
+      // Navigator.of(context).pop();
     }
   }
 

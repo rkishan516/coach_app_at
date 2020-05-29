@@ -8,7 +8,7 @@ class Institute {
     name = json['name'];
     if (json['courses'] != null) {
       courses = new List<Courses>();
-      json['courses'].forEach((v) {
+      json['courses'].forEach((k,v) {
         courses.add(new Courses.fromJson(v));
       });
     }

@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -207,7 +208,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
           RaisedButton(
             color: Colors.orange,
-            onPressed: () {},
+            onPressed: () {
+              if (nameTextEditingController.text != '' &&
+                  addressTextEditingController.text != '' &&
+                  phoneTextEditingController.text != '' &&
+                  classTextEditingController.text != '' &&
+                  instituteCodeTextEditingController.text != '') {
+                    FirebaseDatabase.instance.reference().child('institute/${instituteCodeTextEditingController.text.split('_')[0]}/branches/${instituteCodeTextEditingController.text.split('_')[1]}/students/n').set('');
+                  }
+            },
             child: Text('Register'.tr()),
           )
         ],

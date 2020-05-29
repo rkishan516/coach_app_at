@@ -89,8 +89,7 @@ class _AllCoursePageState extends State<AllCoursePage> {
                 child: StreamBuilder<Event>(
                   stream: FirebaseDatabase.instance
                       .reference()
-                      .child('institute')
-                      .child("0/branch/0")
+                      .child('institute/0/branches/0')
                       .onValue,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
@@ -102,7 +101,7 @@ class _AllCoursePageState extends State<AllCoursePage> {
                           return Card(
                             child: ListTile(
                               title: Text(
-                                '${institute.courses[index].name}',
+                                '${institute.courses[index]?.name}',
                                 style: TextStyle(color: Colors.blue),
                               ),
                               subtitle: Text(

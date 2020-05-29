@@ -1,16 +1,16 @@
+import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/YT_player/pdf_player.dart';
 import 'package:coach_app/YT_player/quiz_player.dart';
 import 'package:coach_app/YT_player/yt_player.dart';
 import 'package:coach_app/courses/FormGeneration/form_generator.dart';
 import 'package:coach_app/noInternet/noInternet.dart';
-import 'package:connectivity/connectivity.dart';
+import 'package:cross_connectivity/cross_connectivity.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class ContentPage extends StatefulWidget {
@@ -25,22 +25,36 @@ class _ContentPageState extends State<ContentPage> {
   int length;
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<ConnectivityResult>(
+    return StreamBuilder<ConnectivityStatus>(
       stream: Connectivity().onConnectivityChanged,
       builder: (BuildContext context, snapshot) {
         if (snapshot.hasData) {
           print(snapshot.data);
-          if (snapshot.data == ConnectivityResult.none) {
+          if (snapshot.data == ConnectivityStatus.none) {
             return NoInternet();
           }
           return Scaffold(
+            drawer: getDrawer(context),
+            appBar: AppBar(
+              title: Text(
+                widget.title,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.portLligatSans(
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+              centerTitle: true,
+              elevation: 0.0,
+              iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
+            ),
             body: Container(
               padding: EdgeInsets.symmetric(
                   vertical: MediaQuery.of(context).size.height / 20),
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
                         color: Colors.grey.shade200,
@@ -54,21 +68,6 @@ class _ContentPageState extends State<ContentPage> {
                       colors: [Colors.orange, Colors.deepOrange])),
               child: Column(
                 children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      child: Text(
-                        widget.title,
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.portLligatSans(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
                   Expanded(
                     flex: 12,
                     child: StreamBuilder<Event>(
@@ -174,7 +173,8 @@ class _ContentPageState extends State<ContentPage> {
                 ],
               ),
             ),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
             floatingActionButton: FloatingActionButton(
               child: Container(
                   height: double.infinity,
@@ -185,7 +185,10 @@ class _ContentPageState extends State<ContentPage> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [Colors.orange, Colors.deepOrange])),
-                  child: Icon(Icons.add)),
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  )),
               onPressed: () => addContent(context, widget.reference, length),
             ),
           );

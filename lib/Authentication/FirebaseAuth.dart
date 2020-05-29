@@ -11,6 +11,7 @@ class FireBaseAuth {
   GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email'],
   );
+  FirebaseUser user;
 
   Future<FirebaseUser> signInWithGoogle() async {
     try {
@@ -26,16 +27,25 @@ class FireBaseAuth {
       final FirebaseUser user =
           (await _auth.signInWithCredential(credential)).user;
       print("signed in " + user.email);
-      Timer(Duration(seconds: 0), () {
-        user.getIdToken(refresh: true).then((value) {
-          print('...................');
-          print(value.claims['admin']);
-        });
+      user.getIdToken(refresh: true).then((value) {
+        print('...................');
+        print(value.claims);
       });
+
+      this.user = user;
       return user;
     } catch (e) {
       print(e.message);
     }
     return null;
+  }
+
+  Future<void> signoutWithGoogle() async {
+    try {
+      await _auth.signOut();
+      user = null;
+    } catch (e) {
+      print(e.message);
+    }
   }
 }

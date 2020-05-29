@@ -1,6 +1,7 @@
 import 'package:coach_app/Models/model.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:upi_pay/upi_pay.dart';
 
 class CourseRegistrationPage extends StatefulWidget {
   final Courses course;
@@ -10,16 +11,19 @@ class CourseRegistrationPage extends StatefulWidget {
 }
 
 class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
+  GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     List<String> teachers = List<String>();
-    widget.course.subjects.forEach((subject) {
+    widget.course.subjects?.forEach((subject) {
       subject.mentor.forEach((mentor) {
         teachers.add(mentor);
       });
     });
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      key: _globalKey,
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.symmetric(
@@ -38,10 +42,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Color(0xff519ddb),
-                Color(0xff54d179),
-              ],
+              colors: [Colors.orange, Colors.deepOrange],
             ),
           ),
           child: ListView(
@@ -98,15 +99,127 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
               ),
               Card(
                 child: FlatButton(
-                  child: Text('Buy Course @ Rs.'.tr() + ' ${widget.course.price}'),
-                  onPressed: () {
-                    Scaffold.of(context).showSnackBar(SnackBar(content: Text('Registration Successful'.tr(),style: TextStyle(color: Colors.blue),)));
+                  child:
+                      Text('Buy Course @ Rs.'.tr() + ' ${widget.course.price}'),
+                  onPressed: () async {
+                    UpiApplication data = await showDialog(context: context,child: Dialog(child: Screen(),));
+                    UpiTransactionResponse txnResponse =
+                        await UpiPay.initiateTransaction(
+                      amount: "${widget.course.price}.00",
+                      app: data,
+                      receiverName: "Kishan",
+                      receiverUpiAddress: "rkishan516-1@okhdfcbank",
+                      transactionRef:
+                          '${widget.course.name.hashCode}${widget.course.hashCode}usernameHashcode',
+                      merchantCode: '1032',
+                      transactionNote:
+                          'You are purchaing the course ${widget.course.name}.',
+                    );
+                    if (txnResponse.status == UpiTransactionStatus.success) {
+                      _globalKey.currentState.showSnackBar(SnackBar(
+                          content: Text(
+                        'Registration Successful'.tr(),
+                        style: TextStyle(color: Colors.orange),
+                      )));
+                    } else {
+                      _globalKey.currentState.showSnackBar(SnackBar(
+                          content: Text(
+                        'Registration Failed'.tr(),
+                        style: TextStyle(color: Colors.orange),
+                      )));
+                    }
                   },
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class Screen extends StatefulWidget {
+  @override
+  _ScreenState createState() => _ScreenState();
+}
+
+class _ScreenState extends State<Screen> {
+  bool _isUpiEditable = false;
+  Future<List<ApplicationMeta>> _appsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _appsFuture = UpiPay.getInstalledUpiApplications();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.width,
+      child: ListView(
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(top: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(bottom: 12),
+                  child: Text(
+                    'Pay Using',
+                    style: Theme.of(context).textTheme.caption,
+                  ),
+                ),
+                FutureBuilder<List<ApplicationMeta>>(
+                  future: _appsFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState != ConnectionState.done) {
+                      return Container();
+                    }
+
+                    return GridView.count(
+                      crossAxisCount: 2,
+                      shrinkWrap: true,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      childAspectRatio: 1.6,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: snapshot.data
+                          .map((it) => Material(
+                                key: ObjectKey(it.upiApplication),
+                                color: Colors.grey[200],
+                                child: InkWell(
+                                  onTap: () => Navigator.of(context).pop(it.upiApplication),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Image.memory(
+                                        it.icon,
+                                        width: 64,
+                                        height: 64,
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(top: 4),
+                                        child: Text(
+                                          it.upiApplication.getAppName(),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    );
+                  },
+                ),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
