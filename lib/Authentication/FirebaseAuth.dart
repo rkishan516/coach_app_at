@@ -12,7 +12,7 @@ class FireBaseAuth {
     scopes: ['email'],
   );
   FirebaseUser user;
-  var branchid,instituteid;
+  var branchid,instituteid,previlagelevel;
 
   Future<FirebaseUser> signInWithGoogle() async {
     try {
@@ -31,6 +31,7 @@ class FireBaseAuth {
         print(value.claims);
         branchid = value.claims['branchid'];
         instituteid = value.claims['instituteid'];
+        previlagelevel = value.claims['previlagelevel'];
       });
 
       this.user = user;

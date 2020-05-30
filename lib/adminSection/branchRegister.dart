@@ -164,6 +164,8 @@ class _BranchRegisterState extends State<BranchRegister> {
                   child: FlatButton(
                     onPressed: () {
                       if (adminEmailTextEditingController.text != '' &&
+                          adminEmailTextEditingController.text
+                              .endsWith('@gmail.com') &&
                           nameTextEditingController.text != '' &&
                           addressTextEditingController.text != '' &&
                           branchCodeTextEditingController.text != '') {

@@ -76,7 +76,7 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                   alignment: Alignment.bottomRight,
                   child: FlatButton(
                     onPressed: () {
-                      if (emailTextEditingController.text != '') {
+                      if (emailTextEditingController.text != '' && emailTextEditingController.text.endsWith('@gmail.com')) {
                         Firestore.instance
                             .collection('institute')
                             .document('teachers')

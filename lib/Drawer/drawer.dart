@@ -8,7 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-
 getDrawer(BuildContext context) {
   FirebaseUser user = FireBaseAuth.instance.user;
   return Drawer(
@@ -23,47 +22,32 @@ getDrawer(BuildContext context) {
             backgroundImage: NetworkImage(user.photoUrl),
           ),
         ),
-        StreamBuilder(
-          stream: user.getIdToken(refresh: true).asStream(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data.claims['previlagelevel'] == 3) {
-                return ListView(
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    ListTile(
-                      title: Text('Add new branch'.tr()),
-                      leading: Icon(Icons.add_box),
-                      onTap: () {
-                        return showCupertinoDialog(
-                          context: context,
-                          builder: (context) => BranchRegister());
-                      },
-                    ),
-                    ListTile(
-                      title: Text('Student Requests'.tr()),
-                      leading: Icon(Icons.verified_user),
-                      onTap: () => Navigator.of(context).push(
-                          CupertinoPageRoute(
-                              builder: (context) => StudentsRequests())),
-                    ),
-                    ListTile(
-                      title: Text('Add Teacher'.tr()),
-                      leading: Icon(Icons.person_add),
-                      onTap: () => showCupertinoDialog(
-                          context: context,
-                          builder: (context) => TeacherRegister()),
-                    ),
-                  ],
-                );
-              } else {
-                return Container();
-              }
-            } else {
-              return Container();
-            }
-          },
-        ),
+        (FireBaseAuth.instance.previlagelevel == 3)
+            ? ListView(shrinkWrap: true,children: <Widget>[
+                ListTile(
+                  title: Text('Add new branch'.tr()),
+                  leading: Icon(Icons.add_box),
+                  onTap: () {
+                    return showCupertinoDialog(
+                        context: context,
+                        builder: (context) => BranchRegister());
+                  },
+                ),
+                ListTile(
+                  title: Text('Student Requests'.tr()),
+                  leading: Icon(Icons.verified_user),
+                  onTap: () => Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (context) => StudentsRequests())),
+                ),
+                ListTile(
+                  title: Text('Add Teacher'.tr()),
+                  leading: Icon(Icons.person_add),
+                  onTap: () => showCupertinoDialog(
+                      context: context,
+                      builder: (context) => TeacherRegister()),
+                ),
+              ],)
+            : Container(),
         ListTile(
           title: Text('Log Out'.tr()),
           leading: Icon(Icons.exit_to_app),

@@ -218,6 +218,16 @@ addSubject(BuildContext context, String courseId, int length,
                     SizedBox(
                       height: 10,
                     ),
+                    StreamBuilder<Event>(
+                      stream: FirebaseDatabase.instance.reference().child('institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers').onValue,
+                      builder: (context,snapshot){
+                      if(snapshot.hasData){
+                        //TODO add dropdown for teacher
+                        return Container();
+                      }else{
+                        return Container();
+                      }
+                    }),
                     TextField(
                       controller: mentorTextEditingController,
                       decoration: InputDecoration(

@@ -79,26 +79,7 @@ class _YTPlayerState extends State<YTPlayer> {
               showVideoProgressIndicator: true,
               progressIndicatorColor: Colors.blueAccent,
               topActions: <Widget>[
-                SizedBox(width: 8.0),
-                Expanded(
-                  child: Text(
-                    _controller.metadata.title,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18.0,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.settings,
-                    color: Colors.white,
-                    size: 25.0,
-                  ),
-                  onPressed: () {},
-                ),
+               
               ],
               onReady: () {
                 _isPlayerReady = true;
@@ -114,122 +95,7 @@ class _YTPlayerState extends State<YTPlayer> {
                 children: [
                   _space,
                   _text('Title', _videoMetaData.title),
-                  _space,
-                  _text('Channel', _videoMetaData.author),
-                  _space,
-                  _text('Video Id', _videoMetaData.videoId),
-                  _space,
-                  Row(
-                    children: [
-                      _text(
-                        'Playback Quality',
-                        _controller.value.playbackQuality,
-                      ),
-                      Spacer(),
-                      _text(
-                        'Playback Rate',
-                        '${_controller.value.playbackRate}x  ',
-                      ),
-                    ],
-                  ),
-                  _space,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.skip_previous),
-                        onPressed: _isPlayerReady
-                            ? () => _controller.seekTo(
-                                _controller.value.position -
-                                    Duration(seconds: 10))
-                            : null,
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          _controller.value.isPlaying
-                              ? Icons.pause
-                              : Icons.play_arrow,
-                        ),
-                        onPressed: _isPlayerReady
-                            ? () {
-                                _controller.value.isPlaying
-                                    ? _controller.pause()
-                                    : _controller.play();
-                                setState(() {});
-                              }
-                            : null,
-                      ),
-                      IconButton(
-                        icon: Icon(_muted ? Icons.volume_off : Icons.volume_up),
-                        onPressed: _isPlayerReady
-                            ? () {
-                                _muted
-                                    ? _controller.unMute()
-                                    : _controller.mute();
-                                setState(() {
-                                  _muted = !_muted;
-                                });
-                              }
-                            : null,
-                      ),
-                      FullScreenButton(
-                        controller: _controller,
-                        color: Colors.blueAccent,
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.skip_next),
-                        onPressed: _isPlayerReady
-                            ? () => _controller.seekTo(
-                                _controller.value.position +
-                                    Duration(seconds: 10))
-                            : null,
-                      ),
-                    ],
-                  ),
-                  _space,
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        "Volume",
-                        style: TextStyle(fontWeight: FontWeight.w300),
-                      ),
-                      Expanded(
-                        child: Slider(
-                          inactiveColor: Colors.transparent,
-                          value: _volume,
-                          min: 0.0,
-                          max: 100.0,
-                          divisions: 10,
-                          label: '${(_volume).round()}',
-                          onChanged: _isPlayerReady
-                              ? (value) {
-                                  setState(() {
-                                    _volume = value;
-                                  });
-                                  _controller.setVolume(_volume.round());
-                                }
-                              : null,
-                        ),
-                      ),
-                    ],
-                  ),
-                  _space,
-                  AnimatedContainer(
-                    duration: Duration(milliseconds: 800),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: _getStateColor(_playerState),
-                    ),
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      _playerState.toString(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.w300,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                  //TODO Description from streamBuilder
                 ],
               ),
             ),

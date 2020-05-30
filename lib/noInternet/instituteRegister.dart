@@ -12,7 +12,6 @@ class InstituteRegister extends StatefulWidget {
 
 class _InstituteRegisterState extends State<InstituteRegister> {
   TextEditingController nameTextEditingController,
-      addressTextEditingController,
       branch1NameTextEditingController,
       branch1addressTextEditingController,
       branch1CodeTextEditingController,
@@ -23,7 +22,6 @@ class _InstituteRegisterState extends State<InstituteRegister> {
   void initState() {
     _scKey = GlobalKey<ScaffoldState>();
     nameTextEditingController = TextEditingController();
-    addressTextEditingController = TextEditingController();
     branch1AdminTextEditingController = TextEditingController();
     branch1CodeTextEditingController = TextEditingController();
     branch1NameTextEditingController = TextEditingController();
@@ -43,7 +41,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Name'.tr(),
+                  'Institute Name'.tr(),
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 SizedBox(
@@ -51,29 +49,11 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                 ),
                 TextField(
                   controller: nameTextEditingController,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    fillColor: Color(0xfff3f3f4),
-                    filled: true,
-                  ),
-                )
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Address'.tr(),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextField(
-                  controller: addressTextEditingController,
+                  onChanged: (value){
+                    setState(() {
+                      branch1NameTextEditingController.text = value;
+                    });
+                  },
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     fillColor: Color(0xfff3f3f4),
@@ -170,6 +150,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     border: InputBorder.none,
+                    hintText: 'e.g. 1101',
                     fillColor: Color(0xfff3f3f4),
                     filled: true,
                   ),
@@ -181,8 +162,9 @@ class _InstituteRegisterState extends State<InstituteRegister> {
             color: Colors.orange,
             onPressed: () {
               if (nameTextEditingController.text != '' &&
-                  addressTextEditingController.text != '' &&
                   branch1AdminTextEditingController.text != '' &&
+                  branch1AdminTextEditingController.text
+                      .endsWith('@gmail.com') &&
                   branch1CodeTextEditingController.text != '' &&
                   branch1NameTextEditingController.text != '' &&
                   branch1addressTextEditingController.text != '') {
@@ -194,7 +176,6 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                         .push()
                         .set({
                       "name": nameTextEditingController.text,
-                      "address": addressTextEditingController.text,
                       "admin": [value.email],
                       "branches": {
                         branch1CodeTextEditingController.text: Institute(
@@ -215,7 +196,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                 });
               } else {
                 _scKey.currentState.showSnackBar(
-                    SnackBar(content: Text('Something remains Unfilled'.tr())));
+                    SnackBar(content: Text('Something is wrong'.tr())));
               }
             },
             child: Text('Register'.tr()),
