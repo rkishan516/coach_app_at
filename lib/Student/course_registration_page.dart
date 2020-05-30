@@ -126,7 +126,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                       widget.ref
                           .child(
                               'students/${FireBaseAuth.instance.user.uid}/course')
-                          .push()
+                          .child(widget.course.id)
                           .set({
                         "Academic Year": DateTime.now().year.toString() +
                             '-' +
@@ -164,7 +164,6 @@ class Screen extends StatefulWidget {
 }
 
 class _ScreenState extends State<Screen> {
-  bool _isUpiEditable = false;
   Future<List<ApplicationMeta>> _appsFuture;
 
   @override

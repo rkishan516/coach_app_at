@@ -8,7 +8,7 @@ class Institute {
     name = json['name'];
     if (json['courses'] != null) {
       courses = new List<Courses>();
-      json['courses'].forEach((k,v) {
+      json['courses'].forEach((k, v) {
         courses.add(new Courses.fromJson(v));
       });
     }
@@ -240,7 +240,8 @@ class Student {
       this.name,
       this.phoneNo,
       this.photoURL,
-      this.rollNo,this.status});
+      this.rollNo,
+      this.status});
 
   Student.fromJson(Map<dynamic, dynamic> json) {
     guardianDetails = json['Guardian Details'] != null

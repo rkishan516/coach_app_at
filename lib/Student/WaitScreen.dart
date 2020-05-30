@@ -1,9 +1,5 @@
-import 'package:coach_app/Models/model.dart';
-import 'package:coach_app/Student/subject_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class WaitScreen extends StatelessWidget {
   @override

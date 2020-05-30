@@ -50,5 +50,10 @@
     "Institute Code" : "संस्थान संख्या",
     "Registration Successful" : "पंजीकरण सफल",
     "Registration Failed" : "पंजीकरण असफल",
-    "Buy Course @ Rs." : "पाठ्यक्रम खरीदें @ रु"
+    "Buy Course @ Rs." : "पाठ्यक्रम खरीदें @ रु",
+    "Pending Students" : "लंबित छात्र",
+    "Select Course" : "कोर्स का चयन करें",
+    "Select the course for Student" : "छात्र के लिए पाठ्यक्रम का चयन करें",
+    "Accept" : "स्वीकारे",
+    "Add Teacher" : "शिक्षक जोड़ें"
 }

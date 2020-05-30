@@ -1,6 +1,4 @@
 import 'package:coach_app/Authentication/welcome_page.dart';
-import 'package:coach_app/Student/all_course_view.dart';
-import 'package:coach_app/XD_Screens/XD_AndroidMobile20.dart';
 import 'package:coach_app/noInternet/noInternet.dart';
 import 'package:cross_connectivity/cross_connectivity.dart';
 import 'package:easy_localization/easy_localization.dart';
