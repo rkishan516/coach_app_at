@@ -1,3 +1,4 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/courses/chapter_page.dart';
@@ -58,7 +59,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
               child: StreamBuilder<Event>(
                 stream: FirebaseDatabase.instance
                     .reference()
-                    .child('institute/0/branches/0/courses/${widget.courseId}')
+                    .child('institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}')
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -86,7 +87,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
                                   reference: FirebaseDatabase.instance
                                       .reference()
                                       .child(
-                                          'institute/0/branches/0/courses/${courses.id}/subjects/$index'),
+                                          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/$index'),
                                 ),
                               ),
                             );
@@ -241,7 +242,7 @@ addSubject(BuildContext context, String courseId, int length,
                               FirebaseDatabase.instance
                                   .reference()
                                   .child(
-                                      'institute/0/branches/0/courses/$courseId/subjects/$length')
+                                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$length')
                                   .remove();
 
                               Navigator.of(context).pop();
@@ -266,7 +267,7 @@ addSubject(BuildContext context, String courseId, int length,
                           FirebaseDatabase.instance
                               .reference()
                               .child(
-                                  'institute/0/branches/0/courses/$courseId/subjects/$length')
+                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$length')
                               .set(subject.toJson());
                         }
                         Navigator.of(context).pop();

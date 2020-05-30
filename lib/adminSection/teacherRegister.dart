@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coach_app/Models/model.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -10,11 +8,10 @@ class TeacherRegister extends StatefulWidget {
 }
 
 class _TeacherRegisterState extends State<TeacherRegister> {
-  TextEditingController nameTextEditingController, emailTextEditingController;
+  TextEditingController emailTextEditingController;
 
   @override
   void initState() {
-    nameTextEditingController = TextEditingController();
     emailTextEditingController = TextEditingController();
     super.initState();
   }
@@ -56,30 +53,6 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Name'.tr(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TextField(
-                        controller: nameTextEditingController,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          fillColor: Color(0xfff3f3f4),
-                          filled: true,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
                         'Email'.tr(),
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 15),
@@ -103,15 +76,13 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                   alignment: Alignment.bottomRight,
                   child: FlatButton(
                     onPressed: () {
-                      FirebaseDatabase.instance
-                          .reference()
-                          .child('institute/0/branches/0/teachers')
-                          .push()
-                          .set(Teacher(
-                            email: emailTextEditingController.text,
-                            name: nameTextEditingController.text,
-                          ).toJson());
-                      Firestore.instance.collection('institute').document('teachers').setData({emailTextEditingController.text:"1"});
+                      if (emailTextEditingController.text != '') {
+                        Firestore.instance
+                            .collection('institute')
+                            .document('teachers')
+                            .setData({emailTextEditingController.text: "1"});
+                        Navigator.of(context).pop();
+                      }
                     },
                     color: Colors.white,
                     child: Text(

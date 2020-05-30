@@ -1,3 +1,4 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/courses/chapter_page.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -60,7 +61,7 @@ class _SubjectPageState extends State<SubjectPage> {
               child: StreamBuilder<Event>(
                 stream: FirebaseDatabase.instance
                     .reference()
-                    .child('institute/0/branches/0/courses/${widget.courseID}')
+                    .child('institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseID}')
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -88,7 +89,7 @@ class _SubjectPageState extends State<SubjectPage> {
                                     reference: FirebaseDatabase.instance
                                         .reference()
                                         .child(
-                                            'institute/0/branches/0/courses/${courses.id}/subjects/$index'),
+                                            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/$index'),
                                   ),
                                 ),
                               );

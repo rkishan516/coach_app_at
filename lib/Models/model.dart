@@ -1,15 +1,24 @@
 class Institute {
   String name;
+  String address;
+  List<String> admin;
   List<Courses> courses;
 
-  Institute({this.name, this.courses});
+  Institute({this.name, this.courses,this.address,this.admin});
 
   Institute.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
+    address = json['address'];
     if (json['courses'] != null) {
       courses = new List<Courses>();
       json['courses'].forEach((k, v) {
         courses.add(new Courses.fromJson(v));
+      });
+    }
+    if(json['admin'] != null){
+      admin = List<String>();
+      json['admin'].forEach((v){
+        admin.add(v);
       });
     }
   }
@@ -17,8 +26,12 @@ class Institute {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
+    data['address'] = this.address;
     if (this.courses != null) {
       data['courses'] = this.courses.map((v) => v.toJson()).toList();
+    }
+    if(this.admin != null) {
+      data['admin'] = this.admin;
     }
     return data;
   }

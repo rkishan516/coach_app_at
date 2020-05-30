@@ -1,3 +1,4 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/courses/chapter_page.dart';
@@ -79,7 +80,7 @@ class _SubjectPageState extends State<SubjectPage> {
                             title: widget.course
                                 .subjects[widget.tCourse.subjects[index]].name,
                             reference: FirebaseDatabase.instance.reference().child(
-                                'institute/0/branches/0/courses/${widget.tCourse.id}/subjects/${widget.tCourse.subjects[index]}'),
+                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.tCourse.id}/subjects/${widget.tCourse.subjects[index]}'),
                           ),
                         ),
                       );

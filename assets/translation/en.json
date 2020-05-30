@@ -55,5 +55,20 @@
     "Select Course" : "कोर्स का चयन करें",
     "Select the course for Student" : "छात्र के लिए पाठ्यक्रम का चयन करें",
     "Accept" : "स्वीकारे",
-    "Add Teacher" : "शिक्षक जोड़ें"
+    "Add Teacher" : "शिक्षक जोड़ें",
+    "Address of branch" : "शाखा का पता",
+    "Add Branch" : "शाखा जोड़ें",
+    "Email of sub-admin" : "उप-व्यवस्थापक का ईमेल",
+    "Name of branch" : "शाखा का नाम",
+    "Code of branch" : "शाखा का कोड",
+    "Student Requests" : "छात्र अनुरोध",
+    "Add new branch" : "नई शाखा जोड़ें",
+    "Branch Already Exist" : "शाखा पहले से मौजूद है",
+    "Something remains Unfilled" : "कुछ अधूरा रह गया",
+    "Login Failed" : "लॉगिन विफल",
+    "Main Branch Code" : "मुख्य शाखा कोड",
+    "Main Branch Admin Email" : "मुख्य शाखा व्यवस्थापक ईमेल",
+    "Main Branch Address" : "मुख्य शाखा का पता",
+    "Main Branch Name" : "मुख्य शाखा का नाम",
+    "Log Out" : "लॉग आउट"
 }

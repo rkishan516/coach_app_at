@@ -1,3 +1,4 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/adminSection/adminSubjectPage.dart';
@@ -17,7 +18,6 @@ class AdminCoursePage extends StatefulWidget {
 class _AdminCoursePageState extends State<AdminCoursePage> {
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       drawer: getDrawer(context),
       appBar: AppBar(
@@ -56,12 +56,13 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
               child: StreamBuilder<Event>(
                 stream: FirebaseDatabase.instance
                     .reference()
-                    .child('institute/0/branches/0/courses')
+                    .child(
+                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses')
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     List<Courses> courses = List<Courses>();
-                    snapshot.data.snapshot.value.values?.forEach((course) {
+                    snapshot.data.snapshot.value?.values?.forEach((course) {
                       courses.add(Courses.fromJson(course));
                     });
                     return ListView.builder(
@@ -323,7 +324,8 @@ addCourse(BuildContext context,
                             onPressed: () {
                               FirebaseDatabase.instance
                                   .reference()
-                                  .child('institute/0/branches/0/courses/$id')
+                                  .child(
+                                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$id')
                                   .remove();
 
                               Navigator.of(context).pop();
@@ -362,7 +364,7 @@ addCourse(BuildContext context,
                           FirebaseDatabase.instance
                               .reference()
                               .child(
-                                  'institute/0/branches/0/courses/${course.id}')
+                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${course.id}')
                               .set(course.toJson());
                         }
                         Navigator.of(context).pop();

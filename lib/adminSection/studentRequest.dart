@@ -17,7 +17,7 @@ class _StudentsRequestsState extends State<StudentsRequests> {
   Courses selectedCourse;
   DatabaseReference ref = FirebaseDatabase.instance
       .reference()
-      .child('institute/0/branches/0/students');
+      .child('institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students');
   GlobalKey<ScaffoldState> _scKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
