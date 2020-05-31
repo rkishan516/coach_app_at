@@ -1,4 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/adminSection/adminSubjectPage.dart';
@@ -336,37 +337,55 @@ addCourse(BuildContext context,
                           ),
                     FlatButton(
                       onPressed: () {
-                        if (nameTextEditingController.text != '' &&
-                            descriptionTextEditingController.text != '') {
-                          Courses course = Courses(
-                            name: nameTextEditingController.text
-                                .capitalize()
-                                .trim(),
-                            description: descriptionTextEditingController.text
-                                .capitalize()
-                                .trim(),
-                            date: DateTime.now().toIso8601String(),
-                            medium: mediumTextEditingController.text
-                                .capitalize()
-                                .trim(),
-                            price: double.parse(priceTextEditingController.text)
-                                .toInt(),
-                            batch: batchTextEditingController.text
-                                .split(',')
-                                .map((e) => e.capitalize().trim())
-                                .toList(),
-                            subjects: subjects,
-                            id: (id == '')
-                                ? nameTextEditingController.text.hashCode
-                                    .toString()
-                                : id,
-                          );
-                          FirebaseDatabase.instance
-                              .reference()
-                              .child(
-                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${course.id}')
-                              .set(course.toJson());
+                        if(nameTextEditingController.text == ''){
+                          Alert.instance.alert(context, 'Please Enter the course '+'name'.tr());
+                          return;
                         }
+                        if(descriptionTextEditingController.text == ''){
+                          Alert.instance.alert(context, 'Please Enter the course '+'description'.tr());
+                          return;
+                        }
+                        if(mediumTextEditingController.text == ''){
+                          Alert.instance.alert(context, 'Please Enter the course '+'medium'.tr());
+                          return;
+                        }
+                        if(priceTextEditingController.text == ''){
+                          Alert.instance.alert(context, 'Please Enter the course ' + 'price'.tr());
+                          return;
+                        }
+                        if(batchTextEditingController.text == ''){
+                          Alert.instance.alert(context, 'Please Enter the course ' + 'batch'.tr());
+                          return;
+                        }
+                        Courses course = Courses(
+                          name: nameTextEditingController.text
+                              .capitalize()
+                              .trim(),
+                          description: descriptionTextEditingController.text
+                              .capitalize()
+                              .trim(),
+                          date: DateTime.now().toIso8601String(),
+                          medium: mediumTextEditingController.text
+                              .capitalize()
+                              .trim(),
+                          price: double.parse(priceTextEditingController.text)
+                              .toInt(),
+                          batch: batchTextEditingController.text
+                              .split(',')
+                              .map((e) => e.capitalize().trim())
+                              .toList(),
+                          subjects: subjects,
+                          id: (id == '')
+                              ? nameTextEditingController.text.hashCode
+                                  .toString()
+                              : id,
+                        );
+                        FirebaseDatabase.instance
+                            .reference()
+                            .child(
+                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${course.id}')
+                            .set(course.toJson());
+
                         Navigator.of(context).pop();
                       },
                       child: Text('Add Course'.tr()),

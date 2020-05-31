@@ -119,7 +119,7 @@ class _QuizState extends State<Quiz> {
                             padding: EdgeInsets.only(left:10.0,top: 10.0),
                             child: getRequiredFormWidget(
                               quizContent.quizModel.questions[index].type,
-                              quizContent.quizModel.questions[index].question,
+                              '${index+1}. '+quizContent.quizModel.questions[index].question,
                               choices: quizContent
                                   .quizModel.questions[index].choices,
                             ),

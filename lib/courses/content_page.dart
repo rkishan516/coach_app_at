@@ -108,7 +108,8 @@ class _ContentPageState extends State<ContentPage> {
                                       Navigator.of(context).push(
                                         CupertinoPageRoute(
                                           builder: (context) => YTPlayer(
-                                              id: chapter.content[index].yid),
+                                              link:
+                                                  chapter.content[index].ylink),
                                         ),
                                       );
                                     } else if (chapter.content[index].kind ==
@@ -137,7 +138,7 @@ class _ContentPageState extends State<ContentPage> {
                                       title: chapter.content[index].title,
                                       link: chapter.content[index].kind ==
                                               'Youtube Video'
-                                          ? chapter.content[index].yid
+                                          ? chapter.content[index].ylink
                                           : chapter.content[index].kind == 'PDF'
                                               ? chapter.content[index].link
                                               : '',
@@ -372,7 +373,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                           children: <Widget>[
                             Text(
                               type == 'Youtube Video'
-                                  ? 'Youtube Video Id'.tr()
+                                  ? 'Youtube Video Link'.tr()
                                   : 'Google Drive Link'.tr(),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
@@ -394,39 +395,61 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                     : Container(),
                 Align(
                   alignment: Alignment.bottomRight,
-                  child: FlatButton(
-                    onPressed: () async {
-                      Content content = Content()
-                        ..kind = type
-                        ..title = titleTextEditingController.text
-                        ..description = descriptionTextEditingController.text;
-                      Navigator.of(context).pop();
-                      type == 'Youtube Video'
-                          ? content.yid = linkTextEditingController.text
-                          : type == 'PDF'
-                              ? content.link = linkTextEditingController.text
-                              : content.quizModel =
-                                  await Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) => FormGenerator(
-                                      title: titleTextEditingController.text,
-                                      description:
-                                          descriptionTextEditingController.text,
-                                    ),
-                                  ),
-                                );
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      (widget.title == '')
+                          ? Container()
+                          : FlatButton(
+                              onPressed: () {
+                                widget.reference
+                                    .child('content/${widget.length}')
+                                    .remove();
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                'Remove'.tr(),
+                              ),
+                            ),
+                      FlatButton(
+                        onPressed: () async {
+                          Content content = Content()
+                            ..kind = type
+                            ..title = titleTextEditingController.text
+                            ..description =
+                                descriptionTextEditingController.text;
+                          Navigator.of(context).pop();
+                          type == 'Youtube Video'
+                              ? content.ylink = linkTextEditingController.text
+                              : type == 'PDF'
+                                  ? content.link =
+                                      linkTextEditingController.text
+                                  : content.quizModel =
+                                      await Navigator.of(context).push(
+                                      CupertinoPageRoute(
+                                        builder: (context) => FormGenerator(
+                                          title:
+                                              titleTextEditingController.text,
+                                          description:
+                                              descriptionTextEditingController
+                                                  .text,
+                                        ),
+                                      ),
+                                    );
 
-                      widget.reference
-                          .child('content/${widget.length}')
-                          .set(content.toJson());
-                    },
-                    color: Colors.white,
-                    child: Text(
-                      'Add Content'.tr(),
-                      style: TextStyle(
-                        color: Colors.black,
+                          widget.reference
+                              .child('content/${widget.length}')
+                              .set(content.toJson());
+                        },
+                        color: Colors.white,
+                        child: Text(
+                          'Add Content'.tr(),
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ],

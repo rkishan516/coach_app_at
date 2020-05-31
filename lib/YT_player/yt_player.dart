@@ -1,11 +1,12 @@
+import 'package:coach_app/Drawer/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YTPlayer extends StatefulWidget {
-  final String id;
-  YTPlayer({@required this.id});
+  final String link;
+  YTPlayer({@required this.link});
   @override
   _YTPlayerState createState() => _YTPlayerState();
 }
@@ -14,17 +15,15 @@ class _YTPlayerState extends State<YTPlayer> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   YoutubePlayerController _controller;
 
-  PlayerState _playerState;
   YoutubeMetaData _videoMetaData;
-  double _volume = 100;
-  bool _muted = false;
+
   bool _isPlayerReady = false;
 
   @override
   void initState() {
     super.initState();
     _controller = YoutubePlayerController(
-      initialVideoId: widget.id,
+      initialVideoId: YoutubePlayer.convertUrlToId(widget.link),
       flags: YoutubePlayerFlags(
         mute: false,
         autoPlay: true,
@@ -36,13 +35,11 @@ class _YTPlayerState extends State<YTPlayer> {
       ),
     )..addListener(listener);
     _videoMetaData = YoutubeMetaData();
-    _playerState = PlayerState.unknown;
   }
 
   void listener() {
     if (_isPlayerReady && mounted && !_controller.value.isFullScreen) {
       setState(() {
-        _playerState = _controller.value.playerState;
         _videoMetaData = _controller.metadata;
       });
     }
@@ -68,10 +65,11 @@ class _YTPlayerState extends State<YTPlayer> {
         key: _scaffoldKey,
         appBar: AppBar(
           title: Text(
-            'CoachApp',
+            'Gurur Cool',
             style: TextStyle(color: Colors.white),
           ),
         ),
+        drawer: getDrawer(context),
         body: ListView(
           children: [
             YoutubePlayer(
@@ -127,27 +125,6 @@ class _YTPlayerState extends State<YTPlayer> {
         ],
       ),
     );
-  }
-
-  Color _getStateColor(PlayerState state) {
-    switch (state) {
-      case PlayerState.unknown:
-        return Colors.grey[700];
-      case PlayerState.unStarted:
-        return Colors.pink;
-      case PlayerState.ended:
-        return Colors.red;
-      case PlayerState.playing:
-        return Colors.blueAccent;
-      case PlayerState.paused:
-        return Colors.orange;
-      case PlayerState.buffering:
-        return Colors.yellow;
-      case PlayerState.cued:
-        return Colors.blue[900];
-      default:
-        return Colors.blue;
-    }
   }
 
   Widget get _space => SizedBox(height: 10);

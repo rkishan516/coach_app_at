@@ -150,13 +150,13 @@ class Chapters {
 class Content {
   String kind;
   String link;
-  String yid;
+  String ylink;
   String title;
   String description;
   QuizModel quizModel;
 
   Content(
-      {this.yid,
+      {this.ylink,
       this.kind,
       this.link,
       this.title,
@@ -164,7 +164,7 @@ class Content {
       this.quizModel});
 
   Content.fromJson(Map<dynamic, dynamic> json) {
-    yid = json['yid'];
+    ylink = json['ylink'];
     kind = json['kind'];
     link = json['link'];
     title = json['title'];
@@ -176,7 +176,7 @@ class Content {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['yid'] = this.yid;
+    data['ylink'] = this.ylink;
     data['kind'] = this.kind;
     data['link'] = this.link;
     data['title'] = this.title;

@@ -1,4 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/Alert.dart';
+import 'package:coach_app/Dialogs/multiselectDialogs.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/courses/chapter_page.dart';
@@ -59,7 +61,8 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
               child: StreamBuilder<Event>(
                 stream: FirebaseDatabase.instance
                     .reference()
-                    .child('institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}')
+                    .child(
+                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}')
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -93,10 +96,12 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
                             );
                           },
                           onLongPress: () => addSubject(
-                              context, widget.courseId, index,
-                              name: courses.subjects[index].name,
-                              mentors: courses.subjects[index].mentor.join(','),
-                              chapters: courses.subjects[index].chapters),
+                            context,
+                            widget.courseId,
+                            index,
+                            name: courses.subjects[index].name,
+                            mentors: courses.subjects[index].mentor.join(','),
+                          ),
                         ));
                       },
                     );
@@ -147,11 +152,11 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
 }
 
 addSubject(BuildContext context, String courseId, int length,
-    {String name = '', String mentors = '', List<Chapters> chapters}) {
+    {String name = '', String mentors = ''}) {
   TextEditingController nameTextEditingController = TextEditingController()
     ..text = name;
-  TextEditingController mentorTextEditingController = TextEditingController()
-    ..text = mentors;
+  List selectedTeacher = List();
+  List<Map<String, dynamic>> teachers;
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -219,24 +224,74 @@ addSubject(BuildContext context, String courseId, int length,
                       height: 10,
                     ),
                     StreamBuilder<Event>(
-                      stream: FirebaseDatabase.instance.reference().child('institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers').onValue,
-                      builder: (context,snapshot){
-                      if(snapshot.hasData){
-                        //TODO add dropdown for teacher
-                        return Container();
-                      }else{
-                        return Container();
-                      }
-                    }),
-                    TextField(
-                      controller: mentorTextEditingController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Seprated With comma'.tr(),
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
+                        stream: FirebaseDatabase.instance
+                            .reference()
+                            .child(
+                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers')
+                            .onValue,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            print(snapshot.data.snapshot.value);
+                            if (snapshot.data.snapshot.value == null) {
+                              return Container(
+                                child: Text(
+                                  'Your Institute does not have any Teacher',
+                                ),
+                              );
+                            } else {
+                              teachers = List<Map<String, dynamic>>();
+                              snapshot.data.snapshot.value.forEach(
+                                (k, v) {
+                                  Teacher teacher = Teacher.fromJson(v);
+                                  if(mentors.contains(teacher.email)){
+                                    selectedTeacher.add(teacher);
+                                  }
+                                  teachers.add({
+                                    "display": teacher.email,
+                                    "value": teacher
+                                  });
+                                },
+                              );
+                              return MultiSelectFormField(
+                                dataSource: teachers,
+                                valueField: 'value',
+                                textField: 'display',
+                                titleText: 'Mentors'.tr(),
+                                okButtonLabel: 'Accept'.tr(),
+                                cancelButtonLabel: 'Reject'.tr(),
+                                hintText:
+                                    'Please select atleast one teacher'.tr(),
+                                initialValue: selectedTeacher,
+                                onSaved: (value) {
+                                  selectedTeacher = value;
+                                },
+                              );
+                            }
+                            // TODO Warning for gmail
+                            // TODO Warning EveryWhere
+                            // TODO EVEnt Section Add
+                            // TODO Quiz Editing
+                            // TODO Question delete and edit
+                            // TODO PDF Loading
+                            // TODO institute Logo on Registration
+                            // TODO My Institute Button
+                            // TODO Credential Save
+                            // TODO Login Button automatic
+                            // TODO subadmin access
+                            // TODO branch List and Details
+                          } else {
+                            return Container();
+                          }
+                        }),
+                    // TextField(
+                    //   controller: mentorTextEditingController,
+                    //   decoration: InputDecoration(
+                    //     border: InputBorder.none,
+                    //     hintText: 'Seprated With comma'.tr(),
+                    //     fillColor: Color(0xfff3f3f4),
+                    //     filled: true,
+                    //   ),
+                    // )
                   ],
                 ),
               ),
@@ -263,23 +318,30 @@ addSubject(BuildContext context, String courseId, int length,
                           ),
                     FlatButton(
                       onPressed: () {
-                        if (nameTextEditingController.text != '' &&
-                            mentorTextEditingController.text != '') {
-                          Subjects subject = Subjects(
-                              name: nameTextEditingController.text
-                                  .capitalize()
-                                  .trim(),
-                              mentor: mentorTextEditingController.text
-                                  .split(',')
-                                  .map((e) => e.capitalize().trim())
-                                  .toList(),
-                              chapters: chapters);
-                          FirebaseDatabase.instance
-                              .reference()
-                              .child(
-                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$length')
-                              .set(subject.toJson());
+                        if (nameTextEditingController.text == '') {
+                          Alert.instance.alert(
+                              context, 'Please Enter the Name of Course');
+                          return;
                         }
+                        if (selectedTeacher.length == 0) {
+                          Alert.instance.alert(context,
+                              'Please select atleast one teacher'.tr());
+                          return;
+                        }
+                        Subjects subject = Subjects(
+                          name: nameTextEditingController.text
+                              .capitalize()
+                              .trim(),
+                          mentor: selectedTeacher.map<String>((e) {
+                            return e.email;
+                          }).toList(),
+                        );
+                        FirebaseDatabase.instance
+                            .reference()
+                            .child(
+                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$length')
+                            .set(subject.toJson());
+
                         Navigator.of(context).pop();
                       },
                       child: Text(

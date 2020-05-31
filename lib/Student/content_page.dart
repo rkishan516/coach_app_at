@@ -105,7 +105,7 @@ class _ContentPageState extends State<ContentPage> {
                                       Navigator.of(context).push(
                                         CupertinoPageRoute(
                                           builder: (context) => YTPlayer(
-                                              id: chapter.content[index].yid),
+                                              link: chapter.content[index].ylink),
                                         ),
                                       );
                                     } else if (chapter.content[index].kind ==
