@@ -269,10 +269,8 @@ addSubject(BuildContext context, String courseId, int length,
                               );
                             }
                             // TODO EVEnt Section Add
-                            // TODO My Institute Button
                             // TODO Credential Save
                             // TODO Login Button automatic
-                            // TODO branch List and Details
                           } else {
                             return Container();
                           }

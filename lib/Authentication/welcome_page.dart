@@ -1,4 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/InstituteAdmin/branchList.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Student/course_page.dart' as st_cp;
 import 'package:coach_app/Student/registration_form.dart';
@@ -60,7 +61,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       if(snapshot.data.claims['previlagelevel'] == 4){
-                        return AdminCoursePage();
+                        return BranchList();
                       }
                       else if (snapshot.data.claims['previlagelevel'] == 3) {
                         return AdminCoursePage();

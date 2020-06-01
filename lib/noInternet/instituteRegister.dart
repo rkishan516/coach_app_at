@@ -249,6 +249,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                       "name": nameTextEditingController.text,
                       "Phone No": phoneNoTextEditingController.text,
                       "admin": [value.email],
+                      "paid" : "false",
                       "logo" : storageTaskSnapshot.storageMetadata.path,
                       "branches": {
                         branch1CodeTextEditingController.text: Institute(

@@ -43,7 +43,7 @@ dependencies:
   cross_connectivity:
   easy_localization:
   upi_pay:
-  adobe_xd:
+  fancy_bottom_navigation:
 
 dev_dependencies:
   flutter_test:

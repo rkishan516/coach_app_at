@@ -9,6 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class BranchRegister extends StatefulWidget {
+  final Institute institute;
+  final String branchCode;
+  BranchRegister({this.institute, this.branchCode});
   @override
   _BranchRegisterState createState() => _BranchRegisterState();
 }
@@ -19,14 +22,28 @@ class _BranchRegisterState extends State<BranchRegister> {
       adminEmailTextEditingController,
       addressTextEditingController;
   Widget errorBox;
+  bool isEnable;
 
   @override
   void initState() {
     errorBox = Container();
-    nameTextEditingController = TextEditingController();
-    branchCodeTextEditingController = TextEditingController();
-    addressTextEditingController = TextEditingController();
+    nameTextEditingController = TextEditingController()
+      ..text = widget.institute?.name ?? '';
+    branchCodeTextEditingController = TextEditingController()
+      ..text = widget?.branchCode ?? '';
+    addressTextEditingController = TextEditingController()
+      ..text = widget.institute?.address ?? '';
     adminEmailTextEditingController = TextEditingController();
+    if (widget.institute?.name == null &&
+        widget.institute?.address == null &&
+        widget.institute?.admin == null &&
+        widget.branchCode == null) {
+      adminEmailTextEditingController.text = '';
+      isEnable = true;
+    } else {
+      adminEmailTextEditingController.text = widget.institute.admin[0];
+      isEnable = false;
+    }
     super.initState();
   }
 
@@ -99,6 +116,7 @@ class _BranchRegisterState extends State<BranchRegister> {
                         height: 10,
                       ),
                       TextField(
+                        enabled: isEnable,
                         controller: adminEmailTextEditingController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
@@ -148,6 +166,7 @@ class _BranchRegisterState extends State<BranchRegister> {
                         height: 10,
                       ),
                       TextField(
+                        enabled: isEnable,
                         controller: branchCodeTextEditingController,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
@@ -174,6 +193,16 @@ class _BranchRegisterState extends State<BranchRegister> {
                             .reference()
                             .child(
                                 'institute/${FireBaseAuth.instance.instituteid}/branches/${branchCodeTextEditingController.text}');
+                        if (widget.branchCode != null) {
+                          widget.institute.name =
+                              nameTextEditingController.text;
+                          widget.institute.address =
+                              addressTextEditingController.text;
+                          ref.set(widget.institute.toJson());
+                          Navigator.of(context).pop();
+                          return;
+                        }
+
                         ref.child('name').once().then((value) {
                           if (value.value != null) {
                             setState(() {

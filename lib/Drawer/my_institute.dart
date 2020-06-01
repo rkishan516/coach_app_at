@@ -1,7 +1,9 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/drawer.dart';
-import 'package:coach_app/Drawer/firebaseStorageImage.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -42,8 +44,19 @@ class _MyInstituteState extends State<MyInstitute> {
                         .getDownloadURL(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        return CircleAvatar(
-                          backgroundImage: NetworkImage(snapshot.data),
+                        return Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                50.0,
+                              ),
+                              border:
+                                  Border.all(color: Colors.orange, width: 3.0)),
+                          child: CircleAvatar(
+                            radius: 50.0,
+                            backgroundImage: NetworkImage(
+                              snapshot.data,
+                            ),
+                          ),
                         );
                       } else {
                         return CircularProgressIndicator();
@@ -52,7 +65,36 @@ class _MyInstituteState extends State<MyInstitute> {
               ),
             ),
           ),
-          Expanded(child: Text(widget.dataSnapshot)),
+          Expanded(
+            
+            child: Text(
+              widget.dataSnapshot.split('/')[1][0].toUpperCase() + widget.dataSnapshot.split('/')[1].toString().substring(1),
+              style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder<Event>(
+              stream: FirebaseDatabase.instance
+                  .reference()
+                  .child(
+                      '/institute/${FireBaseAuth.instance.instituteid}/Phone No')
+                  .onValue,
+              builder: (BuildContext context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text("Contact".tr()+": " +snapshot.data.snapshot.value);
+                } else {
+                  return PlaceholderLines(
+                    count: 1,
+                    animate: true,
+                  );
+                }
+              },
+            ),
+          ),
+          Expanded(
+            child: Container(),
+            flex: 4,
+          ),
         ],
       ),
     );

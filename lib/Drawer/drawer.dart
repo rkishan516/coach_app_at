@@ -6,7 +6,6 @@ import 'package:coach_app/adminSection/studentRequest.dart';
 import 'package:coach_app/adminSection/teacherRegister.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
