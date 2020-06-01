@@ -8,26 +8,26 @@ import '../Authentication/FirebaseAuth.dart';
 
 class VideoConferencing extends StatefulWidget {
   final String passVariable;
-  final String room;
+  final String room, eventkey;
   final String subject;
   final int privilegelevel;
-  VideoConferencing({this.passVariable, this.room, this.subject, this.privilegelevel});
+  VideoConferencing({this.passVariable, this.room,this.eventkey, this.subject, this.privilegelevel});
   @override
   _VideoConferencingState createState() {
     
     if(privilegelevel==2)
     return _VideoConferencingState(passVariable: passVariable, privilegelevel: privilegelevel);
     else
-    return _VideoConferencingState(room: room, subject: subject, privilegelevel: privilegelevel);
+    return _VideoConferencingState(room: room,eventkey: eventkey, subject: subject, privilegelevel: privilegelevel);
     }
 }
 
 class _VideoConferencingState extends State<VideoConferencing> {
   final String passVariable;
-  final String room;
+  final String room, eventkey;
   final String subject;
   int privilegelevel;
-  _VideoConferencingState({this.passVariable, this.room, this.subject, this.privilegelevel});
+  _VideoConferencingState({this.passVariable, this.room, this.eventkey, this.subject, this.privilegelevel});
   final serverText = TextEditingController();
   final roomText = TextEditingController();
   final subjectText = TextEditingController();
@@ -35,7 +35,7 @@ class _VideoConferencingState extends State<VideoConferencing> {
   final emailText = TextEditingController();
   //final iosAppBarRGBAColor = TextEditingController(text: "#0080FF80");//transparent blue
   var isAudioOnly = true;
-  var isAudioMuted = true;
+  var isAudioMuted = false;
   var isVideoMuted = true;
   
   final dbRef = FirebaseDatabase.instance;
@@ -46,7 +46,7 @@ class _VideoConferencingState extends State<VideoConferencing> {
      then((DataSnapshot value) {
        //print(value.value['description']);
       setState(() {
-        roomText.text=value.value['title'];
+        roomText.text=value.value['title']+value.value['eventkey'];
         subjectText.text=value.value['description'];
       }); 
      });
@@ -67,7 +67,7 @@ class _VideoConferencingState extends State<VideoConferencing> {
     }   
     else{
       setState(() {
-        roomText.text= room;
+        roomText.text= room + eventkey;
         subjectText.text= subject;
       });
     }

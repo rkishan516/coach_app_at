@@ -19,7 +19,7 @@ class Calender extends StatefulWidget {
 
 class _CalenderState extends State<Calender> {
   CalendarController _calendarController;
-  String passVariable = "",eventkey="";
+  String passVariable = "",previouspassVariable="",eventkey="";
   Map<DateTime, List<dynamic>> _events = {};
   final dbRef = FirebaseDatabase.instance;
   StreamSubscription<Event> _onDataAddedSubscription;
@@ -87,7 +87,7 @@ class _CalenderState extends State<Calender> {
       }
       
     });
-    _showsnackbar(context,"New Event is Added");
+    //_showsnackbar(context,"New Event is Added");
   }
   onEventRemoved(Event event) {
     _showsnackbar(context,"Event is removed");
@@ -158,10 +158,14 @@ onEventChanged(Event event) {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
+          if(passVariable!=""){
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => SessionDetail(passVaraible: passVariable, eventkey:eventkey , isedit: false,)));
+          }
+          else if(passVariable==previouspassVariable||passVariable=="")
+          _showsnackbar(context, "Select Date");
         },
       ),
       body: SingleChildScrollView(
@@ -195,7 +199,7 @@ onEventChanged(Event event) {
                 }
                 eventkey=randomNumeric(6);
                 passVariable = date.year.toString() + "-" +_month +"-" +_day +eventkey;
-                 
+                previouspassVariable=passVariable; 
                 print(passVariable);
                 print(_calendarController.selectedDay);
                 if (events != null) {

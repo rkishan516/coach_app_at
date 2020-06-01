@@ -138,7 +138,7 @@ onEventChanged(Event event) {
                 onPressed: (){
                   if(_allEvent[index].isStarted==1){
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return VideoConferencing(room: _allEvent[index].title, subject: _allEvent[index].description,);
+                    return VideoConferencing(room: _allEvent[index].title, eventkey: _allEvent[index].eventkey, subject: _allEvent[index].description, privilegelevel: FireBaseAuth.instance.previlagelevel,);
                   }));
                   }
 
