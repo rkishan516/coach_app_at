@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -76,13 +78,25 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                   alignment: Alignment.bottomRight,
                   child: FlatButton(
                     onPressed: () {
-                      if (emailTextEditingController.text != '' && emailTextEditingController.text.endsWith('@gmail.com')) {
-                        Firestore.instance
-                            .collection('institute')
-                            .document('teachers')
-                            .setData({emailTextEditingController.text: "1"});
-                        Navigator.of(context).pop();
+                      if (emailTextEditingController.text == '') {
+                        Alert.instance
+                            .alert(context, 'Something is wrong'.tr());
+                        return;
                       }
+                      if (!emailTextEditingController.text
+                          .endsWith('@gmail.com')) {
+                        Alert.instance
+                            .alert(context, 'Only Gmail account allowed'.tr());
+                        return;
+                      }
+                      Firestore.instance
+                          .collection('institute')
+                          .document('users')
+                          .setData({
+                        emailTextEditingController.text:
+                            "teacher_${FireBaseAuth.instance.instituteid}_${FireBaseAuth.instance.branchid}"
+                      });
+                      Navigator.of(context).pop();
                     },
                     color: Colors.white,
                     child: Text(

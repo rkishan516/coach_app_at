@@ -142,6 +142,8 @@ class _ContentPageState extends State<ContentPage> {
                                           : chapter.content[index].kind == 'PDF'
                                               ? chapter.content[index].link
                                               : '',
+                                      quizModel:
+                                          chapter.content[index].quizModel,
                                       description:
                                           chapter.content[index].description,
                                       type: chapter.content[index].kind),
@@ -204,7 +206,8 @@ class _ContentPageState extends State<ContentPage> {
       {String title = '',
       String description = '',
       String link = '',
-      String type = 'Youtube Video'}) async {
+      String type = 'Youtube Video',
+      QuizModel quizModel}) async {
     await showDialog(
       context: context,
       builder: (context) => ContentUploadDialog(
@@ -214,6 +217,7 @@ class _ContentPageState extends State<ContentPage> {
         description: description,
         reference: reference,
         length: length,
+        quizModel: quizModel,
       ),
     );
   }
@@ -226,13 +230,16 @@ class ContentUploadDialog extends StatefulWidget {
   final DatabaseReference reference;
   final int length;
   final String type;
-  ContentUploadDialog(
-      {@required this.title,
-      @required this.description,
-      @required this.reference,
-      @required this.link,
-      @required this.length,
-      @required this.type});
+  final QuizModel quizModel;
+  ContentUploadDialog({
+    @required this.title,
+    @required this.description,
+    @required this.reference,
+    @required this.link,
+    @required this.length,
+    @required this.type,
+    @required this.quizModel,
+  });
   @override
   _ContentUploadDialogState createState() => _ContentUploadDialogState();
 }
@@ -419,23 +426,27 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                             ..description =
                                 descriptionTextEditingController.text;
                           Navigator.of(context).pop();
-                          type == 'Youtube Video'
-                              ? content.ylink = linkTextEditingController.text
-                              : type == 'PDF'
-                                  ? content.link =
-                                      linkTextEditingController.text
-                                  : content.quizModel =
-                                      await Navigator.of(context).push(
-                                      CupertinoPageRoute(
-                                        builder: (context) => FormGenerator(
-                                          title:
-                                              titleTextEditingController.text,
-                                          description:
-                                              descriptionTextEditingController
-                                                  .text,
-                                        ),
-                                      ),
-                                    );
+                          if (type == 'Youtube Video') {
+                            content.ylink = linkTextEditingController.text;
+                          } else if (type == 'PDF') {
+                            content.link = linkTextEditingController.text;
+                          } else {
+                            var cal = await Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (context) => FormGenerator(
+                                  title: titleTextEditingController.text,
+                                  description:
+                                      descriptionTextEditingController.text,
+                                  quizModel: widget.quizModel,
+                                ),
+                              ),
+                            );
+                            if (cal == null) {
+                              content.quizModel = widget.quizModel;
+                            }else{
+                              content.quizModel = cal;
+                            }
+                          }
 
                           widget.reference
                               .child('content/${widget.length}')

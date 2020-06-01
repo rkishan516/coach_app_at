@@ -243,17 +243,18 @@ addSubject(BuildContext context, String courseId, int length,
                               snapshot.data.snapshot.value.forEach(
                                 (k, v) {
                                   Teacher teacher = Teacher.fromJson(v);
-                                  if(mentors.contains(teacher.email)){
+                                  if (mentors.contains(teacher.email)) {
                                     selectedTeacher.add(teacher);
                                   }
                                   teachers.add({
-                                    "display": teacher.email,
+                                    "key": k,
+                                    "display": teacher?.email,
                                     "value": teacher
                                   });
                                 },
                               );
                               return MultiSelectFormField(
-                                dataSource: teachers,
+                                dataSource: teachers ?? [{'display' : '','value':''}],
                                 valueField: 'value',
                                 textField: 'display',
                                 titleText: 'Mentors'.tr(),
@@ -267,31 +268,15 @@ addSubject(BuildContext context, String courseId, int length,
                                 },
                               );
                             }
-                            // TODO Warning for gmail
-                            // TODO Warning EveryWhere
                             // TODO EVEnt Section Add
-                            // TODO Quiz Editing
-                            // TODO Question delete and edit
-                            // TODO PDF Loading
-                            // TODO institute Logo on Registration
                             // TODO My Institute Button
                             // TODO Credential Save
                             // TODO Login Button automatic
-                            // TODO subadmin access
                             // TODO branch List and Details
                           } else {
                             return Container();
                           }
                         }),
-                    // TextField(
-                    //   controller: mentorTextEditingController,
-                    //   decoration: InputDecoration(
-                    //     border: InputBorder.none,
-                    //     hintText: 'Seprated With comma'.tr(),
-                    //     fillColor: Color(0xfff3f3f4),
-                    //     filled: true,
-                    //   ),
-                    // )
                   ],
                 ),
               ),
@@ -336,6 +321,35 @@ addSubject(BuildContext context, String courseId, int length,
                             return e.email;
                           }).toList(),
                         );
+                        selectedTeacher.forEach((element) {
+                          for (int i = 0; i < teachers.length; i++) {
+                            if (teachers[i]['value'] == element) {
+                              DatabaseReference ref = FirebaseDatabase.instance
+                                  .reference()
+                                  .child(
+                                      "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${teachers[i]['key']}/courses/");
+                              List subjects = [];
+                              int lengthC =
+                                  teachers[i]['value'].courses?.length ?? 0;
+                              for (int i = 0; i < lengthC; i++) {
+                                if (teachers[i]['value'].courses[i].id ==
+                                    courseId) {
+                                  subjects =
+                                      teachers[i]['value'].courses[i].subjects;
+                                  lengthC = i;
+                                  break;
+                                }
+                              }
+                              List<int> d = [];
+                              if (!subjects.contains(length)) {
+                                 d = [length];
+                              }
+
+                              ref.child(lengthC.toString()).set(
+                                  {"id": courseId, "subjects": subjects + d});
+                            }
+                          }
+                        });
                         FirebaseDatabase.instance
                             .reference()
                             .child(

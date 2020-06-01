@@ -1,4 +1,5 @@
 import 'package:coach_app/Dialogs/Alert.dart';
+import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,10 @@ class FormGenerator extends StatefulWidget {
   String title;
   String description;
   QuizModel quizModel;
-  FormGenerator({@required this.title, @required this.description,@required this.quizModel});
+  FormGenerator(
+      {@required this.title,
+      @required this.description,
+      @required this.quizModel});
   @override
   _FormGeneratorState createState() => _FormGeneratorState();
 }
@@ -21,22 +25,23 @@ class _FormGeneratorState extends State<FormGenerator> {
   TextEditingController _textEditingController = TextEditingController();
   TextEditingController _ansController = TextEditingController();
   bool isError = false;
-  List<Widget> formFields = List<Widget>();
   List<QuestionModel> formFieldsModals;
-  Duration testTime = Duration();
+  Duration testTime;
 
   @override
   void initState() {
     for (int i = 0; i < 4; i++) {
       choices.add(TextEditingController());
     }
-    formFieldsModals = widget.quizModel?.questions ??  List<QuestionModel>();
+    testTime = widget.quizModel?.testTime ?? Duration();
+    formFieldsModals = widget.quizModel?.questions ?? List<QuestionModel>();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: getDrawer(context),
       appBar: AppBar(
         centerTitle: true,
         title: Text(
@@ -81,6 +86,7 @@ class _FormGeneratorState extends State<FormGenerator> {
               child: Container(
                 height: 100,
                 child: CupertinoTimerPicker(
+                  initialTimerDuration: testTime,
                   onTimerDurationChanged: (duration) => testTime = duration,
                   mode: CupertinoTimerPickerMode.hms,
                 ),
@@ -91,12 +97,30 @@ class _FormGeneratorState extends State<FormGenerator> {
               child: ListView.builder(
                 shrinkWrap: true,
                 controller: ScrollController(),
-                itemCount: formFields.length,
+                itemCount: formFieldsModals.length,
                 itemBuilder: (BuildContext context, int index) => Card(
-                    child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                  child: formFields[index],
-                )),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    child: ListTile(
+                      title: getRequiredFormWidget(
+                        formFieldsModals[index].type,
+                        '${index + 1}. ' + formFieldsModals[index].question,
+                        choices: formFieldsModals[index].choices,
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.orangeAccent,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            formFieldsModals.removeAt(index);
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
             Card(
@@ -214,13 +238,7 @@ class _FormGeneratorState extends State<FormGenerator> {
                             choices.map((e) => e?.text).toSet().toList();
                         choice.remove('');
                         setState(
-                          () {
-                            formFields.add(
-                              getRequiredFormWidget(dropDownValue, '${formFields.length + 1}. ' + label,
-                                  choices: choice),
-                            );
-                            _textEditingController.text = '';
-                          },
+                          () => _textEditingController.text = '',
                         );
                         formFieldsModals.add(
                           QuestionModel(
@@ -239,7 +257,10 @@ class _FormGeneratorState extends State<FormGenerator> {
                       height: 20,
                     ),
                     RaisedButton(
-                      child: Text('Submit Quiz',style: TextStyle(color: Colors.white),),
+                      child: Text(
+                        'Submit Quiz',
+                        style: TextStyle(color: Colors.white),
+                      ),
                       color: Colors.deepOrange,
                       onPressed: () {
                         QuizModel form = QuizModel(

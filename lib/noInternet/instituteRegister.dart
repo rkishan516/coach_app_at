@@ -1,10 +1,17 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
+import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:image_picker/image_picker.dart';
 
 class InstituteRegister extends StatefulWidget {
   @override
@@ -19,6 +26,16 @@ class _InstituteRegisterState extends State<InstituteRegister> {
       branch1CodeTextEditingController,
       branch1AdminTextEditingController;
   GlobalKey<ScaffoldState> _scKey;
+
+  File _image;
+
+  Future getImage() async {
+    final pickedFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = File(pickedFile?.path);
+    });
+  }
 
   @override
   void initState() {
@@ -88,6 +105,20 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                   ),
                 )
               ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            child: FlatButton(
+              color: Colors.orange[100],
+              onPressed: () async {
+                try {
+                  await getImage();
+                } catch (e) {
+                  print(e);
+                }
+              },
+              child: Text('Institute Logo'.tr()),
             ),
           ),
           Container(
@@ -200,16 +231,25 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                       .alert(context, 'Only Gmail account allowed'.tr());
                   return;
                 }
-                FireBaseAuth.instance.signInWithGoogle().then((value) {
+                if (_image == null) {
+                  Alert.instance
+                      .alert(context, 'Please select Institute Logo'.tr());
+                  return;
+                }
+                FireBaseAuth.instance.signInWithGoogle().then((value) async {
                   if (value != null) {
+                    showDialog(context: context,builder: (context) => UploadDialog());
+                    StorageTaskSnapshot storageTaskSnapshot = await FirebaseStorage.instance.ref().child('/instituteLogo/${nameTextEditingController.text}').putFile(_image).onComplete;
+                    Navigator.of(context).pop();
                     FirebaseDatabase.instance
                         .reference()
                         .child('/institute')
                         .push()
                         .set({
                       "name": nameTextEditingController.text,
-                      "Phone No" : phoneNoTextEditingController.text,
+                      "Phone No": phoneNoTextEditingController.text,
                       "admin": [value.email],
+                      "logo" : storageTaskSnapshot.storageMetadata.path,
                       "branches": {
                         branch1CodeTextEditingController.text: Institute(
                             name: branch1NameTextEditingController.text,
@@ -218,6 +258,15 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                               branch1AdminTextEditingController.text
                             ]).toJson()
                       }
+                    });
+                    Timer(Duration(seconds: 3), () async {
+                      Firestore.instance
+                          .collection('institute')
+                          .document('users')
+                          .setData({
+                        branch1AdminTextEditingController.text:
+                            "subAdmin_${FireBaseAuth.instance.instituteid}_${branch1CodeTextEditingController.text}"
+                      });
                     });
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (context) => WelcomePage()),

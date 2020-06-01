@@ -59,7 +59,10 @@ class _WelcomePageState extends State<WelcomePage> {
                   stream: value?.getIdToken(refresh: true)?.asStream(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      if (snapshot.data.claims['previlagelevel'] == 3) {
+                      if(snapshot.data.claims['previlagelevel'] == 4){
+                        return AdminCoursePage();
+                      }
+                      else if (snapshot.data.claims['previlagelevel'] == 3) {
                         return AdminCoursePage();
                       } else if (snapshot.data.claims['previlagelevel'] == 2) {
                         return StreamBuilder<Event>(

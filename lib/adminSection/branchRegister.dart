@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -203,6 +204,13 @@ class _BranchRegisterState extends State<BranchRegister> {
                                 admin: [
                                   adminEmailTextEditingController.text
                                 ]).toJson());
+                            Firestore.instance
+                                .collection('institute')
+                                .document('users')
+                                .setData({
+                              adminEmailTextEditingController.text:
+                                  "subAdmin_${FireBaseAuth.instance.instituteid}_${branchCodeTextEditingController.text}"
+                            });
                             Navigator.of(context).pop();
                           }
                         });
