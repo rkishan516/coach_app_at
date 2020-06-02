@@ -230,9 +230,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     status: status);
                 var insCode =
                     instituteCodeTextEditingController.text.split('_');
+                var branchCode = insCode[insCode.length - 1];
+                insCode.removeAt(insCode.length - 1);
                 DatabaseReference reference = FirebaseDatabase.instance
                     .reference()
-                    .child('institute/${insCode[0]}/branches/${insCode[1]}/');
+                    .child("institute/${insCode.join('_')}/branches/$branchCode/");
                 reference
                     .child('students/${FireBaseAuth.instance.user.uid}')
                     .set(student.toJson());
@@ -253,7 +255,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   }), (route) => false);
                 }
               } else {
-                _scKey.currentState.showSnackBar(SnackBar(content: Text('Something remains Unfilled')));
+                _scKey.currentState.showSnackBar(
+                    SnackBar(content: Text('Something remains Unfilled')));
               }
             },
             child: Text('Register'.tr()),

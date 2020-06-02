@@ -43,6 +43,7 @@ dependencies:
   cross_connectivity:
   easy_localization:
   upi_pay:
+  shared_preferences:
   fancy_bottom_navigation:
 
 dev_dependencies:

@@ -238,9 +238,23 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                 }
                 FireBaseAuth.instance.signInWithGoogle().then((value) async {
                   if (value != null) {
-                    showDialog(context: context,builder: (context) => UploadDialog());
-                    StorageTaskSnapshot storageTaskSnapshot = await FirebaseStorage.instance.ref().child('/instituteLogo/${nameTextEditingController.text}').putFile(_image).onComplete;
-                    Navigator.of(context).pop();
+                    showDialog(
+                        context: context,
+                        builder: (context) => UploadDialog(
+                              warning: 'Uploading Logo',
+                            ));
+                    StorageTaskSnapshot storageTaskSnapshot = await FirebaseStorage
+                        .instance
+                        .ref()
+                        .child(
+                            '/instituteLogo/${nameTextEditingController.text}')
+                        .putFile(_image)
+                        .onComplete;
+                    showDialog(
+                        context: context,
+                        builder: (context) => UploadDialog(
+                              warning: 'Registering Institute',
+                            ));
                     FirebaseDatabase.instance
                         .reference()
                         .child('/institute')
@@ -249,8 +263,8 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                       "name": nameTextEditingController.text,
                       "Phone No": phoneNoTextEditingController.text,
                       "admin": [value.email],
-                      "paid" : "false",
-                      "logo" : storageTaskSnapshot.storageMetadata.path,
+                      "paid": "false",
+                      "logo": storageTaskSnapshot.storageMetadata.path,
                       "branches": {
                         branch1CodeTextEditingController.text: Institute(
                             name: branch1NameTextEditingController.text,
@@ -260,15 +274,22 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                             ]).toJson()
                       }
                     });
-                    Timer(Duration(seconds: 3), () async {
+                    showDialog(
+                      context: context,
+                      builder: (context) => UploadDialog(
+                        warning: 'Granting access',
+                      ),
+                    );
+                    await Future.delayed(Duration(seconds: 10));
+                    if (value.email != branch1AdminTextEditingController.text) {
                       Firestore.instance
                           .collection('institute')
                           .document('users')
-                          .setData({
-                        branch1AdminTextEditingController.text:
+                          .updateData({
+                        branch1AdminTextEditingController.text.split('@')[0]:
                             "subAdmin_${FireBaseAuth.instance.instituteid}_${branch1CodeTextEditingController.text}"
                       });
-                    });
+                    }
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (context) => WelcomePage()),
                         (route) => false);

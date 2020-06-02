@@ -269,8 +269,7 @@ addSubject(BuildContext context, String courseId, int length,
                               );
                             }
                             // TODO EVEnt Section Add
-                            // TODO Credential Save
-                            // TODO Login Button automatic
+                            // YCode and normal code
                           } else {
                             return Container();
                           }

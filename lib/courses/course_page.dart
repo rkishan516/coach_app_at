@@ -17,7 +17,6 @@ class CoursePage extends StatefulWidget {
 }
 
 class _CoursePageState extends State<CoursePage> {
-  int length = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,13 +62,12 @@ class _CoursePageState extends State<CoursePage> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     List<Courses> courses = List<Courses>();
-                    widget.teacher.courses.forEach((course) {
+                    widget.teacher.courses?.forEach((course) {
                       courses.add(Courses.fromJson(
                           snapshot.data.snapshot.value[course.id]));
                     });
-                    length = snapshot.data.snapshot.value.length;
                     return ListView.builder(
-                      itemCount: widget.teacher.courses.length,
+                      itemCount: widget.teacher.courses?.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
                         return Card(
                           child: ListTile(

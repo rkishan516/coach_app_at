@@ -62,7 +62,7 @@ class _StudentsRequestsState extends State<StudentsRequests> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     Map<String, Student> students = Map<String, Student>();
-                    snapshot.data.snapshot.value.forEach((key, student) {
+                    snapshot.data.snapshot.value?.forEach((key, student) {
                       Student studentp = Student.fromJson(student);
                       if (studentp.status == 'Existing Student') {
                         students[key] = studentp;

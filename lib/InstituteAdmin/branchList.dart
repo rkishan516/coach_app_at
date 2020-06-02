@@ -62,7 +62,7 @@ class _BranchListState extends State<BranchList> {
                     Map<String, Institute> institutes =
                         Map<String, Institute>();
                     print(snapshot.data.snapshot.value);
-                    snapshot.data.snapshot.value.forEach((k, v) {
+                    snapshot.data.snapshot.value?.forEach((k, v) {
                       institutes[k] = Institute.fromJson(v);
                     });
                     length = institutes.length;

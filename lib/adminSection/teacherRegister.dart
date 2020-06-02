@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -10,11 +11,12 @@ class TeacherRegister extends StatefulWidget {
 }
 
 class _TeacherRegisterState extends State<TeacherRegister> {
-  TextEditingController emailTextEditingController;
+  TextEditingController emailTextEditingController, nameTextEditingController;
 
   @override
   void initState() {
     emailTextEditingController = TextEditingController();
+    nameTextEditingController = TextEditingController();
     super.initState();
   }
 
@@ -49,6 +51,31 @@ class _TeacherRegisterState extends State<TeacherRegister> {
             child: ListView(
               shrinkWrap: true,
               children: <Widget>[
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'Name'.tr(),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextField(
+                        controller: nameTextEditingController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          fillColor: Color(0xfff3f3f4),
+                          filled: true,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 10),
                   child: Column(
@@ -92,9 +119,18 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                       Firestore.instance
                           .collection('institute')
                           .document('users')
-                          .setData({
-                        emailTextEditingController.text:
+                          .updateData({
+                        emailTextEditingController.text.split('@')[0]:
                             "teacher_${FireBaseAuth.instance.instituteid}_${FireBaseAuth.instance.branchid}"
+                      });
+                      FirebaseDatabase.instance
+                          .reference()
+                          .child(
+                              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers')
+                          .push()
+                          .set({
+                        "email": emailTextEditingController.text,
+                        "name": nameTextEditingController.text,
                       });
                       Navigator.of(context).pop();
                     },

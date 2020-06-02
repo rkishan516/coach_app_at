@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 
-class UploadDialog extends StatefulWidget {
-  @override
-  _UploadDialogState createState() => _UploadDialogState();
-}
-
-class _UploadDialogState extends State<UploadDialog> {
+class UploadDialog extends StatelessWidget {
+  String warning;
+  UploadDialog({@required this.warning});
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -50,7 +47,7 @@ class _UploadDialogState extends State<UploadDialog> {
                 ),
                 SizedBox(height: 16.0),
                 Text(
-                  'Uploading',
+                  warning,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16.0,
@@ -66,11 +63,7 @@ class _UploadDialogState extends State<UploadDialog> {
             child: CircleAvatar(
               backgroundColor: Colors.transparent,
               radius: 66.0,
-              child: Icon(
-                Icons.info,
-                size: 66.0,
-                color: Colors.red,
-              ),
+              child: Icon(Icons.info, size: 66.0, color: Colors.orange),
             ),
           ),
         ],

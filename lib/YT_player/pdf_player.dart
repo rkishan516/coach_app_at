@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-class PDFPlayer extends StatefulWidget {
+class PDFPlayer extends StatelessWidget {
   final String link;
   PDFPlayer({this.link});
-  @override
-  _PDFPlayerState createState() => _PDFPlayerState();
-}
+  WebViewController controller;
 
-class _PDFPlayerState extends State<PDFPlayer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,10 +40,13 @@ class _PDFPlayerState extends State<PDFPlayer> {
         ),
         child: WebView(
           initialUrl:
-              'https://docs.google.com/gview?embedded=true&url=${widget.link}',
+              link,
+          // 'https://docs.google.com/gview?embedded=true&url=${widget.link}',
           javascriptMode: JavascriptMode.unrestricted,
           gestureNavigationEnabled: true,
-          onWebViewCreated: (cntlr) {},
+          onWebViewCreated: (cntlr) {
+            controller = cntlr;
+          },
         ),
       ),
     );
