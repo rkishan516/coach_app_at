@@ -86,6 +86,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
                             return Navigator.of(context).push(
                               CupertinoPageRoute(
                                 builder: (context) => ChapterPage(
+                                  courseId: widget.courseId,
                                   title: courses.subjects[index].name,
                                   reference: FirebaseDatabase.instance
                                       .reference()
@@ -254,7 +255,10 @@ addSubject(BuildContext context, String courseId, int length,
                                 },
                               );
                               return MultiSelectFormField(
-                                dataSource: teachers ?? [{'display' : '','value':''}],
+                                dataSource: teachers ??
+                                    [
+                                      {'display': '', 'value': ''}
+                                    ],
                                 valueField: 'value',
                                 textField: 'display',
                                 titleText: 'Mentors'.tr(),
@@ -268,8 +272,12 @@ addSubject(BuildContext context, String courseId, int length,
                                 },
                               );
                             }
-                            // TODO EVEnt Section Add
-                            // YCode and normal code
+                            // TODO Map the institute admin than list
+                            // TODO YCode on Register
+                            // TODO Navigation My Courses
+                            // TODO Teacher and Student edit and press profile and performance without teacher performance
+                            // TODO Students responses excel
+
                           } else {
                             return Container();
                           }
@@ -339,7 +347,7 @@ addSubject(BuildContext context, String courseId, int length,
                               }
                               List<int> d = [];
                               if (!subjects.contains(length)) {
-                                 d = [length];
+                                d = [length];
                               }
 
                               ref.child(lengthC.toString()).set(

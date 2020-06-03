@@ -1,3 +1,4 @@
+import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:coach_app/noInternet/instituteRegister.dart';
 import 'package:flutter_signin_button/button_view.dart';
@@ -71,7 +72,8 @@ class _WelcomePageState extends State<WelcomePage> {
             SignInButton(
               Buttons.Google,
               text: 'Sign In With Google'.tr(),
-              onPressed: () => WelcomeNavigation.signInWithGoogleAndGetPage(context),
+              onPressed: () =>
+                  WelcomeNavigation.signInWithGoogleAndGetPage(context),
             ),
             FlatButton(
               onPressed: () {

@@ -328,7 +328,11 @@ addCourse(BuildContext context,
                                   .child(
                                       'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$id')
                                   .remove();
-
+                              FirebaseDatabase.instance
+                                  .reference()
+                                  .child(
+                                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList/$id')
+                                  .remove();
                               Navigator.of(context).pop();
                             },
                             child: Text(
@@ -337,24 +341,29 @@ addCourse(BuildContext context,
                           ),
                     FlatButton(
                       onPressed: () {
-                        if(nameTextEditingController.text == ''){
-                          Alert.instance.alert(context, 'Please Enter the course '+'name'.tr());
+                        if (nameTextEditingController.text == '') {
+                          Alert.instance.alert(context,
+                              'Please Enter the course ' + 'name'.tr());
                           return;
                         }
-                        if(descriptionTextEditingController.text == ''){
-                          Alert.instance.alert(context, 'Please Enter the course '+'description'.tr());
+                        if (descriptionTextEditingController.text == '') {
+                          Alert.instance.alert(context,
+                              'Please Enter the course ' + 'description'.tr());
                           return;
                         }
-                        if(mediumTextEditingController.text == ''){
-                          Alert.instance.alert(context, 'Please Enter the course '+'medium'.tr());
+                        if (mediumTextEditingController.text == '') {
+                          Alert.instance.alert(context,
+                              'Please Enter the course ' + 'medium'.tr());
                           return;
                         }
-                        if(priceTextEditingController.text == ''){
-                          Alert.instance.alert(context, 'Please Enter the course ' + 'price'.tr());
+                        if (priceTextEditingController.text == '') {
+                          Alert.instance.alert(context,
+                              'Please Enter the course ' + 'price'.tr());
                           return;
                         }
-                        if(batchTextEditingController.text == ''){
-                          Alert.instance.alert(context, 'Please Enter the course ' + 'batch'.tr());
+                        if (batchTextEditingController.text == '') {
+                          Alert.instance.alert(context,
+                              'Please Enter the course ' + 'batch'.tr());
                           return;
                         }
                         Courses course = Courses(
@@ -385,6 +394,11 @@ addCourse(BuildContext context,
                             .child(
                                 'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${course.id}')
                             .set(course.toJson());
+                        FirebaseDatabase.instance
+                            .reference()
+                            .child(
+                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList/${course.id}')
+                            .set(course.name);
 
                         Navigator.of(context).pop();
                       },

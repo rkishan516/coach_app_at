@@ -44,7 +44,13 @@ dependencies:
   easy_localization:
   upi_pay:
   shared_preferences:
+  jitsi_meet:
+  table_calendar:
+  firebase_messaging:
+  flutter_local_notifications:
   fancy_bottom_navigation:
+  flutter_spinkit:
+  intl:
 
 dev_dependencies:
   flutter_test:

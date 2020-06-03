@@ -4,7 +4,7 @@ class Institute {
   List<String> admin;
   List<Courses> courses;
 
-  Institute({this.name, this.courses,this.address,this.admin});
+  Institute({this.name, this.courses, this.address, this.admin});
 
   Institute.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
@@ -15,9 +15,9 @@ class Institute {
         courses.add(new Courses.fromJson(v));
       });
     }
-    if(json['admin'] != null){
+    if (json['admin'] != null) {
       admin = List<String>();
-      json['admin'].forEach((v){
+      json['admin'].forEach((v) {
         admin.add(v);
       });
     }
@@ -30,7 +30,7 @@ class Institute {
     if (this.courses != null) {
       data['courses'] = this.courses.map((v) => v.toJson()).toList();
     }
-    if(this.admin != null) {
+    if (this.admin != null) {
       data['admin'] = this.admin;
     }
     return data;
@@ -239,6 +239,7 @@ class Student {
   String address;
   List<Course> course;
   String email;
+  String classs;
   String name;
   String phoneNo;
   String photoURL;
@@ -254,16 +255,18 @@ class Student {
       this.phoneNo,
       this.photoURL,
       this.rollNo,
-      this.status});
+      this.status,
+      this.classs});
 
   Student.fromJson(Map<dynamic, dynamic> json) {
     guardianDetails = json['Guardian Details'] != null
         ? new GuardianDetails.fromJson(json['Guardian Details'])
         : null;
     address = json['address'];
+    classs = json['class'];
     if (json['course'] != null) {
       course = new List<Course>();
-      json['course'].forEach((k,v) {
+      json['course'].forEach((k, v) {
         course.add(new Course.fromJson(v));
       });
     }
@@ -280,6 +283,7 @@ class Student {
     if (this.guardianDetails != null) {
       data['Guardian Details'] = this.guardianDetails.toJson();
     }
+    data['class'] = this.classs;
     data['address'] = this.address;
     if (this.course != null) {
       data['course'] = this.course.map((v) => v.toJson()).toList();

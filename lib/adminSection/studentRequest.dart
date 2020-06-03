@@ -13,11 +13,8 @@ class StudentsRequests extends StatefulWidget {
 }
 
 class _StudentsRequestsState extends State<StudentsRequests> {
-  String selectedCourseID;
-  Courses selectedCourse;
-  DatabaseReference ref = FirebaseDatabase.instance
-      .reference()
-      .child('institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students');
+  DatabaseReference ref = FirebaseDatabase.instance.reference().child(
+      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students');
   GlobalKey<ScaffoldState> _scKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -71,14 +68,20 @@ class _StudentsRequestsState extends State<StudentsRequests> {
                     return ListView.builder(
                       itemCount: students?.length,
                       itemBuilder: (BuildContext context, int index) {
+                        String selectedCourseID =
+                            students[students.keys.toList()[index]].classs;
+                        Courses selectedCourse;
                         return Card(
                           child: ListTile(
                             title: Text(
-                              'Name'.tr() + ' : ' +
+                              'Name'.tr() +
+                                  ' : ' +
                                   '${students[students.keys.toList()[index]].name}\n' +
-                                  'Email'.tr()+' : ' +
+                                  'Email'.tr() +
+                                  ' : ' +
                                   '${students[students.keys.toList()[index]].email}\n' +
-                                  'Address'.tr()+' : ' +
+                                  'Address'.tr() +
+                                  ' : ' +
                                   '${students[students.keys.toList()[index]].address}',
                               style: TextStyle(color: Colors.orange),
                             ),
@@ -117,6 +120,13 @@ class _StudentsRequestsState extends State<StudentsRequests> {
                                           snapshot.data.snapshot.value
                                               .forEach((k, v) {
                                             courses.add(Courses.fromJson(v));
+                                            if (k.toString() ==
+                                                students[students.keys
+                                                        .toList()[index]]
+                                                    .classs) {
+                                              selectedCourse =
+                                                  Courses.fromJson(v);
+                                            }
                                           });
                                           return DropdownButton(
                                               value: selectedCourseID,
@@ -159,14 +169,27 @@ class _StudentsRequestsState extends State<StudentsRequests> {
                                   flex: 5,
                                   child: FlatButton(
                                     onPressed: () {
-                                      if (selectedCourseID == null) {
+                                      if (selectedCourseID == null ||
+                                          selectedCourse == null) {
                                         _scKey.currentState.showSnackBar(
                                           SnackBar(
                                             content: Text(
-                                                'Select the course for Student'.tr()),
+                                                'Select the course for Student'
+                                                    .tr()),
                                           ),
                                         );
                                       } else {
+                                        Course course = Course(
+                                          academicYear:
+                                              DateTime.now().year.toString() +
+                                                  '-' +
+                                                  (DateTime.now().year + 1)
+                                                      .toString(),
+                                          courseID: selectedCourseID,
+                                          courseName: selectedCourse.name,
+                                          paymentToken:
+                                              'Registered By ${FireBaseAuth.instance.user.displayName}',
+                                        );
                                         ref
                                             .child(
                                                 students.keys.toList()[index] +
@@ -177,17 +200,7 @@ class _StudentsRequestsState extends State<StudentsRequests> {
                                                 students.keys.toList()[index] +
                                                     '/course')
                                             .child(selectedCourseID)
-                                            .set({
-                                          "Academic Year":
-                                              DateTime.now().year.toString() +
-                                                  '-' +
-                                                  (DateTime.now().year + 1)
-                                                      .toString(),
-                                          "courseID": selectedCourseID,
-                                          "courseName": selectedCourse.name,
-                                          "paymentToken":
-                                              'Registered By ${FireBaseAuth.instance.user.displayName}',
-                                        });
+                                            .set(course.toJson());
                                         selectedCourse = null;
                                         selectedCourseID = null;
                                       }

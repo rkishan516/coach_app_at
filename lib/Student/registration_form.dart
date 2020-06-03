@@ -1,4 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/selectInstitute.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Student/WaitScreen.dart';
 import 'package:coach_app/Student/all_course_view.dart';
@@ -15,7 +16,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
   TextEditingController nameTextEditingController,
       addressTextEditingController,
       phoneTextEditingController,
-      classTextEditingController,
       instituteCodeTextEditingController;
   String status = 'New Student';
   DateTime dob;
@@ -27,7 +27,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
     nameTextEditingController = TextEditingController();
     addressTextEditingController = TextEditingController();
     phoneTextEditingController = TextEditingController();
-    classTextEditingController = TextEditingController();
     instituteCodeTextEditingController = TextEditingController();
     dob = DateTime.now();
     super.initState();
@@ -76,29 +75,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
                 TextField(
                   controller: addressTextEditingController,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    fillColor: Color(0xfff3f3f4),
-                    filled: true,
-                  ),
-                )
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Class'.tr(),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextField(
-                  controller: classTextEditingController,
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     fillColor: Color(0xfff3f3f4),
@@ -215,11 +191,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
           RaisedButton(
             color: Colors.orange,
-            onPressed: () {
+            onPressed: () async {
               if (nameTextEditingController.text != '' &&
                   addressTextEditingController.text != '' &&
                   phoneTextEditingController.text != '' &&
-                  classTextEditingController.text != '' &&
                   instituteCodeTextEditingController.text != '') {
                 Student student = Student(
                     name: nameTextEditingController.text,
@@ -228,25 +203,39 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     photoURL: FireBaseAuth.instance.user.photoUrl,
                     email: FireBaseAuth.instance.user.email,
                     status: status);
-                var insCode =
-                    instituteCodeTextEditingController.text.split('_');
-                var branchCode = insCode[insCode.length - 1];
-                insCode.removeAt(insCode.length - 1);
+                var branchCode =
+                    instituteCodeTextEditingController.text.substring(4);
+                DataSnapshot dataSnapshot = await FirebaseDatabase.instance
+                    .reference()
+                    .child(
+                        '/instituteList/${instituteCodeTextEditingController.text.substring(0, 4)}')
+                    .once();
                 DatabaseReference reference = FirebaseDatabase.instance
                     .reference()
-                    .child("institute/${insCode.join('_')}/branches/$branchCode/");
-                reference
-                    .child('students/${FireBaseAuth.instance.user.uid}')
-                    .set(student.toJson());
+                    .child(
+                        "institute/${dataSnapshot.value}/branches/$branchCode/");
                 if (status == 'Existing Student') {
-                  reference
-                      .child('students/${FireBaseAuth.instance.user.uid}/class')
-                      .set(classTextEditingController.text);
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (context) {
-                    return WaitScreen();
-                  }));
+                  String course = await showDialog(
+                    context: context,
+                    builder: (context) => SelectInstituteCourse(
+                      databaseReference: reference,
+                    ),
+                    barrierDismissible: false,
+                  );
+                  if (course != null && course != '') {
+                    student.classs = course;
+                    reference
+                        .child('students/${FireBaseAuth.instance.user.uid}')
+                        .set(student.toJson());
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return WaitScreen();
+                    }));
+                  }
                 } else {
+                  reference
+                      .child('students/${FireBaseAuth.instance.user.uid}')
+                      .set(student.toJson());
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (context) {
                     return AllCoursePage(

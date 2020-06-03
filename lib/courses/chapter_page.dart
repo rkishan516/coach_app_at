@@ -1,4 +1,5 @@
 import 'package:coach_app/Drawer/drawer.dart';
+import 'package:coach_app/Events/Calender.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/courses/content_page.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -11,9 +12,11 @@ import 'package:easy_localization/easy_localization.dart';
 class ChapterPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;
+  final String courseId;
   ChapterPage({
     @required this.title,
     @required this.reference,
+    @required this.courseId,
   });
   @override
   _ChapterPageState createState() => _ChapterPageState();
@@ -33,6 +36,18 @@ class _ChapterPageState extends State<ChapterPage> {
             color: Colors.white,
           ),
         ),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.add_to_queue),
+              onPressed: () => Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => Calender(
+                      courseId: widget.courseId,
+                      subjectName: widget.title,
+                    ),
+                  ),
+                ))
+        ],
         centerTitle: true,
         elevation: 0.0,
         iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),

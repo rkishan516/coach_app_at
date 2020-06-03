@@ -6,6 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     initializeDateFormatting();
     return MaterialApp(
       title: 'Guru Cool',
       debugShowCheckedModeBanner: false,
@@ -52,7 +54,7 @@ class MyApp extends StatelessWidget {
                 future: _getPrefs(),
                 builder: (context, snap) {
                   if (snapshot.hasData) {
-                    if(prefs?.getBool('isLoggedIn') == true){
+                    if (prefs?.getBool('isLoggedIn') == true) {
                       WelcomeNavigation.signInWithGoogleAndGetPage(context);
                       return Container();
                     }

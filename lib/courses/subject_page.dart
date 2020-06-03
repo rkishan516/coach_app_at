@@ -77,6 +77,7 @@ class _SubjectPageState extends State<SubjectPage> {
                       return Navigator.of(context).push(
                         CupertinoPageRoute(
                           builder: (context) => ChapterPage(
+                            courseId: widget.course.id,
                             title: widget.course
                                 .subjects[widget.tCourse.subjects[index]].name,
                             reference: FirebaseDatabase.instance.reference().child(

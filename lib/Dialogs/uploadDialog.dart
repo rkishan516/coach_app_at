@@ -1,8 +1,19 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class UploadDialog extends StatelessWidget {
   String warning;
   UploadDialog({@required this.warning});
+  List<Widget> waitWidgets = [
+    SpinKitRipple(
+      color: Colors.orange,
+    ),
+    SpinKitDoubleBounce(
+      color: Colors.orange,
+    ),
+  ];
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -16,7 +27,7 @@ class UploadDialog extends StatelessWidget {
           Container(
             width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.only(
-              top: 66.0 + 16.0,
+              top: 16.0,
               bottom: 16.0,
               left: 16.0,
               right: 16.0,
@@ -37,10 +48,12 @@ class UploadDialog extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                SizedBox(height: 16.0),
+                waitWidgets[Random().nextInt(waitWidgets.length)],
                 Text(
                   'Please Wait!',
                   style: TextStyle(
-                    color: Colors.red,
+                    color: Colors.orange,
                     fontSize: 24.0,
                     fontWeight: FontWeight.w700,
                   ),
@@ -55,15 +68,6 @@ class UploadDialog extends StatelessWidget {
                 ),
                 SizedBox(height: 24.0),
               ],
-            ),
-          ),
-          Positioned(
-            left: 16.0,
-            right: 16.0,
-            child: CircleAvatar(
-              backgroundColor: Colors.transparent,
-              radius: 66.0,
-              child: Icon(Icons.info, size: 66.0, color: Colors.orange),
             ),
           ),
         ],

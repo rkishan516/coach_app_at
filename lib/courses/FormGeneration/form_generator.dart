@@ -23,7 +23,6 @@ class _FormGeneratorState extends State<FormGenerator> {
   bool haveChoices = false;
   List<TextEditingController> choices = List<TextEditingController>();
   TextEditingController _textEditingController = TextEditingController();
-  TextEditingController _ansController = TextEditingController();
   bool isError = false;
   List<QuestionModel> formFieldsModals;
   Duration testTime;
@@ -170,15 +169,6 @@ class _FormGeneratorState extends State<FormGenerator> {
                     SizedBox(
                       height: 20,
                     ),
-                    TextField(
-                      controller: _ansController,
-                      decoration: InputDecoration(
-                        hintText: 'Answer',
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    ),
                     haveChoices
                         ? ListView.builder(
                             shrinkWrap: true,
@@ -227,7 +217,6 @@ class _FormGeneratorState extends State<FormGenerator> {
                         });
                         if (flag == true) {
                           _textEditingController.text = '';
-                          _ansController.text = '';
                           choices.forEach((e) {
                             e.text = '';
                           });
@@ -244,10 +233,8 @@ class _FormGeneratorState extends State<FormGenerator> {
                           QuestionModel(
                               question: label,
                               type: dropDownValue,
-                              choices: choice,
-                              answer: _ansController.text),
+                              choices: choice),
                         );
-                        _ansController.text = '';
                         choices.forEach((element) {
                           element.text = '';
                         });
