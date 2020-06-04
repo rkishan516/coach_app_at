@@ -1,3 +1,4 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Student/course_registration_page.dart';
 import 'package:firebase_database/firebase_database.dart';

@@ -32,6 +32,7 @@ class _SubjectPageState extends State<SubjectPage> {
             color: Colors.white,
           ),
         ),
+        elevation: 0.0,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add_alert),
@@ -54,7 +55,6 @@ class _SubjectPageState extends State<SubjectPage> {
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
             boxShadow: <BoxShadow>[
               BoxShadow(
                   color: Colors.grey.shade200,

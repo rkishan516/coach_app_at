@@ -48,7 +48,7 @@ dependencies:
   table_calendar:
   firebase_messaging:
   flutter_local_notifications:
-  persistent_bottom_nav_bar:
+  fancy_bottom_navigation:
   flutter_spinkit:
   intl:
 

@@ -258,6 +258,10 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                       .alert(context, 'Only Gmail account allowed'.tr());
                   return;
                 }
+                if (!branch1UpiIdTextEditiingController.text.contains('@')) {
+                  Alert.instance.alert(context, 'Wrong UPI ID');
+                  return;
+                }
                 if (_image == null) {
                   Alert.instance
                       .alert(context, 'Please select Institute Logo'.tr());
@@ -286,12 +290,13 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                         .reference()
                         .child('/institute')
                         .push();
-                        reference.set({
+                    reference.set({
                       "name": nameTextEditingController.text,
                       "Phone No": phoneNoTextEditingController.text,
                       "admin": {
                         value.uid:
-                            Admin(email: value.email, name: value.displayName).toJson()
+                            Admin(email: value.email, name: value.displayName)
+                                .toJson()
                       },
                       "paid": 'Trial',
                       "logo": storageTaskSnapshot.storageMetadata.path,
@@ -324,8 +329,20 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                             "subAdmin_${FireBaseAuth.instance.instituteid}_${branch1CodeTextEditingController.text}"
                       });
                     }
-                    DataSnapshot snap = await FirebaseDatabase.instance.reference().child('/instituteList').orderByKey().limitToLast(1).once();
-                    await FirebaseDatabase.instance.reference().child('/instituteList').child(VyCode.instance.getNextVyCode(snap.value.keys.toList()[0])).set(reference.key);
+                    DataSnapshot snap = await FirebaseDatabase.instance
+                        .reference()
+                        .child('/instituteList')
+                        .orderByKey()
+                        .limitToLast(1)
+                        .once();
+
+                    await FirebaseDatabase.instance
+                        .reference()
+                        .child('/instituteList')
+                        .child(VyCode.instance
+                            .getNextVyCode(snap.value.keys.toList()[0]))
+                        .set(reference.key);
+
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (context) => WelcomePage()),
                         (route) => false);

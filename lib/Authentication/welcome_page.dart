@@ -52,7 +52,6 @@ class _WelcomePageState extends State<WelcomePage> {
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
             boxShadow: <BoxShadow>[
               BoxShadow(
                   color: Colors.grey.shade200,

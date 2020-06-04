@@ -1,6 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Profile/Studentprofileactivity.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
@@ -13,7 +14,6 @@ class StudentList extends StatefulWidget {
 }
 
 class _StudentListState extends State<StudentList> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,7 +80,17 @@ class _StudentListState extends State<StudentList> {
                               Icons.chevron_right,
                               color: Colors.orange,
                             ),
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Studentprofileactivity(
+                                    student:
+                                        students[students.keys.toList()[index]],
+                                  ),
+                                ),
+                              );
+                            },
                             onLongPress: () {},
                           ),
                         );

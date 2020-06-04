@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     initializeDateFormatting();
+    initializeDateFormatting();
     return MaterialApp(
       title: 'Guru Cool',
       debugShowCheckedModeBanner: false,
@@ -56,7 +56,24 @@ class MyApp extends StatelessWidget {
                   if (snapshot.hasData) {
                     if (prefs?.getBool('isLoggedIn') == true) {
                       WelcomeNavigation.signInWithGoogleAndGetPage(context);
-                      return Container();
+                      return Container(
+                        padding: EdgeInsets.symmetric(
+                            vertical: MediaQuery.of(context).size.height / 20),
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                  color: Colors.grey.shade200,
+                                  offset: Offset(2, 4),
+                                  blurRadius: 5,
+                                  spreadRadius: 2)
+                            ],
+                            gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Colors.orange, Colors.deepOrange])),
+                      );
                     }
                     return WelcomePage();
                   } else {

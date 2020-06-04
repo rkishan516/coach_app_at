@@ -137,6 +137,7 @@ class _QuizState extends State<Quiz> {
                         child: Text('Submit'),
                         onPressed: () {
                           _fbKey.currentState?.save();
+                          print(_fbKey.currentState.value);
                           Navigator.of(context).pop();
                         },
                       ),
@@ -170,13 +171,13 @@ class _QuizState extends State<Quiz> {
       case 'Long Paragraph':
       case 'Fill In the Blank':
         return FormBuilderTextField(
-          attribute: "text" + labelText,
+          attribute: labelText,
           decoration: InputDecoration(labelText: labelText),
           validators: [],
         );
       case 'Multiple Choice':
         return FormBuilderCheckboxList(
-          attribute: 'Multiple Choice' + labelText,
+          attribute: labelText,
           decoration: InputDecoration(labelText: labelText),
           options: choices
               .map((e) => FormBuilderFieldOption(
@@ -187,7 +188,7 @@ class _QuizState extends State<Quiz> {
         );
       case 'Single Choice':
         return FormBuilderRadio(
-          attribute: "Single Choice" + labelText,
+          attribute: labelText,
           decoration: InputDecoration(labelText: labelText),
           validators: [],
           options: choices
@@ -198,7 +199,7 @@ class _QuizState extends State<Quiz> {
       case 'True False':
         return FormBuilderSwitch(
           label: Text(labelText),
-          attribute: "True False" + labelText,
+          attribute: labelText,
           initialValue: false,
         );
       default:

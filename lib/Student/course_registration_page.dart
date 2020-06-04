@@ -159,8 +159,8 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                               await UpiPay.initiateTransaction(
                             amount: "${course.price}.00",
                             app: application,
-                            receiverName: "Kishan",
-                            receiverUpiAddress: "rkishan516-1@okhdfcbank",
+                            receiverName: upi.split('@')[0],
+                            receiverUpiAddress: upi,
                             transactionRef:
                                 '${course.name.hashCode}${course.hashCode}${FireBaseAuth.instance.user.uid.hashCode}',
                             transactionNote:

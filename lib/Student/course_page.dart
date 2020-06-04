@@ -56,7 +56,7 @@ class _CoursePageState extends State<CoursePage> {
             stream: FirebaseDatabase.instance
                 .reference()
                 .child(
-                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance..user.uid}')
+                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}')
                 .onValue,
             builder: (context, snapshot) {
               if (snapshot.hasData) {

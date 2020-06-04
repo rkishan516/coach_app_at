@@ -227,6 +227,9 @@ class _BranchRegisterState extends State<BranchRegister> {
                             .alert(context, 'Only Gmail account allowed'.tr());
                         return;
                       }
+                      if(!upiTextEditingController.text.contains('@')){
+                        Alert.instance.alert(context, 'Wrong UPI ID');
+                      }
                       DatabaseReference ref = FirebaseDatabase.instance
                           .reference()
                           .child(

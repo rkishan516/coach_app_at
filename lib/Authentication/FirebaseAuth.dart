@@ -15,14 +15,26 @@ class FireBaseAuth {
   FirebaseUser user;
   var branchid, instituteid, previlagelevel;
 
-  Future<FirebaseUser> signInWithGoogle() async {
-    try {
+  Future<List<String>> getAuthGCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('credA') != null && prefs.getString('credI') != null) {
+      return [prefs.getString('credA'), prefs.getString('credI')];
+    } else {
       final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
+      prefs.setString('credA', googleAuth.accessToken);
+      prefs.setString('credI', googleAuth.idToken);
+      return [googleAuth.accessToken, googleAuth.idToken];
+    }
+  }
+
+  Future<FirebaseUser> signInWithGoogle() async {
+    try {
+      var creds = await getAuthGCredentials();
       final AuthCredential credential = GoogleAuthProvider.getCredential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+        accessToken: creds[0],
+        idToken: creds[1],
       );
       final AuthResult authResult =
           (await _auth.signInWithCredential(credential));
@@ -47,6 +59,7 @@ class FireBaseAuth {
 
   updateClaims() async {
     IdTokenResult idTokenResult = await user.getIdToken(refresh: true);
+
     branchid = idTokenResult.claims['branchid'];
     instituteid = idTokenResult.claims['instituteid'];
     previlagelevel = idTokenResult.claims['previlagelevel'];
@@ -55,9 +68,7 @@ class FireBaseAuth {
   Future<void> signoutWithGoogle() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      if (user != null) {
-        prefs.remove('isLoggedIn');
-      }
+      prefs?.clear();
       await _auth.signOut();
       await _googleSignIn.signOut();
       user = null;

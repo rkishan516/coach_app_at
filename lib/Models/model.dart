@@ -34,7 +34,8 @@ class Branch {
       data['courses'] = this.courses.map((v) => v.toJson()).toList();
     }
     if (this.admin != null) {
-      data['admin'] = this.admin.map((key, value) => MapEntry(key,value.toJson()));
+      data['admin'] =
+          this.admin.map((key, value) => MapEntry(key, value.toJson()));
     }
     return data;
   }
@@ -392,7 +393,13 @@ class QuizModel {
   Duration testTime;
   List<QuestionModel> questions;
 
-  QuizModel({this.title, this.description, this.questions, this.testTime,this.startTime});
+  QuizModel({
+    this.title,
+    this.description,
+    this.questions,
+    this.testTime,
+    this.startTime,
+  });
 
   Duration parseDuration(String s) {
     int hours = 0;
@@ -413,7 +420,7 @@ class QuizModel {
     title = json['title'];
     description = json['description'];
     testTime = parseDuration(json['testTime']);
-    startTime = DateTime.parse(json['startTime']);
+    startTime = DateTime.parse(json['startTime'] ?? DateTime.now().toString());
     questions = List<QuestionModel>();
     if (json['questions'] != null) {
       json['questions'].forEach((v) {
