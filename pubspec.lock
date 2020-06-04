@@ -148,13 +148,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.3.2"
-  fancy_bottom_navigation:
-    dependency: "direct main"
-    description:
-      name: fancy_bottom_navigation
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.2"
   firebase:
     dependency: "direct main"
     description:
@@ -469,6 +462,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.9.0"
+  persistent_bottom_nav_bar:
+    dependency: "direct main"
+    description:
+      name: persistent_bottom_nav_bar
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.5.5"
   petitparser:
     dependency: transitive
     description:

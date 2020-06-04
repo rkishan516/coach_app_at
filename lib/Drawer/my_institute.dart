@@ -1,5 +1,4 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Drawer/drawer.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +17,6 @@ class _MyInstituteState extends State<MyInstitute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: getDrawer(context),
       appBar: AppBar(
         title: Text(
           'My Institute'.tr(),

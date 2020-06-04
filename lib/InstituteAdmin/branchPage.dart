@@ -1,10 +1,10 @@
-
 import 'package:coach_app/InstituteAdmin/bottom_navigation_bar.dart';
 import 'package:coach_app/InstituteAdmin/studentList.dart';
 import 'package:coach_app/InstituteAdmin/teachersPage.dart';
 import 'package:coach_app/adminSection/adminCoursePage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class BranchPage extends StatefulWidget {
   @override
@@ -58,21 +58,39 @@ class _BranchPageState extends State<BranchPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: (_bottomNavIndex == 0) ? AdminCoursePage() : (_bottomNavIndex == 1) ? StudentList() : TeachersList(),
-      bottomNavigationBar: AnimatedBottomNavigationBar(
-        icons: iconList,
-        backgroundColor: HexColor('#373A36'),
-        activeIndex: _bottomNavIndex,
-        activeColor: HexColor('#FFA400'),
-        splashColor: HexColor('#FFA400'),
-        inactiveColor: Colors.white,
-        notchAndCornersAnimation: animation,
-        splashSpeedInMilliseconds: 300,
-        notchSmoothness: NotchSmoothness.defaultEdge,
-        gapLocation: GapLocation.none,
-        // leftCornerRadius: 32,
-        // rightCornerRadius: 32,
-        onTap: (index) => setState(() => _bottomNavIndex = index),
+      body: PersistentTabView(
+        screens: [
+          AdminCoursePage(),
+          StudentList(),
+          TeachersList(),
+        ],
+        items: [
+          PersistentBottomNavBarItem(
+            icon: Icon(Icons.library_books),
+            title: ("Courses"),
+            activeColor: Colors.white,
+            inactiveColor: Colors.white,
+            isTranslucent: false,
+          ),
+          PersistentBottomNavBarItem(
+            icon: Icon(Icons.school),
+            title: ("Students"),
+            activeColor: Colors.white,
+            inactiveColor: Colors.white,
+            isTranslucent: false,
+          ),
+          PersistentBottomNavBarItem(
+            icon: Icon(Icons.person),
+            title: ("Teachers"),
+            activeColor: Colors.white,
+            inactiveColor: Colors.white,
+            isTranslucent: false,
+          ),
+        ],
+        confineInSafeArea: true,
+        showElevation: false,
+        backgroundColor: Colors.orange,
+        navBarStyle: NavBarStyle.style1,
       ),
     );
   }

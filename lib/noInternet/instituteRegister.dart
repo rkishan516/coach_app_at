@@ -6,6 +6,7 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
+import 'package:coach_app/GlobalFunction/VyCode.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -22,6 +23,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
   TextEditingController nameTextEditingController,
       phoneNoTextEditingController,
       branch1NameTextEditingController,
+      branch1UpiIdTextEditiingController,
       branch1addressTextEditingController,
       branch1CodeTextEditingController,
       branch1AdminTextEditingController;
@@ -42,6 +44,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
     _scKey = GlobalKey<ScaffoldState>();
     phoneNoTextEditingController = TextEditingController();
     nameTextEditingController = TextEditingController();
+    branch1UpiIdTextEditiingController = TextEditingController();
     branch1AdminTextEditingController = TextEditingController();
     branch1CodeTextEditingController = TextEditingController();
     branch1NameTextEditingController = TextEditingController();
@@ -173,6 +176,29 @@ class _InstituteRegisterState extends State<InstituteRegister> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
+                  'Main Branch UPI'.tr(),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                TextField(
+                  controller: branch1UpiIdTextEditiingController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    fillColor: Color(0xfff3f3f4),
+                    filled: true,
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
                   'Main Branch Admin Email'.tr(),
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
@@ -221,6 +247,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
             onPressed: () {
               if (nameTextEditingController.text != '' &&
                   phoneNoTextEditingController.text != '' &&
+                  branch1UpiIdTextEditiingController.text != '' &&
                   branch1AdminTextEditingController.text != '' &&
                   branch1CodeTextEditingController.text != '' &&
                   branch1NameTextEditingController.text != '' &&
@@ -255,23 +282,31 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                         builder: (context) => UploadDialog(
                               warning: 'Registering Institute',
                             ));
-                    FirebaseDatabase.instance
+                    DatabaseReference reference = FirebaseDatabase.instance
                         .reference()
                         .child('/institute')
-                        .push()
-                        .set({
+                        .push();
+                        reference.set({
                       "name": nameTextEditingController.text,
                       "Phone No": phoneNoTextEditingController.text,
-                      "admin": [value.email],
-                      "paid": "false",
+                      "admin": {
+                        value.uid:
+                            Admin(email: value.email, name: value.displayName).toJson()
+                      },
+                      "paid": 'Trial',
                       "logo": storageTaskSnapshot.storageMetadata.path,
                       "branches": {
-                        branch1CodeTextEditingController.text: Institute(
-                            name: branch1NameTextEditingController.text,
-                            address: branch1addressTextEditingController.text,
-                            admin: [
-                              branch1AdminTextEditingController.text
-                            ]).toJson()
+                        branch1CodeTextEditingController.text: Branch(
+                          name: branch1NameTextEditingController.text,
+                          address: branch1addressTextEditingController.text,
+                          admin: {
+                            "${branch1AdminTextEditingController.text.hashCode}":
+                                Admin(
+                              email: branch1AdminTextEditingController.text,
+                            )
+                          },
+                          upiId: branch1UpiIdTextEditiingController.text,
+                        ).toJson()
                       }
                     });
                     showDialog(
@@ -280,7 +315,6 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                         warning: 'Granting access',
                       ),
                     );
-                    await Future.delayed(Duration(seconds: 10));
                     if (value.email != branch1AdminTextEditingController.text) {
                       Firestore.instance
                           .collection('institute')
@@ -290,6 +324,8 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                             "subAdmin_${FireBaseAuth.instance.instituteid}_${branch1CodeTextEditingController.text}"
                       });
                     }
+                    DataSnapshot snap = await FirebaseDatabase.instance.reference().child('/instituteList').orderByKey().limitToLast(1).once();
+                    await FirebaseDatabase.instance.reference().child('/instituteList').child(VyCode.instance.getNextVyCode(snap.value.keys.toList()[0])).set(reference.key);
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (context) => WelcomePage()),
                         (route) => false);

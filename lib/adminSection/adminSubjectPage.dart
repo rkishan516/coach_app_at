@@ -272,9 +272,11 @@ addSubject(BuildContext context, String courseId, int length,
                                 },
                               );
                             }
-                            // TODO Map the institute admin than list
-                            // TODO YCode on Register
-                            // TODO Navigation My Courses
+                            // TODO My Institute page Modification
+                            // TODO paid user alert on notification
+                            // TODO All course page of student security
+
+                            // TODO teachers DOB,Teaching Experience Years, Qualification
                             // TODO Teacher and Student edit and press profile and performance without teacher performance
                             // TODO Students responses excel
 

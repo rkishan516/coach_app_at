@@ -42,7 +42,6 @@ class _SessionDetailState extends State<SessionDetail> {
         .child(passVariable)
         .once()
         .then((DataSnapshot value) {
-      //print(value.value['description']);
       setState(() {
         titleText.text = value.value['title'];
         descriptionText.text = value.value['description'];
@@ -91,12 +90,12 @@ class _SessionDetailState extends State<SessionDetail> {
   Future<Null> _selectTime(BuildContext context) async {
     _picked = await showTimePicker(context: context, initialTime: _time);
     if (_picked != null) {
-      setState(() {
-        _time = _picked;
-        testtime = _time.hour.toString() + ":" + _time.minute.toString();
-        //  print(_time.hour.toString());
-        //  print(_time.minute.toString());
-      });
+      setState(
+        () {
+          _time = _picked;
+          testtime = _time.hour.toString() + ":" + _time.minute.toString();
+        },
+      );
     }
   }
 
@@ -115,90 +114,121 @@ class _SessionDetailState extends State<SessionDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Enter Event Detail'),
+        elevation: 0.0,
+        title: Text(
+          'Enter Event Detail',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(4.0),
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 20.0,
-              ),
-              TextField(
-                  controller: titleText,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Enter Title",
-                  )),
-              SizedBox(
-                height: 20.0,
-              ),
-              TextField(
-                  controller: descriptionText,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Enter Description",
-                  )),
-              SizedBox(
-                height: 20.0,
-              ),
-              Card(
-                color: Colors.orange,
-                child: ListTile(
-                  trailing: Icon(Icons.alarm),
-                  title: Text(testtime),
-                  onTap: () {
-                    _selectTime(context);
-                  },
-                ),
-              ),
-              Divider(
-                height: 48.0,
-                thickness: 2.0,
-              ),
-              GestureDetector(
-                onTap: () {
-                  _saveintodatabase();
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: Colors.orange),
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  alignment: Alignment.center,
-                  child: Text(
-                    "Save",
-                    style: TextStyle(color: Colors.white),
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height / 20),
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: Colors.grey.shade200,
+                    offset: Offset(2, 4),
+                    blurRadius: 5,
+                    spreadRadius: 2)
+              ],
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.orange, Colors.deepOrange])),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(4.0),
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 20.0,
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              isedit
-                  ? GestureDetector(
-                      onTap: () {
-                        _delfromdatabase();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
-                            color: Colors.orange),
-                        width: MediaQuery.of(context).size.width,
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Delete Event",
-                          style: TextStyle(color: Colors.white),
-                        ),
+                  TextField(
+                      controller: titleText,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        fillColor: Color(0xfff3f3f4),
+                        filled: true,
+                        labelText: "Enter Title",
+                      )),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  TextField(
+                      controller: descriptionText,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        fillColor: Color(0xfff3f3f4),
+                        filled: true,
+                        labelText: "Enter Description",
+                      )),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  Card(
+                    color: Colors.white,
+                    child: ListTile(
+                      trailing: Icon(
+                        Icons.alarm,
+                        color: Colors.orange,
                       ),
-                    )
-                  : SizedBox(
-                      height: 10.0,
-                    )
-            ],
+                      title: Text(testtime),
+                      onTap: () {
+                        _selectTime(context);
+                      },
+                    ),
+                  ),
+                  Divider(
+                    height: 48.0,
+                    thickness: 2.0,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      _saveintodatabase();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0),
+                          color: Colors.white),
+                      width: MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Save",
+                        style: TextStyle(color: Colors.orange),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  isedit
+                      ? GestureDetector(
+                          onTap: () {
+                            _delfromdatabase();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                color: Colors.white),
+                            width: MediaQuery.of(context).size.width,
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Delete Event",
+                              style: TextStyle(color: Colors.orange),
+                            ),
+                          ),
+                        )
+                      : SizedBox(
+                          height: 10.0,
+                        )
+                ],
+              ),
+            ),
           ),
         ),
       ),

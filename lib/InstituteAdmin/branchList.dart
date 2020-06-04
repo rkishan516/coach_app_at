@@ -26,6 +26,36 @@ class _BranchListState extends State<BranchList> {
             color: Colors.white,
           ),
         ),
+        bottom: PreferredSize(
+            child: Stack(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: StreamBuilder<Event>(
+                      stream: FirebaseDatabase.instance
+                          .reference()
+                          .child(
+                              'institute/${FireBaseAuth.instance.instituteid}/paid')
+                          .onValue,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data.snapshot.value == 'Trial') {
+                            return Text(
+                              'Trial',
+                              style: TextStyle(color: Colors.white),
+                            );
+                          }
+                        }
+                        return Container();
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            preferredSize: Size(MediaQuery.of(context).size.width, 1)),
         centerTitle: true,
         elevation: 0.0,
         iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
@@ -59,11 +89,10 @@ class _BranchListState extends State<BranchList> {
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    Map<String, Institute> institutes =
-                        Map<String, Institute>();
+                    Map<String, Branch> institutes = Map<String, Branch>();
                     print(snapshot.data.snapshot.value);
                     snapshot.data.snapshot.value?.forEach((k, v) {
-                      institutes[k] = Institute.fromJson(v);
+                      institutes[k] = Branch.fromJson(v);
                     });
                     length = institutes.length;
                     return ListView.builder(
@@ -93,7 +122,8 @@ class _BranchListState extends State<BranchList> {
                           onTap: () {
                             FireBaseAuth.instance.branchid =
                                 institutes.keys.toList()[index];
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (context) {
                               return BranchPage();
                             }));
                           },

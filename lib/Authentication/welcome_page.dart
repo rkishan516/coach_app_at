@@ -76,6 +76,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   WelcomeNavigation.signInWithGoogleAndGetPage(context),
             ),
             FlatButton(
+              color: Colors.white,
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -85,6 +86,9 @@ class _WelcomePageState extends State<WelcomePage> {
               },
               child: Text(
                 'Register Your Institute',
+                style: TextStyle(
+                  color: Colors.orange,
+                ),
               ),
             ),
           ],

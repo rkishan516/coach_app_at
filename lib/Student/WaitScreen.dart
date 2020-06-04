@@ -25,7 +25,12 @@ class WaitScreen extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [Colors.orange, Colors.deepOrange])),
           child: Center(
-            child: Text('Please wait till you get access to course'),
+            child: Text(
+              'Please wait till you get access to course',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
           ),
         ),
       ),

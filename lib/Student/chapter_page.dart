@@ -1,3 +1,4 @@
+import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/courses/content_page.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -22,6 +23,21 @@ class _ChapterPageState extends State<ChapterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: getDrawer(context),
+      appBar: AppBar(
+        title: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            text: widget.title,
+            style: GoogleFonts.portLligatSans(
+              fontSize: 30,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        elevation: 0.0,
+      ),
       body: Container(
         padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height / 20),
@@ -42,22 +58,6 @@ class _ChapterPageState extends State<ChapterPage> {
                 colors: [Colors.orange, Colors.deepOrange])),
         child: Column(
           children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Container(
-                child: RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    text: widget.title,
-                    style: GoogleFonts.portLligatSans(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
             Expanded(
               flex: 12,
               child: StreamBuilder<Event>(

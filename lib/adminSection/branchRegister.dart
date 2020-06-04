@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class BranchRegister extends StatefulWidget {
-  final Institute institute;
+  final Branch institute;
   final String branchCode;
   BranchRegister({this.institute, this.branchCode});
   @override
@@ -20,7 +21,8 @@ class _BranchRegisterState extends State<BranchRegister> {
   TextEditingController nameTextEditingController,
       branchCodeTextEditingController,
       adminEmailTextEditingController,
-      addressTextEditingController;
+      addressTextEditingController,
+      upiTextEditingController;
   Widget errorBox;
   bool isEnable;
 
@@ -34,6 +36,8 @@ class _BranchRegisterState extends State<BranchRegister> {
     addressTextEditingController = TextEditingController()
       ..text = widget.institute?.address ?? '';
     adminEmailTextEditingController = TextEditingController();
+    upiTextEditingController = TextEditingController()
+      ..text = widget.institute?.upiId ?? '';
     if (widget.institute?.name == null &&
         widget.institute?.address == null &&
         widget.institute?.admin == null &&
@@ -41,7 +45,8 @@ class _BranchRegisterState extends State<BranchRegister> {
       adminEmailTextEditingController.text = '';
       isEnable = true;
     } else {
-      adminEmailTextEditingController.text = widget.institute.admin[0];
+      adminEmailTextEditingController.text =
+          widget.institute.admin.values.toList()[0].email;
       isEnable = false;
     }
     super.initState();
@@ -158,6 +163,30 @@ class _BranchRegisterState extends State<BranchRegister> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
+                        'UPI'.tr(),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextField(
+                        controller: upiTextEditingController,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          fillColor: Color(0xfff3f3f4),
+                          filled: true,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
                         'Code of branch'.tr(),
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 15),
@@ -183,68 +212,80 @@ class _BranchRegisterState extends State<BranchRegister> {
                   alignment: Alignment.bottomRight,
                   child: FlatButton(
                     onPressed: () {
-                      if (adminEmailTextEditingController.text != '' &&
-                          adminEmailTextEditingController.text
-                              .endsWith('@gmail.com') &&
-                          nameTextEditingController.text != '' &&
-                          addressTextEditingController.text != '' &&
-                          branchCodeTextEditingController.text != '') {
-                        DatabaseReference ref = FirebaseDatabase.instance
-                            .reference()
-                            .child(
-                                'institute/${FireBaseAuth.instance.instituteid}/branches/${branchCodeTextEditingController.text}');
-                        if (widget.branchCode != null) {
-                          widget.institute.name =
-                              nameTextEditingController.text;
-                          widget.institute.address =
-                              addressTextEditingController.text;
-                          ref.set(widget.institute.toJson());
-                          Navigator.of(context).pop();
-                          return;
-                        }
+                      if (adminEmailTextEditingController.text == '' ||
+                          upiTextEditingController.text == '' ||
+                          nameTextEditingController.text == '' ||
+                          addressTextEditingController.text == '' ||
+                          branchCodeTextEditingController.text == '') {
+                        Alert.instance
+                            .alert(context, 'Something remains unfilled'.tr());
+                        return;
+                      }
+                      if (!adminEmailTextEditingController.text
+                          .endsWith('@gmail.com')) {
+                        Alert.instance
+                            .alert(context, 'Only Gmail account allowed'.tr());
+                        return;
+                      }
+                      DatabaseReference ref = FirebaseDatabase.instance
+                          .reference()
+                          .child(
+                              'institute/${FireBaseAuth.instance.instituteid}/branches/${branchCodeTextEditingController.text}');
+                      if (widget.branchCode != null) {
+                        widget.institute.name = nameTextEditingController.text;
+                        widget.institute.address =
+                            addressTextEditingController.text;
+                        widget.institute.upiId = upiTextEditingController.text;
+                        ref.set(widget.institute.toJson());
+                        Navigator.of(context).pop();
+                        return;
+                      }
 
-                        ref.child('name').once().then((value) {
-                          if (value.value != null) {
-                            setState(() {
-                              errorBox = Container(
-                                height: 40,
-                                color: Colors.orange,
-                                child: Center(
-                                  child: Text(
-                                    'Branch Already Exist'.tr(),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
+                      ref.child('name').once().then((value) {
+                        if (value.value != null) {
+                          setState(() {
+                            errorBox = Container(
+                              height: 40,
+                              color: Colors.orange,
+                              child: Center(
+                                child: Text(
+                                  'Branch Already Exist'.tr(),
+                                  style: TextStyle(
+                                    color: Colors.white,
                                   ),
                                 ),
-                              );
-                            });
+                              ),
+                            );
+                          });
 
-                            Timer(Duration(seconds: 2), () {
-                              setState(() {
-                                errorBox = Container();
-                                branchCodeTextEditingController.text = '';
-                              });
+                          Timer(Duration(seconds: 2), () {
+                            setState(() {
+                              errorBox = Container();
+                              branchCodeTextEditingController.text = '';
                             });
-                          } else {
-                            ref.set(Institute(
-                                name: nameTextEditingController.text,
-                                address: addressTextEditingController.text,
-                                admin: [
-                                  adminEmailTextEditingController.text
-                                ]).toJson());
-                            Firestore.instance
-                                .collection('institute')
-                                .document('users')
-                                .
-                                updateData({
-                              adminEmailTextEditingController.text.split('@')[0]:
-                                  "subAdmin_${FireBaseAuth.instance.instituteid}_${branchCodeTextEditingController.text}"
-                            });
-                            Navigator.of(context).pop();
-                          }
-                        });
-                      }
+                          });
+                        } else {
+                          ref.set(Branch(
+                            name: nameTextEditingController.text,
+                            address: addressTextEditingController.text,
+                            admin: {
+                              "${adminEmailTextEditingController.text.hashCode}":
+                                  Admin(
+                                email: adminEmailTextEditingController.text,
+                              )
+                            },
+                            upiId: upiTextEditingController.text,
+                          ).toJson());
+                          Firestore.instance
+                              .collection('institute')
+                              .document('users')
+                              .updateData({
+                            adminEmailTextEditingController.text.split('@')[0]:
+                                "subAdmin_${FireBaseAuth.instance.instituteid}_${branchCodeTextEditingController.text}"
+                          });
+                          Navigator.of(context).pop();
+                        }
+                      });
                     },
                     color: Colors.white,
                     child: Text(

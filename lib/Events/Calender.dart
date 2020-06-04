@@ -62,7 +62,7 @@ class _CalenderState extends State<Calender> {
       if (event.snapshot.key != null) {
         String str = event.snapshot.key.substring(0, 10) + 'T12:00:00.000Z';
         DateTime _key = DateTime.parse(str);
-        if (event.snapshot.value['teacheruid'] == "uid") {
+        if (event.snapshot.value['teacheruid'] == "${FireBaseAuth.instance.user.uid}") {
           if (_events[_key] == null) {
             _events[_key] = [
               EventsModal(
@@ -148,10 +148,14 @@ class _CalenderState extends State<Calender> {
     return Scaffold(
       key: _scaffoldkey,
       appBar: AppBar(
+        elevation: 0.0,
         title: Text('Select Date'),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
         onPressed: () {
           if (passVariable != "") {
             Navigator.push(
@@ -170,109 +174,137 @@ class _CalenderState extends State<Calender> {
             _showsnackbar(context, "Select Date");
         },
       ),
-      body: SingleChildScrollView(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          TableCalendar(
-              events: _events,
-              calendarStyle: CalendarStyle(
-                  todayColor: Colors.orange,
-                  todayStyle: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
-                      color: Colors.white)),
-              headerStyle: HeaderStyle(
-                  centerHeaderTitle: true,
-                  formatButtonDecoration: BoxDecoration(
-                    color: Colors.orange,
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  formatButtonTextStyle: TextStyle(color: Colors.white),
-                  formatButtonShowsNext: false),
-              onDaySelected: (date, events) {
-                String _month = date.month.toString();
-                String _day = date.day.toString();
-                if (_month.length == 1) {
-                  _month = "0" + _month;
-                }
-                if (_day.length == 1) {
-                  _day = "0" + _day;
-                }
-                eventkey = randomNumeric(6);
-                passVariable =
-                    date.year.toString() + "-" + _month + "-" + _day + eventkey;
-                previouspassVariable = passVariable;
-                print(passVariable);
-                print(_calendarController.selectedDay);
-                if (events != null) {
-                  setState(() {
-                    _selectedEvents = events;
-                  });
-                }
-              },
-              builders:
-                  CalendarBuilders(selectedDayBuilder: (context, date, events) {
-                return Container(
-                  margin: EdgeInsets.all(4.0),
-                  alignment: Alignment.center,
-                  decoration:
-                      BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
-                  child: Text(
-                    date.day.toString(),
-                    style: TextStyle(color: Colors.white),
-                  ),
-                );
-              }),
-              calendarController: _calendarController),
-          ..._selectedEvents.map((e) {
-            int isStarted = e.isStarted;
-            return Card(
-              color: isStarted == 1 ? Colors.orange : Colors.white30,
-              elevation: 2.0,
-              child: ListTile(
-                onTap: () {
-                  String pass = _pref.getString(e.description);
-                  print(pass);
-                  Navigator.push(
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.grey.shade200,
+                  offset: Offset(2, 4),
+                  blurRadius: 5,
+                  spreadRadius: 2)
+            ],
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.orange, Colors.deepOrange])),
+        child: SingleChildScrollView(
+            child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Card(
+              color: Colors.white,
+              child: TableCalendar(
+                  events: _events,
+                  calendarStyle: CalendarStyle(
+                      todayColor: Colors.orange,
+                      todayStyle: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0,
+                          color: Colors.white)),
+                  headerStyle: HeaderStyle(
+                      centerHeaderTitle: true,
+                      formatButtonDecoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      formatButtonTextStyle: TextStyle(color: Colors.white),
+                      formatButtonShowsNext: false),
+                  onDaySelected: (date, events) {
+                    String _month = date.month.toString();
+                    String _day = date.day.toString();
+                    if (_month.length == 1) {
+                      _month = "0" + _month;
+                    }
+                    if (_day.length == 1) {
+                      _day = "0" + _day;
+                    }
+                    eventkey = randomNumeric(6);
+                    passVariable = date.year.toString() +
+                        "-" +
+                        _month +
+                        "-" +
+                        _day +
+                        eventkey;
+                    previouspassVariable = passVariable;
+                    print(passVariable);
+                    print(_calendarController.selectedDay);
+                    if (events != null) {
+                      setState(() {
+                        _selectedEvents = events;
+                      });
+                    }
+                  },
+                  builders: CalendarBuilders(
+                      selectedDayBuilder: (context, date, events) {
+                    return Container(
+                      margin: EdgeInsets.all(4.0),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.deepOrange, shape: BoxShape.circle),
+                      child: Text(
+                        date.day.toString(),
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
+                  }),
+                  calendarController: _calendarController),
+            ),
+            ..._selectedEvents.map((e) {
+              int isStarted = e.isStarted;
+              return Card(
+                color: isStarted == 1 ? Colors.blue : Colors.white,
+                elevation: 2.0,
+                child: ListTile(
+                  onTap: () {
+                    String pass2 = _pref.getString(e.description);
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => SessionDetail(
-                                courseId: widget.courseId,
-                                subjectName: widget.subjectName,
-                                passVaraible: pass,
-                                eventkey: pass.substring(10, 16),
-                                isedit: true,
-                              )));
-                },
-                title: Text(
-                  e.title + " at " + e.time,
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                        builder: (context) => VideoConferencing(
+                          passVariable: pass2,
+                          privilegelevel: FireBaseAuth.instance.previlagelevel,
+                        ),
+                      ),
+                    );
+                  },
+                  onLongPress: () {
+                    String pass = _pref.getString(e.description);
+                    print(pass);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SessionDetail(
+                          courseId: widget.courseId,
+                          subjectName: widget.subjectName,
+                          passVaraible: pass,
+                          eventkey: pass.substring(10, 16),
+                          isedit: true,
+                        ),
+                      ),
+                    );
+                  },
+                  title: Text(
+                    e.title + " at " + e.time,
+                    style:
+                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    e.description,
+                    style:
+                        TextStyle(fontSize: 13.0, fontWeight: FontWeight.w300),
+                  ),
+                  leading: Icon(
+                    Icons.video_call,
+                    color: Colors.orange,
+                  ),
                 ),
-                subtitle: Text(
-                  e.description,
-                  style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w300),
-                ),
-                leading: IconButton(
-                    onPressed: () {
-                      String pass2 = _pref.getString(e.description);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => VideoConferencing(
-                                    passVariable: pass2,
-                                    privilegelevel:
-                                        FireBaseAuth.instance.previlagelevel,
-                                  )));
-                    },
-                    icon: const Icon(
-                      Icons.video_call,
-                    )),
-              ),
-            );
-          })
-        ],
-      )),
+              );
+            })
+          ],
+        )),
+      ),
     );
   }
 }

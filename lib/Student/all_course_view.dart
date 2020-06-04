@@ -57,22 +57,24 @@ class _AllCoursePageState extends State<AllCoursePage> {
               Expanded(
                 flex: 12,
                 child: StreamBuilder<Event>(
-                  stream: widget.ref.onValue,
+                  stream: widget.ref.child('/coursesList').onValue,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      Institute institute =
-                          Institute.fromJson(snapshot.data.snapshot.value);
+                      Map<String,String> courses = Map<String,String>();
+                      snapshot.data.snapshot.value?.forEach((k,v){
+                        courses[k] = v;
+                      });
                       return ListView.builder(
-                        itemCount: institute?.courses?.length,
+                        itemCount: courses.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Card(
                             child: ListTile(
                               title: Text(
-                                '${institute.courses[index].name}',
+                                '${courses[courses.keys.toList()[index]]}',
                                 style: TextStyle(color: Colors.blue),
                               ),
                               subtitle: Text(
-                                'Price: ${institute.courses[index].price}',
+                                'Price: Details Inside',
                                 style: TextStyle(
                                   color: Colors.grey,
                                 ),
@@ -84,8 +86,7 @@ class _AllCoursePageState extends State<AllCoursePage> {
                               onTap: () => Navigator.of(context).push(
                                 CupertinoPageRoute(
                                   builder: (context) => CourseRegistrationPage(
-                                    course: institute.courses[index],
-                                    ref: widget.ref,
+                                    ref: widget.ref.child('courses/${courses.keys.toList()[index]}'),
                                   ),
                                 ),
                               ),

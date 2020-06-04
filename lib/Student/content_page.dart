@@ -1,3 +1,4 @@
+import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/YT_player/pdf_player.dart';
 import 'package:coach_app/YT_player/quiz_player.dart';
@@ -31,41 +32,45 @@ class _ContentPageState extends State<ContentPage> {
             return NoInternet();
           }
           return Scaffold(
+            drawer: getDrawer(context),
+            appBar: AppBar(
+              elevation: 0.0,
+              title: Text(
+                widget.title,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.portLligatSans(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+            ),
             body: Container(
               padding: EdgeInsets.symmetric(
                   vertical: MediaQuery.of(context).size.height / 20),
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                        color: Colors.grey.shade200,
-                        offset: Offset(2, 4),
-                        blurRadius: 5,
-                        spreadRadius: 2)
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                      color: Colors.grey.shade200,
+                      offset: Offset(2, 4),
+                      blurRadius: 5,
+                      spreadRadius: 2)
+                ],
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.orange,
+                    Colors.deepOrange,
                   ],
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.orange, Colors.deepOrange])),
+                ),
+              ),
               child: Column(
                 children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      child: Text(
-                        widget.title,
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.portLligatSans(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
                   Expanded(
                     flex: 12,
                     child: StreamBuilder<Event>(
@@ -105,7 +110,8 @@ class _ContentPageState extends State<ContentPage> {
                                       Navigator.of(context).push(
                                         CupertinoPageRoute(
                                           builder: (context) => YTPlayer(
-                                              link: chapter.content[index].ylink),
+                                              link:
+                                                  chapter.content[index].ylink),
                                         ),
                                       );
                                     } else if (chapter.content[index].kind ==

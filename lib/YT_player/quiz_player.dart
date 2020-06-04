@@ -112,14 +112,17 @@ class _QuizState extends State<Quiz> {
                       autovalidate: true,
                       child: ListView.builder(
                         shrinkWrap: true,
-                        controller: ScrollController(initialScrollOffset: 0,keepScrollOffset: true),
+                        controller: ScrollController(
+                            initialScrollOffset: 0, keepScrollOffset: true),
                         itemCount: quizContent.quizModel.questions.length,
                         itemBuilder: (BuildContext context, int index) => Card(
                           child: Padding(
-                            padding: EdgeInsets.only(left:10.0,top: 10.0),
+                            padding: EdgeInsets.only(left: 10.0, top: 10.0),
                             child: getRequiredFormWidget(
                               quizContent.quizModel.questions[index].type,
-                              '${index+1}. '+quizContent.quizModel.questions[index].question,
+                              '${index + 1}. ' +
+                                  quizContent
+                                      .quizModel.questions[index].question,
                               choices: quizContent
                                   .quizModel.questions[index].choices,
                             ),

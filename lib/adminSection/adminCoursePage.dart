@@ -124,7 +124,6 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: Container(
             height: double.infinity,

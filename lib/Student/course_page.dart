@@ -1,13 +1,15 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/uploadDialog.dart';
+import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Student/subject_page.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class CoursePage extends StatefulWidget {
-  final Student student;
-  CoursePage({@required this.student});
   @override
   _CoursePageState createState() => _CoursePageState();
 }
@@ -15,8 +17,22 @@ class CoursePage extends StatefulWidget {
 class _CoursePageState extends State<CoursePage> {
   @override
   Widget build(BuildContext context) {
-    print(widget.student.toJson());
     return Scaffold(
+      drawer: getDrawer(context),
+      appBar: AppBar(
+        title: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            text: 'Your Courses'.tr(),
+            style: GoogleFonts.portLligatSans(
+              fontSize: 30,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        elevation: 0.0,
+      ),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.symmetric(
@@ -36,33 +52,22 @@ class _CoursePageState extends State<CoursePage> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [Colors.orange, Colors.deepOrange])),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: Container(
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      text: 'Your Courses'.tr(),
-                      style: GoogleFonts.portLligatSans(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 12,
-                child: ListView.builder(
-                  itemCount: widget.student.course.length,
+          child: StreamBuilder<Event>(
+            stream: FirebaseDatabase.instance
+                .reference()
+                .child(
+                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance..user.uid}')
+                .onValue,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                Student student = Student.fromJson(snapshot.data.snapshot.value);
+                return ListView.builder(
+                  itemCount: student.course.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Card(
                       child: ListTile(
                         title: Text(
-                          '${widget.student.course[index].courseName}',
+                          '${student.course[index].courseName}',
                           style: TextStyle(color: Colors.blue),
                         ),
                         trailing: Icon(
@@ -72,16 +77,19 @@ class _CoursePageState extends State<CoursePage> {
                         onTap: () => Navigator.of(context).push(
                           CupertinoPageRoute(
                             builder: (context) => SubjectPage(
-                              courseID: widget.student.course[index].courseID.toString(),
+                              courseID: student.course[index].courseID
+                                  .toString(),
                             ),
                           ),
                         ),
                       ),
                     );
                   },
-                ),
-              ),
-            ],
+                );
+              } else {
+                return UploadDialog(warning: 'Fetching');
+              }
+            },
           ),
         ),
       ),

@@ -1,14 +1,16 @@
-class Institute {
+class Branch {
   String name;
   String address;
-  List<String> admin;
+  String upiId;
+  Map<String, Admin> admin;
   List<Courses> courses;
 
-  Institute({this.name, this.courses, this.address, this.admin});
+  Branch({this.name, this.courses, this.address, this.admin, this.upiId});
 
-  Institute.fromJson(Map<dynamic, dynamic> json) {
+  Branch.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
     address = json['address'];
+    upiId = json['upiId'];
     if (json['courses'] != null) {
       courses = new List<Courses>();
       json['courses'].forEach((k, v) {
@@ -16,9 +18,9 @@ class Institute {
       });
     }
     if (json['admin'] != null) {
-      admin = List<String>();
-      json['admin'].forEach((v) {
-        admin.add(v);
+      admin = Map<String, Admin>();
+      json['admin'].forEach((k, v) {
+        admin[k] = Admin.fromJson(v);
       });
     }
   }
@@ -27,12 +29,34 @@ class Institute {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
     data['address'] = this.address;
+    data['upiId'] = this.upiId;
     if (this.courses != null) {
       data['courses'] = this.courses.map((v) => v.toJson()).toList();
     }
     if (this.admin != null) {
-      data['admin'] = this.admin;
+      data['admin'] = this.admin.map((key, value) => MapEntry(key,value.toJson()));
     }
+    return data;
+  }
+}
+
+class Admin {
+  String name;
+  String email;
+  String tokenid;
+  Admin({this.name, this.email, this.tokenid});
+
+  Admin.fromJson(Map<dynamic, dynamic> json) {
+    name = json['name'];
+    email = json['email'];
+    tokenid = json['tokenid'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    data['email'] = this.email;
+    data['tokenid'] = this.tokenid;
     return data;
   }
 }
@@ -364,10 +388,11 @@ class Course {
 class QuizModel {
   String title;
   String description;
+  DateTime startTime;
   Duration testTime;
   List<QuestionModel> questions;
 
-  QuizModel({this.title, this.description, this.questions, this.testTime});
+  QuizModel({this.title, this.description, this.questions, this.testTime,this.startTime});
 
   Duration parseDuration(String s) {
     int hours = 0;
@@ -388,6 +413,7 @@ class QuizModel {
     title = json['title'];
     description = json['description'];
     testTime = parseDuration(json['testTime']);
+    startTime = DateTime.parse(json['startTime']);
     questions = List<QuestionModel>();
     if (json['questions'] != null) {
       json['questions'].forEach((v) {
@@ -400,6 +426,7 @@ class QuizModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['title'] = this.title;
     data['description'] = this.description;
+    data['startTime'] = this.startTime.toString();
     data['testTime'] = this.testTime?.toString();
     if (this.questions != null) {
       data['questions'] = this.questions.map((v) => v.toJson()).toList();

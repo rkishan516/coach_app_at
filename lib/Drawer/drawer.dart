@@ -1,6 +1,8 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Drawer/my_institute.dart';
+import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Student/course_page.dart';
 import 'package:coach_app/adminSection/branchRegister.dart';
 import 'package:coach_app/adminSection/studentRequest.dart';
 import 'package:coach_app/adminSection/teacherRegister.dart';
@@ -39,6 +41,23 @@ getDrawer(BuildContext context) {
                     )));
           },
         ),
+        if (FireBaseAuth.instance.previlagelevel == 1)
+          ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              ListTile(
+                title: Text('My Courses'),
+                leading: Icon(Icons.book),
+                onTap: () => Navigator.of(context).pushAndRemoveUntil(
+                    CupertinoPageRoute(
+                      builder: (context) => CoursePage(),
+                    ),
+                    (route) => false),
+              )
+            ],
+          )
+        else
+          Container(),
         if (FireBaseAuth.instance.previlagelevel == 4)
           ListView(
             shrinkWrap: true,
