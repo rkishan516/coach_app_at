@@ -1,4 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/Alert.dart';
+import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/Studentprofileactivity.dart';
@@ -91,7 +93,9 @@ class _StudentListState extends State<StudentList> {
                                 ),
                               );
                             },
-                            onLongPress: () {},
+                            onLongPress: () => editStudent(
+                                students[students.keys.toList()[index]],
+                                students.keys.toList()[index]),
                           ),
                         );
                       },
@@ -119,6 +123,227 @@ class _StudentListState extends State<StudentList> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  editStudent(Student student, String keyS) {
+    TextEditingController nameTextEditingController = TextEditingController()
+      ..text = student?.name ?? '';
+    TextEditingController addressTextEditingController = TextEditingController()
+      ..text = student?.address ?? '';
+    TextEditingController phoneTextEditingController = TextEditingController()
+      ..text = student?.phoneNo ?? '';
+    Courses course;
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        elevation: 0.0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(
+            16.0,
+          ),
+          margin: EdgeInsets.only(top: 66.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(16.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10.0,
+                offset: const Offset(0.0, 10.0),
+              ),
+            ],
+          ),
+          child: ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Name'.tr(),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    TextField(
+                      controller: nameTextEditingController,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        fillColor: Color(0xfff3f3f4),
+                        filled: true,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Address'.tr(),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    TextField(
+                      controller: addressTextEditingController,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        fillColor: Color(0xfff3f3f4),
+                        filled: true,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Phone No'.tr(),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    TextField(
+                      controller: phoneTextEditingController,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        fillColor: Color(0xfff3f3f4),
+                        filled: true,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              StreamBuilder<Event>(
+                stream: FirebaseDatabase.instance
+                    .reference()
+                    .child(
+                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses')
+                    .onValue,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    List<Courses> courses = List<Courses>();
+                    snapshot.data.snapshot.value?.forEach((k, v) {
+                      courses.add(Courses.fromJson(v));
+                    });
+                    return DropdownButton(
+                        value: course,
+                        hint: Text('Select Course'.tr()),
+                        items: courses
+                            .map(
+                              (k) => DropdownMenuItem(
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width / 5,
+                                  child: Text(
+                                    k.name,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                value: k,
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            course = value;
+                          });
+                        });
+                  } else {
+                    return Container();
+                  }
+                },
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    FlatButton(
+                      onPressed: () async {
+                        String res = await showDialog(
+                            context: context,
+                            builder: (context) => AreYouSure());
+                        if (res != 'Yes') {
+                          return;
+                        }
+                        FirebaseDatabase.instance
+                            .reference()
+                            .child(
+                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$keyS')
+                            .remove();
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'Remove'.tr(),
+                      ),
+                    ),
+                    FlatButton(
+                      onPressed: () {
+                        if (nameTextEditingController.text == '' ||
+                            addressTextEditingController.text == '' ||
+                            phoneTextEditingController.text == '') {
+                          Alert.instance
+                              .alert(context, 'Must Fill every detail');
+                          return;
+                        }
+                        bool flag = false;
+                        if (course != null) {
+                          student.course?.forEach((element) {
+                            if (course.id == element.courseID) {
+                              flag = true;
+                            }
+                          });
+                          if (flag == false) {
+                            Course(
+                                academicYear: DateTime.now().year.toString() +
+                                    '-' +
+                                    (DateTime.now().year + 1).toString(),
+                                courseID: course.id,
+                                courseName: course.name,
+                                paymentToken:
+                                    'Registered By ${FireBaseAuth.instance.user.displayName}');
+                          }
+                        }
+                        student.name = nameTextEditingController.text;
+                        student.address = addressTextEditingController.text;
+                        student.phoneNo = phoneTextEditingController.text;
+                        FirebaseDatabase.instance
+                            .reference()
+                            .child(
+                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${keyS}')
+                            .set(student.toJson());
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Update Student'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

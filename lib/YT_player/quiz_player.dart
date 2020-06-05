@@ -85,7 +85,7 @@ class _QuizState extends State<Quiz> {
                                   quizContent.quizModel.testTime.inHours
                                           .toString() +
                                       ' hr ' +
-                                      quizContent.quizModel.testTime.inMinutes
+                                      (quizContent.quizModel.testTime.inMinutes % 60)
                                           .toString() +
                                       ' min',
                                 ),

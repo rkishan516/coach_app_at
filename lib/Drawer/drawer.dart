@@ -1,7 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Drawer/my_institute.dart';
-import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Profile/next.dart';
 import 'package:coach_app/Student/course_page.dart';
 import 'package:coach_app/adminSection/branchRegister.dart';
 import 'package:coach_app/adminSection/studentRequest.dart';
@@ -35,12 +35,32 @@ getDrawer(BuildContext context) {
                 .reference()
                 .child('institute/${FireBaseAuth.instance.instituteid}/logo')
                 .once();
-            Navigator.of(context).push(CupertinoPageRoute(
+            Navigator.of(context).push(
+              CupertinoPageRoute(
                 builder: (context) => MyInstitute(
-                      dataSnapshot: dataSnapshot.value,
-                    )));
+                  dataSnapshot: dataSnapshot.value,
+                ),
+              ),
+            );
           },
         ),
+        if (FireBaseAuth.instance.previlagelevel == 2)
+          ListTile(
+            title: Text('My Profile'.tr()),
+            leading: Icon(Icons.person),
+            onTap: () async {
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) => TeacherProfilePage(
+                    reference: FirebaseDatabase.instance.reference().child(
+                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${FireBaseAuth.instance.user.uid}'),
+                  ),
+                ),
+              );
+            },
+          )
+        else
+          Container(),
         if (FireBaseAuth.instance.previlagelevel == 1)
           ListView(
             shrinkWrap: true,

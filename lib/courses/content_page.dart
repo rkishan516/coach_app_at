@@ -1,3 +1,4 @@
+import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/YT_player/pdf_player.dart';
@@ -408,7 +409,13 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                       (widget.title == '')
                           ? Container()
                           : FlatButton(
-                              onPressed: () {
+                              onPressed: () async {
+                                String res = await showDialog(
+                                    context: context,
+                                    builder: (context) => AreYouSure());
+                                if (res != 'Yes') {
+                                  return;
+                                }
                                 widget.reference
                                     .child('content/${widget.length}')
                                     .remove();
@@ -443,7 +450,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                             );
                             if (cal == null) {
                               content.quizModel = widget.quizModel;
-                            }else{
+                            } else {
                               content.quizModel = cal;
                             }
                           }

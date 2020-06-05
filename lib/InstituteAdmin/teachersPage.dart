@@ -1,6 +1,8 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Profile/next.dart';
+import 'package:coach_app/adminSection/teacherRegister.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
@@ -79,8 +81,23 @@ class _TeachersListState extends State<TeachersList> {
                               Icons.chevron_right,
                               color: Colors.orange,
                             ),
-                            onTap: () {},
-                            onLongPress: () {},
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => TeacherProfilePage(
+                                    reference: FirebaseDatabase.instance
+                                        .reference()
+                                        .child(
+                                            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${teachers.keys.toList()[index]}'),
+                                  ),
+                                ),
+                              );
+                            },
+                            onLongPress: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => TeacherRegister(isEdit: true,keyT: teachers.keys.toList()[index],teacher: teachers[teachers.keys.toList()[index]],));
+                            },
                           ),
                         );
                       },
@@ -109,6 +126,23 @@ class _TeachersListState extends State<TeachersList> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50.0),
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.orange, Colors.deepOrange])),
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+            )),
+        onPressed: () => showDialog(
+            context: context, builder: (context) => TeacherRegister()),
       ),
     );
   }

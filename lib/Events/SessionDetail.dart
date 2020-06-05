@@ -116,7 +116,7 @@ class _SessionDetailState extends State<SessionDetail> {
       appBar: AppBar(
         elevation: 0.0,
         title: Text(
-          'Enter Event Detail',
+          'Enter Session Detail',
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -175,7 +175,7 @@ class _SessionDetailState extends State<SessionDetail> {
                         Icons.alarm,
                         color: Colors.orange,
                       ),
-                      title: Text(testtime),
+                      title: Text('Live Session Start Time'),
                       onTap: () {
                         _selectTime(context);
                       },
@@ -218,7 +218,7 @@ class _SessionDetailState extends State<SessionDetail> {
                             padding: EdgeInsets.symmetric(vertical: 15),
                             alignment: Alignment.center,
                             child: Text(
-                              "Delete Event",
+                              "Delete Session",
                               style: TextStyle(color: Colors.orange),
                             ),
                           ),

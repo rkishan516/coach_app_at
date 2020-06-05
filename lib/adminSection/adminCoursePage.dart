@@ -1,5 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
+import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/adminSection/adminSubjectPage.dart';
@@ -276,14 +277,29 @@ addCourse(BuildContext context,
                     SizedBox(
                       height: 10,
                     ),
-                    TextField(
-                      controller: priceTextEditingController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          flex: 9,
+                          child: TextField(
+                            controller: priceTextEditingController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              fillColor: Color(0xfff3f3f4),
+                              filled: true,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                            child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            '₹',
+                            style: TextStyle(fontSize: 25),
+                          ),
+                        )),
+                      ],
                     )
                   ],
                 ),
@@ -321,7 +337,13 @@ addCourse(BuildContext context,
                     (id == '')
                         ? Container()
                         : FlatButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              String res = await showDialog(
+                                  context: context,
+                                  builder: (context) => AreYouSure());
+                              if (res != 'Yes') {
+                                return;
+                              }
                               FirebaseDatabase.instance
                                   .reference()
                                   .child(
@@ -413,3 +435,8 @@ addCourse(BuildContext context,
     },
   );
 }
+
+//TODO All delete are you sure
+//TODO Ghocha
+//TODO Floating Action Button Like apple
+//TODO Not payment app, like paytm,phone pe,bhim

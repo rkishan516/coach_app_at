@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
+import 'package:coach_app/Dialogs/SucessDialog.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/GlobalFunction/VyCode.dart';
 import 'package:coach_app/Models/model.dart';
@@ -175,9 +176,34 @@ class _InstituteRegisterState extends State<InstituteRegister> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  'Main Branch UPI'.tr(),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                Row(
+                  children: <Widget>[
+                    Text(
+                      'Main Branch'.tr() + 'UPI ID'.tr(),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    InkWell(
+                      child: CircleAvatar(
+                        radius: 10,
+                        child: Text('?'),
+                      ),
+                      onTap: () => showDialog(
+                        context: context,
+                        builder: (context) => Dialog(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'This UPI ID is used for payment from student',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(
                   height: 10,
@@ -293,6 +319,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                     reference.set({
                       "name": nameTextEditingController.text,
                       "Phone No": phoneNoTextEditingController.text,
+                      "mainBranchCode": branch1CodeTextEditingController.text,
                       "admin": {
                         value.uid:
                             Admin(email: value.email, name: value.displayName)
@@ -342,7 +369,12 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                         .child(VyCode.instance
                             .getNextVyCode(snap.value.keys.toList()[0]))
                         .set(reference.key);
-
+                    showDialog(
+                        context: context,
+                        builder: (context) => SuccessDialog(
+                            success:
+                                'Your Institute has been successfully Registered'));
+                    await Future.delayed(Duration(seconds: 2));
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (context) => WelcomePage()),
                         (route) => false);

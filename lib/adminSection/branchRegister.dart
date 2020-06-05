@@ -163,9 +163,11 @@ class _BranchRegisterState extends State<BranchRegister> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'UPI'.tr(),
+                        'Branch UPI ID',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
                       ),
                       SizedBox(
                         height: 10,
@@ -227,7 +229,7 @@ class _BranchRegisterState extends State<BranchRegister> {
                             .alert(context, 'Only Gmail account allowed'.tr());
                         return;
                       }
-                      if(!upiTextEditingController.text.contains('@')){
+                      if (!upiTextEditingController.text.contains('@')) {
                         Alert.instance.alert(context, 'Wrong UPI ID');
                       }
                       DatabaseReference ref = FirebaseDatabase.instance

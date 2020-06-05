@@ -215,8 +215,11 @@ class Teacher {
   List<TCourses> courses;
   String email;
   String name;
+  int experience;
+  String qualification;
+  String photoURL;
 
-  Teacher({this.courses, this.email, this.name});
+  Teacher({this.courses, this.email, this.name,this.experience,this.qualification});
 
   Teacher.fromJson(Map<dynamic, dynamic> json) {
     if (json['courses'] != null) {
@@ -225,8 +228,11 @@ class Teacher {
         courses.add(new TCourses.fromJson(v));
       });
     }
+    experience = json['experience'];
+    qualification = json['qualification'];
     email = json['email'];
     name = json['name'];
+    photoURL = json['photoURL'];
   }
 
   Map<String, dynamic> toJson() {
@@ -236,6 +242,9 @@ class Teacher {
     }
     data['email'] = this.email;
     data['name'] = this.name;
+    data['experience'] = this.experience;
+    data['qualification'] = this.qualification;
+    data['photoURL'] = this.photoURL;
     return data;
   }
 }

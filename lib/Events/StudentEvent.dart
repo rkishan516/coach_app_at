@@ -120,7 +120,7 @@ class _StudentEventState extends State<StudentEvent> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('All Events'),
+          title: Text('All Sessions'),
           elevation: 0.0,
         ),
         body: Container(

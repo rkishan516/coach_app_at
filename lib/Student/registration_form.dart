@@ -1,4 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/selectInstitute.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Student/WaitScreen.dart';
@@ -7,6 +8,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegistrationPage extends StatefulWidget {
   @override
@@ -20,10 +22,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
       instituteCodeTextEditingController;
   String status = 'New Student';
   DateTime dob;
+  SharedPreferences preferences;
   GlobalKey<ScaffoldState> _scKey;
 
   @override
   void initState() {
+    SharedPreferences.getInstance().then((value){
+      preferences = value;
+    });
     _scKey = GlobalKey<ScaffoldState>();
     nameTextEditingController = TextEditingController();
     addressTextEditingController = TextEditingController();
@@ -254,10 +260,17 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         .child(
                             '/instituteList/${instituteCodeTextEditingController.text.substring(0, 4)}')
                         .once();
+                    if(dataSnapshot.value == null){
+                      Alert.instance.alert(context, 'Wrong Institute Code');
+                      return;
+                    }
+                    preferences.setString('insCode', dataSnapshot.value);
+                    preferences.setString('branchCode', branchCode);
                     DatabaseReference reference = FirebaseDatabase.instance
                         .reference()
                         .child(
                             "institute/${dataSnapshot.value}/branches/$branchCode/");
+                    
                     if (status == 'Existing Student') {
                       String course = await showDialog(
                         context: context,
@@ -271,10 +284,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         reference
                             .child('students/${FireBaseAuth.instance.user.uid}')
                             .set(student.toJson());
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) {
-                          return WaitScreen();
-                        }));
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                          builder: (context) {
+                            return WaitScreen();
+                          },
+                        ), (route) => false);
                       }
                     } else {
                       reference

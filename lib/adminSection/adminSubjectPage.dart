@@ -1,8 +1,10 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
+import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Dialogs/multiselectDialogs.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/adminSection/teacherRegister.dart';
 import 'package:coach_app/courses/chapter_page.dart';
 import 'package:coach_app/courses/subject_page.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -234,10 +236,24 @@ addSubject(BuildContext context, String courseId, int length,
                           if (snapshot.hasData) {
                             print(snapshot.data.snapshot.value);
                             if (snapshot.data.snapshot.value == null) {
-                              return Container(
-                                child: Text(
-                                  'Your Institute does not have any Teacher',
-                                ),
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Center(
+                                    child: Text(
+                                      'Your Institute does not have any Teacher',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  FlatButton(
+                                      color: Color(0xfff3f3f4),
+                                      onPressed: () => showCupertinoDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                TeacherRegister(),
+                                          ),
+                                      child: Text('Register Teacher'))
+                                ],
                               );
                             } else {
                               teachers = List<Map<String, dynamic>>();
@@ -272,14 +288,6 @@ addSubject(BuildContext context, String courseId, int length,
                                 },
                               );
                             }
-                            // TODO My Institute page Modification
-                            // TODO paid user alert on notification
-                            // TODO All course page of student security
-
-                            // TODO teachers DOB,Teaching Experience Years, Qualification
-                            // TODO Teacher and Student edit and press profile and performance without teacher performance
-                            // TODO Teacher Quiz Start Time
-
                           } else {
                             return Container();
                           }
@@ -295,7 +303,13 @@ addSubject(BuildContext context, String courseId, int length,
                     (name == '')
                         ? Container()
                         : FlatButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              String res = await showDialog(
+                                  context: context,
+                                  builder: (context) => AreYouSure());
+                              if (res != 'Yes') {
+                                return;
+                              }
                               FirebaseDatabase.instance
                                   .reference()
                                   .child(

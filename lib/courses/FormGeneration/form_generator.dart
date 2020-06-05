@@ -26,6 +26,7 @@ class _FormGeneratorState extends State<FormGenerator> {
   bool isError = false;
   List<QuestionModel> formFieldsModals;
   Duration testTime;
+  DateTime startTime;
 
   @override
   void initState() {
@@ -33,6 +34,7 @@ class _FormGeneratorState extends State<FormGenerator> {
       choices.add(TextEditingController());
     }
     testTime = widget.quizModel?.testTime ?? Duration();
+    startTime = widget.quizModel?.startTime ?? DateTime.now();
     formFieldsModals = widget.quizModel?.questions ?? List<QuestionModel>();
     super.initState();
   }
@@ -79,6 +81,30 @@ class _FormGeneratorState extends State<FormGenerator> {
                     ),
                   ),
                 ),
+              ),
+            ),
+            Card(
+              child: Container(
+                height: 40,
+                child: Center(child: Text('Start Date and Time')),
+              ),
+            ),
+            Card(
+              child: Container(
+                height: 100,
+                child: CupertinoDatePicker(
+                  onDateTimeChanged: (dateTime) {
+                    startTime = dateTime;
+                  },
+                  initialDateTime: DateTime.now(),
+                  mode: CupertinoDatePickerMode.dateAndTime,
+                ),
+              ),
+            ),
+            Card(
+              child: Container(
+                height: 40,
+                child: Center(child: Text('Quiz Duration')),
               ),
             ),
             Card(
@@ -253,6 +279,7 @@ class _FormGeneratorState extends State<FormGenerator> {
                         QuizModel form = QuizModel(
                           questions: formFieldsModals,
                           testTime: testTime,
+                          startTime: startTime,
                         );
                         Navigator.of(context).pop(form);
                       },

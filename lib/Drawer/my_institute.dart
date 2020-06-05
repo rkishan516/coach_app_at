@@ -1,4 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -64,10 +65,10 @@ class _MyInstituteState extends State<MyInstitute> {
             ),
           ),
           Expanded(
-            
             child: Text(
-              widget.dataSnapshot.split('/')[1][0].toUpperCase() + widget.dataSnapshot.split('/')[1].toString().substring(1),
-              style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),
+              widget.dataSnapshot.split('/')[1][0].toUpperCase() +
+                  widget.dataSnapshot.split('/')[1].toString().substring(1),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
           ),
           Expanded(
@@ -79,7 +80,8 @@ class _MyInstituteState extends State<MyInstitute> {
                   .onValue,
               builder: (BuildContext context, snapshot) {
                 if (snapshot.hasData) {
-                  return Text("Contact".tr()+": " +snapshot.data.snapshot.value);
+                  return Text(
+                      "Contact".tr() + ": " + snapshot.data.snapshot.value);
                 } else {
                   return PlaceholderLines(
                     count: 1,
@@ -90,8 +92,71 @@ class _MyInstituteState extends State<MyInstitute> {
             ),
           ),
           Expanded(
-            child: Container(),
-            flex: 4,
+            flex: 5,
+            child: StreamBuilder<Event>(
+              stream: FirebaseDatabase.instance
+                  .reference()
+                  .child('/instituteList/')
+                  .orderByValue()
+                  .equalTo(FireBaseAuth.instance.instituteid)
+                  .onValue,
+              builder: (BuildContext context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data.snapshot.value == null) {
+                    return Text('Unable to find Institute Code');
+                  }
+                  if (FireBaseAuth.instance.previlagelevel == 4) {
+                    return StreamBuilder<Event>(
+                      stream: FirebaseDatabase.instance
+                          .reference()
+                          .child(
+                              '/institute/${FireBaseAuth.instance.instituteid}/branches')
+                          .onValue,
+                      builder: (BuildContext context, snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data.snapshot.value == null) {
+                            return Text('Unable to find Institute Code');
+                          } else {
+                            Map<String, Branch> branches =
+                                Map<String, Branch>();
+                            snapshot.data.snapshot.value.forEach((k, b) {
+                              branches[k] = Branch.fromJson(b);
+                            });
+                            return ListView.builder(
+                                itemCount: branches.length,
+                                itemBuilder: (context, index) {
+                                  String key = branches.keys.toList()[index];
+                                  return ListTile(
+                                    title: Text(
+                                        'Branch Name: ${branches[key].name}'),
+                                    subtitle: Text(
+                                        'Branch Code : ${snapshot.data.snapshot.value.keys.toList()[0] + key}'),
+                                  );
+                                });
+                          }
+                        } else {
+                          return PlaceholderLines(
+                            count: 1,
+                            animate: true,
+                          );
+                        }
+                      },
+                    );
+                  } else if (FireBaseAuth.instance.previlagelevel > 1) {
+                    return Text(
+                        'Institute Code : ${snapshot.data.snapshot.value.keys.toList()[0]}${FireBaseAuth.instance.branchid}\n(Share this code with Student)');
+                  } else {
+                    return Text(
+                        'Institute Code : ${snapshot.data.snapshot.value.keys.toList()[0]}${FireBaseAuth.instance.branchid}');
+                  }
+                } else {
+                  return PlaceholderLines(
+                    count: 1,
+                    animate: true,
+                  );
+                }
+              },
+            ),
           ),
         ],
       ),

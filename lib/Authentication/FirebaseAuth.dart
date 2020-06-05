@@ -17,6 +17,8 @@ class FireBaseAuth {
 
   Future<List<String>> getAuthGCredentials() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    //TODO remove this
+    prefs.remove('credA');
     if (prefs.getString('credA') != null && prefs.getString('credI') != null) {
       return [prefs.getString('credA'), prefs.getString('credI')];
     } else {

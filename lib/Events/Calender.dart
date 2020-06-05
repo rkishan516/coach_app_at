@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 import 'package:coach_app/Events/FirebaseMessaging.dart';
 import 'package:coach_app/Events/SessionDetail.dart';
 import 'package:coach_app/Events/videoConferencing.dart';
@@ -91,7 +90,7 @@ class _CalenderState extends State<Calender> {
   }
 
   onEventRemoved(Event event) {
-    _showsnackbar(context, "Event is removed");
+    _showsnackbar(context, "Session is removed");
     String str = event.snapshot.key.substring(0, 10) + 'T12:00:00.000Z';
     DateTime _key = DateTime.parse(str);
     print(_events);
@@ -126,7 +125,7 @@ class _CalenderState extends State<Calender> {
         });
       }
     });
-    _showsnackbar(context, "Event is Updated");
+    _showsnackbar(context, "Session is Updated");
   }
 
   void _showsnackbar(BuildContext context, String message) {

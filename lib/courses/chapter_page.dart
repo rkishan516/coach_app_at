@@ -1,3 +1,4 @@
+import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Events/Calender.dart';
 import 'package:coach_app/Models/model.dart';
@@ -40,13 +41,13 @@ class _ChapterPageState extends State<ChapterPage> {
           IconButton(
               icon: Icon(Icons.add_to_queue),
               onPressed: () => Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) => Calender(
-                      courseId: widget.courseId,
-                      subjectName: widget.title,
+                    CupertinoPageRoute(
+                      builder: (context) => Calender(
+                        courseId: widget.courseId,
+                        subjectName: widget.title,
+                      ),
                     ),
-                  ),
-                ))
+                  ))
         ],
         centerTitle: true,
         elevation: 0.0,
@@ -253,7 +254,13 @@ addChapter(BuildContext context, DatabaseReference reference, int length,
                     (name == '')
                         ? Container()
                         : FlatButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              String res = await showDialog(
+                                  context: context,
+                                  builder: (context) => AreYouSure());
+                              if (res != 'Yes') {
+                                return;
+                              }
                               reference.child('chapters/$length').remove();
                               Navigator.of(context).pop();
                             },

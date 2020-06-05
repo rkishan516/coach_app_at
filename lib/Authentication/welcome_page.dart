@@ -1,4 +1,3 @@
-import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:coach_app/noInternet/instituteRegister.dart';
 import 'package:flutter_signin_button/button_view.dart';
