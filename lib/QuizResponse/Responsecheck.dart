@@ -40,7 +40,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
     dbref
         .reference()
         .child(
-            'institute/0/branches/0/courses/${widget.courseId}/subjects/${widget.subjectId}/chapters/${widget.chapterId}/content/${widget.contentId}/quizModel')
+            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/subjects/${widget.subjectId}/chapters/${widget.chapterId}/content/${widget.contentId}/quizModel')
         .child('result')
         .once()
         .then((DataSnapshot snapshot) {
@@ -64,7 +64,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
     await dbref
         .reference()
         .child(
-            'institute/0/branches/0/courses/${widget.courseId}/subjects/${widget.subjectId}/chapters/${widget.chapterId}/content/${widget.contentId}/quizModel')
+            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/subjects/${widget.subjectId}/chapters/${widget.chapterId}/content/${widget.contentId}/quizModel')
         .child('result/$uid').update({
          'score': int.parse(_scoreText.text)
         });
@@ -72,7 +72,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
     await  dbref
         .reference()
         .child(
-            'institute/0/branches/0/students/bbqYNmA3UXgDBbJ40O3oET4DISI2/course/${widget.courseId}/subjects/${widget.subjectId}/chapters/${widget.chapterId}/content/${widget.contentId}')
+            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/bbqYNmA3UXgDBbJ40O3oET4DISI2/course/${widget.courseId}/subjects/${widget.subjectId}/chapters/${widget.chapterId}/content/${widget.contentId}')
         .update({
          'score': score
         });
@@ -83,7 +83,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
     await dbref
         .reference()
         .child(
-            'institute/0/branches/0/courses/${widget.courseId}/subjects/${widget.subjectId}/chapters/${widget.chapterId}/content/${widget.contentId}/quizModel')
+            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/subjects/${widget.subjectId}/chapters/${widget.chapterId}/content/${widget.contentId}/quizModel')
         .child('result').remove();
     _showsnackbar(context, "Submitted successfully");
   }

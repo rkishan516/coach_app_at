@@ -1,3 +1,4 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/QuizResponse/Responsecheck.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,7 @@ class _QuizModalState extends State<QuizModal> {
     dbref
         .reference()
         .child(
-            'institute/0/branches/0/courses/${widget.courseId}/subjects/${widget.subjectId}/chapters/${widget.chapterId}/content/${widget.contentId}/kind')
+            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/subjects/${widget.subjectId}/chapters/${widget.chapterId}/content/${widget.contentId}/kind')
         .once()
         .then((DataSnapshot snapshot) {
           if(snapshot.value=='Quiz')
