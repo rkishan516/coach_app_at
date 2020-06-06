@@ -21,35 +21,21 @@ class _StudentsRequestsState extends State<StudentsRequests> {
     return Scaffold(
       key: _scKey,
       drawer: getDrawer(context),
-      appBar: AppBar(
-        title: Text(
-          'Pending Students'.tr(),
-          style: GoogleFonts.portLligatSans(
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0.0,
-        iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
-      ),
+      appBar: getAppBar(context),
       body: Container(
         padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height / 20),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.orange, Colors.deepOrange])),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2)
+          ],
+        ),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -75,13 +61,13 @@ class _StudentsRequestsState extends State<StudentsRequests> {
                           child: ListTile(
                             title: Text(
                               'Name'.tr() +
-                                  ' : ' +
+                                  ' : \t\t\t' +
                                   '${students[students.keys.toList()[index]].name}\n' +
                                   'Email'.tr() +
-                                  ' : ' +
+                                  ' : \t' +
                                   '${students[students.keys.toList()[index]].email}\n' +
                                   'Address'.tr() +
-                                  ' : ' +
+                                  ' : \t\t\t' +
                                   '${students[students.keys.toList()[index]].address}',
                               style: TextStyle(color: Colors.orange),
                             ),

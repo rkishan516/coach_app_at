@@ -1,6 +1,9 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
+import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/QuizResponse/quiz_display.dart';
 import 'package:coach_app/YT_player/pdf_player.dart';
 import 'package:coach_app/YT_player/quiz_player.dart';
 import 'package:coach_app/YT_player/yt_player.dart';
@@ -36,37 +39,21 @@ class _ContentPageState extends State<ContentPage> {
           }
           return Scaffold(
             drawer: getDrawer(context),
-            appBar: AppBar(
-              title: Text(
-                widget.title,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.portLligatSans(
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
-              centerTitle: true,
-              elevation: 0.0,
-              iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
-            ),
+            appBar: getAppBar(context),
             body: Container(
               padding: EdgeInsets.symmetric(
                   vertical: MediaQuery.of(context).size.height / 20),
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                        color: Colors.grey.shade200,
-                        offset: Offset(2, 4),
-                        blurRadius: 5,
-                        spreadRadius: 2)
-                  ],
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.orange, Colors.deepOrange])),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                      color: Colors.grey.shade200,
+                      offset: Offset(2, 4),
+                      blurRadius: 5,
+                      spreadRadius: 2)
+                ],
+              ),
               child: Column(
                 children: <Widget>[
                   Expanded(
@@ -81,73 +68,90 @@ class _ContentPageState extends State<ContentPage> {
                           return ListView.builder(
                             itemCount: length,
                             itemBuilder: (BuildContext context, int index) {
-                              return Card(
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    child: Icon(
-                                      chapter.content[index].kind ==
-                                              'Youtube Video'
-                                          ? Icons.videocam
-                                          : chapter.content[index].kind == 'PDF'
-                                              ? Icons.library_books
-                                              : Icons.question_answer,
-                                      color: Colors.white,
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Card(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      child: Icon(
+                                        chapter.content[index].kind ==
+                                                'Youtube Video'
+                                            ? Icons.videocam
+                                            : chapter.content[index].kind == 'PDF'
+                                                ? Icons.library_books
+                                                : Icons.question_answer,
+                                        color: Colors.white,
+                                      ),
+                                      backgroundColor: Colors.orange,
                                     ),
-                                    backgroundColor: Colors.orange,
-                                  ),
-                                  title: Text(
-                                    '${chapter.content[index].title}',
-                                    style: TextStyle(color: Colors.orange),
-                                  ),
-                                  trailing: Icon(
-                                    Icons.chevron_right,
-                                    color: Colors.orange,
-                                  ),
-                                  onTap: () {
-                                    if (chapter.content[index].kind ==
-                                        'Youtube Video') {
-                                      Navigator.of(context).push(
-                                        CupertinoPageRoute(
-                                          builder: (context) => YTPlayer(
-                                              link:
-                                                  chapter.content[index].ylink),
-                                        ),
-                                      );
-                                    } else if (chapter.content[index].kind ==
-                                        'PDF') {
-                                      Navigator.of(context).push(
-                                        CupertinoPageRoute(
-                                          builder: (context) => PDFPlayer(
-                                            link: chapter.content[index].link,
+                                    title: Text(
+                                      '${chapter.content[index].title}',
+                                      style: TextStyle(color: Colors.orange),
+                                    ),
+                                    trailing: Icon(
+                                      Icons.chevron_right,
+                                      color: Colors.orange,
+                                    ),
+                                    onTap: () {
+                                      if (chapter.content[index].kind ==
+                                          'Youtube Video') {
+                                        Navigator.of(context).push(
+                                          CupertinoPageRoute(
+                                            builder: (context) => YTPlayer(
+                                                link:
+                                                    chapter.content[index].ylink),
                                           ),
-                                        ),
-                                      );
-                                    } else if (chapter.content[index].kind ==
-                                        'Quiz') {
-                                      Navigator.of(context).push(
-                                        CupertinoPageRoute(
-                                          builder: (context) => Quiz(
-                                            reference: widget.reference
-                                                .child('content/$index'),
+                                        );
+                                      } else if (chapter.content[index].kind ==
+                                          'PDF') {
+                                        Navigator.of(context).push(
+                                          CupertinoPageRoute(
+                                            builder: (context) => PDFPlayer(
+                                              link: chapter.content[index].link,
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  onLongPress: () => addContent(
-                                      context, widget.reference, index,
-                                      title: chapter.content[index].title,
-                                      link: chapter.content[index].kind ==
-                                              'Youtube Video'
-                                          ? chapter.content[index].ylink
-                                          : chapter.content[index].kind == 'PDF'
-                                              ? chapter.content[index].link
-                                              : '',
-                                      quizModel:
-                                          chapter.content[index].quizModel,
-                                      description:
-                                          chapter.content[index].description,
-                                      type: chapter.content[index].kind),
+                                        );
+                                      } else if (chapter.content[index].kind ==
+                                          'Quiz') {
+                                        if (FireBaseAuth.instance.previlagelevel >
+                                            1) {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      QuizModalResponse(
+                                                        databaseReference: widget
+                                                            .reference
+                                                            .child(
+                                                                'content/$index'),
+                                                      )));
+                                          return;
+                                        }
+                                        Navigator.of(context).push(
+                                          CupertinoPageRoute(
+                                            builder: (context) => Quiz(
+                                              reference: widget.reference
+                                                  .child('content/$index'),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    onLongPress: () => addContent(
+                                        context, widget.reference, index,
+                                        title: chapter.content[index].title,
+                                        link: chapter.content[index].kind ==
+                                                'Youtube Video'
+                                            ? chapter.content[index].ylink
+                                            : chapter.content[index].kind == 'PDF'
+                                                ? chapter.content[index].link
+                                                : '',
+                                        quizModel:
+                                            chapter.content[index].quizModel,
+                                        description:
+                                            chapter.content[index].description,
+                                        type: chapter.content[index].kind),
+                                  ),
                                 ),
                               );
                             },
@@ -177,23 +181,11 @@ class _ContentPageState extends State<ContentPage> {
                 ],
               ),
             ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: FloatingActionButton(
-              child: Container(
-                  height: double.infinity,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50.0),
-                      gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.orange, Colors.deepOrange])),
-                  child: Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  )),
-              onPressed: () => addContent(context, widget.reference, length),
+            floatingActionButton: SlideButtonR(
+              text: 'Add Content',
+              onTap: () => addContent(context, widget.reference, length),
+              width: 150,
+              height: 50,
             ),
           );
         } else {
@@ -330,17 +322,12 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'Title'.tr(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
                       TextField(
                         controller: titleTextEditingController,
                         decoration: InputDecoration(
+                          hintText: 'Title'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
                           border: InputBorder.none,
                           fillColor: Color(0xfff3f3f4),
                           filled: true,
@@ -354,17 +341,12 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'Description'.tr(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
                       TextField(
                         controller: descriptionTextEditingController,
                         decoration: InputDecoration(
+                          hintText: 'Description'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
                           border: InputBorder.none,
                           fillColor: Color(0xfff3f3f4),
                           filled: true,
@@ -379,19 +361,14 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              type == 'Youtube Video'
-                                  ? 'Youtube Video Link'.tr()
-                                  : 'Google Drive Link'.tr(),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
                             TextField(
                               controller: linkTextEditingController,
                               decoration: InputDecoration(
+                                hintText: type == 'Youtube Video'
+                                    ? 'Youtube Video Link'.tr()
+                                    : 'Google Drive Link'.tr(),
+                                hintStyle: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
                                 border: InputBorder.none,
                                 fillColor: Color(0xfff3f3f4),
                                 filled: true,

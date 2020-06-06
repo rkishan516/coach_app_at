@@ -3,6 +3,7 @@ import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Dialogs/multiselectDialogs.dart';
 import 'package:coach_app/Drawer/drawer.dart';
+import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/adminSection/teacherRegister.dart';
 import 'package:coach_app/courses/chapter_page.dart';
@@ -27,35 +28,21 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
     int length = 0;
     return Scaffold(
       drawer: getDrawer(context),
-      appBar: AppBar(
-        title: Text(
-          'Subjects'.tr(),
-          style: GoogleFonts.portLligatSans(
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0.0,
-        iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
-      ),
+      appBar: getAppBar(context),
       body: Container(
         padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height / 20),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.orange, Colors.deepOrange])),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2)
+          ],
+        ),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -74,38 +61,42 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
                     return ListView.builder(
                       itemCount: length,
                       itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                            child: ListTile(
-                          title: Text(
-                            '${courses.subjects[index].name}',
-                            style: TextStyle(color: Colors.orange),
-                          ),
-                          trailing: Icon(
-                            Icons.chevron_right,
-                            color: Colors.orange,
-                          ),
-                          onTap: () {
-                            return Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (context) => ChapterPage(
-                                  courseId: widget.courseId,
-                                  title: courses.subjects[index].name,
-                                  reference: FirebaseDatabase.instance
-                                      .reference()
-                                      .child(
-                                          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/$index'),
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              child: ListTile(
+                            title: Text(
+                              '${courses.subjects[index].name}',
+                              style: TextStyle(color: Colors.orange),
+                            ),
+                            trailing: Icon(
+                              Icons.chevron_right,
+                              color: Colors.orange,
+                            ),
+                            onTap: () {
+                              return Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => ChapterPage(
+                                    courseId: widget.courseId,
+                                    title: courses.subjects[index].name,
+                                    reference: FirebaseDatabase.instance
+                                        .reference()
+                                        .child(
+                                            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/$index'),
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                          onLongPress: () => addSubject(
-                            context,
-                            widget.courseId,
-                            index,
-                            name: courses.subjects[index].name,
-                            mentors: courses.subjects[index].mentor.join(','),
-                          ),
-                        ));
+                              );
+                            },
+                            onLongPress: () => addSubject(
+                              context,
+                              widget.courseId,
+                              index,
+                              name: courses.subjects[index].name,
+                              mentors: courses.subjects[index].mentor.join(','),
+                            ),
+                          )),
+                        );
                       },
                     );
                   } else if (snapshot.hasError) {
@@ -133,23 +124,11 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        child: Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50.0),
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.orange, Colors.deepOrange])),
-            child: Icon(
-              Icons.add,
-              color: Colors.white,
-            )),
-        onPressed: () => addSubject(context, widget.courseId, length),
-      ),
+      floatingActionButton: SlideButtonR(
+          text: 'Add Subject',
+          onTap: () => addSubject(context, widget.courseId, length),
+          width: 150,
+          height: 50),
     );
   }
 }
@@ -194,17 +173,12 @@ addSubject(BuildContext context, String courseId, int length,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Subject Name'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     TextField(
                       controller: nameTextEditingController,
                       decoration: InputDecoration(
+                        hintText: 'Subject Name'.tr(),
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
                         filled: true,

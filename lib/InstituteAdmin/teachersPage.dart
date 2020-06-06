@@ -1,5 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/drawer.dart';
+import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/next.dart';
 import 'package:coach_app/adminSection/teacherRegister.dart';
@@ -19,35 +20,21 @@ class _TeachersListState extends State<TeachersList> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: getDrawer(context),
-      appBar: AppBar(
-        title: Text(
-          'Teacher'.tr(),
-          style: GoogleFonts.portLligatSans(
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0.0,
-        iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
-      ),
+      appBar: getAppBar(context),
       body: Container(
         padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height / 20),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.orange, Colors.deepOrange])),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2)
+          ],
+        ),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -96,7 +83,12 @@ class _TeachersListState extends State<TeachersList> {
                             onLongPress: () {
                               showDialog(
                                   context: context,
-                                  builder: (context) => TeacherRegister(isEdit: true,keyT: teachers.keys.toList()[index],teacher: teachers[teachers.keys.toList()[index]],));
+                                  builder: (context) => TeacherRegister(
+                                        isEdit: true,
+                                        keyT: teachers.keys.toList()[index],
+                                        teacher: teachers[
+                                            teachers.keys.toList()[index]],
+                                      ));
                             },
                           ),
                         );
@@ -127,22 +119,13 @@ class _TeachersListState extends State<TeachersList> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50.0),
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.orange, Colors.deepOrange])),
-            child: Icon(
-              Icons.add,
-              color: Colors.white,
-            )),
-        onPressed: () => showDialog(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: SlideButton(
+        text: 'Add Teacher',
+        onTap: () => showDialog(
             context: context, builder: (context) => TeacherRegister()),
+        width: 150,
+        height: 50,
       ),
     );
   }

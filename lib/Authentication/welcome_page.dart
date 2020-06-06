@@ -1,3 +1,4 @@
+import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:coach_app/noInternet/instituteRegister.dart';
 import 'package:flutter_signin_button/button_view.dart';
@@ -17,27 +18,7 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   Widget _title() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(
-        text: 'Guru',
-        style: GoogleFonts.portLligatSans(
-          fontSize: 30,
-          fontWeight: FontWeight.w700,
-          color: Colors.white,
-        ),
-        children: [
-          TextSpan(
-            text: ' Co',
-            style: TextStyle(color: Colors.black, fontSize: 30),
-          ),
-          TextSpan(
-            text: 'ol',
-            style: TextStyle(color: Colors.white, fontSize: 30),
-          ),
-        ],
-      ),
-    );
+    return Image.asset('assets/images/logo.png');
   }
 
   @override
@@ -46,47 +27,62 @@ class _WelcomePageState extends State<WelcomePage> {
     return Scaffold(
       key: _skey,
       body: Container(
-        padding: EdgeInsets.symmetric(
-            vertical: MediaQuery.of(context).size.height / 5),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.orange, Colors.deepOrange])),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2)
+          ],
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.white, Color(0xffF36C24)],
+          ),
+        ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            _title(),
-            SignInButton(
-              Buttons.Google,
-              text: 'Sign In With Google'.tr(),
+            Expanded(flex: 3, child: _title()),
+            Expanded(child: Container(), flex: 4),
+            SignInButtonBuilder(
+              key: ValueKey("Google"),
+              text: 'Sign in with Google',
+              textColor: Colors.white,
+              image: Container(
+                margin: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
+                child: CircleAvatar(
+                  backgroundImage: AssetImage(
+                    'assets/logos/google_light.png',
+                    package: 'flutter_signin_button',
+                  ),
+                ),
+              ),
+              backgroundColor: Color(0xfff2905e),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50)),
               onPressed: () =>
                   WelcomeNavigation.signInWithGoogleAndGetPage(context),
+              innerPadding: EdgeInsets.all(0),
+              height: 36.0,
+              width: 180,
             ),
-            FlatButton(
-              color: Colors.white,
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => InstituteRegister(),
-                  ),
-                );
-              },
-              child: Text(
-                'Register Your Institute',
-                style: TextStyle(
-                  color: Colors.orange,
-                ),
+            Expanded(child: Container(), flex: 3),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SlideButton(
+                text: 'Register Institute',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => InstituteRegister(),
+                    ),
+                  );
+                },
+                width: 180,
+                height: 40,
               ),
             ),
           ],

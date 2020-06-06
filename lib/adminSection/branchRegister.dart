@@ -88,17 +88,12 @@ class _BranchRegisterState extends State<BranchRegister> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'Name of branch'.tr(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
                       TextField(
                         controller: nameTextEditingController,
                         decoration: InputDecoration(
+                          hintText: 'Name of branch'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
                           border: InputBorder.none,
                           fillColor: Color(0xfff3f3f4),
                           filled: true,
@@ -112,19 +107,14 @@ class _BranchRegisterState extends State<BranchRegister> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'Email of sub-admin'.tr(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
                       TextField(
                         enabled: isEnable,
                         controller: adminEmailTextEditingController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
+                          hintText: 'Email of sub-admin'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
                           border: InputBorder.none,
                           fillColor: Color(0xfff3f3f4),
                           filled: true,
@@ -138,17 +128,12 @@ class _BranchRegisterState extends State<BranchRegister> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'Address of branch'.tr(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
                       TextField(
                         controller: addressTextEditingController,
                         decoration: InputDecoration(
+                          hintText: 'Address of branch'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
                           border: InputBorder.none,
                           fillColor: Color(0xfff3f3f4),
                           filled: true,
@@ -162,19 +147,12 @@ class _BranchRegisterState extends State<BranchRegister> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'Branch UPI ID',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
                       TextField(
                         controller: upiTextEditingController,
                         decoration: InputDecoration(
+                          hintText: 'Branch UPI ID',
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
                           border: InputBorder.none,
                           fillColor: Color(0xfff3f3f4),
                           filled: true,
@@ -188,19 +166,14 @@ class _BranchRegisterState extends State<BranchRegister> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'Code of branch'.tr(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
                       TextField(
                         enabled: isEnable,
                         controller: branchCodeTextEditingController,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
+                          hintText: 'Code of branch'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
                           border: InputBorder.none,
                           fillColor: Color(0xfff3f3f4),
                           filled: true,

@@ -2,6 +2,7 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
+import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/adminSection/adminSubjectPage.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -21,25 +22,14 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: getDrawer(context),
-      appBar: AppBar(
-        title: Text(
-          'Your Courses'.tr(),
-          style: GoogleFonts.portLligatSans(
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0.0,
-        iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
-      ),
-      body: Container(
-        padding: EdgeInsets.symmetric(
-            vertical: MediaQuery.of(context).size.height / 20),
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
+        drawer: getDrawer(context),
+        appBar: getAppBar(context),
+        body: Container(
+          padding: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height / 20),
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
             boxShadow: <BoxShadow>[
               BoxShadow(
                   color: Colors.grey.shade200,
@@ -47,101 +37,91 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                   blurRadius: 5,
                   spreadRadius: 2)
             ],
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.orange, Colors.deepOrange])),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              flex: 12,
-              child: StreamBuilder<Event>(
-                stream: FirebaseDatabase.instance
-                    .reference()
-                    .child(
-                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses')
-                    .onValue,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    List<Courses> courses = List<Courses>();
-                    snapshot.data.snapshot.value?.values?.forEach((course) {
-                      courses.add(Courses.fromJson(course));
-                    });
-                    return ListView.builder(
-                      itemCount: courses?.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          child: ListTile(
-                            title: Text(
-                              '${courses[index].name}',
-                              style: TextStyle(color: Colors.orange),
-                            ),
-                            trailing: Icon(
-                              Icons.chevron_right,
-                              color: Colors.orange,
-                            ),
-                            onTap: () => Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (context) => AdminSubjectPage(
-                                    courseId: courses[index].id),
+          ),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                flex: 12,
+                child: StreamBuilder<Event>(
+                  stream: FirebaseDatabase.instance
+                      .reference()
+                      .child(
+                          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses')
+                      .onValue,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      List<Courses> courses = List<Courses>();
+                      snapshot.data.snapshot.value?.values?.forEach((course) {
+                        courses.add(Courses.fromJson(course));
+                      });
+                      return ListView.builder(
+                        itemCount: courses?.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              child: ListTile(
+                                title: Text(
+                                  '${courses[index].name}',
+                                  style: TextStyle(color: Colors.orange),
+                                ),
+                                trailing: Icon(
+                                  Icons.chevron_right,
+                                  color: Colors.orange,
+                                ),
+                                onTap: () => Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                    builder: (context) => AdminSubjectPage(
+                                        courseId: courses[index].id),
+                                  ),
+                                ),
+                                onLongPress: () => addCourse(
+                                  context,
+                                  name: courses[index].name,
+                                  description: courses[index].description,
+                                  price: courses[index].price.toString(),
+                                  medium: courses[index].medium,
+                                  // batch: courses[index].batch.join(','),
+                                  subjects: courses[index].subjects,
+                                  id: courses[index].id,
+                                ),
                               ),
                             ),
-                            onLongPress: () => addCourse(
-                              context,
-                              name: courses[index].name,
-                              description: courses[index].description,
-                              price: courses[index].price.toString(),
-                              medium: courses[index].medium,
-                              batch: courses[index].batch.join(','),
-                              subjects: courses[index].subjects,
-                              id: courses[index].id,
+                          );
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Text('${snapshot.error}'),
+                      );
+                    } else {
+                      return ListView.builder(
+                        itemCount: 3,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Card(
+                            child: ListTile(
+                              title: PlaceholderLines(
+                                count: 1,
+                                animate: true,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text('${snapshot.error}'),
-                    );
-                  } else {
-                    return ListView.builder(
-                      itemCount: 3,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          child: ListTile(
-                            title: PlaceholderLines(
-                              count: 1,
-                              animate: true,
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                },
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50.0),
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.orange, Colors.deepOrange])),
-            child: Icon(
-              Icons.add,
-              color: Colors.white,
-            )),
-        onPressed: () => addCourse(context),
-      ),
-    );
+        floatingActionButton: SlideButtonR(
+          height: 50,
+          width: 150,
+          onTap: () => addCourse(context),
+          text: 'Create Course',
+        ));
   }
 }
 
@@ -197,17 +177,12 @@ addCourse(BuildContext context,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Course Name'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     TextField(
                       controller: nameTextEditingController,
                       decoration: InputDecoration(
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                        hintText: 'Course Name'.tr(),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
@@ -221,17 +196,12 @@ addCourse(BuildContext context,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Course Description'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     TextField(
                       controller: descriptionTextEditingController,
                       decoration: InputDecoration(
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                        hintText: 'Course Description'.tr(),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
@@ -245,17 +215,12 @@ addCourse(BuildContext context,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Medium'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     TextField(
                       controller: mediumTextEditingController,
                       decoration: InputDecoration(
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                        hintText: 'Medium'.tr(),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
@@ -269,14 +234,6 @@ addCourse(BuildContext context,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Fee'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     Row(
                       children: <Widget>[
                         Expanded(
@@ -285,6 +242,9 @@ addCourse(BuildContext context,
                             controller: priceTextEditingController,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
+                              hintStyle: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15),
+                              hintText: 'Fee'.tr(),
                               border: InputBorder.none,
                               fillColor: Color(0xfff3f3f4),
                               filled: true,
@@ -304,31 +264,31 @@ addCourse(BuildContext context,
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Batches'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    TextField(
-                      controller: batchTextEditingController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Seprated With comma'.tr(),
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
-                  ],
-                ),
-              ),
+              // Container(
+              //   margin: EdgeInsets.symmetric(vertical: 10),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: <Widget>[
+              //       Text(
+              //         'Batches'.tr(),
+              //         style:
+              //             TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              //       ),
+              //       SizedBox(
+              //         height: 10,
+              //       ),
+              //       TextField(
+              //         controller: batchTextEditingController,
+              //         decoration: InputDecoration(
+              //           border: InputBorder.none,
+              //           hintText: 'Seprated With comma'.tr(),
+              //           fillColor: Color(0xfff3f3f4),
+              //           filled: true,
+              //         ),
+              //       )
+              //     ],
+              //   ),
+              // ),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Row(
@@ -382,11 +342,11 @@ addCourse(BuildContext context,
                               'Please Enter the course ' + 'price'.tr());
                           return;
                         }
-                        if (batchTextEditingController.text == '') {
-                          Alert.instance.alert(context,
-                              'Please Enter the course ' + 'batch'.tr());
-                          return;
-                        }
+                        // if (batchTextEditingController.text == '') {
+                        //   Alert.instance.alert(context,
+                        //       'Please Enter the course ' + 'batch'.tr());
+                        //   return;
+                        // }
                         Courses course = Courses(
                           name: nameTextEditingController.text
                               .capitalize()
@@ -400,10 +360,10 @@ addCourse(BuildContext context,
                               .trim(),
                           price: double.parse(priceTextEditingController.text)
                               .toInt(),
-                          batch: batchTextEditingController.text
-                              .split(',')
-                              .map((e) => e.capitalize().trim())
-                              .toList(),
+                          // batch: batchTextEditingController.text
+                          //     .split(',')
+                          //     .map((e) => e.capitalize().trim())
+                          //     .toList(),
                           subjects: subjects,
                           id: (id == '')
                               ? nameTextEditingController.text.hashCode
@@ -436,7 +396,12 @@ addCourse(BuildContext context,
   );
 }
 
-//TODO All delete are you sure
 //TODO Ghocha
-//TODO Floating Action Button Like apple
+//TODO SUBject hashcode
+//TODO chapter hashcode
+//TODO content hashcode
+//TODO Year for teacher experience
+//TODO Student Performance
+//TODO Privacy and Policy Page add
+//TODO QUestion mark alert
 //TODO Not payment app, like paytm,phone pe,bhim

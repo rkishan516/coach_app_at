@@ -127,20 +127,17 @@ class _SessionDetailState extends State<SessionDetail> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                    color: Colors.grey.shade200,
-                    offset: Offset(2, 4),
-                    blurRadius: 5,
-                    spreadRadius: 2)
-              ],
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.orange, Colors.deepOrange])),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.grey.shade200,
+                  offset: Offset(2, 4),
+                  blurRadius: 5,
+                  spreadRadius: 2)
+            ],
+          ),
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.all(4.0),
+              padding: EdgeInsets.all(15.0),
               child: Column(
                 children: <Widget>[
                   SizedBox(
@@ -152,7 +149,8 @@ class _SessionDetailState extends State<SessionDetail> {
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
-                        labelText: "Enter Title",
+                        contentPadding: EdgeInsets.only(left: 8.0),
+                        hintText: "Enter Title",
                       )),
                   SizedBox(
                     height: 20.0,
@@ -161,9 +159,10 @@ class _SessionDetailState extends State<SessionDetail> {
                       controller: descriptionText,
                       decoration: InputDecoration(
                         border: InputBorder.none,
+                        contentPadding: EdgeInsets.only(left: 8.0),
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
-                        labelText: "Enter Description",
+                        hintText: "Enter Description",
                       )),
                   SizedBox(
                     height: 20.0,
@@ -185,47 +184,48 @@ class _SessionDetailState extends State<SessionDetail> {
                     height: 48.0,
                     thickness: 2.0,
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      _saveintodatabase();
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          color: Colors.white),
-                      width: MediaQuery.of(context).size.width,
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Save",
-                        style: TextStyle(color: Colors.orange),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  isedit
-                      ? GestureDetector(
-                          onTap: () {
-                            _delfromdatabase();
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5.0),
-                                color: Colors.white),
-                            width: MediaQuery.of(context).size.width,
-                            padding: EdgeInsets.symmetric(vertical: 15),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Delete Session",
-                              style: TextStyle(color: Colors.orange),
-                            ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      isedit
+                          ? GestureDetector(
+                              onTap: () {
+                                _delfromdatabase();
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    color: Colors.orange),
+                                width: MediaQuery.of(context).size.width / 3.5,
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "Delete Session",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 16),
+                                ),
+                              ),
+                            )
+                          : Container(),
+                      GestureDetector(
+                        onTap: () {
+                          _saveintodatabase();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5.0),
+                              color: Colors.orange),
+                          width: MediaQuery.of(context).size.width / 3.5,
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Save",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
-                        )
-                      : SizedBox(
-                          height: 10.0,
-                        )
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),

@@ -1,3 +1,4 @@
+import 'package:coach_app/xd_pages/XD_PDFloading.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -29,18 +30,9 @@ class PDFPlayer extends StatelessWidget {
               spreadRadius: 2,
             )
           ],
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xff519ddb),
-              Color(0xff54d179),
-            ],
-          ),
         ),
         child: WebView(
-          initialUrl:
-              link,
+          initialUrl: link,
           // 'https://docs.google.com/gview?embedded=true&url=${widget.link}',
           javascriptMode: JavascriptMode.unrestricted,
           gestureNavigationEnabled: true,

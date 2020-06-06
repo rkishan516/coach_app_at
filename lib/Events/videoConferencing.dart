@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -93,6 +96,10 @@ class _VideoConferencingState extends State<VideoConferencing> {
         subjectText.text = subject;
       });
     }
+    Timer(Duration(seconds: 3), () async {
+      await _joinMeeting();
+      Navigator.of(context).pop();
+    });
   }
 
   @override
@@ -104,9 +111,6 @@ class _VideoConferencingState extends State<VideoConferencing> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Video Conferencing'),
-      ),
       body: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: 16.0,
@@ -114,123 +118,19 @@ class _VideoConferencingState extends State<VideoConferencing> {
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.orange, Colors.deepOrange])),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2)
+          ],
+        ),
         child: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
-                height: 16.0,
-              ),
-              TextField(
-                enabled: false,
-                controller: roomText,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  fillColor: Color(0xfff3f3f4),
-                  filled: true,
-                  labelText: "Room",
-                ),
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              TextField(
-                controller: subjectText,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  fillColor: Color(0xfff3f3f4),
-                  filled: true,
-                  labelText: "Subject",
-                ),
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              TextField(
-                controller: nameText,
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    fillColor: Color(0xfff3f3f4),
-                    filled: true,
-                    labelText: "Display Name",
-                    hintText: "Enter Your Name"),
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              TextField(
-                controller: emailText,
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    fillColor: Color(0xfff3f3f4),
-                    filled: true,
-                    labelText: "EmailId",
-                    hintText: "Enter your Email Id"),
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              Card(
-                color: Colors.white,
-                child: CheckboxListTile(
-                  title: Text("Audio Only"),
-                  value: isAudioOnly,
-                  onChanged: _onAudioOnlyChanged,
-                ),
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              Card(
-                color: Colors.white,
-                child: CheckboxListTile(
-                  title: Text("Audio Muted"),
-                  value: isAudioMuted,
-                  onChanged: _onAudioMutedChanged,
-                ),
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              Card(
-                color: Colors.white,
-                child: CheckboxListTile(
-                  title: Text("Video Muted"),
-                  value: isVideoMuted,
-                  onChanged: _onVideoMutedChanged,
-                ),
-              ),
-              Divider(
-                height: 48.0,
-                thickness: 2.0,
-              ),
-              SizedBox(
-                height: 50.0,
-                width: double.maxFinite,
-                child: RaisedButton(
-                  onPressed: () {
-                    _joinMeeting();
-                  },
-                  child: Text(
-                    privilegelevel >= 2 ? "Create Meeting" : "Join Meeting",
-                    style: TextStyle(color: Colors.orange),
-                  ),
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(
-                height: 48.0,
-              ),
+              Center(child: UploadDialog(warning: 'Connecting to server'))
             ],
           ),
         ),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:coach_app/Events/FirebaseMessaging.dart';
 import 'package:coach_app/Events/SessionDetail.dart';
 import 'package:coach_app/Events/videoConferencing.dart';
+import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/Models/Events.dart';
 import 'package:coach_app/Models/random_string.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -61,7 +62,8 @@ class _CalenderState extends State<Calender> {
       if (event.snapshot.key != null) {
         String str = event.snapshot.key.substring(0, 10) + 'T12:00:00.000Z';
         DateTime _key = DateTime.parse(str);
-        if (event.snapshot.value['teacheruid'] == "${FireBaseAuth.instance.user.uid}") {
+        if (event.snapshot.value['teacheruid'] ==
+            "${FireBaseAuth.instance.user.uid}") {
           if (_events[_key] == null) {
             _events[_key] = [
               EventsModal(
@@ -150,44 +152,39 @@ class _CalenderState extends State<Calender> {
         elevation: 0.0,
         title: Text('Select Date'),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-        onPressed: () {
-          if (passVariable != "") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SessionDetail(
-                  passVaraible: passVariable,
-                  eventkey: eventkey,
-                  isedit: false,
-                  courseId: widget.courseId,
-                  subjectName: widget.subjectName,
+      floatingActionButton: SlideButtonR(
+          text: 'Add Session',
+          onTap: () {
+            if (passVariable != "") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SessionDetail(
+                    passVaraible: passVariable,
+                    eventkey: eventkey,
+                    isedit: false,
+                    courseId: widget.courseId,
+                    subjectName: widget.subjectName,
+                  ),
                 ),
-              ),
-            );
-          } else if (passVariable == previouspassVariable || passVariable == "")
-            _showsnackbar(context, "Select Date");
-        },
-      ),
+              );
+            } else if (passVariable == previouspassVariable ||
+                passVariable == "") _showsnackbar(context, "Select Date");
+          },
+          width: 150,
+          height: 50),
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.orange, Colors.deepOrange])),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2)
+          ],
+        ),
         child: SingleChildScrollView(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

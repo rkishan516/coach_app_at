@@ -25,6 +25,10 @@ class _BranchPageState extends State<BranchPage>
           ? AdminCoursePage()
           : (_bottomNavIndex == 1) ? StudentList() : TeachersList(),
       bottomNavigationBar: FancyBottomNavigation(
+        barBackgroundColor: Colors.orange,
+        circleColor: Colors.white,
+        activeIconColor: Colors.orange,
+        inactiveIconColor: Colors.white,
         tabs: [
           TabData(iconData: Icons.library_books, title: "Courses"),
           TabData(iconData: Icons.school, title: "Student"),

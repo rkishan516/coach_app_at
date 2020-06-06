@@ -9,9 +9,11 @@ import 'package:coach_app/adminSection/teacherRegister.dart';
 import 'package:coach_app/InstituteAdmin/branchList.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 getDrawer(BuildContext context) {
   FirebaseUser user = FireBaseAuth.instance.user;
@@ -84,7 +86,7 @@ getDrawer(BuildContext context) {
             children: <Widget>[
               ListTile(
                 title: Text(
-                  'All brances',
+                  'All branches',
                 ),
                 leading: Icon(Icons.business),
                 onTap: () {
@@ -141,5 +143,76 @@ getDrawer(BuildContext context) {
         )
       ],
     ),
+  );
+}
+
+getAppBar(BuildContext context) {
+  Size size = MediaQuery.of(context).size;
+  return AppBar(
+    backgroundColor: Colors.orange,
+    title: StreamBuilder<Event>(
+      stream: FirebaseDatabase.instance
+          .reference()
+          .child('institute/${FireBaseAuth.instance.instituteid}/name')
+          .onValue,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Text(
+            snapshot.data.snapshot.value,
+            style: GoogleFonts.portLligatSans(
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          );
+        }
+        return Container();
+      },
+    ),
+    flexibleSpace: Stack(
+      children: <Widget>[
+        Transform.translate(
+          offset: Offset(size.width - 80.0, 46.0),
+          child: StreamBuilder<Event>(
+            stream: FirebaseDatabase.instance
+                .reference()
+                .child('institute/${FireBaseAuth.instance.instituteid}/name')
+                .onValue,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return FutureBuilder<dynamic>(
+                  future: FirebaseStorage.instance
+                      .ref()
+                      .child('/instituteLogo/${snapshot.data.snapshot.value}')
+                      .getDownloadURL(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            45.0,
+                          ),
+                        ),
+                        child: CircleAvatar(
+                          radius: 33.0,
+                          backgroundImage: NetworkImage(
+                            snapshot.data,
+                          ),
+                        ),
+                      );
+                    } else {
+                      return CircularProgressIndicator();
+                    }
+                  },
+                );
+              } else {
+                return Container();
+              }
+            },
+          ),
+        ),
+      ],
+    ),
+    elevation: 0.0,
+    iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
   );
 }

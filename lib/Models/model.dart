@@ -69,7 +69,7 @@ class Courses {
   int price;
   String date;
   String medium;
-  List<String> batch;
+  // List<String> batch;
   List<Subjects> subjects;
 
   Courses(
@@ -79,7 +79,7 @@ class Courses {
       this.price,
       this.date,
       this.medium,
-      this.batch,
+      // this.batch,
       this.subjects});
 
   Courses.fromJson(Map<dynamic, dynamic> json) {
@@ -89,7 +89,7 @@ class Courses {
     price = json['price'];
     date = json['date'];
     medium = json['medium'];
-    batch = json['batch'].cast<String>();
+    // batch = json['batch'].cast<String>();
     if (json['subjects'] != null) {
       subjects = new List<Subjects>();
       json['subjects'].forEach((v) {
@@ -106,7 +106,7 @@ class Courses {
     data['price'] = this.price;
     data['date'] = this.date;
     data['medium'] = this.medium;
-    data['batch'] = this.batch;
+    // data['batch'] = this.batch;
     if (this.subjects != null) {
       data['subjects'] = this.subjects.map((v) => v.toJson()).toList();
     }
@@ -219,7 +219,12 @@ class Teacher {
   String qualification;
   String photoURL;
 
-  Teacher({this.courses, this.email, this.name,this.experience,this.qualification});
+  Teacher(
+      {this.courses,
+      this.email,
+      this.name,
+      this.experience,
+      this.qualification});
 
   Teacher.fromJson(Map<dynamic, dynamic> json) {
     if (json['courses'] != null) {
@@ -449,6 +454,15 @@ class QuizModel {
     }
     return data;
   }
+}
+
+class Response {
+  String uid;
+  String name;
+  int score;
+  Map<String, String> responses;
+
+  Response(this.uid, this.name, this.responses, this.score);
 }
 
 class QuestionModel {

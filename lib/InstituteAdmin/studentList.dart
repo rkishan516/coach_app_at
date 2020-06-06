@@ -20,35 +20,21 @@ class _StudentListState extends State<StudentList> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: getDrawer(context),
-      appBar: AppBar(
-        title: Text(
-          'Students'.tr(),
-          style: GoogleFonts.portLligatSans(
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0.0,
-        iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
-      ),
+      appBar: getAppBar(context),
       body: Container(
         padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height / 20),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.orange, Colors.deepOrange])),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2)
+          ],
+        ),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -169,17 +155,12 @@ class _StudentListState extends State<StudentList> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Name'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     TextField(
                       controller: nameTextEditingController,
                       decoration: InputDecoration(
+                        hintText: 'Name'.tr(),
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
@@ -193,17 +174,12 @@ class _StudentListState extends State<StudentList> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Address'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     TextField(
                       controller: addressTextEditingController,
                       decoration: InputDecoration(
+                        hintText: 'Address'.tr(),
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
@@ -217,18 +193,13 @@ class _StudentListState extends State<StudentList> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Phone No'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     TextField(
                       controller: phoneTextEditingController,
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
+                        hintText: 'Phone No'.tr(),
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
                         filled: true,

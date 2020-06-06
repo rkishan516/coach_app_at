@@ -123,16 +123,24 @@ class _MyInstituteState extends State<MyInstitute> {
                               branches[k] = Branch.fromJson(b);
                             });
                             return ListView.builder(
-                                itemCount: branches.length,
-                                itemBuilder: (context, index) {
-                                  String key = branches.keys.toList()[index];
-                                  return ListTile(
-                                    title: Text(
-                                        'Branch Name: ${branches[key].name}'),
-                                    subtitle: Text(
-                                        'Branch Code : ${snapshot.data.snapshot.value.keys.toList()[0] + key}'),
-                                  );
-                                });
+                              itemCount: branches.length,
+                              itemBuilder: (context, index) {
+                                String key = branches.keys.toList()[index];
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Card(
+                                    child: ListTile(
+                                      isThreeLine: true,
+                                      title: Text(
+                                          'Branch Name: ${branches[key].name}'),
+                                      contentPadding: EdgeInsets.all(16),
+                                      subtitle: Text(
+                                          'Branch Code : ${snapshot.data.snapshot.value.keys.toList()[0] + key}'),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
                           }
                         } else {
                           return PlaceholderLines(

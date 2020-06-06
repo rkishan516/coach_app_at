@@ -71,18 +71,13 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'Name'.tr(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
                       TextField(
                         controller: nameTextEditingController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                          hintText: 'Name'.tr(),
                           border: InputBorder.none,
                           fillColor: Color(0xfff3f3f4),
                           filled: true,
@@ -96,19 +91,14 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'Email'.tr(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
                       TextField(
                         enabled: !widget.isEdit,
                         controller: emailTextEditingController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
+                          hintText: 'Email'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
                           border: InputBorder.none,
                           fillColor: Color(0xfff3f3f4),
                           filled: true,
@@ -122,18 +112,13 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'Experience'.tr(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
                       TextField(
                         controller: experienceTextEditingController,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
+                          hintText: 'Experience'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
                           border: InputBorder.none,
                           fillColor: Color(0xfff3f3f4),
                           filled: true,
@@ -147,17 +132,12 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'Qualification'.tr(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
                       TextField(
                         controller: qualificationTextEditingController,
                         decoration: InputDecoration(
+                          hintText: 'Qualification'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
                           border: InputBorder.none,
                           fillColor: Color(0xfff3f3f4),
                           filled: true,

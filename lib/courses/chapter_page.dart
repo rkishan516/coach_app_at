@@ -1,6 +1,7 @@
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Events/Calender.dart';
+import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/courses/content_page.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -29,63 +30,40 @@ class _ChapterPageState extends State<ChapterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: getDrawer(context),
-      appBar: AppBar(
-        title: Text(
-          widget.title,
-          style: GoogleFonts.portLligatSans(
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-          ),
-        ),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.add_to_queue),
-              onPressed: () => Navigator.of(context).push(
-                    CupertinoPageRoute(
-                      builder: (context) => Calender(
-                        courseId: widget.courseId,
-                        subjectName: widget.title,
-                      ),
-                    ),
-                  ))
-        ],
-        centerTitle: true,
-        elevation: 0.0,
-        iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
-      ),
+      appBar: getAppBar(context),
       body: Container(
         padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height / 20),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.orange, Colors.deepOrange])),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2)
+          ],
+        ),
         child: Column(
           children: <Widget>[
             Expanded(
               flex: 12,
               child: StreamBuilder<Event>(
-                  stream: widget.reference.onValue,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      print(snapshot.data.snapshot.value);
-                      Subjects subjects =
-                          Subjects.fromJson(snapshot.data.snapshot.value);
-                      length = subjects.chapters?.length ?? 0;
-                      return ListView.builder(
-                        itemCount: length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Card(
+                stream: widget.reference.onValue,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    print(snapshot.data.snapshot.value);
+                    Subjects subjects =
+                        Subjects.fromJson(snapshot.data.snapshot.value);
+                    length = subjects.chapters?.length ?? 0;
+                    return ListView.builder(
+                      itemCount: length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                             child: ListTile(
                               title: Text(
                                 '${subjects.chapters[index].name}',
@@ -99,8 +77,8 @@ class _ChapterPageState extends State<ChapterPage> {
                                 CupertinoPageRoute(
                                   builder: (context) => ContentPage(
                                     title: subjects.chapters[index].name,
-                                    reference: widget.reference
-                                        .child('chapters/$index'),
+                                    reference:
+                                        widget.reference.child('chapters/$index'),
                                   ),
                                 ),
                               ),
@@ -111,49 +89,61 @@ class _ChapterPageState extends State<ChapterPage> {
                                       subjects.chapters[index].description,
                                   content: subjects.chapters[index].content),
                             ),
-                          );
-                        },
-                      );
-                    } else if (snapshot.hasError) {
-                      return Center(
-                        child: Text('${snapshot.error}'),
-                      );
-                    } else {
-                      return ListView.builder(
-                        itemCount: 3,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Card(
-                            child: ListTile(
-                              title: PlaceholderLines(
-                                count: 1,
-                                animate: true,
-                              ),
+                          ),
+                        );
+                      },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('${snapshot.error}'),
+                    );
+                  } else {
+                    return ListView.builder(
+                      itemCount: 3,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Card(
+                          child: ListTile(
+                            title: PlaceholderLines(
+                              count: 1,
+                              animate: true,
                             ),
-                          );
-                        },
-                      );
-                    }
-                  }),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        child: Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50.0),
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.orange, Colors.deepOrange])),
-            child: Icon(
-              Icons.add,
-              color: Colors.white,
-            )),
-        onPressed: () => addChapter(context, widget.reference, length),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            SlideButton(
+              text: 'Live Session',
+              onTap: () => Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) => Calender(
+                    courseId: widget.courseId,
+                    subjectName: widget.title,
+                  ),
+                ),
+              ),
+              width: 150,
+              height: 50,
+              icon: Icon(Icons.add_to_queue),
+            ),
+            SlideButtonR(
+                text: 'Add Chapter',
+                onTap: () => addChapter(context, widget.reference, length),
+                width: 150,
+                height: 50),
+          ],
+        ),
       ),
     );
   }
@@ -203,17 +193,12 @@ addChapter(BuildContext context, DatabaseReference reference, int length,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Chapter Name'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     TextField(
                       controller: nameTextEditingController,
                       decoration: InputDecoration(
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                        hintText: 'Chapter Name'.tr(),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
@@ -227,17 +212,12 @@ addChapter(BuildContext context, DatabaseReference reference, int length,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Chapter Description'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     TextField(
                       controller: descriptionTextEditingController,
                       decoration: InputDecoration(
+                        hintText: 'Chapter Description'.tr(),
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
                         filled: true,

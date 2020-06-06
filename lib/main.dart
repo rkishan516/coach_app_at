@@ -2,6 +2,7 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:coach_app/noInternet/noInternet.dart';
+import 'package:coach_app/xd_pages/XD_Nointernet.dart';
 import 'package:cross_connectivity/cross_connectivity.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIOverlays([]);
+  // SystemChrome.setEnabledSystemUIOverlays([]);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
     EasyLocalization(
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data == ConnectivityStatus.none) {
-                return NoInternet();
+                return XD_Nointernet();
               }
               return FutureBuilder(
                 future: _getPrefs(),
@@ -73,7 +74,7 @@ class MyApp extends StatelessWidget {
                             gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [Colors.orange, Colors.deepOrange])),
+                                colors: [Colors.white, Color(0xffF36C24)])),
                       );
                     }
                     return WelcomePage();

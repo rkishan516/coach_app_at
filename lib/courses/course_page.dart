@@ -21,35 +21,21 @@ class _CoursePageState extends State<CoursePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: getDrawer(context),
-      appBar: AppBar(
-        title: Text(
-          'Your Courses'.tr(),
-          style: GoogleFonts.portLligatSans(
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0.0,
-        iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
-      ),
+      appBar: getAppBar(context),
       body: Container(
         padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height / 20),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.orange, Colors.deepOrange])),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2)
+          ],
+        ),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -57,7 +43,8 @@ class _CoursePageState extends State<CoursePage> {
               child: StreamBuilder<Event>(
                 stream: FirebaseDatabase.instance
                     .reference()
-                    .child('institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses')
+                    .child(
+                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses')
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -69,21 +56,25 @@ class _CoursePageState extends State<CoursePage> {
                     return ListView.builder(
                       itemCount: widget.teacher.courses?.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          child: ListTile(
-                            title: Text(
-                              '${courses[index].name}',
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                            trailing: Icon(
-                              Icons.chevron_right,
-                              color: Colors.blue,
-                            ),
-                            onTap: () => Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (context) => SubjectPage(
-                                  tCourse: widget.teacher.courses[index],
-                                  course: courses[index],
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            child: ListTile(
+                              title: Text(
+                                '${courses[index].name}',
+                                style: TextStyle(color: Colors.blue),
+                              ),
+                              trailing: Icon(
+                                Icons.chevron_right,
+                                color: Colors.blue,
+                              ),
+                              onTap: () => Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (context) => SubjectPage(
+                                    tCourse: widget.teacher.courses[index],
+                                    course: courses[index],
+                                  ),
                                 ),
                               ),
                             ),
