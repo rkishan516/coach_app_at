@@ -1,7 +1,7 @@
 class PrivacyModal{
-
+ final String key;
   final String heading;
   final String subtitile;
 
-  PrivacyModal(this.heading, this.subtitile);
+  PrivacyModal(this.key,this.heading, this.subtitile);
 }

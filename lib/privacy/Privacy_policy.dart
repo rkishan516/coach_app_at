@@ -3,8 +3,8 @@ import 'dart:collection';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-import 'PrivacyModal.dart';
 
+import 'PrivacyModal.dart';
 class PrivacyPolicy extends StatefulWidget {
   @override
   _PrivacyPolicyState createState() => _PrivacyPolicyState();
@@ -17,18 +17,16 @@ LinkedHashMap<dynamic, dynamic> _hashMap = new LinkedHashMap();
 List<PrivacyModal> _list=[];
 String str="privacy";
   _loadFromDatabase() async{
-    dbRef.reference().child('privacyPolicy').once().
+    dbRef.reference().child('privacyPolicy').orderByKey().once().
     then((value){
-    setState(() {
       _hashMap= value.value;
       _hashMap.forEach((key, value) {
-
-        setState(() {
-          _list.add(PrivacyModal(value['heading'], value['subTitle']));
-        });
+          _list.add(PrivacyModal(key,value['heading'], value['subTitle']));
        });
-    });
-
+       setState(() {
+          _list.sort((a,b)=>int.parse(a.key.substring(4,a.key.length)).compareTo(int.parse(b.key.substring(4,b.key.length))));
+       });
+      
     });
   }
 
@@ -63,6 +61,6 @@ String str="privacy";
 
     );
 
-
   }
 }
+
