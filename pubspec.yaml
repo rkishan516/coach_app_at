@@ -47,6 +47,7 @@ dependencies:
   jitsi_meet: ^0.2.0
   table_calendar: ^2.2.3
   shared_preferences:
+  firebase_admob:
 
 dev_dependencies:
   flutter_test:
