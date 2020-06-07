@@ -397,6 +397,12 @@ addCourse(BuildContext context,
 }
 
 //TODO Ghocha
+//TODO Distance on branchList content
+//TODO Youtube and PDF ad
+//TODO Login screen by flare
+//TODO Optimize
+//TODO Course Registration page
+//TODO English of total app
 //TODO SUBject hashcode
 //TODO chapter hashcode
 //TODO content hashcode
@@ -405,3 +411,4 @@ addCourse(BuildContext context,
 //TODO Privacy and Policy Page add
 //TODO QUestion mark alert
 //TODO Not payment app, like paytm,phone pe,bhim
+//TODO Firebase security rules

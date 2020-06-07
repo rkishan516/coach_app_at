@@ -33,19 +33,7 @@ class _ContentPageState extends State<ContentPage> {
           }
           return Scaffold(
             drawer: getDrawer(context),
-            appBar: AppBar(
-              elevation: 0.0,
-              title: Text(
-                widget.title,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.portLligatSans(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
-            ),
+            appBar: getAppBar(context),
             body: Container(
               padding: EdgeInsets.symmetric(
                   vertical: MediaQuery.of(context).size.height / 20),
@@ -59,14 +47,6 @@ class _ContentPageState extends State<ContentPage> {
                       blurRadius: 5,
                       spreadRadius: 2)
                 ],
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.orange,
-                    Colors.deepOrange,
-                  ],
-                ),
               ),
               child: Column(
                 children: <Widget>[
@@ -82,58 +62,62 @@ class _ContentPageState extends State<ContentPage> {
                           return ListView.builder(
                             itemCount: length,
                             itemBuilder: (BuildContext context, int index) {
-                              return Card(
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    child: Icon(
-                                      chapter.content[index].kind ==
-                                              'Youtube Video'
-                                          ? Icons.videocam
-                                          : chapter.content[index].kind == 'PDF'
-                                              ? Icons.library_books
-                                              : Icons.question_answer,
-                                      color: Colors.white,
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Card(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      child: Icon(
+                                        chapter.content[index].kind ==
+                                                'Youtube Video'
+                                            ? Icons.videocam
+                                            : chapter.content[index].kind == 'PDF'
+                                                ? Icons.library_books
+                                                : Icons.question_answer,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ),
-                                  title: Text(
-                                    '${chapter.content[index].title}',
-                                    style: TextStyle(color: Colors.blue),
-                                  ),
-                                  trailing: Icon(
-                                    Icons.chevron_right,
-                                    color: Colors.blue,
-                                  ),
-                                  onTap: () {
-                                    if (chapter.content[index].kind ==
-                                        'Youtube Video') {
-                                      Navigator.of(context).push(
-                                        CupertinoPageRoute(
-                                          builder: (context) => YTPlayer(
-                                              link:
-                                                  chapter.content[index].ylink),
-                                        ),
-                                      );
-                                    } else if (chapter.content[index].kind ==
-                                        'PDF') {
-                                      Navigator.of(context).push(
-                                        CupertinoPageRoute(
-                                          builder: (context) => PDFPlayer(
-                                            link: chapter.content[index].link,
+                                    title: Text(
+                                      '${chapter.content[index].title}',
+                                      style: TextStyle(color: Colors.blue),
+                                    ),
+                                    trailing: Icon(
+                                      Icons.chevron_right,
+                                      color: Colors.blue,
+                                    ),
+                                    onTap: () {
+                                      if (chapter.content[index].kind ==
+                                          'Youtube Video') {
+                                        Navigator.of(context).push(
+                                          CupertinoPageRoute(
+                                            builder: (context) => YTPlayer(
+                                                link:
+                                                    chapter.content[index].ylink),
                                           ),
-                                        ),
-                                      );
-                                    } else if (chapter.content[index].kind ==
-                                        'Quiz') {
-                                      Navigator.of(context).push(
-                                        CupertinoPageRoute(
-                                          builder: (context) => Quiz(
-                                            reference: widget.reference
-                                                .child('content/$index'),
+                                        );
+                                      } else if (chapter.content[index].kind ==
+                                          'PDF') {
+                                        Navigator.of(context).push(
+                                          CupertinoPageRoute(
+                                            builder: (context) => PDFPlayer(
+                                              link: chapter.content[index].link,
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    }
-                                  },
+                                        );
+                                      } else if (chapter.content[index].kind ==
+                                          'Quiz') {
+                                        Navigator.of(context).push(
+                                          CupertinoPageRoute(
+                                            builder: (context) => Quiz(
+                                              reference: widget.reference
+                                                  .child('content/$index'),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ),
                                 ),
                               );
                             },

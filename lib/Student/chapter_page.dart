@@ -24,37 +24,21 @@ class _ChapterPageState extends State<ChapterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: getDrawer(context),
-      appBar: AppBar(
-        title: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            text: widget.title,
-            style: GoogleFonts.portLligatSans(
-              fontSize: 30,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        elevation: 0.0,
-      ),
+      appBar: getAppBar(context),
       body: Container(
         padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height / 20),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.orange, Colors.deepOrange])),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2)
+          ],
+        ),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -70,22 +54,26 @@ class _ChapterPageState extends State<ChapterPage> {
                       return ListView.builder(
                         itemCount: length,
                         itemBuilder: (BuildContext context, int index) {
-                          return Card(
-                            child: ListTile(
-                              title: Text(
-                                '${subjects.chapters[index].name}',
-                                style: TextStyle(color: Colors.blue),
-                              ),
-                              trailing: Icon(
-                                Icons.chevron_right,
-                                color: Colors.blue,
-                              ),
-                              onTap: () => Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) => ContentPage(
-                                    title: subjects.chapters[index].name,
-                                    reference: widget.reference
-                                        .child('chapters/$index'),
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              child: ListTile(
+                                title: Text(
+                                  '${subjects.chapters[index].name}',
+                                  style: TextStyle(color: Colors.blue),
+                                ),
+                                trailing: Icon(
+                                  Icons.chevron_right,
+                                  color: Colors.blue,
+                                ),
+                                onTap: () => Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                    builder: (context) => ContentPage(
+                                      title: subjects.chapters[index].name,
+                                      reference: widget.reference
+                                          .child('chapters/$index'),
+                                    ),
                                   ),
                                 ),
                               ),

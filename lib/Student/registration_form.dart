@@ -27,7 +27,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   @override
   void initState() {
-    SharedPreferences.getInstance().then((value){
+    SharedPreferences.getInstance().then((value) {
       preferences = value;
     });
     _scKey = GlobalKey<ScaffoldState>();
@@ -81,17 +81,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Name'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     TextField(
                       controller: nameTextEditingController,
                       decoration: InputDecoration(
+                        helperText: 'Name'.tr(),
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
@@ -105,17 +100,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Address'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     TextField(
                       controller: addressTextEditingController,
                       decoration: InputDecoration(
+                        helperText: 'Address'.tr(),
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
@@ -129,17 +119,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Institute Code'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     TextField(
                       controller: instituteCodeTextEditingController,
                       decoration: InputDecoration(
+                        helperText: 'Institute Code'.tr(),
+                        helperStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
@@ -153,18 +138,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Phone No'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
                     TextField(
                       controller: phoneTextEditingController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
+                        helperText: 'Phone No'.tr(),
+                        helperStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
@@ -260,7 +240,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         .child(
                             '/instituteList/${instituteCodeTextEditingController.text.substring(0, 4)}')
                         .once();
-                    if(dataSnapshot.value == null){
+                    if (dataSnapshot.value == null) {
                       Alert.instance.alert(context, 'Wrong Institute Code');
                       return;
                     }
@@ -270,7 +250,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         .reference()
                         .child(
                             "institute/${dataSnapshot.value}/branches/$branchCode/");
-                    
+
                     if (status == 'Existing Student') {
                       String course = await showDialog(
                         context: context,

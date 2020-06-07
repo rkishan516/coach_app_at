@@ -1,8 +1,10 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
+import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:coach_app/noInternet/noInternet.dart';
 import 'package:coach_app/xd_pages/XD_Nointernet.dart';
+import 'package:coach_app/xd_pages/XD_Splashscreen.dart';
 import 'package:cross_connectivity/cross_connectivity.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   // SystemChrome.setEnabledSystemUIOverlays([]);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  XD_Splashscreen();
   runApp(
     EasyLocalization(
       path: 'assets/translation',
@@ -58,24 +61,6 @@ class MyApp extends StatelessWidget {
                   if (snapshot.hasData) {
                     if (prefs?.getBool('isLoggedIn') == true) {
                       WelcomeNavigation.signInWithGoogleAndGetPage(context);
-                      return Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: MediaQuery.of(context).size.height / 20),
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                            boxShadow: <BoxShadow>[
-                              BoxShadow(
-                                  color: Colors.grey.shade200,
-                                  offset: Offset(2, 4),
-                                  blurRadius: 5,
-                                  spreadRadius: 2)
-                            ],
-                            gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [Colors.white, Color(0xffF36C24)])),
-                      );
                     }
                     return WelcomePage();
                   } else {
@@ -86,29 +71,7 @@ class MyApp extends StatelessWidget {
                 },
               );
             } else {
-              return Scaffold(
-                body: Center(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                            vertical: MediaQuery.of(context).size.height / 20),
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                            boxShadow: <BoxShadow>[
-                              BoxShadow(
-                                  color: Colors.grey.shade200,
-                                  offset: Offset(2, 4),
-                                  blurRadius: 5,
-                                  spreadRadius: 2)
-                            ],
-                            gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [Colors.orange, Colors.deepOrange])),
-                    child: Text('Internet Connectivity Checking').tr(),
-                  ),
-                ),
-              );
+              return UploadDialog(warning: 'Fetching Network Details',);
             }
           }),
     );

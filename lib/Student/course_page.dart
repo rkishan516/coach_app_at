@@ -19,20 +19,7 @@ class _CoursePageState extends State<CoursePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: getDrawer(context),
-      appBar: AppBar(
-        title: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            text: 'Your Courses'.tr(),
-            style: GoogleFonts.portLligatSans(
-              fontSize: 30,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        elevation: 0.0,
-      ),
+      appBar: getAppBar(context),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.symmetric(
@@ -60,7 +47,8 @@ class _CoursePageState extends State<CoursePage> {
                 .onValue,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                Student student = Student.fromJson(snapshot.data.snapshot.value);
+                Student student =
+                    Student.fromJson(snapshot.data.snapshot.value);
                 return ListView.builder(
                   itemCount: student.course.length,
                   itemBuilder: (BuildContext context, int index) {
@@ -77,8 +65,8 @@ class _CoursePageState extends State<CoursePage> {
                         onTap: () => Navigator.of(context).push(
                           CupertinoPageRoute(
                             builder: (context) => SubjectPage(
-                              courseID: student.course[index].courseID
-                                  .toString(),
+                              courseID:
+                                  student.course[index].courseID.toString(),
                             ),
                           ),
                         ),

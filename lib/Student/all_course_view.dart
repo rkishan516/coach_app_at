@@ -23,18 +23,15 @@ class _AllCoursePageState extends State<AllCoursePage> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2,
-                )
-              ],
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.orange, Colors.deepOrange])),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2,
+              )
+            ],
+          ),
           child: Column(
             children: <Widget>[
               Expanded(
@@ -59,33 +56,38 @@ class _AllCoursePageState extends State<AllCoursePage> {
                   stream: widget.ref.child('/coursesList').onValue,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      Map<String,String> courses = Map<String,String>();
-                      snapshot.data.snapshot.value?.forEach((k,v){
+                      Map<String, String> courses = Map<String, String>();
+                      snapshot.data.snapshot.value?.forEach((k, v) {
                         courses[k] = v;
                       });
                       return ListView.builder(
                         itemCount: courses.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return Card(
-                            child: ListTile(
-                              title: Text(
-                                '${courses[courses.keys.toList()[index]]}',
-                                style: TextStyle(color: Colors.blue),
-                              ),
-                              subtitle: Text(
-                                'Price: Details Inside',
-                                style: TextStyle(
-                                  color: Colors.grey,
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              child: ListTile(
+                                title: Text(
+                                  '${courses[courses.keys.toList()[index]]}',
+                                  style: TextStyle(color: Colors.blue),
                                 ),
-                              ),
-                              trailing: Icon(
-                                Icons.chevron_right,
-                                color: Colors.blue,
-                              ),
-                              onTap: () => Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) => CourseRegistrationPage(
-                                    ref: widget.ref.child('courses/${courses.keys.toList()[index]}'),
+                                subtitle: Text(
+                                  'Price: Details Inside',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                trailing: Icon(
+                                  Icons.chevron_right,
+                                  color: Colors.blue,
+                                ),
+                                onTap: () => Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                    builder: (context) => CourseRegistrationPage(
+                                      ref: widget.ref.child(
+                                          'courses/${courses.keys.toList()[index]}'),
+                                    ),
                                   ),
                                 ),
                               ),

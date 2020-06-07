@@ -1,6 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Events/StudentEvent.dart';
+import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Student/chapter_page.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -23,32 +24,7 @@ class _SubjectPageState extends State<SubjectPage> {
     int length = 0;
     return Scaffold(
       drawer: getDrawer(context),
-      appBar: AppBar(
-        title: Text(
-          'Subjects'.tr(),
-          style: GoogleFonts.portLligatSans(
-            fontSize: 30,
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-          ),
-        ),
-        elevation: 0.0,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add_alert),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => StudentEvent(
-                    courseId: widget.courseID,
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+      appBar: getAppBar(context),
       body: Container(
         padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height / 20),
@@ -135,6 +111,20 @@ class _SubjectPageState extends State<SubjectPage> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: SlideButton(
+        text: 'Live Sessions',
+        icon: Icon(Icons.add_alert),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StudentEvent(
+              courseId: widget.courseID,
+            ),
+          ),
+        ),
+        width: 150,
+        height: 50,
       ),
     );
   }

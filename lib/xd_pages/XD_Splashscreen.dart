@@ -4,8 +4,10 @@ class XD_Splashscreen extends StatelessWidget {
   XD_Splashscreen({
     Key key,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    precacheImage(AssetImage('assets/images/splash.jpeg'), context);
     return Scaffold(
       backgroundColor: const Color(0xffffffff),
       body: Stack(
@@ -26,15 +28,15 @@ class XD_Splashscreen extends StatelessWidget {
             ),
           ),
           Transform.translate(
-            offset: Offset(91.0, 214.0),
+            offset: Offset(MediaQuery.of(context).size.width/2-128,MediaQuery.of(context).size.height/2-(128+64)),
             child:
                 // Adobe XD layer: 'gurucool3png' (shape)
                 Container(
-              width: 178.0,
-              height: 178.0,
+              width: 256.0,
+              height: 256.0,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: const AssetImage(''),
+                  image: const AssetImage('assets/images/splash.jpeg'),
                   fit: BoxFit.fill,
                 ),
               ),

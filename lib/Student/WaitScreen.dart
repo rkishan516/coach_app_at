@@ -23,7 +23,7 @@ class WaitScreen extends StatelessWidget {
               gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.orange, Colors.deepOrange])),
+                  colors: [Colors.white, Color(0xffF36C24)])),
           child: Center(
             child: Text(
               'Please wait till you get access to course',

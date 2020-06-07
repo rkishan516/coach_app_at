@@ -17,10 +17,12 @@ class FireBaseAuth {
 
   Future<List<String>> getAuthGCredentials() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    //TODO remove this
-    prefs.remove('credA');
-    if (prefs.getString('credA') != null && prefs.getString('credI') != null) {
-      return [prefs.getString('credA'), prefs.getString('credI')];
+    if (prefs.getBool('isLoggedIn') == true) {
+      final GoogleSignInAccount googleUser =
+          await _googleSignIn.signInSilently(suppressErrors: true);
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      return [googleAuth.accessToken, googleAuth.idToken];
     } else {
       final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
