@@ -37,11 +37,7 @@ class _SubjectPageState extends State<SubjectPage> {
                   offset: Offset(2, 4),
                   blurRadius: 5,
                   spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.orange, Colors.deepOrange])),
+            ],),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -63,7 +59,7 @@ class _SubjectPageState extends State<SubjectPage> {
                         return Card(
                           child: ListTile(
                             title: Text(
-                              '${courses.subjects[index].name}',
+                              '${courses.subjects[courses.subjects.keys.toList()[index]].name}',
                               style: TextStyle(color: Colors.blue),
                             ),
                             trailing: Icon(
@@ -74,11 +70,11 @@ class _SubjectPageState extends State<SubjectPage> {
                               return Navigator.of(context).push(
                                 CupertinoPageRoute(
                                   builder: (context) => ChapterPage(
-                                    title: courses.subjects[index].name,
+                                    title: courses.subjects[courses.subjects.keys.toList()[index]].name,
                                     reference: FirebaseDatabase.instance
                                         .reference()
                                         .child(
-                                            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/$index'),
+                                            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${courses.subjects.keys.toList()[index]}'),
                                   ),
                                 ),
                               );

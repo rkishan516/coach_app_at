@@ -3,6 +3,7 @@ import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/YT_player/pdf_player.dart';
 import 'package:coach_app/YT_player/quiz_player.dart';
 import 'package:coach_app/YT_player/yt_player.dart';
+import 'package:coach_app/noInternet/XD_Nointernet.dart';
 import 'package:coach_app/noInternet/noInternet.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -69,17 +70,17 @@ class _ContentPageState extends State<ContentPage> {
                                   child: ListTile(
                                     leading: CircleAvatar(
                                       child: Icon(
-                                        chapter.content[index].kind ==
+                                        chapter.content[chapter.content.keys.toList()[index]].kind ==
                                                 'Youtube Video'
                                             ? Icons.videocam
-                                            : chapter.content[index].kind == 'PDF'
+                                            : chapter.content[chapter.content.keys.toList()[index]].kind == 'PDF'
                                                 ? Icons.library_books
                                                 : Icons.question_answer,
                                         color: Colors.white,
                                       ),
                                     ),
                                     title: Text(
-                                      '${chapter.content[index].title}',
+                                      '${chapter.content[chapter.content.keys.toList()[index]].title}',
                                       style: TextStyle(color: Colors.blue),
                                     ),
                                     trailing: Icon(
@@ -87,31 +88,31 @@ class _ContentPageState extends State<ContentPage> {
                                       color: Colors.blue,
                                     ),
                                     onTap: () {
-                                      if (chapter.content[index].kind ==
+                                      if (chapter.content[chapter.content.keys.toList()[index]].kind ==
                                           'Youtube Video') {
                                         Navigator.of(context).push(
                                           CupertinoPageRoute(
                                             builder: (context) => YTPlayer(
                                                 link:
-                                                    chapter.content[index].ylink),
+                                                    chapter.content[chapter.content.keys.toList()[index]].ylink),
                                           ),
                                         );
-                                      } else if (chapter.content[index].kind ==
+                                      } else if (chapter.content[chapter.content.keys.toList()[index]].kind ==
                                           'PDF') {
                                         Navigator.of(context).push(
                                           CupertinoPageRoute(
                                             builder: (context) => PDFPlayer(
-                                              link: chapter.content[index].link,
+                                              link: chapter.content[chapter.content.keys.toList()[index]].link,
                                             ),
                                           ),
                                         );
-                                      } else if (chapter.content[index].kind ==
+                                      } else if (chapter.content[chapter.content.keys.toList()[index]].kind ==
                                           'Quiz') {
                                         Navigator.of(context).push(
                                           CupertinoPageRoute(
                                             builder: (context) => Quiz(
                                               reference: widget.reference
-                                                  .child('content/$index'),
+                                                  .child('content/${chapter.content.keys.toList()[index]}'),
                                             ),
                                           ),
                                         );
@@ -149,7 +150,7 @@ class _ContentPageState extends State<ContentPage> {
             ),
           );
         } else {
-          return NoInternet();
+          return XD_Nointernet();
         }
       },
     );

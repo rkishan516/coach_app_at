@@ -71,14 +71,17 @@ class _ContentPageState extends State<ContentPage> {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Card(
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(10.0)),
                                   child: ListTile(
                                     leading: CircleAvatar(
                                       child: Icon(
-                                        chapter.content[index].kind ==
+                                        chapter.content[chapter.content.keys.toList()[index]].kind ==
                                                 'Youtube Video'
                                             ? Icons.videocam
-                                            : chapter.content[index].kind == 'PDF'
+                                            : chapter.content[chapter.content.keys.toList()[index]].kind ==
+                                                    'PDF'
                                                 ? Icons.library_books
                                                 : Icons.question_answer,
                                         color: Colors.white,
@@ -86,7 +89,7 @@ class _ContentPageState extends State<ContentPage> {
                                       backgroundColor: Colors.orange,
                                     ),
                                     title: Text(
-                                      '${chapter.content[index].title}',
+                                      '${chapter.content[chapter.content.keys.toList()[index]].title}',
                                       style: TextStyle(color: Colors.orange),
                                     ),
                                     trailing: Icon(
@@ -94,27 +97,28 @@ class _ContentPageState extends State<ContentPage> {
                                       color: Colors.orange,
                                     ),
                                     onTap: () {
-                                      if (chapter.content[index].kind ==
+                                      if (chapter.content[chapter.content.keys.toList()[index]].kind ==
                                           'Youtube Video') {
                                         Navigator.of(context).push(
                                           CupertinoPageRoute(
                                             builder: (context) => YTPlayer(
-                                                link:
-                                                    chapter.content[index].ylink),
+                                                link: chapter
+                                                    .content[chapter.content.keys.toList()[index]].ylink),
                                           ),
                                         );
-                                      } else if (chapter.content[index].kind ==
+                                      } else if (chapter.content[chapter.content.keys.toList()[index]].kind ==
                                           'PDF') {
                                         Navigator.of(context).push(
                                           CupertinoPageRoute(
                                             builder: (context) => PDFPlayer(
-                                              link: chapter.content[index].link,
+                                              link: chapter.content[chapter.content.keys.toList()[index]].link,
                                             ),
                                           ),
                                         );
-                                      } else if (chapter.content[index].kind ==
+                                      } else if (chapter.content[chapter.content.keys.toList()[index]].kind ==
                                           'Quiz') {
-                                        if (FireBaseAuth.instance.previlagelevel >
+                                        if (FireBaseAuth
+                                                .instance.previlagelevel >
                                             1) {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
@@ -123,7 +127,7 @@ class _ContentPageState extends State<ContentPage> {
                                                         databaseReference: widget
                                                             .reference
                                                             .child(
-                                                                'content/$index'),
+                                                                'content/${chapter.content.keys.toList()[index]}'),
                                                       )));
                                           return;
                                         }
@@ -131,26 +135,28 @@ class _ContentPageState extends State<ContentPage> {
                                           CupertinoPageRoute(
                                             builder: (context) => Quiz(
                                               reference: widget.reference
-                                                  .child('content/$index'),
+                                                  .child('content/${chapter.content.keys.toList()[index]}'),
                                             ),
                                           ),
                                         );
                                       }
                                     },
                                     onLongPress: () => addContent(
-                                        context, widget.reference, index,
-                                        title: chapter.content[index].title,
-                                        link: chapter.content[index].kind ==
+                                        context, widget.reference,
+                                        key: chapter.content.keys.toList()[index],
+                                        title: chapter.content[chapter.content.keys.toList()[index]].title,
+                                        link: chapter.content[chapter.content.keys.toList()[index]].kind ==
                                                 'Youtube Video'
-                                            ? chapter.content[index].ylink
-                                            : chapter.content[index].kind == 'PDF'
-                                                ? chapter.content[index].link
+                                            ? chapter.content[chapter.content.keys.toList()[index]].ylink
+                                            : chapter.content[chapter.content.keys.toList()[index]].kind ==
+                                                    'PDF'
+                                                ? chapter.content[chapter.content.keys.toList()[index]].link
                                                 : '',
                                         quizModel:
-                                            chapter.content[index].quizModel,
+                                            chapter.content[chapter.content.keys.toList()[index]].quizModel,
                                         description:
-                                            chapter.content[index].description,
-                                        type: chapter.content[index].kind),
+                                            chapter.content[chapter.content.keys.toList()[index]].description,
+                                        type: chapter.content[chapter.content.keys.toList()[index]].kind),
                                   ),
                                 ),
                               );
@@ -183,7 +189,7 @@ class _ContentPageState extends State<ContentPage> {
             ),
             floatingActionButton: SlideButtonR(
               text: 'Add Content',
-              onTap: () => addContent(context, widget.reference, length),
+              onTap: () => addContent(context, widget.reference),
               width: 150,
               height: 50,
             ),
@@ -195,8 +201,9 @@ class _ContentPageState extends State<ContentPage> {
     );
   }
 
-  addContent(BuildContext context, DatabaseReference reference, int length,
-      {String title = '',
+  addContent(BuildContext context, DatabaseReference reference,
+      {String key,
+      String title = '',
       String description = '',
       String link = '',
       String type = 'Youtube Video',
@@ -209,7 +216,7 @@ class _ContentPageState extends State<ContentPage> {
         title: title,
         description: description,
         reference: reference,
-        length: length,
+        keyC: key,
         quizModel: quizModel,
       ),
     );
@@ -221,7 +228,7 @@ class ContentUploadDialog extends StatefulWidget {
   final String description;
   final String link;
   final DatabaseReference reference;
-  final int length;
+  final String keyC;
   final String type;
   final QuizModel quizModel;
   ContentUploadDialog({
@@ -229,7 +236,7 @@ class ContentUploadDialog extends StatefulWidget {
     @required this.description,
     @required this.reference,
     @required this.link,
-    @required this.length,
+    @required this.keyC,
     @required this.type,
     @required this.quizModel,
   });
@@ -383,7 +390,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      (widget.title == '')
+                      (widget.keyC == null)
                           ? Container()
                           : FlatButton(
                               onPressed: () async {
@@ -394,7 +401,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                                   return;
                                 }
                                 widget.reference
-                                    .child('content/${widget.length}')
+                                    .child('content/${widget.keyC}')
                                     .remove();
                                 Navigator.of(context).pop();
                               },
@@ -431,10 +438,16 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                               content.quizModel = cal;
                             }
                           }
-
-                          widget.reference
-                              .child('content/${widget.length}')
-                              .set(content.toJson());
+                          if (widget.keyC == null) {
+                            widget.reference
+                                .child('content/')
+                                .push()
+                                .set(content.toJson());
+                          } else {
+                            widget.reference
+                                .child('content/${widget.keyC}')
+                                .set(content.toJson());
+                          }
                         },
                         color: Colors.white,
                         child: Text(

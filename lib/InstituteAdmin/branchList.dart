@@ -3,13 +3,10 @@ import 'package:coach_app/InstituteAdmin/branchPage.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/adminSection/branchRegister.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:coach_app/xd_pages/XD_Branchlist.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class BranchList extends StatefulWidget {
   @override
@@ -45,7 +42,7 @@ class _BranchListState extends State<BranchList> {
         flexibleSpace: Stack(
           children: <Widget>[
             Transform.translate(
-              offset: Offset(size.width - 100.0, 41.0),
+              offset: Offset(size.width - 70.0, 56.0),
               child: StreamBuilder<Event>(
                 stream: FirebaseDatabase.instance
                     .reference()
@@ -57,18 +54,20 @@ class _BranchListState extends State<BranchList> {
                     return FutureBuilder<dynamic>(
                       future: FirebaseStorage.instance
                           .ref()
-                          .child('/instituteLogo/${snapshot.data.snapshot.value}')
+                          .child(
+                              '/instituteLogo/${snapshot.data.snapshot.value}')
                           .getDownloadURL(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                45.0,
-                              ),
-                            ),
+                                borderRadius: BorderRadius.circular(
+                                  45.0,
+                                ),
+                                border: Border.all(
+                                    color: Colors.white, width: 3.0)),
                             child: CircleAvatar(
-                              radius: 43.0,
+                              radius: 23.0,
                               backgroundImage: NetworkImage(
                                 snapshot.data,
                               ),
@@ -103,9 +102,12 @@ class _BranchListState extends State<BranchList> {
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           if (snapshot.data.snapshot.value == 'Trial') {
-                            return Text(
-                              'Trial',
-                              style: TextStyle(color: Colors.white),
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 10.0),
+                              child: Text(
+                                'Trial',
+                                style: TextStyle(color: Colors.white),
+                              ),
                             );
                           }
                         }
@@ -152,25 +154,24 @@ class _BranchListState extends State<BranchList> {
                       institutes[k] = Branch.fromJson(v);
                     });
                     length = institutes.length;
-                    return GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2),
-                      itemCount: length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              left: 20, right: 10, top: 20, bottom: 10),
-                          child: Card(
+                    return Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,childAspectRatio: 0.8),
+                        itemCount: length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Card(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15)),
                             color: Colors.orange,
                             child: InkWell(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GridTile(
-                                  child: ListView(
-                                    children: <Widget>[
-                                      Center(
+                              child: GridTile(
+                                child: ListView(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(top:8.0,bottom: 8.0),
+                                      child: Center(
                                         child: Container(
                                           width: 54.0,
                                           height: 35.0,
@@ -188,26 +189,32 @@ class _BranchListState extends State<BranchList> {
                                           ),
                                         ),
                                       ),
-                                      Center(
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Center(
                                         child: Text(
                                           '${institutes[institutes.keys.toList()[index]].name}',
                                           overflow: TextOverflow.fade,
-                                          textAlign: TextAlign.center,
+                                          textAlign: TextAlign.justify,
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ),
-                                      Center(
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Center(
                                         child: Text(
                                           '${institutes[institutes.keys.toList()[index]].address}',
                                           overflow: TextOverflow.fade,
-                                          textAlign: TextAlign.center,
+                                          textAlign: TextAlign.justify,
                                           style: TextStyle(color: Colors.white),
                                         ),
-                                      )
-                                    ],
-                                  ),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
                               onTap: () {
@@ -232,9 +239,9 @@ class _BranchListState extends State<BranchList> {
                                 );
                               },
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     );
                   } else if (snapshot.hasError) {
                     return Center(

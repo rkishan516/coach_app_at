@@ -1,12 +1,9 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
-import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
-import 'package:coach_app/noInternet/noInternet.dart';
-import 'package:coach_app/xd_pages/XD_Nointernet.dart';
-import 'package:coach_app/xd_pages/XD_Splashscreen.dart';
-import 'package:cross_connectivity/cross_connectivity.dart';
+import 'package:coach_app/YT_player/ad_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flare_loading/flare_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,7 +14,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   // SystemChrome.setEnabledSystemUIOverlays([]);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  XD_Splashscreen();
+  
   runApp(
     EasyLocalization(
       path: 'assets/translation',
@@ -25,6 +22,8 @@ void main() {
         Locale('en'),
         Locale('hi'),
       ],
+      saveLocale: true,
+      fallbackLocale: Locale('hi'),
       child: MyApp(),
     ),
   );
@@ -42,38 +41,37 @@ class MyApp extends StatelessWidget {
     initializeDateFormatting();
     return MaterialApp(
       title: 'Guru Cool',
+      // localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         textTheme: GoogleFonts.portLligatSansTextTheme(),
         primarySwatch: Colors.orange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: StreamBuilder<ConnectivityStatus>(
-          stream: Connectivity().onConnectivityChanged,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data == ConnectivityStatus.none) {
-                return XD_Nointernet();
-              }
-              return FutureBuilder(
-                future: _getPrefs(),
-                builder: (context, snap) {
-                  if (snapshot.hasData) {
-                    if (prefs?.getBool('isLoggedIn') == true) {
-                      WelcomeNavigation.signInWithGoogleAndGetPage(context);
-                    }
-                    return WelcomePage();
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
+      home: FutureBuilder(
+        future: _getPrefs(),
+        builder: (context, snap) {
+          if (snap.hasData) {
+            if (prefs?.getBool('isLoggedIn') == true) {
+              return FlareLoading(
+                name: 'assets/images/gurucool.flr',
+                onSuccess: (_) {},
+                onError: (_, __) {},
+                startAnimation: 'animation',
+                until: () =>
+                    WelcomeNavigation.signInWithGoogleAndGetPage(context),
               );
-            } else {
-              return UploadDialog(warning: 'Fetching Network Details',);
             }
-          }),
+            return WelcomePage();
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
     );
   }
 }

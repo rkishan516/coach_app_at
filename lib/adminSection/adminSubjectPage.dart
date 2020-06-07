@@ -55,6 +55,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
+                    print(snapshot.data.snapshot.value);
                     Courses courses =
                         Courses.fromJson(snapshot.data.snapshot.value);
                     length = courses.subjects?.length ?? 0;
@@ -64,38 +65,49 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
                               child: ListTile(
-                            title: Text(
-                              '${courses.subjects[index].name}',
-                              style: TextStyle(color: Colors.orange),
-                            ),
-                            trailing: Icon(
-                              Icons.chevron_right,
-                              color: Colors.orange,
-                            ),
-                            onTap: () {
-                              return Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) => ChapterPage(
-                                    courseId: widget.courseId,
-                                    title: courses.subjects[index].name,
-                                    reference: FirebaseDatabase.instance
-                                        .reference()
-                                        .child(
-                                            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/$index'),
-                                  ),
+                                title: Text(
+                                  '${courses.subjects[courses.subjects.keys.toList()[index]].name}',
+                                  style: TextStyle(color: Colors.orange),
                                 ),
-                              );
-                            },
-                            onLongPress: () => addSubject(
-                              context,
-                              widget.courseId,
-                              index,
-                              name: courses.subjects[index].name,
-                              mentors: courses.subjects[index].mentor.join(','),
-                            ),
-                          )),
+                                trailing: Icon(
+                                  Icons.chevron_right,
+                                  color: Colors.orange,
+                                ),
+                                onTap: () {
+                                  return Navigator.of(context).push(
+                                    CupertinoPageRoute(
+                                      builder: (context) => ChapterPage(
+                                        courseId: widget.courseId,
+                                        title: courses
+                                            .subjects[courses.subjects.keys
+                                                .toList()[index]]
+                                            .name,
+                                        reference: FirebaseDatabase.instance
+                                            .reference()
+                                            .child(
+                                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${courses.subjects.keys.toList()[index]}'),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                onLongPress: () => addSubject(
+                                  context,
+                                  widget.courseId,
+                                  key: courses.subjects.keys.toList()[index],
+                                  name: courses
+                                      .subjects[
+                                          courses.subjects.keys.toList()[index]]
+                                      .name,
+                                  mentors: courses
+                                      .subjects[
+                                          courses.subjects.keys.toList()[index]]
+                                      .mentor
+                                      .join(','),
+                                ),
+                              )),
                         );
                       },
                     );
@@ -126,15 +138,15 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
       ),
       floatingActionButton: SlideButtonR(
           text: 'Add Subject',
-          onTap: () => addSubject(context, widget.courseId, length),
+          onTap: () => addSubject(context, widget.courseId),
           width: 150,
           height: 50),
     );
   }
 }
 
-addSubject(BuildContext context, String courseId, int length,
-    {String name = '', String mentors = ''}) {
+addSubject(BuildContext context, String courseId,
+    {String key, String name = '', String mentors = ''}) {
   TextEditingController nameTextEditingController = TextEditingController()
     ..text = name;
   List selectedTeacher = List();
@@ -287,7 +299,7 @@ addSubject(BuildContext context, String courseId, int length,
                               FirebaseDatabase.instance
                                   .reference()
                                   .child(
-                                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$length')
+                                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$key')
                                   .remove();
 
                               Navigator.of(context).pop();
@@ -316,40 +328,50 @@ addSubject(BuildContext context, String courseId, int length,
                             return e.email;
                           }).toList(),
                         );
-                        selectedTeacher.forEach((element) {
-                          for (int i = 0; i < teachers.length; i++) {
-                            if (teachers[i]['value'] == element) {
-                              DatabaseReference ref = FirebaseDatabase.instance
-                                  .reference()
-                                  .child(
-                                      "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${teachers[i]['key']}/courses/");
-                              List subjects = [];
-                              int lengthC =
-                                  teachers[i]['value'].courses?.length ?? 0;
-                              for (int i = 0; i < lengthC; i++) {
-                                if (teachers[i]['value'].courses[i].id ==
-                                    courseId) {
-                                  subjects =
-                                      teachers[i]['value'].courses[i].subjects;
-                                  lengthC = i;
-                                  break;
+                        var refe;
+                        if (key == null) {
+                          refe = FirebaseDatabase.instance
+                              .reference()
+                              .child(
+                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/')
+                              .push();
+                          key = refe.key;
+                        } else {
+                          refe = FirebaseDatabase.instance.reference().child(
+                              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$key');
+                        }
+                        refe.set(subject.toJson());
+                        selectedTeacher.forEach(
+                          (element) {
+                            for (int i = 0; i < teachers.length; i++) {
+                              if (teachers[i]['value'] == element) {
+                                DatabaseReference ref =
+                                    FirebaseDatabase.instance.reference().child(
+                                        "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${teachers[i]['key']}/courses/");
+                                List subjects = [];
+                                int lengthC =
+                                    teachers[i]['value'].courses?.length ?? 0;
+                                for (int i = 0; i < lengthC; i++) {
+                                  if (teachers[i]['value'].courses[i].id ==
+                                      courseId) {
+                                    subjects = teachers[i]['value']
+                                        .courses[i]
+                                        .subjects;
+                                    lengthC = i;
+                                    break;
+                                  }
                                 }
-                              }
-                              List<int> d = [];
-                              if (!subjects.contains(length)) {
-                                d = [length];
-                              }
+                                List<String> d = [];
+                                if (!subjects.contains(key)) {
+                                  d = [key];
+                                }
 
-                              ref.child(lengthC.toString()).set(
-                                  {"id": courseId, "subjects": subjects + d});
+                                ref.child(lengthC.toString()).set(
+                                    {"id": courseId, "subjects": subjects + d});
+                              }
                             }
-                          }
-                        });
-                        FirebaseDatabase.instance
-                            .reference()
-                            .child(
-                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$length')
-                            .set(subject.toJson());
+                          },
+                        );
 
                         Navigator.of(context).pop();
                       },

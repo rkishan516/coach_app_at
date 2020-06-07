@@ -12,6 +12,7 @@ class TeacherProfilePage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.white,
           title: Text('Profile'),
           centerTitle: false,
           elevation: 0.0,
@@ -32,7 +33,7 @@ class TeacherProfilePage extends StatelessWidget {
               gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.orange, Colors.deepOrange])),
+                  colors: [Colors.white, Colors.deepOrange])),
           child: StreamBuilder<Event>(
               stream: reference.onValue,
               builder: (context, snapshot) {
@@ -48,7 +49,7 @@ class TeacherProfilePage extends StatelessWidget {
                         flex: 2,
                         child: CircleAvatar(
                           radius: _width / 5,
-                          backgroundColor: Colors.orange,
+                          backgroundColor: Colors.deepOrange[200],
                           backgroundImage: NetworkImage(teacher.photoURL ?? ''),
                           child: Text(
                             '${teacher?.name[0].toUpperCase()}',

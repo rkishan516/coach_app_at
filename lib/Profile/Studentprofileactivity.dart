@@ -1,9 +1,11 @@
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Profile/student_performance.dart';
 import 'package:flutter/material.dart';
 
 class Studentprofileactivity extends StatefulWidget {
   final Student student;
-  Studentprofileactivity({@required this.student});
+  final String keyS;
+  Studentprofileactivity({@required this.student, @required this.keyS});
   @override
   _Studentinfostate createState() => _Studentinfostate();
 }
@@ -17,6 +19,10 @@ class _Studentinfostate extends State<Studentprofileactivity> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
+        title: Text(
+          'Student Profile',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -38,7 +44,7 @@ class _Studentinfostate extends State<Studentprofileactivity> {
                   width: 20,
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width/2,
+                  width: MediaQuery.of(context).size.width / 2,
                   height: 220,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -68,7 +74,7 @@ class _Studentinfostate extends State<Studentprofileactivity> {
                       Padding(
                         padding: const EdgeInsets.all(3.0),
                         child: Text(
-                          "${widget.student.course}",
+                          "Student",
                           style: TextStyle(fontSize: 15, color: Colors.grey),
                         ),
                       ),
@@ -99,7 +105,7 @@ class _Studentinfostate extends State<Studentprofileactivity> {
                                     width: 4,
                                   ),
                                   Container(
-                                    width: _width /4,
+                                    width: _width / 4,
                                     child: Text(
                                       "${widget.student.status}",
                                       style: TextStyle(
@@ -120,55 +126,17 @@ class _Studentinfostate extends State<Studentprofileactivity> {
             SizedBox(
               height: 8.0,
             ),
-            new Padding(
-              padding: new EdgeInsets.only(
-                  top: 5.0, left: 20.0, right: 20.0, bottom: 5.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.orange,
-                    borderRadius: BorderRadius.circular(5)),
-                padding: new EdgeInsets.only(left: 5.0, right: 5.0),
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Text(
-                        "Course's name",
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(1.0),
-                      child: Text(
-                        "Course Id",
-                        style: TextStyle(fontSize: 15, color: Colors.white),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(1.0),
-                      child: Text(
-                        "Payment Token",
-                        style: TextStyle(fontSize: 15, color: Colors.white),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                      width: _width,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 24,
-            ),
             Row(
               children: <Widget>[
                 Column(
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        Icon(Icons.location_city,color: Colors.green,size: 100,),
+                        Icon(
+                          Icons.location_city,
+                          color: Colors.green,
+                          size: 100,
+                        ),
                         SizedBox(
                           width: 20,
                         ),
@@ -176,20 +144,11 @@ class _Studentinfostate extends State<Studentprofileactivity> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              "${widget.student.address}",
+                              "${widget.student.address.replaceAll(',', '\n')}",
                               style: TextStyle(
                                   color: Colors.black87.withOpacity(0.7),
                                   fontSize: 20),
                             ),
-                            SizedBox(
-                              height: 3,
-                            ),
-                            Container(
-                                width: MediaQuery.of(context).size.width - 268,
-                                child: Text(
-                                  "House # 2, Road # 5, Green Road Dhanmondi, Dhaka, India",
-                                  style: TextStyle(color: Colors.grey),
-                                ))
                           ],
                         )
                       ],
@@ -204,22 +163,64 @@ class _Studentinfostate extends State<Studentprofileactivity> {
             SizedBox(
               height: 20,
             ),
-            new FlatButton(
-                onPressed: () {},
-                child: new Container(
-                    child: new Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new Icon(Icons.rotate_right),
-                    new SizedBox(
-                      width: _width / 120,
+            if (widget.student.course != null)
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: widget.student.course.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => StudentPerformance(
+                              uid: widget.keyS,
+                              courseId: widget.student.course[index].courseID,
+                            ))),
+                    child: Padding(
+                      padding: new EdgeInsets.only(
+                          top: 5.0, left: 20.0, right: 20.0, bottom: 5.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.orange,
+                            borderRadius: BorderRadius.circular(5)),
+                        padding: new EdgeInsets.only(left: 5.0, right: 5.0),
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Text(
+                                "${widget.student.course[index].courseName}",
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.white),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(1.0),
+                              child: Text(
+                                "${widget.student.course[index].academicYear}",
+                                style: TextStyle(
+                                    fontSize: 15, color: Colors.white),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(1.0),
+                              child: Text(
+                                "${widget.student.course[index].paymentToken}",
+                                style: TextStyle(
+                                    fontSize: 15, color: Colors.white),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                              width: _width,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    new Text('Performance',
-                        style: new TextStyle(
-                            fontFamily: 'portLliga', color: Colors.white))
-                  ],
-                )),
-                color: Colors.greenAccent),
+                  );
+                },
+              )
+            else
+              Container(),
           ]),
         ),
       ),

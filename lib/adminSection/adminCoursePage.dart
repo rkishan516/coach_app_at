@@ -10,7 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:coach_app/courses/subject_page.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class AdminCoursePage extends StatefulWidget {
@@ -60,7 +59,8 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Card(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
                               child: ListTile(
                                 title: Text(
                                   '${courses[index].name}',
@@ -132,7 +132,7 @@ addCourse(BuildContext context,
     String price = '',
     String batch = '',
     String id = '',
-    List<Subjects> subjects}) {
+    Map<String, Subjects> subjects}) {
   TextEditingController nameTextEditingController = TextEditingController()
     ..text = name;
   TextEditingController descriptionTextEditingController =
@@ -396,19 +396,12 @@ addCourse(BuildContext context,
   );
 }
 
-//TODO Ghocha
-//TODO Distance on branchList content
+//TODO DELEtion care testing
+//TODO Description of everything
 //TODO Youtube and PDF ad
-//TODO Login screen by flare
+//TODO DYNAMIC Ad
+//TODO Login screen by flare animation name
 //TODO Optimize
 //TODO Course Registration page
 //TODO English of total app
-//TODO SUBject hashcode
-//TODO chapter hashcode
-//TODO content hashcode
-//TODO Year for teacher experience
-//TODO Student Performance
-//TODO Privacy and Policy Page add
-//TODO QUestion mark alert
-//TODO Not payment app, like paytm,phone pe,bhim
 //TODO Firebase security rules

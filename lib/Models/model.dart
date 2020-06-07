@@ -70,7 +70,7 @@ class Courses {
   String date;
   String medium;
   // List<String> batch;
-  List<Subjects> subjects;
+  Map<String, Subjects> subjects;
 
   Courses(
       {this.id,
@@ -91,9 +91,9 @@ class Courses {
     medium = json['medium'];
     // batch = json['batch'].cast<String>();
     if (json['subjects'] != null) {
-      subjects = new List<Subjects>();
-      json['subjects'].forEach((v) {
-        subjects.add(new Subjects.fromJson(v));
+      subjects = new Map<String, Subjects>();
+      json['subjects'].forEach((k, v) {
+        subjects[k] = Subjects.fromJson(v);
       });
     }
   }
@@ -108,7 +108,7 @@ class Courses {
     data['medium'] = this.medium;
     // data['batch'] = this.batch;
     if (this.subjects != null) {
-      data['subjects'] = this.subjects.map((v) => v.toJson()).toList();
+      data['subjects'] = this.subjects.map((k, v) => MapEntry(k, v.toJson()));
     }
     return data;
   }
@@ -117,7 +117,7 @@ class Courses {
 class Subjects {
   String name;
   List<String> mentor;
-  List<Chapters> chapters;
+  Map<String, Chapters> chapters;
 
   Subjects({this.name, this.mentor, this.chapters});
 
@@ -125,9 +125,9 @@ class Subjects {
     name = json['name'];
     mentor = json['mentor']?.cast<String>();
     if (json['chapters'] != null) {
-      chapters = new List<Chapters>();
-      json['chapters']?.forEach((v) {
-        chapters.add(new Chapters.fromJson(v));
+      chapters = new Map<String, Chapters>();
+      json['chapters']?.forEach((k, v) {
+        chapters[k] = Chapters.fromJson(v);
       });
     }
   }
@@ -137,7 +137,7 @@ class Subjects {
     data['name'] = this.name;
     data['mentor'] = this.mentor;
     if (this.chapters != null) {
-      data['chapters'] = this.chapters.map((v) => v.toJson()).toList();
+      data['chapters'] = this.chapters.map((k, v) => MapEntry(k, v.toJson()));
     }
     return data;
   }
@@ -146,7 +146,7 @@ class Subjects {
 class Chapters {
   String name;
   String description;
-  List<Content> content;
+  Map<String, Content> content;
 
   Chapters({this.name, this.description, this.content});
 
@@ -154,9 +154,9 @@ class Chapters {
     name = json['name'];
     description = json['description'];
     if (json['content'] != null) {
-      content = new List<Content>();
-      json['content'].forEach((v) {
-        content.add(new Content.fromJson(v));
+      content = new Map<String, Content>();
+      json['content'].forEach((k, v) {
+        content[k] = Content.fromJson(v);
       });
     }
   }
@@ -166,7 +166,7 @@ class Chapters {
     data['name'] = this.name;
     data['description'] = this.description;
     if (this.content != null) {
-      data['content'] = this.content.map((v) => v.toJson()).toList();
+      data['content'] = this.content.map((k, v) => MapEntry(k, v.toJson()));
     }
     return data;
   }
@@ -256,13 +256,13 @@ class Teacher {
 
 class TCourses {
   String id;
-  List<int> subjects;
+  List<String> subjects;
 
   TCourses({this.id, this.subjects});
 
   TCourses.fromJson(Map<dynamic, dynamic> json) {
     id = json['id'];
-    subjects = json['subjects']?.cast<int>();
+    subjects = json['subjects']?.cast<String>();
   }
 
   Map<String, dynamic> toJson() {
@@ -495,4 +495,12 @@ class QuestionModel {
     data['answer'] = this.answer;
     return data;
   }
+}
+
+class PrivacyModal{
+ final String key;
+  final String heading;
+  final String subtitile;
+
+  PrivacyModal(this.key,this.heading, this.subtitile);
 }

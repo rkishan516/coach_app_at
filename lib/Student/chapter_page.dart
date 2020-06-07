@@ -60,7 +60,7 @@ class _ChapterPageState extends State<ChapterPage> {
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                               child: ListTile(
                                 title: Text(
-                                  '${subjects.chapters[index].name}',
+                                  '${subjects.chapters[subjects.chapters.keys.toList()[index]].name}',
                                   style: TextStyle(color: Colors.blue),
                                 ),
                                 trailing: Icon(
@@ -70,9 +70,9 @@ class _ChapterPageState extends State<ChapterPage> {
                                 onTap: () => Navigator.of(context).push(
                                   CupertinoPageRoute(
                                     builder: (context) => ContentPage(
-                                      title: subjects.chapters[index].name,
+                                      title: subjects.chapters[subjects.chapters.keys.toList()[index]].name,
                                       reference: widget.reference
-                                          .child('chapters/$index'),
+                                          .child('chapters/${subjects.chapters.keys.toList()[index]}'),
                                     ),
                                   ),
                                 ),

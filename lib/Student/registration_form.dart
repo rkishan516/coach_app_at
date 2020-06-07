@@ -84,7 +84,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     TextField(
                       controller: nameTextEditingController,
                       decoration: InputDecoration(
-                        helperText: 'Name'.tr(),
+                        hintText: 'Name'.tr(),
                         hintStyle: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 15),
                         border: InputBorder.none,
@@ -103,7 +103,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     TextField(
                       controller: addressTextEditingController,
                       decoration: InputDecoration(
-                        helperText: 'Address'.tr(),
+                        hintText: 'Address'.tr(),
                         hintStyle: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 15),
                         border: InputBorder.none,
@@ -122,8 +122,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     TextField(
                       controller: instituteCodeTextEditingController,
                       decoration: InputDecoration(
-                        helperText: 'Institute Code'.tr(),
-                        helperStyle: TextStyle(
+                        hintText: 'Institute Code'.tr(),
+                        hintStyle: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 15),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),
@@ -142,8 +142,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       controller: phoneTextEditingController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        helperText: 'Phone No'.tr(),
-                        helperStyle: TextStyle(
+                        hintText: 'Phone No'.tr(),
+                        hintStyle: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 15),
                         border: InputBorder.none,
                         fillColor: Color(0xfff3f3f4),

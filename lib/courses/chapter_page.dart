@@ -7,7 +7,6 @@ import 'package:coach_app/courses/content_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_placeholder_textlines/flutter_placeholder_textlines.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -63,10 +62,11 @@ class _ChapterPageState extends State<ChapterPage> {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
                             child: ListTile(
                               title: Text(
-                                '${subjects.chapters[index].name}',
+                                '${subjects.chapters[subjects.chapters.keys.toList()[index]].name}',
                                 style: TextStyle(color: Colors.orange),
                               ),
                               trailing: Icon(
@@ -76,18 +76,27 @@ class _ChapterPageState extends State<ChapterPage> {
                               onTap: () => Navigator.of(context).push(
                                 CupertinoPageRoute(
                                   builder: (context) => ContentPage(
-                                    title: subjects.chapters[index].name,
-                                    reference:
-                                        widget.reference.child('chapters/$index'),
+                                    title: subjects.chapters[subjects.chapters.keys.toList()[index]].name,
+                                    reference: widget.reference.child(
+                                        'chapters/${subjects.chapters.keys.toList()[index]}'),
                                   ),
                                 ),
                               ),
                               onLongPress: () => addChapter(
-                                  context, widget.reference, index,
-                                  name: subjects.chapters[index].name,
-                                  description:
-                                      subjects.chapters[index].description,
-                                  content: subjects.chapters[index].content),
+                                  context, widget.reference,
+                                  key: subjects.chapters.keys.toList()[index],
+                                  name: subjects
+                                      .chapters[subjects.chapters.keys
+                                          .toList()[index]]
+                                      .name,
+                                  description: subjects
+                                      .chapters[subjects.chapters.keys
+                                          .toList()[index]]
+                                      .description,
+                                  content: subjects
+                                      .chapters[subjects.chapters.keys
+                                          .toList()[index]]
+                                      .content),
                             ),
                           ),
                         );
@@ -139,7 +148,7 @@ class _ChapterPageState extends State<ChapterPage> {
             ),
             SlideButtonR(
                 text: 'Add Chapter',
-                onTap: () => addChapter(context, widget.reference, length),
+                onTap: () => addChapter(context, widget.reference),
                 width: 150,
                 height: 50),
           ],
@@ -149,8 +158,11 @@ class _ChapterPageState extends State<ChapterPage> {
   }
 }
 
-addChapter(BuildContext context, DatabaseReference reference, int length,
-    {String name = '', String description = '', List<Content> content}) {
+addChapter(BuildContext context, DatabaseReference reference,
+    {String key,
+    String name = '',
+    String description = '',
+    Map<String, Content> content}) {
   TextEditingController nameTextEditingController = TextEditingController()
     ..text = name;
   TextEditingController descriptionTextEditingController =
@@ -231,7 +243,7 @@ addChapter(BuildContext context, DatabaseReference reference, int length,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    (name == '')
+                    (key == null)
                         ? Container()
                         : FlatButton(
                             onPressed: () async {
@@ -241,7 +253,7 @@ addChapter(BuildContext context, DatabaseReference reference, int length,
                               if (res != 'Yes') {
                                 return;
                               }
-                              reference.child('chapters/$length').remove();
+                              reference.child('chapters/$key').remove();
                               Navigator.of(context).pop();
                             },
                             child: Text(
@@ -257,9 +269,16 @@ addChapter(BuildContext context, DatabaseReference reference, int length,
                               description:
                                   descriptionTextEditingController.text,
                               content: content);
-                          reference
-                              .child('chapters/$length')
-                              .set(chapter.toJson());
+                          if (key == null) {
+                            reference
+                                .child('chapters/')
+                                .push()
+                                .set(chapter.toJson());
+                          } else {
+                            reference
+                                .child('chapters/$key')
+                                .set(chapter.toJson());
+                          }
                         }
                         Navigator.of(context).pop();
                       },

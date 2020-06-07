@@ -73,9 +73,9 @@ class _StudentListState extends State<StudentList> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => Studentprofileactivity(
-                                    student:
-                                        students[students.keys.toList()[index]],
-                                  ),
+                                      student: students[
+                                          students.keys.toList()[index]],
+                                      keyS: students.keys.toList()[index]),
                                 ),
                               );
                             },

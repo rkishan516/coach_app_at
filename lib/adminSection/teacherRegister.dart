@@ -107,25 +107,39 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                     ],
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      TextField(
-                        controller: experienceTextEditingController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          hintText: 'Experience'.tr(),
-                          hintStyle: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 15),
-                          border: InputBorder.none,
-                          fillColor: Color(0xfff3f3f4),
-                          filled: true,
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 4,
+                      child: Container(
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            TextField(
+                              controller: experienceTextEditingController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                hintText: 'Experience'.tr(),
+                                hintStyle: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                                border: InputBorder.none,
+                                fillColor: Color(0xfff3f3f4),
+                                filled: true,
+                              ),
+                            )
+                          ],
                         ),
-                      )
-                    ],
-                  ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('In Years',style: TextStyle(fontSize: 16),),
+                      ),
+                    ),
+                  ],
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 10),

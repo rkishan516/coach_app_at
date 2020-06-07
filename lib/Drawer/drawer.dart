@@ -1,6 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Drawer/my_institute.dart';
+import 'package:coach_app/Drawer/privacyNPolicies.dart';
 import 'package:coach_app/Profile/next.dart';
 import 'package:coach_app/Student/course_page.dart';
 import 'package:coach_app/adminSection/branchRegister.dart';
@@ -129,6 +130,15 @@ getDrawer(BuildContext context) {
         else
           Container(),
         ListTile(
+          title: Text('Privacy & Policy'.tr()),
+          leading: Icon(Icons.local_parking),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => PrivacyPolicy()),
+            );
+          },
+        ),
+        ListTile(
           title: Text('Log Out'.tr()),
           leading: Icon(Icons.exit_to_app),
           onTap: () {
@@ -168,10 +178,31 @@ getAppBar(BuildContext context) {
         return Container();
       },
     ),
+    bottom: PreferredSize(
+      child: StreamBuilder<Event>(
+        stream: FirebaseDatabase.instance
+            .reference()
+            .child('publicNotice')
+            .onValue,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text(
+              snapshot.data.snapshot.value,
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            );
+          } else {
+            return Container();
+          }
+        },
+      ),
+      preferredSize: Size.fromHeight(5),
+    ),
     flexibleSpace: Stack(
       children: <Widget>[
         Transform.translate(
-          offset: Offset(size.width - 80.0, 46.0),
+          offset: Offset(size.width - 70.0, 56.0),
           child: StreamBuilder<Event>(
             stream: FirebaseDatabase.instance
                 .reference()
@@ -188,12 +219,13 @@ getAppBar(BuildContext context) {
                     if (snapshot.hasData) {
                       return Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            45.0,
-                          ),
-                        ),
+                            borderRadius: BorderRadius.circular(
+                              45.0,
+                            ),
+                            border:
+                                Border.all(color: Colors.white, width: 3.0)),
                         child: CircleAvatar(
-                          radius: 33.0,
+                          radius: 23.0,
                           backgroundImage: NetworkImage(
                             snapshot.data,
                           ),

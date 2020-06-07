@@ -5,6 +5,7 @@ import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Student/WaitScreen.dart';
 import 'package:coach_app/Student/all_course_view.dart';
 import 'package:coach_app/Student/registration_form.dart';
+import 'package:coach_app/YT_player/ad_screen.dart';
 import 'package:coach_app/adminSection/adminCoursePage.dart';
 import 'package:coach_app/courses/course_page.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -49,7 +50,8 @@ class WelcomeNavigation {
             } else if (FireBaseAuth.instance.previlagelevel == 1) {
               return st_cp.CoursePage();
             } else {
-              if(preferences.getString('insCode') == null || preferences.getString('branchCode')== null){
+              if (preferences.getString('insCode') == null ||
+                  preferences.getString('branchCode') == null) {
                 return RegistrationPage();
               }
               return StreamBuilder<Event>(

@@ -6,6 +6,7 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/SucessDialog.dart';
+import 'package:coach_app/Dialogs/infoDialog.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/GlobalFunction/VyCode.dart';
 import 'package:coach_app/Models/model.dart';
@@ -183,15 +184,9 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                         ),
                         onTap: () => showDialog(
                           context: context,
-                          builder: (context) => Dialog(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
+                          builder: (context) => InfoDialog(
+                            infoString:
                                 'You will  be able to collect fee from students of respective branches on bank account registered with this UPI ID',
-                              ),
-                            ),
                           ),
                         ),
                       ),
@@ -234,7 +229,8 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                   contentPadding: EdgeInsets.only(left: 10),
                   hintStyle: TextStyle(fontSize: 15),
                   hintText: 'Main Branch Code'.tr(),
-                  helperText: "Make your own branch code for easy references. eg : 1101",
+                  helperText:
+                      "Make your own branch code for easy references. eg : 1101",
                   fillColor: Color(0xfff3f3f4),
                   filled: true,
                 ),

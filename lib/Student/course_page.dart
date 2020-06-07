@@ -34,11 +34,7 @@ class _CoursePageState extends State<CoursePage> {
                   blurRadius: 5,
                   spreadRadius: 2,
                 )
-              ],
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.orange, Colors.deepOrange])),
+              ],),
           child: StreamBuilder<Event>(
             stream: FirebaseDatabase.instance
                 .reference()

@@ -1,3 +1,5 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Student/course_registration_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,6 +18,34 @@ class _AllCoursePageState extends State<AllCoursePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            text: 'All Courses',
+            style: GoogleFonts.portLligatSans(
+              fontSize: 30,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(
+                Icons.exit_to_app,
+                color: Colors.white,
+              ),
+              onPressed: () => FireBaseAuth.instance.signoutWithGoogle().then(
+                    (value) {
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => WelcomePage()),
+                          (route) => false);
+                    },
+                  )),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.symmetric(
@@ -35,22 +65,6 @@ class _AllCoursePageState extends State<AllCoursePage> {
           child: Column(
             children: <Widget>[
               Expanded(
-                flex: 1,
-                child: Container(
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      text: 'All Courses',
-                      style: GoogleFonts.portLligatSans(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
                 flex: 12,
                 child: StreamBuilder<Event>(
                   stream: widget.ref.child('/coursesList').onValue,
@@ -66,25 +80,22 @@ class _AllCoursePageState extends State<AllCoursePage> {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Card(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              color: Colors.orange,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
                               child: ListTile(
                                 title: Text(
                                   '${courses[courses.keys.toList()[index]]}',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                                subtitle: Text(
-                                  'Price: Details Inside',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                  ),
+                                  style: TextStyle(color: Colors.white),
                                 ),
                                 trailing: Icon(
                                   Icons.chevron_right,
-                                  color: Colors.blue,
+                                  color: Colors.white,
                                 ),
                                 onTap: () => Navigator.of(context).push(
                                   CupertinoPageRoute(
-                                    builder: (context) => CourseRegistrationPage(
+                                    builder: (context) =>
+                                        CourseRegistrationPage(
                                       ref: widget.ref.child(
                                           'courses/${courses.keys.toList()[index]}'),
                                     ),

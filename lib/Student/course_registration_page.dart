@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
+import 'package:coach_app/Dialogs/infoDialog.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -49,7 +52,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
               if (snapshot.hasData) {
                 Courses course = Courses.fromJson(snapshot.data.snapshot.value);
                 List<String> teachers = List<String>();
-                course.subjects?.forEach((subject) {
+                course.subjects?.forEach((k, subject) {
                   subject.mentor.forEach((mentor) {
                     teachers.add(mentor);
                   });
@@ -141,7 +144,12 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                             return;
                           }
                           String upi;
-                          widget.ref.parent().parent().child('upiId').once().then((value){
+                          widget.ref
+                              .parent()
+                              .parent()
+                              .child('upiId')
+                              .once()
+                              .then((value) {
                             upi = value.value;
                           });
                           UpiApplication application = await showDialog(
@@ -252,7 +260,17 @@ class _ScreenState extends State<Screen> {
                     future: _appsFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState != ConnectionState.done) {
-                        return Container();
+                        return UploadDialog(
+                          warning: 'Fetching Apps',
+                        );
+                      }
+                      if (snapshot.data.length == 0) {
+                        Timer(Duration(seconds: 1), () {
+                          Navigator.of(context).pop();
+                        });
+                        return UploadDialog(
+                          warning: 'Fetching Apps',
+                        );
                       }
 
                       return GridView.count(

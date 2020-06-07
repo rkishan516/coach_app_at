@@ -65,11 +65,10 @@ class _YTPlayerState extends State<YTPlayer> {
         key: _scaffoldKey,
         appBar: AppBar(
           title: Text(
-            'Gurur Cool',
+            'Video Player',
             style: TextStyle(color: Colors.white),
           ),
         ),
-        drawer: getDrawer(context),
         body: ListView(
           children: [
             YoutubePlayer(
