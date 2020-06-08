@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class InfoDialog extends StatelessWidget {
   final String infoString;
@@ -38,7 +39,7 @@ class InfoDialog extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  'What we will do!',
+                  'What we will do!'.tr(),
                   style: TextStyle(
                     color: Colors.orange,
                     fontSize: 24.0,
@@ -60,7 +61,7 @@ class InfoDialog extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text('Close'),
+                    child: Text('Close'.tr()),
                   ),
                 ),
               ],

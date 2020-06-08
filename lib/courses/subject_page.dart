@@ -5,8 +5,6 @@ import 'package:coach_app/courses/chapter_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 extension StringExtension on String {
   String capitalize() {
@@ -49,13 +47,19 @@ class _SubjectPageState extends State<SubjectPage> {
               child: ListView.builder(
                 itemCount: widget.tCourse.subjects?.length ?? 0,
                 itemBuilder: (BuildContext context, int index) {
+                  if(widget.course.subjects == null){
+                    return Container();
+                  }
+                  if(widget.course?.subjects[widget.tCourse.subjects[index]] == null){
+                    return Container();
+                  }
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Card(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         child: ListTile(
                       title: Text(
-                        '${widget.course.subjects[widget.tCourse.subjects[index]].name}',
+                        '${widget.course.subjects[widget.tCourse.subjects[index]]?.name}',
                         style: TextStyle(color: Colors.blue),
                       ),
                       trailing: Icon(

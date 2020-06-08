@@ -6,8 +6,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class CoursePage extends StatefulWidget {
   final Teacher teacher;
@@ -49,17 +47,23 @@ class _CoursePageState extends State<CoursePage> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     List<Courses> courses = List<Courses>();
-                    widget.teacher.courses?.forEach((course) {
-                      courses.add(Courses.fromJson(
-                          snapshot.data.snapshot.value[course.id]));
+                    widget.teacher?.courses?.forEach((course) {
+                      if (snapshot.data.snapshot.value != null) {
+                        if (snapshot.data.snapshot.value[course.id] != null) {
+                          courses.add(Courses.fromJson(
+                              snapshot.data.snapshot.value[course.id]));
+                        }
+                      }
                     });
                     return ListView.builder(
-                      itemCount: widget.teacher.courses?.length ?? 0,
+                      itemCount: courses?.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
+                        TCourses tcourse = widget.teacher?.courses?.firstWhere((element) => element.id == courses[index].id);
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
                             child: ListTile(
                               title: Text(
                                 '${courses[index].name}',
@@ -72,7 +76,7 @@ class _CoursePageState extends State<CoursePage> {
                               onTap: () => Navigator.of(context).push(
                                 CupertinoPageRoute(
                                   builder: (context) => SubjectPage(
-                                    tCourse: widget.teacher.courses[index],
+                                    tCourse: tcourse,
                                     course: courses[index],
                                   ),
                                 ),
@@ -84,7 +88,7 @@ class _CoursePageState extends State<CoursePage> {
                     );
                   } else {
                     return ListView.builder(
-                      itemCount: widget.teacher.courses.length,
+                      itemCount: widget.teacher?.courses?.length,
                       itemBuilder: (BuildContext context, int index) {
                         return Card(
                           child: ListTile(

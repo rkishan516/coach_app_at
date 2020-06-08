@@ -3,6 +3,7 @@ import 'package:coach_app/InstituteAdmin/teachersPage.dart';
 import 'package:coach_app/adminSection/adminCoursePage.dart';
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class BranchPage extends StatefulWidget {
   @override
@@ -30,9 +31,9 @@ class _BranchPageState extends State<BranchPage>
         activeIconColor: Colors.orange,
         inactiveIconColor: Colors.white,
         tabs: [
-          TabData(iconData: Icons.library_books, title: "Courses"),
-          TabData(iconData: Icons.school, title: "Student"),
-          TabData(iconData: Icons.person, title: "Teachers")
+          TabData(iconData: Icons.library_books, title: "Courses".tr()),
+          TabData(iconData: Icons.school, title: "Student".tr()),
+          TabData(iconData: Icons.person, title: "Teachers".tr())
         ],
         onTabChangedListener: (pos) {
           setState(() {

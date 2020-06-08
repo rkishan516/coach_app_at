@@ -42,6 +42,33 @@ class _BranchListState extends State<BranchList> {
         flexibleSpace: Stack(
           children: <Widget>[
             Transform.translate(
+              offset: Offset(size.width-70, kToolbarHeight-24),
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: StreamBuilder<Event>(
+                  stream: FirebaseDatabase.instance
+                      .reference()
+                      .child(
+                          'institute/${FireBaseAuth.instance.instituteid}/paid')
+                      .onValue,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data.snapshot.value == 'Trial') {
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Text(
+                            'Trial',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        );
+                      }
+                    }
+                    return Container();
+                  },
+                ),
+              ),
+            ),
+            Transform.translate(
               offset: Offset(size.width - 70.0, 56.0),
               child: StreamBuilder<Event>(
                 stream: FirebaseDatabase.instance
@@ -86,39 +113,6 @@ class _BranchListState extends State<BranchList> {
             ),
           ],
         ),
-        bottom: PreferredSize(
-            child: Stack(
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: StreamBuilder<Event>(
-                      stream: FirebaseDatabase.instance
-                          .reference()
-                          .child(
-                              'institute/${FireBaseAuth.instance.instituteid}/paid')
-                          .onValue,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          if (snapshot.data.snapshot.value == 'Trial') {
-                            return Padding(
-                              padding: const EdgeInsets.only(left: 10.0),
-                              child: Text(
-                                'Trial',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            );
-                          }
-                        }
-                        return Container();
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            preferredSize: Size(MediaQuery.of(context).size.width, 1)),
         elevation: 0.0,
         iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
       ),
@@ -158,7 +152,7 @@ class _BranchListState extends State<BranchList> {
                       padding: const EdgeInsets.all(10.0),
                       child: GridView.builder(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,childAspectRatio: 0.8),
+                            crossAxisCount: 2, childAspectRatio: 0.8),
                         itemCount: length,
                         itemBuilder: (BuildContext context, int index) {
                           return Card(
@@ -170,7 +164,8 @@ class _BranchListState extends State<BranchList> {
                                 child: ListView(
                                   children: <Widget>[
                                     Padding(
-                                      padding: const EdgeInsets.only(top:8.0,bottom: 8.0),
+                                      padding: const EdgeInsets.only(
+                                          top: 8.0, bottom: 8.0),
                                       child: Center(
                                         child: Container(
                                           width: 54.0,

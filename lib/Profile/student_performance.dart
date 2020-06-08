@@ -3,6 +3,7 @@ import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class StudentPerformance extends StatelessWidget {
   final String uid;
@@ -13,7 +14,7 @@ class StudentPerformance extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Student Performance',
+          'Student Performance'.tr(),
           style: TextStyle(color: Colors.white),
         ),
         elevation: 0,
@@ -27,12 +28,51 @@ class StudentPerformance extends StatelessWidget {
           builder: (context, snap) {
             if (snap.hasData) {
               Branch branch = Branch.fromJson(snap.data.snapshot.value);
-              snap.data.snapshot.value['students']['$uid']['courses']['$courseId']['subjects'].forEach((k,v){
+              Map<String, int> subjectPerformance = Map<String, int>();
+              snap.data.snapshot
+                  .value['students']['$uid']['courses']['$courseId']['subjects']
+                  ?.forEach((k, v) {
+                double score = 0;
+                int count = 0;
+                String name;
+                v['chapters']?.forEach((k, v) {
+                  v['content']?.forEach((k, v) {
+                    score += v['score'];
+                    count++;
+                  });
+                });
+                branch.courses.forEach((element) {
+                  if (element.id == courseId) {
+                    name = element.subjects[k].name;
+                  }
+                });
 
+                subjectPerformance[name] = score * 100 ~/ count;
               });
-              return Container();
+              return Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: ListView.builder(
+                  itemCount: subjectPerformance.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      color: Colors.orange,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      child: ListTile(
+                        title: Text(
+                          subjectPerformance.keys.toList()[index],
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        trailing: Text(
+                          '${subjectPerformance[subjectPerformance.keys.toList()[index]]}%',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
             } else {
-              return UploadDialog(warning: 'Fetching Student Data');
+              return UploadDialog(warning: 'Fetching Student Data'.tr());
             }
           }),
     );

@@ -8,6 +8,7 @@ import 'package:coach_app/Models/random_string.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../Authentication/FirebaseAuth.dart';
@@ -92,7 +93,7 @@ class _CalenderState extends State<Calender> {
   }
 
   onEventRemoved(Event event) {
-    _showsnackbar(context, "Session is removed");
+    _showsnackbar(context, "Session is Removed".tr());
     String str = event.snapshot.key.substring(0, 10) + 'T12:00:00.000Z';
     DateTime _key = DateTime.parse(str);
     print(_events);
@@ -127,7 +128,7 @@ class _CalenderState extends State<Calender> {
         });
       }
     });
-    _showsnackbar(context, "Session is Updated");
+    _showsnackbar(context, "Session is Updated".tr());
   }
 
   void _showsnackbar(BuildContext context, String message) {
@@ -150,10 +151,10 @@ class _CalenderState extends State<Calender> {
       key: _scaffoldkey,
       appBar: AppBar(
         elevation: 0.0,
-        title: Text('Select Date'),
+        title: Text('Select Date'.tr()),
       ),
       floatingActionButton: SlideButtonR(
-          text: 'Add Session',
+          text: 'Add Session'.tr(),
           onTap: () {
             if (passVariable != "") {
               Navigator.push(
@@ -169,7 +170,7 @@ class _CalenderState extends State<Calender> {
                 ),
               );
             } else if (passVariable == previouspassVariable ||
-                passVariable == "") _showsnackbar(context, "Select Date");
+                passVariable == "") _showsnackbar(context, "Select Date".tr());
           },
           width: 150,
           height: 50),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class Alert {
   static Alert instance = Alert._();
@@ -41,7 +42,7 @@ class Alert {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Text(
-                        'Oh, No!',
+                        'Oh, No!'.tr(),
                         style: TextStyle(
                           color: Colors.red,
                           fontSize: 24.0,
@@ -63,7 +64,7 @@ class Alert {
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: Text('Close'),
+                          child: Text('Close'.tr()),
                         ),
                       ),
                     ],

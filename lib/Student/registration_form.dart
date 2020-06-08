@@ -1,4 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/selectInstitute.dart';
 import 'package:coach_app/Models/model.dart';
@@ -44,16 +45,23 @@ class _RegistrationPageState extends State<RegistrationPage> {
     return Scaffold(
       key: _scKey,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         elevation: 0.0,
         centerTitle: true,
         title: Text(
-          'Registration Form',
+          'Registration Form'.tr(),
           style: GoogleFonts.portLligatSans(
             fontSize: 30,
             fontWeight: FontWeight.w700,
-            color: Colors.white,
+            color: Colors.deepOrange,
           ),
         ),
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.exit_to_app), onPressed: (){
+            FireBaseAuth.instance.signoutWithGoogle();
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => WelcomePage()), (route) => false);
+          })
+        ],
       ),
       body: Container(
         padding: EdgeInsets.symmetric(
@@ -71,7 +79,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.orange, Colors.deepOrange])),
+                colors: [Colors.white, Colors.deepOrange])),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ListView(
@@ -241,7 +249,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             '/instituteList/${instituteCodeTextEditingController.text.substring(0, 4)}')
                         .once();
                     if (dataSnapshot.value == null) {
-                      Alert.instance.alert(context, 'Wrong Institute Code');
+                      Alert.instance.alert(context, 'Wrong Institute Code'.tr());
                       return;
                     }
                     preferences.setString('insCode', dataSnapshot.value);
@@ -284,7 +292,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     }
                   } else {
                     _scKey.currentState.showSnackBar(
-                        SnackBar(content: Text('Something remains Unfilled')));
+                        SnackBar(content: Text('Something remains unfilled'.tr())));
                   }
                 },
                 child: Text('Register'.tr()),

@@ -66,7 +66,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  'Institute Registration',
+                  'Institute Registration'.tr(),
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
                 ),
               ),
@@ -186,7 +186,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                           context: context,
                           builder: (context) => InfoDialog(
                             infoString:
-                                'You will  be able to collect fee from students of respective branches on bank account registered with this UPI ID',
+                                'You will  be able to collect fee from students of respective branches on bank account registered with this UPI ID'.tr(),
                           ),
                         ),
                       ),
@@ -230,7 +230,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                   hintStyle: TextStyle(fontSize: 15),
                   hintText: 'Main Branch Code'.tr(),
                   helperText:
-                      "Make your own branch code for easy references. eg : 1101",
+                      "Make your own branch code for easy references. eg : 1101".tr(),
                   fillColor: Color(0xfff3f3f4),
                   filled: true,
                 ),
@@ -281,7 +281,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                         }
                         if (!branch1UpiIdTextEditiingController.text
                             .contains('@')) {
-                          Alert.instance.alert(context, 'Wrong UPI ID');
+                          Alert.instance.alert(context, 'Wrong UPI ID'.tr());
                           return;
                         }
                         if (_image == null) {
@@ -290,13 +290,13 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                           return;
                         }
                         FireBaseAuth.instance
-                            .signInWithGoogle()
+                            .signInWithGoogle(context)
                             .then((value) async {
                           if (value != null) {
                             showDialog(
                                 context: context,
                                 builder: (context) => UploadDialog(
-                                      warning: 'Uploading Logo',
+                                      warning: 'Uploading Logo'.tr(),
                                     ));
                             StorageTaskSnapshot storageTaskSnapshot =
                                 await FirebaseStorage.instance
@@ -308,7 +308,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                             showDialog(
                                 context: context,
                                 builder: (context) => UploadDialog(
-                                      warning: 'Registering Institute',
+                                      warning: 'Registering Institute'.tr(),
                                     ));
                             DatabaseReference reference = FirebaseDatabase
                                 .instance
@@ -348,7 +348,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                             showDialog(
                               context: context,
                               builder: (context) => UploadDialog(
-                                warning: 'Granting access',
+                                warning: 'Granting access'.tr(),
                               ),
                             );
                             if (value.email !=
@@ -359,7 +359,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                   .updateData({
                                 branch1AdminTextEditingController.text
                                         .split('@')[0]:
-                                    "subAdmin_${FireBaseAuth.instance.instituteid}_${branch1CodeTextEditingController.text}"
+                                    "subAdmin_${reference.key}_${branch1CodeTextEditingController.text}"
                               });
                             }
                             DataSnapshot snap = await FirebaseDatabase.instance
@@ -379,7 +379,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                 context: context,
                                 builder: (context) => SuccessDialog(
                                     success:
-                                        'Your Institute has been successfully Registered'));
+                                        'Your Institute has been successfully Registered'.tr()));
                             await Future.delayed(Duration(seconds: 2));
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
@@ -387,7 +387,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                 (route) => false);
                           } else {
                             _scKey.currentState.showSnackBar(
-                                SnackBar(content: Text('Login Failed')));
+                                SnackBar(content: Text('Login Failed'.tr())));
                           }
                         });
                       } else {

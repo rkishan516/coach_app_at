@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 
 class Quiz extends StatefulWidget {
@@ -58,7 +60,10 @@ class _QuizState extends State<Quiz> {
                     Content.fromJson(snapshot.data.snapshot.value);
                 if (timerCalled == 'Not Called') {
                   timerCalled = 'Called';
-                  timer = Timer(quizContent.quizModel.testTime, () {
+                  DateTime endTime = quizContent.quizModel.startTime
+                      .add(quizContent.quizModel.testTime);
+                  Duration testDuration = endTime.difference(DateTime.now());
+                  timer = Timer(testDuration, () {
                     _fbKey.currentState?.save();
                     widget.reference
                         .child(
@@ -68,7 +73,7 @@ class _QuizState extends State<Quiz> {
                       "score": -1,
                       "response": _fbKey.currentState?.value
                     });
-                    Navigator.of(context).pop();
+                    Navigator?.of(context)?.pop();
                   });
                 }
                 return ListView(
@@ -144,8 +149,14 @@ class _QuizState extends State<Quiz> {
                       padding: const EdgeInsets.all(8.0),
                       child: FlatButton(
                         color: Colors.white,
-                        child: Text('Submit'),
-                        onPressed: () {
+                        child: Text('Submit'.tr()),
+                        onPressed: () async{
+                          String res = await showDialog(
+                              context: context,
+                              builder: (context) => AreYouSure());
+                          if (res != 'Yes') {
+                            return;
+                          }
                           _fbKey.currentState?.save();
                           widget.reference
                               .child(

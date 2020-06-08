@@ -1,6 +1,7 @@
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PrivacyPolicy extends StatefulWidget {
   @override
@@ -35,7 +36,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Privacy Policy'),
+        title: Text('Privacy & Policy'.tr()),
       ),
       body: ListView.builder(
         itemCount: _list.length,

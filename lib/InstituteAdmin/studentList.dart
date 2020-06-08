@@ -7,7 +7,6 @@ import 'package:coach_app/Profile/Studentprofileactivity.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class StudentList extends StatefulWidget {
@@ -208,45 +207,45 @@ class _StudentListState extends State<StudentList> {
                   ],
                 ),
               ),
-              StreamBuilder<Event>(
-                stream: FirebaseDatabase.instance
-                    .reference()
-                    .child(
-                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses')
-                    .onValue,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    List<Courses> courses = List<Courses>();
-                    snapshot.data.snapshot.value?.forEach((k, v) {
-                      courses.add(Courses.fromJson(v));
-                    });
-                    return DropdownButton(
-                        value: course,
-                        hint: Text('Select Course'.tr()),
-                        items: courses
-                            .map(
-                              (k) => DropdownMenuItem(
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width / 5,
-                                  child: Text(
-                                    k.name,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                value: k,
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            course = value;
-                          });
-                        });
-                  } else {
-                    return Container();
-                  }
-                },
-              ),
+              // StreamBuilder<Event>(
+              //   stream: FirebaseDatabase.instance
+              //       .reference()
+              //       .child(
+              //           'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses')
+              //       .onValue,
+              //   builder: (context, snapshot) {
+              //     if (snapshot.hasData) {
+              //       List<Courses> courses = List<Courses>();
+              //       snapshot.data.snapshot.value?.forEach((k, v) {
+              //         courses.add(Courses.fromJson(v));
+              //       });
+              //       return DropdownButton(
+              //           value: course,
+              //           hint: Text('Select Course'.tr()),
+              //           items: courses
+              //               .map(
+              //                 (k) => DropdownMenuItem(
+              //                   child: Container(
+              //                     width: MediaQuery.of(context).size.width / 5,
+              //                     child: Text(
+              //                       k.name,
+              //                       overflow: TextOverflow.ellipsis,
+              //                     ),
+              //                   ),
+              //                   value: k,
+              //                 ),
+              //               )
+              //               .toList(),
+              //           onChanged: (value) {
+              //             setState(() {
+              //               course = value;
+              //             });
+              //           });
+              //     } else {
+              //       return Container();
+              //     }
+              //   },
+              // ),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Row(
@@ -277,38 +276,38 @@ class _StudentListState extends State<StudentList> {
                             addressTextEditingController.text == '' ||
                             phoneTextEditingController.text == '') {
                           Alert.instance
-                              .alert(context, 'Must Fill every detail');
+                              .alert(context, 'Something remains unfilled'.tr());
                           return;
                         }
-                        bool flag = false;
-                        if (course != null) {
-                          student.course?.forEach((element) {
-                            if (course.id == element.courseID) {
-                              flag = true;
-                            }
-                          });
-                          if (flag == false) {
-                            Course(
-                                academicYear: DateTime.now().year.toString() +
-                                    '-' +
-                                    (DateTime.now().year + 1).toString(),
-                                courseID: course.id,
-                                courseName: course.name,
-                                paymentToken:
-                                    'Registered By ${FireBaseAuth.instance.user.displayName}');
-                          }
-                        }
+                        // bool flag = false;
+                        // if (course != null) {
+                        //   student.course?.forEach((element) {
+                        //     if (course.id == element.courseID) {
+                        //       flag = true;
+                        //     }
+                        //   });
+                        //   if (flag == false) {
+                        //     Course(
+                        //         academicYear: DateTime.now().year.toString() +
+                        //             '-' +
+                        //             (DateTime.now().year + 1).toString(),
+                        //         courseID: course.id,
+                        //         courseName: course.name,
+                        //         paymentToken:
+                        //             'Registered By ${FireBaseAuth.instance.user.displayName}');
+                        //   }
+                        // }
                         student.name = nameTextEditingController.text;
                         student.address = addressTextEditingController.text;
                         student.phoneNo = phoneTextEditingController.text;
                         FirebaseDatabase.instance
                             .reference()
                             .child(
-                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${keyS}')
+                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$keyS')
                             .set(student.toJson());
                         Navigator.of(context).pop();
                       },
-                      child: Text('Update Student'),
+                      child: Text('Update Student'.tr()),
                     ),
                   ],
                 ),

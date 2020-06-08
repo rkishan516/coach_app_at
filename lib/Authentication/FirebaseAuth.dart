@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flare_loading/flare_loading.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,7 +35,7 @@ class FireBaseAuth {
     }
   }
 
-  Future<FirebaseUser> signInWithGoogle() async {
+  Future<FirebaseUser> signInWithGoogle(BuildContext context) async {
     try {
       var creds = await getAuthGCredentials();
       final AuthCredential credential = GoogleAuthProvider.getCredential(
@@ -50,7 +52,19 @@ class FireBaseAuth {
         prefs.setBool('isLoggedIn', true);
       }
       if (authResult.additionalUserInfo.isNewUser) {
-        await Future.delayed(Duration(seconds: 10));
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => FlareLoading(
+              name: 'assets/images/gurucool.flr',
+              onSuccess: (_) {
+                Navigator.pop(context);
+              },
+              onError: (_, __) {},
+              startAnimation: 'animation',
+              until: () => Future.delayed(Duration(seconds: 10)),
+            ),
+          ),
+        );
       }
       this.user = user;
       await updateClaims();
@@ -63,10 +77,10 @@ class FireBaseAuth {
 
   updateClaims() async {
     IdTokenResult idTokenResult = await user.getIdToken(refresh: true);
-
     branchid = idTokenResult.claims['branchid'];
     instituteid = idTokenResult.claims['instituteid'];
     previlagelevel = idTokenResult.claims['previlagelevel'];
+    print(previlagelevel);
   }
 
   Future<void> signoutWithGoogle() async {

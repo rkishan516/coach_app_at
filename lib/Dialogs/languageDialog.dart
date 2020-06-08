@@ -1,7 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'dart:async';
 
-class AreYouSure extends StatelessWidget {
+import 'package:coach_app/Dialogs/SucessDialog.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+
+class LanguageDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -35,7 +38,7 @@ class AreYouSure extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              'Are You Sure ?'.tr(),
+              'Please Choose your langauge'.tr(),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16.0,
@@ -49,16 +52,40 @@ class AreYouSure extends StatelessWidget {
                 children: <Widget>[
                   FlatButton(
                     onPressed: () {
-                      Navigator.of(context).pop('No');
+                      EasyLocalization.of(context).locale = Locale('hi');
+                      showDialog(
+                          context: context,
+                          builder: (context) => SuccessDialog(
+                              success:
+                                  'प्रभाव देखने के लिए, ऐप को पुनरारंभ करें'));
+                      Timer(Duration(seconds: 1), () {
+                        Navigator.of(context).pop();
+                        if (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        }
+                      });
                     },
-                    child: Text('No'.tr()),
+                    child: Text('हिन्दी'),
                   ),
                   FlatButton(
                     color: Colors.deepOrange,
                     onPressed: () {
-                      Navigator.of(context).pop('Yes');
+                      EasyLocalization.of(context).locale = Locale('en');
+                      showDialog(
+                          context: context,
+                          builder: (context) => SuccessDialog(
+                              success: 'To See effect, Restart the App'));
+                              Timer(Duration(seconds: 2), () {
+                        Navigator.of(context).pop();
+                        if (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        }
+                      });
                     },
-                    child: Text('Yes'.tr(),style: TextStyle(color: Colors.white),),
+                    child: Text(
+                      'English',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),

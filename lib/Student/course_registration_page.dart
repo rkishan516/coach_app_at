@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
-import 'package:coach_app/Dialogs/infoDialog.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -12,7 +12,10 @@ import 'package:upi_pay/upi_pay.dart';
 
 class CourseRegistrationPage extends StatefulWidget {
   DatabaseReference ref;
-  CourseRegistrationPage({@required this.ref});
+  String name;
+  String courseID;
+  CourseRegistrationPage(
+      {@required this.ref, @required this.name, @required this.courseID});
   @override
   _CourseRegistrationPageState createState() => _CourseRegistrationPageState();
 }
@@ -22,200 +25,268 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    int price;
     return Scaffold(
       key: _globalKey,
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(
-              vertical: MediaQuery.of(context).size.height / 20),
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2,
-              )
-            ],
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.orange, Colors.deepOrange],
+      appBar: AppBar(
+          backgroundColor: Colors.black87,
+          title: Text(
+            'Course Description'.tr(),
+            style: TextStyle(
+              color: Colors.white,
             ),
           ),
-          child: StreamBuilder<Event>(
-            stream: widget.ref.onValue,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                Courses course = Courses.fromJson(snapshot.data.snapshot.value);
-                List<String> teachers = List<String>();
-                course.subjects?.forEach((k, subject) {
-                  subject.mentor.forEach((mentor) {
-                    teachers.add(mentor);
-                  });
-                });
-                return ListView(
-                  children: <Widget>[
-                    Center(
-                      child: Text(
-                        course.name,
-                        style: TextStyle(color: Colors.white, fontSize: 32.0),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Card(
-                      child: Container(
-                        margin: EdgeInsets.all(20.0),
-                        child: ListView(
-                          shrinkWrap: true,
-                          children: <Widget>[
-                            Center(
-                                child: Text(
-                              'Course Description'.tr(),
-                              style: TextStyle(fontSize: 22.0),
-                            )),
-                            SizedBox(height: 20.0),
-                            Text(
-                              course.description,
-                              textAlign: TextAlign.justify,
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                            SizedBox(height: 20.0),
-                            Center(
-                              child: Text(
-                                'Mentors'.tr(),
-                                style: TextStyle(fontSize: 22.0),
+          elevation: 0,
+          iconTheme: IconThemeData.fallback().copyWith(color: Colors.white)),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: StreamBuilder<Event>(
+          stream: widget.ref.child('description').onValue,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Column(
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      color: Colors.black87,
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                              widget.name,
+                              style: TextStyle(
+                                fontSize: 32,
+                                color: Colors.white,
                               ),
                             ),
-                            SizedBox(height: 20.0),
-                            ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: teachers.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Text(
-                                    '${index + 1}. ${teachers[index]}',
-                                    style: TextStyle(fontSize: 16.0),
-                                  );
-                                }),
-                          ],
-                        ),
-                        width: size.width,
-                        height: 400,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Card(
-                      child: FlatButton(
-                        child:
-                            Text('Buy Course @ Rs.'.tr() + ' ${course.price}'),
-                        onPressed: () async {
-                          if (course.price < 1) {
-                            Course rCourse = Course(
-                              academicYear: DateTime.now().year.toString() +
-                                  '-' +
-                                  (DateTime.now().year + 1).toString(),
-                              courseID: course.id,
-                              courseName: course.name,
-                              paymentToken: "It's a free course for student",
-                            );
-                            showDialog(
-                                context: context,
-                                builder: (context) =>
-                                    UploadDialog(warning: 'Registering'));
-                            await widget.ref
-                                .parent()
-                                .parent()
-                                .child(
-                                  'students/${FireBaseAuth.instance.user.uid}/course/${course.id}',
-                                )
-                                .set(rCourse.toJson());
-                            await widget.ref
-                                .parent()
-                                .parent()
-                                .child(
-                                    '/students/${FireBaseAuth.instance.user.uid}/status')
-                                .set('Registered');
-                            Navigator.of(context).pop();
-                            return;
-                          }
-                          String upi;
-                          widget.ref
-                              .parent()
-                              .parent()
-                              .child('upiId')
-                              .once()
-                              .then((value) {
-                            upi = value.value;
-                          });
-                          UpiApplication application = await showDialog(
-                            context: context,
-                            child: Dialog(
-                              child: Screen(),
+                          ),
+                          Text(
+                            snapshot.data.snapshot.value,
+                            style: TextStyle(
+                              color: Colors.white,
                             ),
-                          );
-                          if (application == null) {
-                            Alert.instance.alert(context,
-                                'No application selected or available');
-                            return;
-                          }
-                          UpiTransactionResponse txnResponse =
-                              await UpiPay.initiateTransaction(
-                            amount: "${course.price}.00",
-                            app: application,
-                            receiverName: upi.split('@')[0],
-                            receiverUpiAddress: upi,
-                            transactionRef:
-                                '${course.name.hashCode}${course.hashCode}${FireBaseAuth.instance.user.uid.hashCode}',
-                            transactionNote:
-                                'You are purchaing the course ${course.name}.',
-                          );
-                          if (txnResponse.status ==
-                              UpiTransactionStatus.success) {
-                            Course rCourse = Course(
-                                academicYear: DateTime.now().year.toString() +
-                                    '-' +
-                                    (DateTime.now().year + 1).toString(),
-                                courseID: course.id,
-                                courseName: course.name,
-                                paymentToken: txnResponse.txnRef);
-                            showDialog(
-                                context: context,
-                                builder: (context) =>
-                                    UploadDialog(warning: 'Registering'));
-                            await widget.ref
-                                .parent()
-                                .parent()
-                                .child(
-                                    'students/${FireBaseAuth.instance.user.uid}/course')
-                                .child(course.id)
-                                .set(rCourse.toJson());
-                            await widget.ref
-                                .parent()
-                                .parent()
-                                .child(
-                                  '/students/${FireBaseAuth.instance.user.uid}/status',
-                                )
-                                .set('Registered');
-                            Navigator.of(context).pop();
-                          } else {
-                            Alert.instance
-                                .alert(context, 'Registration Failed'.tr());
-                          }
-                        },
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                );
-              } else {
-                return UploadDialog(warning: 'Fetching Details');
-              }
-            },
-          ),
+                    flex: 10,
+                  ),
+                  Expanded(
+                    child: Card(
+                        child: ListView(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(top: 24.0, left: 8),
+                          child: Text(
+                            'This course includes'.tr(),
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.dvr,
+                                size: 45,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  '24 hours on-demand video'.tr(),
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.question_answer,
+                                size: 45,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  'Quizzes and PDFs'.tr(),
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.place,
+                                size: 45,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  'Access from anywhere'.tr(),
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    )),
+                    flex: 10,
+                  ),
+                  Expanded(
+                    child: ListView(
+                      children: <Widget>[
+                        Card(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          child: FlatButton(
+                            color: Colors.orange,
+                            child: StreamBuilder<Event>(
+                                stream: widget.ref.child('price').onValue,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    price = snapshot.data.snapshot.value;
+                                    return Text(
+                                      'Buy Course @ Rs.'.tr() +
+                                          ' ${snapshot.data.snapshot.value}',
+                                      style: TextStyle(color: Colors.white),
+                                    );
+                                  } else {
+                                    return CircularProgressIndicator();
+                                  }
+                                }),
+                            onPressed: () async {
+                              if (price == null) {
+                                return;
+                              }
+                              if (price < 1) {
+                                Course rCourse = Course(
+                                  academicYear: DateTime.now().year.toString() +
+                                      '-' +
+                                      (DateTime.now().year + 1).toString(),
+                                  courseID: widget.courseID,
+                                  courseName: widget.name,
+                                  paymentToken:
+                                      "It's a free course for student".tr(),
+                                );
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => UploadDialog(
+                                        warning: 'Registering'.tr()));
+                                await widget.ref
+                                    .parent()
+                                    .parent()
+                                    .child(
+                                      'students/${FireBaseAuth.instance.user.uid}/course/${widget.courseID}',
+                                    )
+                                    .set(rCourse.toJson());
+                                await widget.ref
+                                    .parent()
+                                    .parent()
+                                    .child(
+                                        '/students/${FireBaseAuth.instance.user.uid}/status')
+                                    .set('Registered');
+                                await Future.delayed(Duration(seconds: 5));
+                                WelcomeNavigation.signInWithGoogleAndGetPage(
+                                    context);
+                                return;
+                              }
+                              String upi;
+                              widget.ref
+                                  .parent()
+                                  .parent()
+                                  .child('upiId')
+                                  .once()
+                                  .then((value) {
+                                upi = value.value;
+                              });
+                              UpiApplication application = await showDialog(
+                                context: context,
+                                child: Dialog(
+                                  child: Screen(),
+                                ),
+                              );
+                              if (application == null) {
+                                Alert.instance.alert(
+                                    context,
+                                    'No application selected or available'
+                                        .tr());
+                                return;
+                              }
+                              UpiTransactionResponse txnResponse =
+                                  await UpiPay.initiateTransaction(
+                                amount: "$price.00",
+                                app: application,
+                                receiverName: upi.split('@')[0],
+                                receiverUpiAddress: upi,
+                                transactionRef:
+                                    '${widget.name.hashCode}${widget.courseID.hashCode}${FireBaseAuth.instance.user.uid.hashCode}',
+                                transactionNote:
+                                    'You are purchaing the course ${widget.name}.',
+                              );
+                              if (txnResponse.status ==
+                                  UpiTransactionStatus.success) {
+                                Course rCourse = Course(
+                                    academicYear: DateTime.now()
+                                            .year
+                                            .toString() +
+                                        '-' +
+                                        (DateTime.now().year + 1).toString(),
+                                    courseID: widget.courseID,
+                                    courseName: widget.name,
+                                    paymentToken: txnResponse.txnRef);
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => UploadDialog(
+                                        warning: 'Registering'.tr()));
+                                await widget.ref
+                                    .parent()
+                                    .parent()
+                                    .child(
+                                        'students/${FireBaseAuth.instance.user.uid}/course')
+                                    .child(widget.courseID)
+                                    .set(rCourse.toJson());
+                                await widget.ref
+                                    .parent()
+                                    .parent()
+                                    .child(
+                                      '/students/${FireBaseAuth.instance.user.uid}/status',
+                                    )
+                                    .set('Registered');
+                                await Future.delayed(Duration(seconds: 5));
+                                WelcomeNavigation.signInWithGoogleAndGetPage(
+                                    context);
+                              } else {
+                                Alert.instance
+                                    .alert(context, 'Registration Failed'.tr());
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    flex: 2,
+                  ),
+                ],
+              );
+            } else {
+              return UploadDialog(warning: 'Fetching'.tr());
+            }
+          },
         ),
       ),
     );
@@ -252,7 +323,7 @@ class _ScreenState extends State<Screen> {
                   Container(
                     margin: EdgeInsets.only(bottom: 12),
                     child: Text(
-                      'Pay Using',
+                      'Pay Using'.tr(),
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ),
@@ -261,7 +332,7 @@ class _ScreenState extends State<Screen> {
                     builder: (context, snapshot) {
                       if (snapshot.connectionState != ConnectionState.done) {
                         return UploadDialog(
-                          warning: 'Fetching Apps',
+                          warning: 'Fetching Apps'.tr(),
                         );
                       }
                       if (snapshot.data.length == 0) {
@@ -269,7 +340,7 @@ class _ScreenState extends State<Screen> {
                           Navigator.of(context).pop();
                         });
                         return UploadDialog(
-                          warning: 'Fetching Apps',
+                          warning: 'Fetching Apps'.tr(),
                         );
                       }
 

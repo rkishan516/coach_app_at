@@ -1,9 +1,6 @@
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:coach_app/noInternet/instituteRegister.dart';
-import 'package:flutter_signin_button/button_view.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -47,33 +44,35 @@ class _WelcomePageState extends State<WelcomePage> {
           children: <Widget>[
             Expanded(flex: 3, child: _title()),
             Expanded(child: Container(), flex: 4),
-            SignInButtonBuilder(
-              key: ValueKey("Google"),
-              text: 'Sign in with Google',
-              textColor: Colors.white,
-              image: Container(
-                margin: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
-                child: CircleAvatar(
-                  backgroundImage: AssetImage(
-                    'assets/logos/google_light.png',
-                    package: 'flutter_signin_button',
-                  ),
+            InkWell(
+              onTap: () =>
+                  WelcomeNavigation.signInWithGoogleAndGetPage(context),
+              child: Container(
+                width: MediaQuery.of(context).size.width / 2,
+                decoration: BoxDecoration(
+                    color: Color(0xfff2905e),
+                    borderRadius: BorderRadius.circular(50)),
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
+                      child: CircleAvatar(
+                        backgroundImage: AssetImage(
+                          'assets/logos/google_light.png',
+                          package: 'flutter_signin_button',
+                        ),
+                      ),
+                    ),
+                    Text('Sign in with Google'.tr(),style: TextStyle(color: Colors.white),)
+                  ],
                 ),
               ),
-              backgroundColor: Color(0xfff2905e),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50)),
-              onPressed: () =>
-                  WelcomeNavigation.signInWithGoogleAndGetPage(context),
-              innerPadding: EdgeInsets.all(0),
-              height: 36.0,
-              width: 180,
             ),
             Expanded(child: Container(), flex: 3),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: SlideButton(
-                text: 'Register Institute',
+                text: 'Register Institute'.tr(),
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(

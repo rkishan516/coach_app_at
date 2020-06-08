@@ -7,7 +7,6 @@ import 'package:coach_app/adminSection/teacherRegister.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class TeachersList extends StatefulWidget {
@@ -121,7 +120,7 @@ class _TeachersListState extends State<TeachersList> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: SlideButton(
-        text: 'Add Teacher',
+        text: 'Add Teacher'.tr(),
         onTap: () => showDialog(
             context: context, builder: (context) => TeacherRegister()),
         width: 150,

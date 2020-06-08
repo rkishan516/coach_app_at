@@ -1,19 +1,9 @@
-import 'dart:math';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class SuccessDialog extends StatelessWidget {
   String success;
   SuccessDialog({@required this.success});
-  List<Widget> waitWidgets = [
-    SpinKitRipple(
-      color: Colors.green,
-    ),
-    SpinKitDoubleBounce(
-      color: Colors.green,
-    ),
-  ];
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -57,7 +47,7 @@ class SuccessDialog extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Successfully Done!',
+                  'Successfully Done!'.tr(),
                   style: TextStyle(
                     color: Colors.green,
                     fontSize: 24.0,

@@ -99,7 +99,7 @@ class _SelectInstituteState extends State<SelectInstituteCourse> {
                     onPressed: () {
                       Navigator.of(context).pop(selectedCourseID);
                     },
-                    child: Text('Close'),
+                    child: Text('Close'.tr()),
                   ),
                 ),
               ],

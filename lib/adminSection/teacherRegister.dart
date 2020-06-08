@@ -136,7 +136,7 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                       flex: 2,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text('In Years',style: TextStyle(fontSize: 16),),
+                        child: Text('In Years'.tr(),style: TextStyle(fontSize: 16),),
                       ),
                     ),
                   ],
@@ -207,7 +207,7 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                                       .replaceAll('-', '')) >
                                   80) {
                             Alert.instance.alert(
-                                context, 'Please Provide Correct Experience');
+                                context, 'Please Provide Correct Experience'.tr());
                           }
                           if (!emailTextEditingController.text
                               .endsWith('@gmail.com')) {

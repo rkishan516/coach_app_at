@@ -1,5 +1,5 @@
 import 'dart:collection';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -64,12 +64,12 @@ class _ResponseCheckState extends State<ResponseCheck> {
         .child(
             'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$uid/courses/${widget.databaseReference.path.split('/courses/')[1]}')
         .update({'score': score});
-    _showsnackbar(context, "Score is Saved");
+    _showsnackbar(context, "Score is Saved".tr());
   }
 
   _submitcheck() async {
     await widget.databaseReference.child('/quizModel').child('result').remove();
-    _showsnackbar(context, "Submitted successfully");
+    _showsnackbar(context, "Submitted successfully".tr());
   }
 
   void _showsnackbar(BuildContext context, String message) {
@@ -93,7 +93,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Response Check'),
+        title: Text('Response Check'.tr()),
         actions: [
           IconButton(
             icon: Icon(Icons.arrow_back_ios),
@@ -110,7 +110,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
                   ? _pageController.animateToPage(++pageNumber,
                       duration: Duration(milliseconds: 250),
                       curve: Curves.bounceInOut)
-                  : _showsnackbar(context, "Save Score First");
+                  : _showsnackbar(context, "Save Score First".tr());
             },
           )
         ],
@@ -175,7 +175,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText:
-                          _score == -1 ? "Enter Score" : _score.toString(),
+                          _score == -1 ? "Enter Score".tr() : _score.toString(),
                     ),
                   ),
                 ),
@@ -184,7 +184,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
                   children: [
                     RaisedButton(
                         color: Colors.orange,
-                        child: Text('Save Score'),
+                        child: Text('Save Score'.tr()),
                         onPressed: () {
                           saveScore = true;
                           _saveScore(
@@ -193,11 +193,11 @@ class _ResponseCheckState extends State<ResponseCheck> {
                     pageNumber + 1 == _allStudentResponse.length
                         ? RaisedButton(
                             color: Colors.orange,
-                            child: Text('Submit'),
+                            child: Text('Submit'.tr()),
                             onPressed: () {
                               saveScore
                                   ? _submitcheck()
-                                  : _showsnackbar(context, "Save Score First");
+                                  : _showsnackbar(context, "Save Score First".tr());
                               _pref.remove(key);
                             })
                         : Container(),
@@ -205,7 +205,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
                 )
               ],
             );
-          }) : Container(child: Center(child: Text('No Student has submitted the quiz'),),),
+          }) : Container(child: Center(child: Text('No Student has submitted the quiz'.tr()),),),
     );
   }
 }

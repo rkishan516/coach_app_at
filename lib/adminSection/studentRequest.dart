@@ -1,10 +1,10 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class StudentsRequests extends StatefulWidget {
@@ -54,148 +54,10 @@ class _StudentsRequestsState extends State<StudentsRequests> {
                     return ListView.builder(
                       itemCount: students?.length,
                       itemBuilder: (BuildContext context, int index) {
-                        String selectedCourseID =
-                            students[students.keys.toList()[index]].classs;
-                        Courses selectedCourse;
                         return Card(
-                          child: ListTile(
-                            title: Text(
-                              'Name'.tr() +
-                                  ' : \t\t\t' +
-                                  '${students[students.keys.toList()[index]].name}\n' +
-                                  'Email'.tr() +
-                                  ' : \t' +
-                                  '${students[students.keys.toList()[index]].email}\n' +
-                                  'Address'.tr() +
-                                  ' : \t\t\t' +
-                                  '${students[students.keys.toList()[index]].address}',
-                              style: TextStyle(color: Colors.orange),
-                            ),
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  students[students.keys.toList()[index]]
-                                      .photoURL),
-                            ),
-                            dense: true,
-                            isThreeLine: true,
-                            trailing: IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: Colors.orange,
-                              ),
-                              onPressed: () {
-                                ref
-                                    .child(students.keys.toList()[index] +
-                                        '/status')
-                                    .set('Rejected');
-                              },
-                            ),
-                            subtitle: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 9,
-                                  child: StreamBuilder<Event>(
-                                      stream: ref
-                                          .parent()
-                                          .child('/courses')
-                                          .onValue,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          List<Courses> courses =
-                                              List<Courses>();
-                                          snapshot.data.snapshot.value
-                                              .forEach((k, v) {
-                                            courses.add(Courses.fromJson(v));
-                                            if (k.toString() ==
-                                                students[students.keys
-                                                        .toList()[index]]
-                                                    .classs) {
-                                              selectedCourse =
-                                                  Courses.fromJson(v);
-                                            }
-                                          });
-                                          return DropdownButton(
-                                              value: selectedCourseID,
-                                              hint: Text('Select Course'.tr()),
-                                              items: courses
-                                                  .map(
-                                                    (e) => DropdownMenuItem(
-                                                      child: Container(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width /
-                                                            5,
-                                                        child: Text(
-                                                          e.name,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ),
-                                                      value: e.id,
-                                                      onTap: () {
-                                                        setState(() {
-                                                          selectedCourse = e;
-                                                        });
-                                                      },
-                                                    ),
-                                                  )
-                                                  .toList(),
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  selectedCourseID = value;
-                                                });
-                                              });
-                                        } else {
-                                          return Container();
-                                        }
-                                      }),
-                                ),
-                                Expanded(
-                                  flex: 5,
-                                  child: FlatButton(
-                                    onPressed: () {
-                                      if (selectedCourseID == null ||
-                                          selectedCourse == null) {
-                                        _scKey.currentState.showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                                'Select the course for Student'
-                                                    .tr()),
-                                          ),
-                                        );
-                                      } else {
-                                        Course course = Course(
-                                          academicYear:
-                                              DateTime.now().year.toString() +
-                                                  '-' +
-                                                  (DateTime.now().year + 1)
-                                                      .toString(),
-                                          courseID: selectedCourseID,
-                                          courseName: selectedCourse.name,
-                                          paymentToken:
-                                              'Registered By ${FireBaseAuth.instance.user.displayName}',
-                                        );
-                                        ref
-                                            .child(
-                                                students.keys.toList()[index] +
-                                                    '/status')
-                                            .set('Registered');
-                                        ref
-                                            .child(
-                                                students.keys.toList()[index] +
-                                                    '/course')
-                                            .child(selectedCourseID)
-                                            .set(course.toJson());
-                                        selectedCourse = null;
-                                        selectedCourseID = null;
-                                      }
-                                    },
-                                    child: Text('Accept'.tr()),
-                                  ),
-                                ),
-                              ],
-                            ),
+                          child: StudentRequestListTile(
+                            keyS: students.keys.toList()[index],
+                            student: students[students.keys.toList()[index]],
                           ),
                         );
                       },
@@ -224,6 +86,138 @@ class _StudentsRequestsState extends State<StudentsRequests> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class StudentRequestListTile extends StatefulWidget {
+  String keyS;
+  Student student;
+  StudentRequestListTile({this.keyS, this.student});
+  @override
+  _StudentRequestListTileState createState() => _StudentRequestListTileState();
+}
+
+class _StudentRequestListTileState extends State<StudentRequestListTile> {
+  DatabaseReference ref = FirebaseDatabase.instance.reference().child(
+      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students');
+  String selectedCourseID;
+  Courses selectedCourse;
+  @override
+  void initState() {
+    selectedCourseID = widget.student.classs;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(
+        'Name'.tr() +
+            ' : \t\t\t' +
+            '${widget.student.name}\n' +
+            'Email'.tr() +
+            ' : \t' +
+            '${widget.student.email}\n' +
+            'Address'.tr() +
+            ' : \t\t\t' +
+            '${widget.student.address}',
+        style: TextStyle(color: Colors.orange),
+      ),
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(widget.student.photoURL),
+      ),
+      dense: true,
+      isThreeLine: true,
+      trailing: IconButton(
+        icon: Icon(
+          Icons.delete,
+          color: Colors.orange,
+        ),
+        onPressed: () {
+          ref.child(widget.keyS + '/status').set('Rejected');
+        },
+      ),
+      subtitle: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 9,
+            child: StreamBuilder<Event>(
+                stream: ref.parent().child('/courses').onValue,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    Map<String, Courses> courses = Map<String, Courses>();
+                    snapshot.data.snapshot.value.forEach((k, v) {
+                      courses[k] = (Courses.fromJson(v));
+                      if (k.toString() == widget.student.classs) {
+                        selectedCourse = Courses.fromJson(v);
+                      }
+                    });
+                    return DropdownButton<String>(
+                        value: selectedCourseID,
+                        hint: Text('Select Course'.tr()),
+                        items: courses
+                            .map(
+                              (k, e) => MapEntry(
+                                k,
+                                DropdownMenuItem(
+                                  child: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 5,
+                                    child: Text(
+                                      e.name,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  value: e.id,
+                                ),
+                              ),
+                            )
+                            .values
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedCourseID = value;
+                            selectedCourse = courses[value];
+                            print(selectedCourseID);
+                          });
+                        });
+                  } else {
+                    return Container();
+                  }
+                }),
+          ),
+          Expanded(
+            flex: 5,
+            child: FlatButton(
+              onPressed: () {
+                if (selectedCourseID == null || selectedCourse == null) {
+                  Alert.instance
+                      .alert(context, 'Select the course for Student'.tr());
+                } else {
+                  Course course = Course(
+                    academicYear: DateTime.now().year.toString() +
+                        '-' +
+                        (DateTime.now().year + 1).toString(),
+                    courseID: selectedCourseID,
+                    courseName: selectedCourse.name,
+                    paymentToken:
+                        'Registered By ${FireBaseAuth.instance.user.displayName}',
+                  );
+                  ref.child(widget.keyS + '/status').set('Registered');
+                  ref
+                      .child(widget.keyS + '/course')
+                      .child(selectedCourseID)
+                      .set(course.toJson());
+                  selectedCourse = null;
+                  selectedCourseID = null;
+                }
+              },
+              child: Text('Accept'.tr()),
+            ),
+          ),
+        ],
       ),
     );
   }

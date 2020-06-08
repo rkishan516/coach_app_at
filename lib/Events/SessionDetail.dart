@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../Authentication/FirebaseAuth.dart';
 
 class SessionDetail extends StatefulWidget {
@@ -116,7 +116,7 @@ class _SessionDetailState extends State<SessionDetail> {
       appBar: AppBar(
         elevation: 0.0,
         title: Text(
-          'Enter Session Detail',
+          'Enter Session Detail'.tr(),
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -150,7 +150,7 @@ class _SessionDetailState extends State<SessionDetail> {
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
                         contentPadding: EdgeInsets.only(left: 8.0),
-                        hintText: "Enter Title",
+                        hintText: "Enter Title".tr(),
                       )),
                   SizedBox(
                     height: 20.0,
@@ -162,7 +162,7 @@ class _SessionDetailState extends State<SessionDetail> {
                         contentPadding: EdgeInsets.only(left: 8.0),
                         fillColor: Color(0xfff3f3f4),
                         filled: true,
-                        hintText: "Enter Description",
+                        hintText: "Enter Description".tr(),
                       )),
                   SizedBox(
                     height: 20.0,
@@ -174,7 +174,7 @@ class _SessionDetailState extends State<SessionDetail> {
                         Icons.alarm,
                         color: Colors.orange,
                       ),
-                      title: Text('Live Session Start Time'),
+                      title: Text('Live Session Start Time'.tr()),
                       onTap: () {
                         _selectTime(context);
                       },
@@ -200,7 +200,7 @@ class _SessionDetailState extends State<SessionDetail> {
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 alignment: Alignment.center,
                                 child: Text(
-                                  "Delete Session",
+                                  "Delete Session".tr(),
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 16),
                                 ),
@@ -219,7 +219,7 @@ class _SessionDetailState extends State<SessionDetail> {
                           padding: EdgeInsets.symmetric(vertical: 10),
                           alignment: Alignment.center,
                           child: Text(
-                            "Save",
+                            "Save".tr(),
                             style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ),

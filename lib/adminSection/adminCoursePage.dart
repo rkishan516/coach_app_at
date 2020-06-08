@@ -82,7 +82,6 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                   description: courses[index].description,
                                   price: courses[index].price.toString(),
                                   medium: courses[index].medium,
-                                  // batch: courses[index].batch.join(','),
                                   subjects: courses[index].subjects,
                                   id: courses[index].id,
                                 ),
@@ -120,7 +119,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
           height: 50,
           width: 150,
           onTap: () => addCourse(context),
-          text: 'Create Course',
+          text: 'Create Course'.tr(),
         ));
   }
 }
@@ -130,7 +129,6 @@ addCourse(BuildContext context,
     String description = '',
     String medium = '',
     String price = '',
-    String batch = '',
     String id = '',
     Map<String, Subjects> subjects}) {
   TextEditingController nameTextEditingController = TextEditingController()
@@ -141,8 +139,6 @@ addCourse(BuildContext context,
     ..text = medium;
   TextEditingController priceTextEditingController = TextEditingController()
     ..text = price;
-  TextEditingController batchTextEditingController = TextEditingController()
-    ..text = batch;
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -264,31 +260,6 @@ addCourse(BuildContext context,
                   ],
                 ),
               ),
-              // Container(
-              //   margin: EdgeInsets.symmetric(vertical: 10),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: <Widget>[
-              //       Text(
-              //         'Batches'.tr(),
-              //         style:
-              //             TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-              //       ),
-              //       SizedBox(
-              //         height: 10,
-              //       ),
-              //       TextField(
-              //         controller: batchTextEditingController,
-              //         decoration: InputDecoration(
-              //           border: InputBorder.none,
-              //           hintText: 'Seprated With comma'.tr(),
-              //           fillColor: Color(0xfff3f3f4),
-              //           filled: true,
-              //         ),
-              //       )
-              //     ],
-              //   ),
-              // ),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Row(
@@ -323,30 +294,29 @@ addCourse(BuildContext context,
                     FlatButton(
                       onPressed: () {
                         if (nameTextEditingController.text == '') {
-                          Alert.instance.alert(context,
-                              'Please Enter the course ' + 'name'.tr());
+                          Alert.instance.alert(
+                              context,
+                              'Please Enter the course '
+                                  .tr(args: ['Name'.tr()]));
                           return;
                         }
                         if (descriptionTextEditingController.text == '') {
-                          Alert.instance.alert(context,
-                              'Please Enter the course ' + 'description'.tr());
+                          Alert.instance.alert(
+                              context,
+                              'Please Enter the course '
+                                  .tr(args: ['Description'.tr()]));
                           return;
                         }
                         if (mediumTextEditingController.text == '') {
                           Alert.instance.alert(context,
-                              'Please Enter the course ' + 'medium'.tr());
+                              'Please Enter the course '.tr(args: ['Medium'.tr()]));
                           return;
                         }
                         if (priceTextEditingController.text == '') {
                           Alert.instance.alert(context,
-                              'Please Enter the course ' + 'price'.tr());
+                              'Please Enter the course '.tr(args: ['Fee'.tr()]));
                           return;
                         }
-                        // if (batchTextEditingController.text == '') {
-                        //   Alert.instance.alert(context,
-                        //       'Please Enter the course ' + 'batch'.tr());
-                        //   return;
-                        // }
                         Courses course = Courses(
                           name: nameTextEditingController.text
                               .capitalize()
@@ -360,10 +330,6 @@ addCourse(BuildContext context,
                               .trim(),
                           price: double.parse(priceTextEditingController.text)
                               .toInt(),
-                          // batch: batchTextEditingController.text
-                          //     .split(',')
-                          //     .map((e) => e.capitalize().trim())
-                          //     .toList(),
                           subjects: subjects,
                           id: (id == '')
                               ? nameTextEditingController.text.hashCode
@@ -396,12 +362,5 @@ addCourse(BuildContext context,
   );
 }
 
-//TODO DELEtion care testing
-//TODO Description of everything
-//TODO Youtube and PDF ad
-//TODO DYNAMIC Ad
-//TODO Login screen by flare animation name
-//TODO Optimize
-//TODO Course Registration page
-//TODO English of total app
-//TODO Firebase security rules
+//Quiz start at or expired
+//TODO COurse select for student on student request

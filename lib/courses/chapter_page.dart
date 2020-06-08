@@ -133,7 +133,7 @@ class _ChapterPageState extends State<ChapterPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             SlideButton(
-              text: 'Live Session',
+              text: 'Live Session'.tr(),
               onTap: () => Navigator.of(context).push(
                 CupertinoPageRoute(
                   builder: (context) => Calender(
@@ -147,7 +147,7 @@ class _ChapterPageState extends State<ChapterPage> {
               icon: Icon(Icons.add_to_queue),
             ),
             SlideButtonR(
-                text: 'Add Chapter',
+                text: 'Add Chapter'.tr(),
                 onTap: () => addChapter(context, widget.reference),
                 width: 150,
                 height: 50),

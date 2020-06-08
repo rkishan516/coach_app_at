@@ -12,7 +12,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class AdminSubjectPage extends StatefulWidget {
@@ -55,7 +54,6 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    print(snapshot.data.snapshot.value);
                     Courses courses =
                         Courses.fromJson(snapshot.data.snapshot.value);
                     length = courses.subjects?.length ?? 0;
@@ -137,7 +135,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
         ),
       ),
       floatingActionButton: SlideButtonR(
-          text: 'Add Subject',
+          text: 'Add Subject'.tr(),
           onTap: () => addSubject(context, widget.courseId),
           width: 150,
           height: 50),
@@ -227,7 +225,7 @@ addSubject(BuildContext context, String courseId,
                                 children: <Widget>[
                                   Center(
                                     child: Text(
-                                      'Your Institute does not have any Teacher',
+                                      'Your Institute does not have any Teacher'.tr(),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -238,7 +236,7 @@ addSubject(BuildContext context, String courseId,
                                             builder: (context) =>
                                                 TeacherRegister(),
                                           ),
-                                      child: Text('Register Teacher'))
+                                      child: Text('Add Teacher'.tr()))
                                 ],
                               );
                             } else {
@@ -312,7 +310,7 @@ addSubject(BuildContext context, String courseId,
                       onPressed: () {
                         if (nameTextEditingController.text == '') {
                           Alert.instance.alert(
-                              context, 'Please Enter the Name of Course');
+                              context, 'Please Enter the Name of Subject'.tr());
                           return;
                         }
                         if (selectedTeacher.length == 0) {

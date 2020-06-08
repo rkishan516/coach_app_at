@@ -2,6 +2,7 @@ import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class TeacherProfilePage extends StatelessWidget {
   DatabaseReference reference;
@@ -13,7 +14,7 @@ class TeacherProfilePage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
-          title: Text('Profile'),
+          title: Text('Profile'.tr()),
           centerTitle: false,
           elevation: 0.0,
         ),
@@ -38,7 +39,7 @@ class TeacherProfilePage extends StatelessWidget {
               stream: reference.onValue,
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return UploadDialog(warning: 'Fetching');
+                  return UploadDialog(warning: 'Fetching'.tr());
                 }
                 Teacher teacher =
                     Teacher.fromJson(snapshot.data.snapshot.value);
@@ -81,7 +82,7 @@ class TeacherProfilePage extends StatelessWidget {
                               textAlign: TextAlign.center,
                             ),
                             Text(
-                              'Qualification: ${teacher?.qualification}',
+                              'Qualification'.tr()+': ${teacher?.qualification}',
                               style: TextStyle(
                                   fontWeight: FontWeight.normal,
                                   fontSize: _width / 25,
@@ -102,7 +103,7 @@ class TeacherProfilePage extends StatelessWidget {
                                       width: _width / 30,
                                     ),
                                     Text(
-                                      '${teacher?.experience} Years of Experience',
+                                      '${teacher?.experience} '+'Years of Experience'.tr(),
                                     )
                                   ],
                                 )),

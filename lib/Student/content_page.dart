@@ -1,16 +1,17 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/YT_player/pdf_player.dart';
 import 'package:coach_app/YT_player/quiz_player.dart';
 import 'package:coach_app/YT_player/yt_player.dart';
 import 'package:coach_app/noInternet/XD_Nointernet.dart';
-import 'package:coach_app/noInternet/noInternet.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class ContentPage extends StatefulWidget {
   final DatabaseReference reference;
@@ -28,10 +29,6 @@ class _ContentPageState extends State<ContentPage> {
       stream: Connectivity().onConnectivityChanged,
       builder: (BuildContext context, snapshot) {
         if (snapshot.hasData) {
-          print(snapshot.data);
-          if (snapshot.data == ConnectivityResult.none) {
-            return NoInternet();
-          }
           return Scaffold(
             drawer: getDrawer(context),
             appBar: getAppBar(context),
@@ -63,22 +60,61 @@ class _ContentPageState extends State<ContentPage> {
                           return ListView.builder(
                             itemCount: length,
                             itemBuilder: (BuildContext context, int index) {
+                              bool isEnabled = true;
+                              if (chapter
+                                      .content[
+                                          chapter.content.keys.toList()[index]]
+                                      .kind ==
+                                  'Quiz') {
+                                isEnabled = false;
+                                DateTime endTime = chapter
+                                    .content[
+                                        chapter.content.keys.toList()[index]]
+                                    .quizModel
+                                    .startTime
+                                    .add(chapter
+                                        .content[chapter.content.keys
+                                            .toList()[index]]
+                                        .quizModel
+                                        .testTime);
+                                if (DateTime.now().isAfter(chapter
+                                        .content[chapter.content.keys
+                                            .toList()[index]]
+                                        .quizModel
+                                        .startTime) &&
+                                    DateTime.now().isBefore(endTime)) {
+                                  isEnabled = true;
+                                }
+                              }
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Card(
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
                                   child: ListTile(
                                     leading: CircleAvatar(
+                                      backgroundColor:
+                                          isEnabled ? Colors.orange : null,
                                       child: Icon(
-                                        chapter.content[chapter.content.keys.toList()[index]].kind ==
+                                        chapter
+                                                    .content[chapter
+                                                        .content.keys
+                                                        .toList()[index]]
+                                                    .kind ==
                                                 'Youtube Video'
                                             ? Icons.videocam
-                                            : chapter.content[chapter.content.keys.toList()[index]].kind == 'PDF'
+                                            : chapter
+                                                        .content[chapter
+                                                            .content.keys
+                                                            .toList()[index]]
+                                                        .kind ==
+                                                    'PDF'
                                                 ? Icons.library_books
                                                 : Icons.question_answer,
                                         color: Colors.white,
                                       ),
                                     ),
+                                    enabled: isEnabled,
                                     title: Text(
                                       '${chapter.content[chapter.content.keys.toList()[index]].title}',
                                       style: TextStyle(color: Colors.blue),
@@ -88,31 +124,70 @@ class _ContentPageState extends State<ContentPage> {
                                       color: Colors.blue,
                                     ),
                                     onTap: () {
-                                      if (chapter.content[chapter.content.keys.toList()[index]].kind ==
+                                      if (chapter
+                                              .content[chapter.content.keys
+                                                  .toList()[index]]
+                                              .kind ==
                                           'Youtube Video') {
                                         Navigator.of(context).push(
                                           CupertinoPageRoute(
                                             builder: (context) => YTPlayer(
-                                                link:
-                                                    chapter.content[chapter.content.keys.toList()[index]].ylink),
+                                                reference: widget.reference.child(
+                                                    'content/${chapter.content.keys.toList()[index]}'),
+                                                link: chapter
+                                                    .content[chapter
+                                                        .content.keys
+                                                        .toList()[index]]
+                                                    .ylink),
                                           ),
                                         );
-                                      } else if (chapter.content[chapter.content.keys.toList()[index]].kind ==
+                                      } else if (chapter
+                                              .content[chapter.content.keys
+                                                  .toList()[index]]
+                                              .kind ==
                                           'PDF') {
                                         Navigator.of(context).push(
                                           CupertinoPageRoute(
                                             builder: (context) => PDFPlayer(
-                                              link: chapter.content[chapter.content.keys.toList()[index]].link,
+                                              link: chapter
+                                                  .content[chapter.content.keys
+                                                      .toList()[index]]
+                                                  .link,
                                             ),
                                           ),
                                         );
-                                      } else if (chapter.content[chapter.content.keys.toList()[index]].kind ==
+                                      } else if (chapter
+                                              .content[chapter.content.keys
+                                                  .toList()[index]]
+                                              .kind ==
                                           'Quiz') {
+                                        if(snapshot.data.snapshot.value['content'][chapter.content.keys.toList()[index]]['quizModel']['result'][FireBaseAuth.instance.user.uid] != null){
+                                          Alert.instance.alert(context, 'You have already submitted the quiz'.tr());
+                                          return;
+                                        }
+                                        DateTime endTime = chapter
+                                            .content[chapter.content.keys
+                                                .toList()[index]]
+                                            .quizModel
+                                            .startTime
+                                            .add(chapter
+                                                .content[chapter.content.keys
+                                                    .toList()[index]]
+                                                .quizModel
+                                                .testTime);
+                                        if (!DateTime.now().isAfter(chapter
+                                                .content[chapter.content.keys
+                                                    .toList()[index]]
+                                                .quizModel
+                                                .startTime) ||
+                                            !DateTime.now().isBefore(endTime)) {
+                                          return;
+                                        }
                                         Navigator.of(context).push(
                                           CupertinoPageRoute(
                                             builder: (context) => Quiz(
-                                              reference: widget.reference
-                                                  .child('content/${chapter.content.keys.toList()[index]}'),
+                                              reference: widget.reference.child(
+                                                  'content/${chapter.content.keys.toList()[index]}'),
                                             ),
                                           ),
                                         );

@@ -8,13 +8,12 @@ import 'package:coach_app/YT_player/pdf_player.dart';
 import 'package:coach_app/YT_player/quiz_player.dart';
 import 'package:coach_app/YT_player/yt_player.dart';
 import 'package:coach_app/courses/FormGeneration/form_generator.dart';
-import 'package:coach_app/noInternet/noInternet.dart';
+import 'package:coach_app/noInternet/XD_Nointernet.dart';
 import 'package:cross_connectivity/cross_connectivity.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class ContentPage extends StatefulWidget {
@@ -35,7 +34,7 @@ class _ContentPageState extends State<ContentPage> {
         if (snapshot.hasData) {
           print(snapshot.data);
           if (snapshot.data == ConnectivityStatus.none) {
-            return NoInternet();
+            return XD_Nointernet();
           }
           return Scaffold(
             drawer: getDrawer(context),
@@ -77,10 +76,18 @@ class _ContentPageState extends State<ContentPage> {
                                   child: ListTile(
                                     leading: CircleAvatar(
                                       child: Icon(
-                                        chapter.content[chapter.content.keys.toList()[index]].kind ==
+                                        chapter
+                                                    .content[chapter
+                                                        .content.keys
+                                                        .toList()[index]]
+                                                    .kind ==
                                                 'Youtube Video'
                                             ? Icons.videocam
-                                            : chapter.content[chapter.content.keys.toList()[index]].kind ==
+                                            : chapter
+                                                        .content[chapter
+                                                            .content.keys
+                                                            .toList()[index]]
+                                                        .kind ==
                                                     'PDF'
                                                 ? Icons.library_books
                                                 : Icons.question_answer,
@@ -97,25 +104,42 @@ class _ContentPageState extends State<ContentPage> {
                                       color: Colors.orange,
                                     ),
                                     onTap: () {
-                                      if (chapter.content[chapter.content.keys.toList()[index]].kind ==
+                                      if (chapter
+                                              .content[chapter.content.keys
+                                                  .toList()[index]]
+                                              .kind ==
                                           'Youtube Video') {
                                         Navigator.of(context).push(
                                           CupertinoPageRoute(
                                             builder: (context) => YTPlayer(
+                                                reference: widget.reference.child(
+                                                    'content/${chapter.content.keys.toList()[index]}'),
                                                 link: chapter
-                                                    .content[chapter.content.keys.toList()[index]].ylink),
+                                                    .content[chapter
+                                                        .content.keys
+                                                        .toList()[index]]
+                                                    .ylink),
                                           ),
                                         );
-                                      } else if (chapter.content[chapter.content.keys.toList()[index]].kind ==
+                                      } else if (chapter
+                                              .content[chapter.content.keys
+                                                  .toList()[index]]
+                                              .kind ==
                                           'PDF') {
                                         Navigator.of(context).push(
                                           CupertinoPageRoute(
                                             builder: (context) => PDFPlayer(
-                                              link: chapter.content[chapter.content.keys.toList()[index]].link,
+                                              link: chapter
+                                                  .content[chapter.content.keys
+                                                      .toList()[index]]
+                                                  .link,
                                             ),
                                           ),
                                         );
-                                      } else if (chapter.content[chapter.content.keys.toList()[index]].kind ==
+                                      } else if (chapter
+                                              .content[chapter.content.keys
+                                                  .toList()[index]]
+                                              .kind ==
                                           'Quiz') {
                                         if (FireBaseAuth
                                                 .instance.previlagelevel >
@@ -134,8 +158,8 @@ class _ContentPageState extends State<ContentPage> {
                                         Navigator.of(context).push(
                                           CupertinoPageRoute(
                                             builder: (context) => Quiz(
-                                              reference: widget.reference
-                                                  .child('content/${chapter.content.keys.toList()[index]}'),
+                                              reference: widget.reference.child(
+                                                  'content/${chapter.content.keys.toList()[index]}'),
                                             ),
                                           ),
                                         );
@@ -143,19 +167,23 @@ class _ContentPageState extends State<ContentPage> {
                                     },
                                     onLongPress: () => addContent(
                                         context, widget.reference,
-                                        key: chapter.content.keys.toList()[index],
-                                        title: chapter.content[chapter.content.keys.toList()[index]].title,
+                                        key: chapter.content.keys
+                                            .toList()[index],
+                                        title: chapter
+                                            .content[chapter.content.keys
+                                                .toList()[index]]
+                                            .title,
                                         link: chapter.content[chapter.content.keys.toList()[index]].kind ==
                                                 'Youtube Video'
-                                            ? chapter.content[chapter.content.keys.toList()[index]].ylink
-                                            : chapter.content[chapter.content.keys.toList()[index]].kind ==
-                                                    'PDF'
+                                            ? chapter
+                                                .content[chapter.content.keys
+                                                    .toList()[index]]
+                                                .ylink
+                                            : chapter.content[chapter.content.keys.toList()[index]].kind == 'PDF'
                                                 ? chapter.content[chapter.content.keys.toList()[index]].link
                                                 : '',
-                                        quizModel:
-                                            chapter.content[chapter.content.keys.toList()[index]].quizModel,
-                                        description:
-                                            chapter.content[chapter.content.keys.toList()[index]].description,
+                                        quizModel: chapter.content[chapter.content.keys.toList()[index]].quizModel,
+                                        description: chapter.content[chapter.content.keys.toList()[index]].description,
                                         type: chapter.content[chapter.content.keys.toList()[index]].kind),
                                   ),
                                 ),
@@ -188,14 +216,14 @@ class _ContentPageState extends State<ContentPage> {
               ),
             ),
             floatingActionButton: SlideButtonR(
-              text: 'Add Content',
+              text: 'Add Content'.tr(),
               onTap: () => addContent(context, widget.reference),
               width: 150,
               height: 50,
             ),
           );
         } else {
-          return NoInternet();
+          return XD_Nointernet();
         }
       },
     );

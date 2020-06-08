@@ -1,11 +1,10 @@
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
-import 'package:coach_app/courses/content_page.dart';
+import 'package:coach_app/Student/content_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class ChapterPage extends StatefulWidget {
   final DatabaseReference reference;
@@ -47,7 +46,6 @@ class _ChapterPageState extends State<ChapterPage> {
                   stream: widget.reference.onValue,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      print(snapshot.data.snapshot.value);
                       Subjects subjects =
                           Subjects.fromJson(snapshot.data.snapshot.value);
                       length = subjects.chapters?.length ?? 0;

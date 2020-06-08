@@ -1,11 +1,10 @@
-import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Student/course_registration_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AllCoursePage extends StatefulWidget {
   DatabaseReference ref;
@@ -22,7 +21,7 @@ class _AllCoursePageState extends State<AllCoursePage> {
         title: RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
-            text: 'All Courses',
+            text: 'All Courses'.tr(),
             style: GoogleFonts.portLligatSans(
               fontSize: 30,
               fontWeight: FontWeight.w700,
@@ -30,21 +29,6 @@ class _AllCoursePageState extends State<AllCoursePage> {
             ),
           ),
         ),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(
-                Icons.exit_to_app,
-                color: Colors.white,
-              ),
-              onPressed: () => FireBaseAuth.instance.signoutWithGoogle().then(
-                    (value) {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) => WelcomePage()),
-                          (route) => false);
-                    },
-                  )),
-        ],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -96,6 +80,9 @@ class _AllCoursePageState extends State<AllCoursePage> {
                                   CupertinoPageRoute(
                                     builder: (context) =>
                                         CourseRegistrationPage(
+                                      courseID: courses.keys.toList()[index],
+                                      name:
+                                          courses[courses.keys.toList()[index]],
                                       ref: widget.ref.child(
                                           'courses/${courses.keys.toList()[index]}'),
                                     ),

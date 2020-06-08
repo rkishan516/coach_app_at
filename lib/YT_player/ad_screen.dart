@@ -1,7 +1,7 @@
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 
-const String testDevice ="MobileAd";
+const String testDevice ="BCC52FD9D88E15E383AEAD29E916C3F1";
 
 class MobileAd extends StatefulWidget {
   @override
@@ -35,7 +35,7 @@ class _MobileAdState extends State<MobileAd> {
   @override
   void initState() {
     super.initState();
-    FirebaseAdMob.instance.initialize(appId: "ca-app-pub-9529467099496606/1080207528");
+    FirebaseAdMob.instance.initialize(appId: "ca-app-pub-9529467099496606~5774987233");
     _bannerAd= createBannerAd()..load()..show();
   }
 

@@ -100,10 +100,10 @@ class _MyInstituteState extends State<MyInstitute> {
                   .orderByValue()
                   .equalTo(FireBaseAuth.instance.instituteid)
                   .onValue,
-              builder: (BuildContext context, snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.data.snapshot.value == null) {
-                    return Text('Unable to find Institute Code');
+              builder: (BuildContext context, snap) {
+                if (snap.hasData) {
+                  if (snap.data.snapshot.value == null) {
+                    return Text('Unable to find Institute Code'.tr());
                   }
                   if (FireBaseAuth.instance.previlagelevel == 4) {
                     return StreamBuilder<Event>(
@@ -115,31 +115,38 @@ class _MyInstituteState extends State<MyInstitute> {
                       builder: (BuildContext context, snapshot) {
                         if (snapshot.hasData) {
                           if (snapshot.data.snapshot.value == null) {
-                            return Text('Unable to find Institute Code');
+                            return Text('Unable to find Institute Code'.tr());
                           } else {
                             Map<String, Branch> branches =
                                 Map<String, Branch>();
                             snapshot.data.snapshot.value.forEach((k, b) {
                               branches[k] = Branch.fromJson(b);
                             });
-                            return ListView.builder(
-                              itemCount: branches.length,
-                              itemBuilder: (context, index) {
-                                String key = branches.keys.toList()[index];
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Card(
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListView.builder(
+                                itemCount: branches.length,
+                                itemBuilder: (context, index) {
+                                  String key = branches.keys.toList()[index];
+                                  return Card(
+                                    color: Colors.orange[100],
                                     child: ListTile(
                                       isThreeLine: true,
-                                      title: Text(
-                                          'Branch Name: ${branches[key].name}'),
-                                      contentPadding: EdgeInsets.all(16),
-                                      subtitle: Text(
-                                          'Branch Code : ${snapshot.data.snapshot.value.keys.toList()[0] + key}'),
+                                      title: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text('Branch Name'.tr() +
+                                            ': ' +
+                                            '${branches[key].name}'),
+                                      ),
+                                      subtitle: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text('Branch Code'.tr() +
+                                            ' : ${snap.data.snapshot.value.keys.toList()[0] + key}'),
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             );
                           }
                         } else {
@@ -152,10 +159,10 @@ class _MyInstituteState extends State<MyInstitute> {
                     );
                   } else if (FireBaseAuth.instance.previlagelevel > 1) {
                     return Text(
-                        'Institute Code : ${snapshot.data.snapshot.value.keys.toList()[0]}${FireBaseAuth.instance.branchid}\n(Share this code with Student)');
+                        'Institute Code'.tr()+' : ${snap.data.snapshot.value.keys.toList()[0]}${FireBaseAuth.instance.branchid}\n('+'Share this code with Student'.tr()+')');
                   } else {
                     return Text(
-                        'Institute Code : ${snapshot.data.snapshot.value.keys.toList()[0]}${FireBaseAuth.instance.branchid}');
+                        'Institute Code'.tr()+' : ${snap.data.snapshot.value.keys.toList()[0]}${FireBaseAuth.instance.branchid}');
                   }
                 } else {
                   return PlaceholderLines(

@@ -1,7 +1,7 @@
 import 'package:coach_app/QuizResponse/ResponseCheck.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class QuizModalResponse extends StatefulWidget {
@@ -27,16 +27,11 @@ class _QuizModalState extends State<QuizModalResponse> {
     });
   }
 
-  void _showsnackbar(BuildContext context, String message) {
-    final snackBar = SnackBar(content: Text(message));
-    _scaffoldkey.currentState.showSnackBar(snackBar);
-  }
-
   @override
   void initState() {
     super.initState();
-    _sharedprefinit();
     key = widget.databaseReference.path;
+    _sharedprefinit();
   }
 
   @override
@@ -45,7 +40,7 @@ class _QuizModalState extends State<QuizModalResponse> {
     return Scaffold(
       key: _scaffoldkey,
       appBar: AppBar(
-        title: Text('Quizes'),
+        title: Text('Quizzes'.tr()),
       ),
       body: Container(
         height: size.height,
@@ -86,7 +81,7 @@ class _QuizModalState extends State<QuizModalResponse> {
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: "Enter Total Score",
+                          labelText: "Enter Total Score".tr(),
                         ),
                       ),
                     ),
@@ -114,7 +109,7 @@ class _QuizModalState extends State<QuizModalResponse> {
                           padding: EdgeInsets.symmetric(vertical: 10),
                           alignment: Alignment.center,
                           child: Text(
-                            "Save Score",
+                            "Save Score".tr(),
                             style: TextStyle(
                                 color: Colors.white, fontSize: 16),
                           ),

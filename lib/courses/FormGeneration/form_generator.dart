@@ -5,6 +5,7 @@ import 'package:coach_app/Models/model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class FormGenerator extends StatefulWidget {
   String title;
@@ -36,7 +37,6 @@ class _FormGeneratorState extends State<FormGenerator> {
     }
     testTime = widget.quizModel?.testTime ?? Duration();
     startTime = widget.quizModel?.startTime ?? DateTime.now();
-    print(startTime);
     formFieldsModals = widget.quizModel?.questions ?? List<QuestionModel>();
     super.initState();
   }
@@ -81,7 +81,7 @@ class _FormGeneratorState extends State<FormGenerator> {
               Card(
                 child: Container(
                   height: 40,
-                  child: Center(child: Text('Start Date and Time')),
+                  child: Center(child: Text('Start Date and Time'.tr())),
                 ),
               ),
               Card(
@@ -99,7 +99,7 @@ class _FormGeneratorState extends State<FormGenerator> {
               Card(
                 child: Container(
                   height: 40,
-                  child: Center(child: Text('Quiz Duration')),
+                  child: Center(child: Text('Quiz Duration'.tr())),
                 ),
               ),
               Card(
@@ -160,7 +160,7 @@ class _FormGeneratorState extends State<FormGenerator> {
                         ].map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value),
+                            child: Text(value.tr()),
                           );
                         }).toList(),
                         onChanged: (e) => setState(
@@ -181,7 +181,7 @@ class _FormGeneratorState extends State<FormGenerator> {
                           label = val;
                         },
                         decoration: InputDecoration(
-                          hintText: 'Question',
+                          hintText: 'Question'.tr(),
                           border: InputBorder.none,
                           fillColor: Color(0xfff3f3f4),
                           filled: true,
@@ -202,7 +202,7 @@ class _FormGeneratorState extends State<FormGenerator> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                        'Choice $index',
+                                        'Choice'.tr() + ' $index',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15),
@@ -226,7 +226,7 @@ class _FormGeneratorState extends State<FormGenerator> {
                           : Container(),
                       SlideButtonCovered(
                         height: 50,
-                        text: 'Add Question',
+                        text: 'Add Question'.tr(),
                         width: 150,
                         icon: Icon(Icons.add_circle_outline),
                         onTap: () {
@@ -234,7 +234,7 @@ class _FormGeneratorState extends State<FormGenerator> {
                           formFieldsModals.forEach((element) {
                             if (element.question == label) {
                               Alert.instance
-                                  .alert(context, 'Question Already Exist');
+                                  .alert(context, 'Question Already Exist'.tr());
                               flag = true;
                               return;
                             }
@@ -267,22 +267,24 @@ class _FormGeneratorState extends State<FormGenerator> {
                       SizedBox(
                         height: 20,
                       ),
-                      RaisedButton(
-                        padding: EdgeInsets.only(left:100,right: 100.0,),
-                        child: Text(
-                          'Submit Quiz',
-                          style: TextStyle(color: Colors.white),
+                      Container(
+                        width: MediaQuery.of(context).size.width/1.2,
+                        child: RaisedButton(
+                          child: Text(
+                            'Submit Quiz'.tr(),
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                          color: Color(0xffFF6C24),
+                          onPressed: () {
+                            QuizModel form = QuizModel(
+                              questions: formFieldsModals,
+                              testTime: testTime,
+                              startTime: startTime,
+                            );
+                            Navigator.of(context).pop(form);
+                          },
                         ),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                        color: Color(0xffFF6C24),
-                        onPressed: () {
-                          QuizModel form = QuizModel(
-                            questions: formFieldsModals,
-                            testTime: testTime,
-                            startTime: startTime,
-                          );
-                          Navigator.of(context).pop(form);
-                        },
                       )
                     ],
                   ),

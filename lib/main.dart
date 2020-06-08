@@ -1,9 +1,7 @@
-import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
+import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
-import 'package:coach_app/YT_player/ad_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flare_loading/flare_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,7 +12,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   // SystemChrome.setEnabledSystemUIOverlays([]);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  
+
   runApp(
     EasyLocalization(
       path: 'assets/translation',
@@ -23,7 +21,8 @@ void main() {
         Locale('hi'),
       ],
       saveLocale: true,
-      fallbackLocale: Locale('hi'),
+      startLocale: Locale('en'),
+      fallbackLocale: Locale('en'),
       child: MyApp(),
     ),
   );
@@ -41,9 +40,6 @@ class MyApp extends StatelessWidget {
     initializeDateFormatting();
     return MaterialApp(
       title: 'Guru Cool',
-      // localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         textTheme: GoogleFonts.portLligatSansTextTheme(),
@@ -55,14 +51,8 @@ class MyApp extends StatelessWidget {
         builder: (context, snap) {
           if (snap.hasData) {
             if (prefs?.getBool('isLoggedIn') == true) {
-              return FlareLoading(
-                name: 'assets/images/gurucool.flr',
-                onSuccess: (_) {},
-                onError: (_, __) {},
-                startAnimation: 'animation',
-                until: () =>
-                    WelcomeNavigation.signInWithGoogleAndGetPage(context),
-              );
+              WelcomeNavigation.signInWithGoogleAndGetPage(context);
+              return UploadDialog(warning: 'Logging In'.tr());
             }
             return WelcomePage();
           } else {

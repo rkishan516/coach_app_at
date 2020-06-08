@@ -8,7 +8,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class SubjectPage extends StatefulWidget {
@@ -56,29 +55,33 @@ class _SubjectPageState extends State<SubjectPage> {
                     return ListView.builder(
                       itemCount: length,
                       itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          child: ListTile(
-                            title: Text(
-                              '${courses.subjects[courses.subjects.keys.toList()[index]].name}',
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                            trailing: Icon(
-                              Icons.chevron_right,
-                              color: Colors.blue,
-                            ),
-                            onTap: () {
-                              return Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) => ChapterPage(
-                                    title: courses.subjects[courses.subjects.keys.toList()[index]].name,
-                                    reference: FirebaseDatabase.instance
-                                        .reference()
-                                        .child(
-                                            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${courses.subjects.keys.toList()[index]}'),
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            child: ListTile(
+                              title: Text(
+                                '${courses.subjects[courses.subjects.keys.toList()[index]].name}',
+                                style: TextStyle(color: Colors.blue),
+                              ),
+                              trailing: Icon(
+                                Icons.chevron_right,
+                                color: Colors.blue,
+                              ),
+                              onTap: () {
+                                return Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                    builder: (context) => ChapterPage(
+                                      title: courses.subjects[courses.subjects.keys.toList()[index]].name,
+                                      reference: FirebaseDatabase.instance
+                                          .reference()
+                                          .child(
+                                              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${courses.subjects.keys.toList()[index]}'),
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
                         );
                       },
@@ -109,7 +112,7 @@ class _SubjectPageState extends State<SubjectPage> {
         ),
       ),
       floatingActionButton: SlideButton(
-        text: 'Live Sessions',
+        text: 'Live Sessions'.tr(),
         icon: Icon(Icons.add_alert),
         onTap: () => Navigator.push(
           context,

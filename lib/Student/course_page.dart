@@ -6,7 +6,6 @@ import 'package:coach_app/Student/subject_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class CoursePage extends StatefulWidget {
@@ -48,21 +47,25 @@ class _CoursePageState extends State<CoursePage> {
                 return ListView.builder(
                   itemCount: student.course.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      child: ListTile(
-                        title: Text(
-                          '${student.course[index].courseName}',
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                        trailing: Icon(
-                          Icons.chevron_right,
-                          color: Colors.blue,
-                        ),
-                        onTap: () => Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (context) => SubjectPage(
-                              courseID:
-                                  student.course[index].courseID.toString(),
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        child: ListTile(
+                          title: Text(
+                            '${student.course[index].courseName}',
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                          trailing: Icon(
+                            Icons.chevron_right,
+                            color: Colors.blue,
+                          ),
+                          onTap: () => Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (context) => SubjectPage(
+                                courseID:
+                                    student.course[index].courseID.toString(),
+                              ),
                             ),
                           ),
                         ),
@@ -71,7 +74,7 @@ class _CoursePageState extends State<CoursePage> {
                   },
                 );
               } else {
-                return UploadDialog(warning: 'Fetching');
+                return UploadDialog(warning: 'Fetching'.tr());
               }
             },
           ),

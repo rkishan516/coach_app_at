@@ -1,12 +1,17 @@
-import 'package:coach_app/Drawer/drawer.dart';
+import 'package:firebase_admob/firebase_admob.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
+// import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YTPlayer extends StatefulWidget {
   final String link;
-  YTPlayer({@required this.link});
+  final DatabaseReference reference;
+  YTPlayer({@required this.link, @required this.reference});
   @override
   _YTPlayerState createState() => _YTPlayerState();
 }
@@ -15,12 +20,64 @@ class _YTPlayerState extends State<YTPlayer> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   YoutubePlayerController _controller;
 
-  YoutubeMetaData _videoMetaData;
-
   bool _isPlayerReady = false;
+
+  static final MobileAdTargetingInfo targetingInfo = new MobileAdTargetingInfo(
+    keywords: <String>[
+      'Education',
+      'Technology',
+      'Career',
+      'news',
+      'cricket',
+      'current affairs',
+      'business',
+      'success stories',
+      'motivation',
+      'concentration',
+      'exercise',
+      'workout',
+      'fun facts',
+      'nature',
+      'robots',
+      'mobiles',
+      'cars',
+      'rockets',
+      'space',
+      'science',
+      'maths',
+      'biology',
+      'geography',
+      'english',
+      'vocabulary',
+      'grammar',
+      'spoken english',
+      'army',
+      'gamees',
+      'adventure',
+      'focus'
+    ],
+    childDirected: true,
+  );
+
+  BannerAd _bannerAd;
+
+  BannerAd createBannerAd() {
+    return new BannerAd(
+        adUnitId: "ca-app-pub-9529467099496606/1080207528",
+        size: AdSize.banner,
+        targetingInfo: targetingInfo,
+        listener: (MobileAdEvent event) {
+          print("Banner event $event");
+        });
+  }
 
   @override
   void initState() {
+    FirebaseAdMob.instance
+        .initialize(appId: "ca-app-pub-9529467099496606~5774987233");
+    _bannerAd = createBannerAd()
+      ..load()
+      ..show();
     super.initState();
     _controller = YoutubePlayerController(
       initialVideoId: YoutubePlayer.convertUrlToId(widget.link),
@@ -34,14 +91,11 @@ class _YTPlayerState extends State<YTPlayer> {
         enableCaption: true,
       ),
     )..addListener(listener);
-    _videoMetaData = YoutubeMetaData();
   }
 
   void listener() {
     if (_isPlayerReady && mounted && !_controller.value.isFullScreen) {
-      setState(() {
-        _videoMetaData = _controller.metadata;
-      });
+      setState(() {});
     }
   }
 
@@ -54,6 +108,7 @@ class _YTPlayerState extends State<YTPlayer> {
 
   @override
   void dispose() {
+    _bannerAd?.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -65,35 +120,61 @@ class _YTPlayerState extends State<YTPlayer> {
         key: _scaffoldKey,
         appBar: AppBar(
           title: Text(
-            'Video Player',
+            'Video Player'.tr(),
             style: TextStyle(color: Colors.white),
           ),
         ),
-        body: ListView(
+        body: Column(
           children: [
-            YoutubePlayer(
-              controller: _controller,
-              showVideoProgressIndicator: true,
-              progressIndicatorColor: Colors.blueAccent,
-              topActions: <Widget>[
-               
-              ],
-              onReady: () {
-                _isPlayerReady = true;
-              },
-              onEnded: (data) {
-                Navigator.of(context).pop();
-              },
+            Expanded(
+              flex: 4,
+              child: YoutubePlayer(
+                controller: _controller,
+                showVideoProgressIndicator: true,
+                progressIndicatorColor: Colors.deepOrangeAccent,
+                onReady: () {
+                  _isPlayerReady = true;
+                },
+                onEnded: (data) {
+                  Navigator.of(context).pop();
+                },
+              ),
             ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _space,
-                  _text('Title', _videoMetaData.title),
-                  //TODO Description from streamBuilder
-                ],
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: StreamBuilder<Event>(
+                  stream: widget.reference.onValue,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              snapshot.data.snapshot.value['title'],
+                              style: TextStyle(fontSize: 32),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              snapshot.data.snapshot.value['description'],
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          )
+                        ],
+                      );
+                    } else {
+                      return PlaceholderLines(
+                        count: 3,
+                        animate: true,
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           ],
@@ -104,27 +185,4 @@ class _YTPlayerState extends State<YTPlayer> {
       // Navigator.of(context).pop();
     }
   }
-
-  Widget _text(String title, String value) {
-    return RichText(
-      text: TextSpan(
-        text: '$title : ',
-        style: TextStyle(
-          color: Colors.blueAccent,
-          fontWeight: FontWeight.bold,
-        ),
-        children: [
-          TextSpan(
-            text: value ?? '',
-            style: TextStyle(
-              color: Colors.blueAccent,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget get _space => SizedBox(height: 10);
 }

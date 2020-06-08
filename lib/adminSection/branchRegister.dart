@@ -150,7 +150,7 @@ class _BranchRegisterState extends State<BranchRegister> {
                       TextField(
                         controller: upiTextEditingController,
                         decoration: InputDecoration(
-                          hintText: 'Branch UPI ID',
+                          hintText: 'Branch UPI ID'.tr(),
                           hintStyle: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 15),
                           border: InputBorder.none,
@@ -203,7 +203,7 @@ class _BranchRegisterState extends State<BranchRegister> {
                         return;
                       }
                       if (!upiTextEditingController.text.contains('@')) {
-                        Alert.instance.alert(context, 'Wrong UPI ID');
+                        Alert.instance.alert(context, 'Wrong UPI ID'.tr());
                       }
                       DatabaseReference ref = FirebaseDatabase.instance
                           .reference()

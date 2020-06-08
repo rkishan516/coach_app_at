@@ -1,6 +1,7 @@
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/student_performance.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class Studentprofileactivity extends StatefulWidget {
   final Student student;
@@ -20,7 +21,7 @@ class _Studentinfostate extends State<Studentprofileactivity> {
       appBar: AppBar(
         elevation: 0.0,
         title: Text(
-          'Student Profile',
+          'Student'.tr()+' '+ 'Profile'.tr(),
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -74,7 +75,7 @@ class _Studentinfostate extends State<Studentprofileactivity> {
                       Padding(
                         padding: const EdgeInsets.all(3.0),
                         child: Text(
-                          "Student",
+                          "Student".tr(),
                           style: TextStyle(fontSize: 15, color: Colors.grey),
                         ),
                       ),

@@ -1,5 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
+import 'package:coach_app/Dialogs/areYouSure.dart';
+import 'package:coach_app/Dialogs/languageDialog.dart';
 import 'package:coach_app/Drawer/my_institute.dart';
 import 'package:coach_app/Drawer/privacyNPolicies.dart';
 import 'package:coach_app/Profile/next.dart';
@@ -69,7 +71,7 @@ getDrawer(BuildContext context) {
             shrinkWrap: true,
             children: <Widget>[
               ListTile(
-                title: Text('My Courses'),
+                title: Text('My Courses'.tr()),
                 leading: Icon(Icons.book),
                 onTap: () => Navigator.of(context).pushAndRemoveUntil(
                     CupertinoPageRoute(
@@ -87,7 +89,7 @@ getDrawer(BuildContext context) {
             children: <Widget>[
               ListTile(
                 title: Text(
-                  'All branches',
+                  'All branches'.tr(),
                 ),
                 leading: Icon(Icons.business),
                 onTap: () {
@@ -139,9 +141,22 @@ getDrawer(BuildContext context) {
           },
         ),
         ListTile(
+          title: Text('Language'.tr()),
+          leading: Icon(Icons.language),
+          onTap: () {
+            showDialog(
+                context: context, builder: (context) => LanguageDialog());
+          },
+        ),
+        ListTile(
           title: Text('Log Out'.tr()),
           leading: Icon(Icons.exit_to_app),
-          onTap: () {
+          onTap: () async {
+            String res = await showDialog(
+                context: context, builder: (context) => AreYouSure());
+            if (res != 'Yes') {
+              return;
+            }
             FireBaseAuth.instance.signoutWithGoogle().then(
               (value) {
                 Navigator.of(context).pushAndRemoveUntil(
@@ -178,29 +193,37 @@ getAppBar(BuildContext context) {
         return Container();
       },
     ),
-    bottom: PreferredSize(
-      child: StreamBuilder<Event>(
-        stream: FirebaseDatabase.instance
-            .reference()
-            .child('publicNotice')
-            .onValue,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Text(
-              snapshot.data.snapshot.value,
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
-      preferredSize: Size.fromHeight(5),
-    ),
     flexibleSpace: Stack(
       children: <Widget>[
+        Transform.translate(
+          offset: Offset(0, kToolbarHeight + 24.0),
+          child: StreamBuilder<Event>(
+            stream: FirebaseDatabase.instance
+                .reference()
+                .child('publicNotice')
+                .onValue,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data.snapshot.value == '') {
+                  return Container();
+                }
+                return Container(
+                  height: 30.0,
+                  width: size.width,
+                  color: Colors.red,
+                  child: Center(
+                    child: Text(
+                      snapshot.data.snapshot.value,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                );
+              } else {
+                return Container();
+              }
+            },
+          ),
+        ),
         Transform.translate(
           offset: Offset(size.width - 70.0, 56.0),
           child: StreamBuilder<Event>(
