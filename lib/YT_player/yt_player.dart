@@ -24,6 +24,17 @@ class _YTPlayerState extends State<YTPlayer> {
 
   static final MobileAdTargetingInfo targetingInfo = new MobileAdTargetingInfo(
     keywords: <String>[
+      'simulation games',
+      'board games',
+      'puzzle games',
+      'sport games',
+      'driver games',
+      'action games',
+      'survival games',
+      'simulation games',
+      'casual games',
+      'racing games',
+      'premium games',
       'Education',
       'Technology',
       'Career',
@@ -63,7 +74,7 @@ class _YTPlayerState extends State<YTPlayer> {
 
   BannerAd createBannerAd() {
     return new BannerAd(
-        adUnitId: "ca-app-pub-9529467099496606/1080207528",
+        adUnitId: "ca-app-pub-9529467099496606/3258157614",
         size: AdSize.banner,
         targetingInfo: targetingInfo,
         listener: (MobileAdEvent event) {
@@ -126,30 +137,26 @@ class _YTPlayerState extends State<YTPlayer> {
         ),
         body: Column(
           children: [
-            Expanded(
-              flex: 4,
-              child: YoutubePlayer(
-                controller: _controller,
-                showVideoProgressIndicator: true,
-                progressIndicatorColor: Colors.deepOrangeAccent,
-                onReady: () {
-                  _isPlayerReady = true;
-                },
-                onEnded: (data) {
-                  Navigator.of(context).pop();
-                },
-              ),
+            YoutubePlayer(
+              controller: _controller,
+              showVideoProgressIndicator: true,
+              progressIndicatorColor: Colors.deepOrangeAccent,
+              onReady: () {
+                _isPlayerReady = true;
+              },
+              onEnded: (data) {
+                Navigator.of(context).pop();
+              },
             ),
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: StreamBuilder<Event>(
-                  stream: widget.reference.onValue,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: StreamBuilder<Event>(
+                stream: widget.reference.onValue,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Card(
+                      child: ListView(
+                        shrinkWrap: true,
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -166,15 +173,15 @@ class _YTPlayerState extends State<YTPlayer> {
                             ),
                           )
                         ],
-                      );
-                    } else {
-                      return PlaceholderLines(
-                        count: 3,
-                        animate: true,
-                      );
-                    }
-                  },
-                ),
+                      ),
+                    );
+                  } else {
+                    return PlaceholderLines(
+                      count: 3,
+                      animate: true,
+                    );
+                  }
+                },
               ),
             ),
           ],

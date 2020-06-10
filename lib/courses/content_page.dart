@@ -93,15 +93,15 @@ class _ContentPageState extends State<ContentPage> {
                                                 : Icons.question_answer,
                                         color: Colors.white,
                                       ),
-                                      backgroundColor: Colors.orange,
+                                      backgroundColor: Color(0xffF36C24),
                                     ),
                                     title: Text(
                                       '${chapter.content[chapter.content.keys.toList()[index]].title}',
-                                      style: TextStyle(color: Colors.orange),
+                                      style: TextStyle(color: Color(0xffF36C24)),
                                     ),
                                     trailing: Icon(
                                       Icons.chevron_right,
-                                      color: Colors.orange,
+                                      color: Color(0xffF36C24),
                                     ),
                                     onTap: () {
                                       if (chapter

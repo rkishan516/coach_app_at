@@ -104,7 +104,7 @@ class _QuizModalState extends State<QuizModalResponse> {
                         child: Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20.0),
-                              color: Colors.orange),
+                              color: Color(0xffF36C24)),
                           width: MediaQuery.of(context).size.width / 3.5,
                           padding: EdgeInsets.symmetric(vertical: 10),
                           alignment: Alignment.center,

@@ -58,19 +58,37 @@ class _InstituteRegisterState extends State<InstituteRegister> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scKey,
+      appBar: AppBar(
+        title: Text(
+          'Institute Registration'.tr(),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 22, color: Colors.white),
+        ),
+        backgroundColor: Color(0xffF36C24),
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
+      ),
       body: Container(
         padding: EdgeInsets.only(left: 16.0, right: 16.0),
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2)
+          ],
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xffF36C24), Colors.white],
+          ),
+        ),
         child: ListView(
           children: <Widget>[
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Institute Registration'.tr(),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                ),
-              ),
-            ),
             Container(
               margin: EdgeInsets.symmetric(vertical: 8),
               child: TextField(
@@ -177,20 +195,23 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                     ),
                   ),
                   Expanded(
-                      child: InkWell(
-                        child: CircleAvatar(
-                          radius: 15,
-                          child: Text('?'),
-                        ),
-                        onTap: () => showDialog(
-                          context: context,
-                          builder: (context) => InfoDialog(
-                            infoString:
-                                'You will  be able to collect fee from students of respective branches on bank account registered with this UPI ID'.tr(),
-                          ),
+                    child: InkWell(
+                      child: CircleAvatar(
+                        backgroundColor: Colors.deepOrange[300],
+                        radius: 15,
+                        child: Text('?',style: TextStyle(color: Colors.white),),
+                      ),
+                      onTap: () => showDialog(
+                        context: context,
+                        builder: (context) => InfoDialog(
+                          infoString:
+                              'You will  be able to collect fee from students of respective branches on bank account registered with this UPI ID'
+                                  .tr(),
                         ),
                       ),
-                      flex: 1),
+                    ),
+                    flex: 1,
+                  ),
                 ],
               ),
             ),
@@ -230,7 +251,8 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                   hintStyle: TextStyle(fontSize: 15),
                   hintText: 'Main Branch Code'.tr(),
                   helperText:
-                      "Make your own branch code for easy references. eg : 1101".tr(),
+                      "Make your own branch code for easy references. eg : 1101"
+                          .tr(),
                   fillColor: Color(0xfff3f3f4),
                   filled: true,
                 ),
@@ -246,7 +268,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                     child: FlatButton(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
-                      color: Colors.orange,
+                      color: Color(0xffF36C24),
                       onPressed: () async {
                         try {
                           await getImage();
@@ -254,7 +276,10 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                           print(e);
                         }
                       },
-                      child: Text('Institute Logo'.tr()),
+                      child: Text(
+                        'Institute Logo'.tr(),
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
@@ -264,7 +289,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                   child: RaisedButton(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
-                    color: Colors.orange,
+                    color: Color(0xffF36C24),
                     onPressed: () {
                       if (nameTextEditingController.text != '' &&
                           phoneNoTextEditingController.text != '' &&
@@ -296,18 +321,6 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                             showDialog(
                                 context: context,
                                 builder: (context) => UploadDialog(
-                                      warning: 'Uploading Logo'.tr(),
-                                    ));
-                            StorageTaskSnapshot storageTaskSnapshot =
-                                await FirebaseStorage.instance
-                                    .ref()
-                                    .child(
-                                        '/instituteLogo/${nameTextEditingController.text}')
-                                    .putFile(_image)
-                                    .onComplete;
-                            showDialog(
-                                context: context,
-                                builder: (context) => UploadDialog(
                                       warning: 'Registering Institute'.tr(),
                                     ));
                             DatabaseReference reference = FirebaseDatabase
@@ -327,7 +340,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                     .toJson()
                               },
                               "paid": 'Trial',
-                              "logo": storageTaskSnapshot.storageMetadata.path,
+                              "logo": "/instituteLogo/${reference.key}",
                               "branches": {
                                 branch1CodeTextEditingController.text: Branch(
                                   name: branch1NameTextEditingController.text,
@@ -345,6 +358,17 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                 ).toJson()
                               }
                             });
+                            showDialog(
+                                context: context,
+                                builder: (context) => UploadDialog(
+                                      warning: 'Uploading Logo'.tr(),
+                                    ));
+                            StorageTaskSnapshot storageTaskSnapshot =
+                                await FirebaseStorage.instance
+                                    .ref()
+                                    .child('/instituteLogo/${reference.key}')
+                                    .putFile(_image)
+                                    .onComplete;
                             showDialog(
                               context: context,
                               builder: (context) => UploadDialog(
@@ -379,7 +403,8 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                 context: context,
                                 builder: (context) => SuccessDialog(
                                     success:
-                                        'Your Institute has been successfully Registered'.tr()));
+                                        'Your Institute has been successfully Registered'
+                                            .tr()));
                             await Future.delayed(Duration(seconds: 2));
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
@@ -398,8 +423,14 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        Text('Register'.tr()),
-                        Icon(Icons.keyboard_arrow_right)
+                        Text(
+                          'Register'.tr(),
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_right,
+                          color: Colors.white,
+                        )
                       ],
                     ),
                   ),

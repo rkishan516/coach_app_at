@@ -41,7 +41,7 @@ class InfoDialog extends StatelessWidget {
                 Text(
                   'What we will do!'.tr(),
                   style: TextStyle(
-                    color: Colors.orange,
+                    color: Color(0xffF36C24),
                     fontSize: 24.0,
                     fontWeight: FontWeight.w700,
                   ),
@@ -76,7 +76,7 @@ class InfoDialog extends StatelessWidget {
               child: Icon(
                 Icons.info,
                 size: 66.0,
-                color: Colors.orange,
+                color: Color(0xffF36C24),
               ),
             ),
           ),

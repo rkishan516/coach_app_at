@@ -53,7 +53,7 @@ class _PDFPlayerState extends State<PDFPlayer> {
 
   BannerAd createBannerAd() {
     return new BannerAd(
-        adUnitId: "ca-app-pub-9529467099496606/1080207528",
+        adUnitId: "ca-app-pub-9529467099496606/3258157614",
         size: AdSize.banner,
         targetingInfo: targetingInfo,
         listener: (MobileAdEvent event) {

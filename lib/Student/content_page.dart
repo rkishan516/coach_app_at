@@ -94,7 +94,7 @@ class _ContentPageState extends State<ContentPage> {
                                   child: ListTile(
                                     leading: CircleAvatar(
                                       backgroundColor:
-                                          isEnabled ? Colors.orange : null,
+                                          isEnabled ? Color(0xffF36C24) : null,
                                       child: Icon(
                                         chapter
                                                     .content[chapter

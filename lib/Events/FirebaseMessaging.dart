@@ -10,7 +10,7 @@ class FirebaseMessagingService {
 
   FirebaseMessagingService() {
     //initializing setting
-    var android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    var android = AndroidInitializationSettings('@mipmap/launcher_icon');
     var ios = IOSInitializationSettings();
     var initializationSettings = InitializationSettings(android, ios);
     flutterlocalnotificationplugin.initialize(initializationSettings);
@@ -19,16 +19,19 @@ class FirebaseMessagingService {
   sendNotification() {
     _firebaseMessaging.requestNotificationPermissions();
     _firebaseMessaging.configure(
-        onMessage: (Map<String, dynamic> message) async {
-      print('onMessage $message');
-      showNotification(message['data']['title'], message['data']['body']);
-    }, onResume: (Map<String, dynamic> message) async {
-      print('onResume $message');
-      showNotification(message['data']['title'], message['data']['body']);
-    }, onLaunch: (Map<String, dynamic> message) async {
-      print('onlaunch $message');
-      showNotification(message['data']['title'], message['data']['body']);
-    });
+      onMessage: (Map<String, dynamic> message) async {
+        print('onMessage $message');
+        showNotification(message['data']['title'], message['data']['body']);
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print('onResume $message');
+        showNotification(message['data']['title'], message['data']['body']);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print('onlaunch $message');
+        showNotification(message['data']['title'], message['data']['body']);
+      },
+    );
     _firebaseMessaging.requestNotificationPermissions(
         const IosNotificationSettings(sound: true, badge: true, alert: true));
   }
@@ -61,8 +64,7 @@ class FirebaseMessagingService {
             .update({"tokenid": token.toString()});
       } else if (FireBaseAuth.instance.previlagelevel == 4) {
         dbref
-            .child(
-                'admin/${FireBaseAuth.instance.user.uid}')
+            .child('admin/${FireBaseAuth.instance.user.uid}')
             .update({"tokenid": token.toString()});
       }
     });

@@ -68,11 +68,11 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
                               child: ListTile(
                                 title: Text(
                                   '${courses.subjects[courses.subjects.keys.toList()[index]].name}',
-                                  style: TextStyle(color: Colors.orange),
+                                  style: TextStyle(color: Color(0xffF36C24)),
                                 ),
                                 trailing: Icon(
                                   Icons.chevron_right,
-                                  color: Colors.orange,
+                                  color: Color(0xffF36C24),
                                 ),
                                 onTap: () {
                                   return Navigator.of(context).push(

@@ -1,41 +1,107 @@
 {
-    "project_info": {
-      "project_number": "571534499090",
-      "firebase_url": "https://coachapp-5a4c.firebaseio.com",
-      "project_id": "coachapp-5a4c",
-      "storage_bucket": "coachapp-5a4c.appspot.com"
-    },
-    "client": [
-      {
-        "client_info": {
-          "mobilesdk_app_id": "1:571534499090:android:910c09da3693052acfe7cb",
-          "android_client_info": {
-            "package_name": "com.example.coach_app"
-          }
-        },
-        "oauth_client": [
-          {
-            "client_id": "571534499090-cmhe7sr09q09cgqpqurk3o92joj3o585.apps.googleusercontent.com",
-            "client_type": 3
-          }
-        ],
-        "api_key": [
-          {
-            "current_key": "AIzaSyDrzBA1M5wj6c_c5GyOP1NcDxtQG9UJJ-Q"
-          }
-        ],
-        "services": {
-          "appinvite_service": {
-            "other_platform_oauth_client": [
-              {
-                "client_id": "571534499090-cmhe7sr09q09cgqpqurk3o92joj3o585.apps.googleusercontent.com",
-                "client_type": 3
-              }
-            ]
-          }
-        },
-        "admob_app_id" : "ca-app-pub-9529467099496606~5774987233"
+  "project_info": {
+    "project_number": "571534499090",
+    "firebase_url": "https://coachapp-5a4c.firebaseio.com",
+    "project_id": "coachapp-5a4c",
+    "storage_bucket": "coachapp-5a4c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571534499090:android:ca544014df8d004fcfe7cb",
+        "android_client_info": {
+          "package_name": "com.VysionTech.gurucool"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571534499090-cmhe7sr09q09cgqpqurk3o92joj3o585.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrzBA1M5wj6c_c5GyOP1NcDxtQG9UJJ-Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "571534499090-0kgvca6a7gmc873lenkdj00d4hqhgd83.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
       }
-    ],
-    "configuration_version": "1"
-  }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571534499090:android:910c09da3693052acfe7cb",
+        "android_client_info": {
+          "package_name": "com.example.coach_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571534499090-ci7od5ol8rgqopn4k9ki2jgbuas78u1l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.coach_app",
+            "certificate_hash": "017a59493f270ad1e69aa58e0b1b792b1de869f8"
+          }
+        },
+        {
+          "client_id": "571534499090-cmhe7sr09q09cgqpqurk3o92joj3o585.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrzBA1M5wj6c_c5GyOP1NcDxtQG9UJJ-Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "571534499090-0kgvca6a7gmc873lenkdj00d4hqhgd83.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-9529467099496606~5774987233"
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571534499090:android:66a8d85858d8cb10cfe7cb",
+        "android_client_info": {
+          "package_name": "com.example.videocalling"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571534499090-cmhe7sr09q09cgqpqurk3o92joj3o585.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrzBA1M5wj6c_c5GyOP1NcDxtQG9UJJ-Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "571534499090-0kgvca6a7gmc873lenkdj00d4hqhgd83.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

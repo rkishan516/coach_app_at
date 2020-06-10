@@ -57,15 +57,15 @@ class _StudentListState extends State<StudentList> {
                           child: ListTile(
                             title: Text(
                               '${students[students.keys.toList()[index]].name}',
-                              style: TextStyle(color: Colors.orange),
+                              style: TextStyle(color: Color(0xffF36C24)),
                             ),
                             subtitle: Text(
                               '${students[students.keys.toList()[index]].email}',
-                              style: TextStyle(color: Colors.orange),
+                              style: TextStyle(color: Color(0xffF36C24)),
                             ),
                             trailing: Icon(
                               Icons.chevron_right,
-                              color: Colors.orange,
+                              color: Color(0xffF36C24),
                             ),
                             onTap: () {
                               Navigator.push(

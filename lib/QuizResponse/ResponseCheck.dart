@@ -183,7 +183,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     RaisedButton(
-                        color: Colors.orange,
+                        color: Color(0xffF36C24),
                         child: Text('Save Score'.tr()),
                         onPressed: () {
                           saveScore = true;
@@ -192,7 +192,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
                         }),
                     pageNumber + 1 == _allStudentResponse.length
                         ? RaisedButton(
-                            color: Colors.orange,
+                            color: Color(0xffF36C24),
                             child: Text('Submit'.tr()),
                             onPressed: () {
                               saveScore

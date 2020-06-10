@@ -64,11 +64,11 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                               child: ListTile(
                                 title: Text(
                                   '${courses[index].name}',
-                                  style: TextStyle(color: Colors.orange),
+                                  style: TextStyle(color: Color(0xffF36C24)),
                                 ),
                                 trailing: Icon(
                                   Icons.chevron_right,
-                                  color: Colors.orange,
+                                  color: Color(0xffF36C24),
                                 ),
                                 onTap: () => Navigator.of(context).push(
                                   CupertinoPageRoute(
@@ -362,5 +362,16 @@ addCourse(BuildContext context,
   );
 }
 
-//Quiz start at or expired
+
 //TODO COurse select for student on student request
+//TODO Firebase rules
+//TODO Notification
+//TODO admins corner
+//TODO Teachers contact no. and call now
+//TODO Quiz start at or expired
+//TODO Cloud function copy
+//TODO Mid admin
+//TODO paid wala kaam
+
+//Jitsi name option
+//branch name in appbar ke niche

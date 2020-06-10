@@ -224,7 +224,7 @@ class _BranchRegisterState extends State<BranchRegister> {
                           setState(() {
                             errorBox = Container(
                               height: 40,
-                              color: Colors.orange,
+                              color: Color(0xffF36C24),
                               child: Center(
                                 child: Text(
                                   'Branch Already Exist'.tr(),

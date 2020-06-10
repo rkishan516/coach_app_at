@@ -67,11 +67,11 @@ class _ChapterPageState extends State<ChapterPage> {
                             child: ListTile(
                               title: Text(
                                 '${subjects.chapters[subjects.chapters.keys.toList()[index]].name}',
-                                style: TextStyle(color: Colors.orange),
+                                style: TextStyle(color: Color(0xffF36C24)),
                               ),
                               trailing: Icon(
                                 Icons.chevron_right,
-                                color: Colors.orange,
+                                color: Color(0xffF36C24),
                               ),
                               onTap: () => Navigator.of(context).push(
                                 CupertinoPageRoute(

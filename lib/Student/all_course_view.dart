@@ -64,7 +64,7 @@ class _AllCoursePageState extends State<AllCoursePage> {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Card(
-                              color: Colors.orange,
+                              color: Color(0xffF36C24),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                               child: ListTile(

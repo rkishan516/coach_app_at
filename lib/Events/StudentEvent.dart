@@ -155,7 +155,7 @@ class _StudentEventState extends State<StudentEvent> {
                   child: Icon(
                     Icons.video_call,
                     color: _allEvent[index].isStarted == 1
-                        ? Colors.orange
+                        ? Color(0xffF36C24)
                         : Colors.grey,
                   ),
                 ),

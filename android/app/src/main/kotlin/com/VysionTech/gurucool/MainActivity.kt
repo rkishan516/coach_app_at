@@ -1,4 +1,4 @@
-package com.example.coach_app
+package com.VysionTech.gurucool
 
 import io.flutter.embedding.android.FlutterActivity
 

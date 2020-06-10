@@ -34,7 +34,7 @@ class TeacherProfilePage extends StatelessWidget {
               gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.white, Colors.deepOrange])),
+                  colors: [Colors.white, Color(0xffF36C24)])),
           child: StreamBuilder<Event>(
               stream: reference.onValue,
               builder: (context, snapshot) {
@@ -50,7 +50,7 @@ class TeacherProfilePage extends StatelessWidget {
                         flex: 2,
                         child: CircleAvatar(
                           radius: _width / 5,
-                          backgroundColor: Colors.deepOrange[200],
+                          backgroundColor: Color(0xffe6783e),
                           backgroundImage: NetworkImage(teacher.photoURL ?? ''),
                           child: Text(
                             '${teacher?.name[0].toUpperCase()}',

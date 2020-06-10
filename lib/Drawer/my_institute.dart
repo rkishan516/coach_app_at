@@ -49,7 +49,7 @@ class _MyInstituteState extends State<MyInstitute> {
                                 50.0,
                               ),
                               border:
-                                  Border.all(color: Colors.orange, width: 3.0)),
+                                  Border.all(color: Color(0xffF36C24), width: 3.0)),
                           child: CircleAvatar(
                             radius: 50.0,
                             backgroundImage: NetworkImage(
@@ -129,7 +129,7 @@ class _MyInstituteState extends State<MyInstitute> {
                                 itemBuilder: (context, index) {
                                   String key = branches.keys.toList()[index];
                                   return Card(
-                                    color: Colors.orange[100],
+                                    color: Color(0xffe6783e),
                                     child: ListTile(
                                       isThreeLine: true,
                                       title: Padding(

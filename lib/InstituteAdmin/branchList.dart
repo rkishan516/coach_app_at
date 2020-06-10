@@ -20,7 +20,7 @@ class _BranchListState extends State<BranchList> {
     int length = 0;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: Color(0xffF36C24),
         title: StreamBuilder<Event>(
           stream: FirebaseDatabase.instance
               .reference()
@@ -42,7 +42,7 @@ class _BranchListState extends State<BranchList> {
         flexibleSpace: Stack(
           children: <Widget>[
             Transform.translate(
-              offset: Offset(size.width-70, kToolbarHeight-24),
+              offset: Offset(size.width - 70, kToolbarHeight - 24),
               child: Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: StreamBuilder<Event>(
@@ -70,43 +70,29 @@ class _BranchListState extends State<BranchList> {
             ),
             Transform.translate(
               offset: Offset(size.width - 70.0, 56.0),
-              child: StreamBuilder<Event>(
-                stream: FirebaseDatabase.instance
-                    .reference()
+              child: FutureBuilder<dynamic>(
+                future: FirebaseStorage.instance
+                    .ref()
                     .child(
-                        'institute/${FireBaseAuth.instance.instituteid}/name')
-                    .onValue,
+                        '/instituteLogo/${FireBaseAuth.instance.instituteid}')
+                    .getDownloadURL(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return FutureBuilder<dynamic>(
-                      future: FirebaseStorage.instance
-                          .ref()
-                          .child(
-                              '/instituteLogo/${snapshot.data.snapshot.value}')
-                          .getDownloadURL(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                  45.0,
-                                ),
-                                border: Border.all(
-                                    color: Colors.white, width: 3.0)),
-                            child: CircleAvatar(
-                              radius: 23.0,
-                              backgroundImage: NetworkImage(
-                                snapshot.data,
-                              ),
-                            ),
-                          );
-                        } else {
-                          return CircularProgressIndicator();
-                        }
-                      },
+                    return Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            45.0,
+                          ),
+                          border: Border.all(color: Colors.white, width: 3.0)),
+                      child: CircleAvatar(
+                        radius: 23.0,
+                        backgroundImage: NetworkImage(
+                          snapshot.data,
+                        ),
+                      ),
                     );
                   } else {
-                    return Container();
+                    return CircularProgressIndicator();
                   }
                 },
               ),
@@ -158,7 +144,7 @@ class _BranchListState extends State<BranchList> {
                           return Card(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15)),
-                            color: Colors.orange,
+                            color: Color(0xffF36C24),
                             child: InkWell(
                               child: GridTile(
                                 child: ListView(

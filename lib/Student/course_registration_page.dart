@@ -154,7 +154,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           child: FlatButton(
-                            color: Colors.orange,
+                            color: Color(0xffF36C24),
                             child: StreamBuilder<Event>(
                                 stream: widget.ref.child('price').onValue,
                                 builder: (context, snapshot) {

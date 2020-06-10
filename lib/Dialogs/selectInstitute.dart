@@ -47,7 +47,7 @@ class _SelectInstituteState extends State<SelectInstituteCourse> {
                 Text(
                   'Select Course'.tr(),
                   style: TextStyle(
-                    color: Colors.orange,
+                    color: Color(0xffF36C24),
                     fontSize: 24.0,
                     fontWeight: FontWeight.w700,
                   ),

@@ -51,8 +51,6 @@ class _VideoConferencingState extends State<VideoConferencing> {
   final serverText = TextEditingController();
   final roomText = TextEditingController();
   final subjectText = TextEditingController();
-  final nameText = TextEditingController();
-  final emailText = TextEditingController();
   var isAudioOnly = true;
   var isAudioMuted = false;
   var isVideoMuted = true;
@@ -161,8 +159,8 @@ class _VideoConferencingState extends State<VideoConferencing> {
         ..room = roomText.text
         ..serverURL = serverUrl
         ..subject = subjectText.text
-        ..userDisplayName = nameText.text
-        ..userEmail = emailText.text
+        ..userDisplayName = FireBaseAuth.instance.user.displayName
+        ..userEmail = FireBaseAuth.instance.user.email
         //..iosAppBarRGBAColor = iosAppBarRGBAColor.text
         ..audioOnly = isAudioOnly
         ..audioMuted = isAudioMuted

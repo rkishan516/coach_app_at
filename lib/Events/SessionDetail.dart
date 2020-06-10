@@ -172,7 +172,7 @@ class _SessionDetailState extends State<SessionDetail> {
                     child: ListTile(
                       trailing: Icon(
                         Icons.alarm,
-                        color: Colors.orange,
+                        color: Color(0xffF36C24),
                       ),
                       title: Text('Live Session Start Time'.tr()),
                       onTap: () {
@@ -195,7 +195,7 @@ class _SessionDetailState extends State<SessionDetail> {
                               child: Container(
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5.0),
-                                    color: Colors.orange),
+                                    color: Color(0xffF36C24)),
                                 width: MediaQuery.of(context).size.width / 3.5,
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 alignment: Alignment.center,
@@ -214,7 +214,7 @@ class _SessionDetailState extends State<SessionDetail> {
                         child: Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5.0),
-                              color: Colors.orange),
+                              color: Color(0xffF36C24)),
                           width: MediaQuery.of(context).size.width / 3.5,
                           padding: EdgeInsets.symmetric(vertical: 10),
                           alignment: Alignment.center,

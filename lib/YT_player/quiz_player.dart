@@ -51,7 +51,7 @@ class _QuizState extends State<Quiz> {
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.orange, Colors.deepOrange])),
+                colors: [Colors.white, Color(0xffF36C24)])),
         child: StreamBuilder<Event>(
             stream: widget.reference.onValue,
             builder: (context, snapshot) {

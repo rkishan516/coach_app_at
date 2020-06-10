@@ -174,11 +174,11 @@ getDrawer(BuildContext context) {
 getAppBar(BuildContext context) {
   Size size = MediaQuery.of(context).size;
   return AppBar(
-    backgroundColor: Colors.orange,
+    backgroundColor: Color(0xffF36C24),
     title: StreamBuilder<Event>(
       stream: FirebaseDatabase.instance
           .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/name')
+          .child('institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/name')
           .onValue,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -226,41 +226,28 @@ getAppBar(BuildContext context) {
         ),
         Transform.translate(
           offset: Offset(size.width - 70.0, 56.0),
-          child: StreamBuilder<Event>(
-            stream: FirebaseDatabase.instance
-                .reference()
-                .child('institute/${FireBaseAuth.instance.instituteid}/name')
-                .onValue,
+          child: FutureBuilder<dynamic>(
+            future: FirebaseStorage.instance
+                .ref()
+                .child('/instituteLogo/${FireBaseAuth.instance.instituteid}')
+                .getDownloadURL(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return FutureBuilder<dynamic>(
-                  future: FirebaseStorage.instance
-                      .ref()
-                      .child('/instituteLogo/${snapshot.data.snapshot.value}')
-                      .getDownloadURL(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                              45.0,
-                            ),
-                            border:
-                                Border.all(color: Colors.white, width: 3.0)),
-                        child: CircleAvatar(
-                          radius: 23.0,
-                          backgroundImage: NetworkImage(
-                            snapshot.data,
-                          ),
-                        ),
-                      );
-                    } else {
-                      return CircularProgressIndicator();
-                    }
-                  },
+                return Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        45.0,
+                      ),
+                      border: Border.all(color: Colors.white, width: 3.0)),
+                  child: CircleAvatar(
+                    radius: 23.0,
+                    backgroundImage: NetworkImage(
+                      snapshot.data,
+                    ),
+                  ),
                 );
               } else {
-                return Container();
+                return CircularProgressIndicator();
               }
             },
           ),

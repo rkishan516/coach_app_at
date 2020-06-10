@@ -123,7 +123,7 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
             'Address'.tr() +
             ' : \t\t\t' +
             '${widget.student.address}',
-        style: TextStyle(color: Colors.orange),
+        style: TextStyle(color: Color(0xffF36C24)),
       ),
       leading: CircleAvatar(
         backgroundImage: NetworkImage(widget.student.photoURL),
@@ -133,7 +133,7 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
       trailing: IconButton(
         icon: Icon(
           Icons.delete,
-          color: Colors.orange,
+          color: Color(0xffF36C24),
         ),
         onPressed: () {
           ref.child(widget.keyS + '/status').set('Rejected');

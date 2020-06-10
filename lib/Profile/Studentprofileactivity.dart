@@ -180,7 +180,7 @@ class _Studentinfostate extends State<Studentprofileactivity> {
                           top: 5.0, left: 20.0, right: 20.0, bottom: 5.0),
                       child: Container(
                         decoration: BoxDecoration(
-                            color: Colors.orange,
+                            color: Color(0xffF36C24),
                             borderRadius: BorderRadius.circular(5)),
                         padding: new EdgeInsets.only(left: 5.0, right: 5.0),
                         child: Column(

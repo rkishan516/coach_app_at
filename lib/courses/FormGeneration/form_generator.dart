@@ -130,7 +130,7 @@ class _FormGeneratorState extends State<FormGenerator> {
                         trailing: IconButton(
                           icon: Icon(
                             Icons.delete,
-                            color: Colors.orangeAccent,
+                            color: Color(0xffF36C24),
                           ),
                           onPressed: () {
                             setState(() {
