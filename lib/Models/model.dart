@@ -62,6 +62,33 @@ class Admin {
   }
 }
 
+class MidAdmin {
+  String name;
+  String email;
+  String tokenid;
+  String district;
+  String branches;
+  MidAdmin({this.name, this.email, this.tokenid, this.branches, this.district});
+
+  MidAdmin.fromJson(Map<dynamic, dynamic> json) {
+    name = json['name'];
+    email = json['email'];
+    tokenid = json['tokenid'];
+    branches = json['branchesKey'];
+    district = json['district'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    data['email'] = this.email;
+    data['tokenid'] = this.tokenid;
+    data['branchesKey'] = this.branches;
+    data['district'] = this.district;
+    return data;
+  }
+}
+
 class Courses {
   String id;
   String name;
@@ -69,7 +96,6 @@ class Courses {
   int price;
   String date;
   String medium;
-  // List<String> batch;
   Map<String, Subjects> subjects;
 
   Courses(
@@ -79,7 +105,6 @@ class Courses {
       this.price,
       this.date,
       this.medium,
-      // this.batch,
       this.subjects});
 
   Courses.fromJson(Map<dynamic, dynamic> json) {
@@ -89,7 +114,6 @@ class Courses {
     price = json['price'];
     date = json['date'];
     medium = json['medium'];
-    // batch = json['batch'].cast<String>();
     if (json['subjects'] != null) {
       subjects = new Map<String, Subjects>();
       json['subjects'].forEach((k, v) {
@@ -106,7 +130,6 @@ class Courses {
     data['price'] = this.price;
     data['date'] = this.date;
     data['medium'] = this.medium;
-    // data['batch'] = this.batch;
     if (this.subjects != null) {
       data['subjects'] = this.subjects.map((k, v) => MapEntry(k, v.toJson()));
     }
@@ -218,13 +241,15 @@ class Teacher {
   int experience;
   String qualification;
   String photoURL;
+  String phoneNo;
 
   Teacher(
       {this.courses,
       this.email,
       this.name,
       this.experience,
-      this.qualification});
+      this.qualification,
+      this.phoneNo});
 
   Teacher.fromJson(Map<dynamic, dynamic> json) {
     if (json['courses'] != null) {
@@ -237,7 +262,8 @@ class Teacher {
     qualification = json['qualification'];
     email = json['email'];
     name = json['name'];
-    photoURL = json['photoURL'];
+    photoURL = json['photoUrl'];
+    phoneNo = json['phoneNo'];
   }
 
   Map<String, dynamic> toJson() {
@@ -250,6 +276,7 @@ class Teacher {
     data['experience'] = this.experience;
     data['qualification'] = this.qualification;
     data['photoURL'] = this.photoURL;
+    data['phoneNo'] = this.phoneNo;
     return data;
   }
 }
@@ -274,7 +301,6 @@ class TCourses {
 }
 
 class Student {
-  GuardianDetails guardianDetails;
   String address;
   List<Course> course;
   String email;
@@ -286,8 +312,7 @@ class Student {
   String status;
 
   Student(
-      {this.guardianDetails,
-      this.address,
+      {this.address,
       this.course,
       this.email,
       this.name,
@@ -298,9 +323,6 @@ class Student {
       this.classs});
 
   Student.fromJson(Map<dynamic, dynamic> json) {
-    guardianDetails = json['Guardian Details'] != null
-        ? new GuardianDetails.fromJson(json['Guardian Details'])
-        : null;
     address = json['address'];
     classs = json['class'];
     if (json['course'] != null) {
@@ -319,9 +341,6 @@ class Student {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.guardianDetails != null) {
-      data['Guardian Details'] = this.guardianDetails.toJson();
-    }
     data['class'] = this.classs;
     data['address'] = this.address;
     if (this.course != null) {
@@ -337,65 +356,32 @@ class Student {
   }
 }
 
-class GuardianDetails {
-  String email;
-  String name;
-  String phoneNo;
-
-  GuardianDetails({this.email, this.name, this.phoneNo});
-
-  GuardianDetails.fromJson(Map<dynamic, dynamic> json) {
-    email = json['Email'];
-    name = json['Name'];
-    phoneNo = json['Phone no'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['Email'] = this.email;
-    data['Name'] = this.name;
-    data['Phone no'] = this.phoneNo;
-    return data;
-  }
-}
-
 class Course {
   String academicYear;
-  String batch;
-  int attendence;
   String courseID;
   String courseName;
   String paymentToken;
-  int score;
 
-  Course(
-      {this.academicYear,
-      this.batch,
-      this.attendence,
-      this.courseID,
-      this.courseName,
-      this.paymentToken,
-      this.score});
+  Course({
+    this.academicYear,
+    this.courseID,
+    this.courseName,
+    this.paymentToken,
+  });
 
   Course.fromJson(Map<dynamic, dynamic> json) {
     academicYear = json['Academic Year'];
-    batch = json['Batch'];
-    attendence = json['attendence'];
     courseID = json['courseID'];
     courseName = json['courseName'];
     paymentToken = json['paymentToken'];
-    score = json['score'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['Academic Year'] = this.academicYear;
-    data['Batch'] = this.batch;
-    data['attendence'] = this.attendence;
     data['courseID'] = this.courseID;
     data['courseName'] = this.courseName;
     data['paymentToken'] = this.paymentToken;
-    data['score'] = this.score;
     return data;
   }
 }
@@ -497,10 +483,10 @@ class QuestionModel {
   }
 }
 
-class PrivacyModal{
- final String key;
+class PrivacyModal {
+  final String key;
   final String heading;
   final String subtitile;
 
-  PrivacyModal(this.key,this.heading, this.subtitile);
+  PrivacyModal(this.key, this.heading, this.subtitile);
 }

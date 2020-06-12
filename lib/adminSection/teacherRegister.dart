@@ -20,7 +20,8 @@ class _TeacherRegisterState extends State<TeacherRegister> {
   TextEditingController emailTextEditingController,
       nameTextEditingController,
       experienceTextEditingController,
-      qualificationTextEditingController;
+      qualificationTextEditingController,
+      phoneTextEditingController;
 
   @override
   void initState() {
@@ -32,6 +33,8 @@ class _TeacherRegisterState extends State<TeacherRegister> {
       ..text = widget.teacher?.experience?.toString() ?? '';
     qualificationTextEditingController = TextEditingController()
       ..text = widget.teacher?.qualification ?? '';
+    phoneTextEditingController = TextEditingController()
+      ..text = widget.teacher?.phoneNo ?? '';
     super.initState();
   }
 
@@ -107,6 +110,26 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                     ],
                   ),
                 ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TextField(
+                        controller: phoneTextEditingController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                          hintText: 'Phone No'.tr(),
+                          border: InputBorder.none,
+                          fillColor: Color(0xfff3f3f4),
+                          filled: true,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -136,7 +159,10 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                       flex: 2,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text('In Years'.tr(),style: TextStyle(fontSize: 16),),
+                        child: Text(
+                          'In Years'.tr(),
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ),
                   ],
@@ -189,7 +215,8 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                           if (emailTextEditingController.text == '' ||
                               nameTextEditingController.text == '' ||
                               qualificationTextEditingController.text == '' ||
-                              experienceTextEditingController.text == '') {
+                              experienceTextEditingController.text == '' ||
+                              phoneTextEditingController.text == '') {
                             Alert.instance
                                 .alert(context, 'Something is wrong'.tr());
                             return;
@@ -206,8 +233,8 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                                       .replaceAll(' ', '')
                                       .replaceAll('-', '')) >
                                   80) {
-                            Alert.instance.alert(
-                                context, 'Please Provide Correct Experience'.tr());
+                            Alert.instance.alert(context,
+                                'Please Provide Correct Experience'.tr());
                           }
                           if (!emailTextEditingController.text
                               .endsWith('@gmail.com')) {
@@ -224,6 +251,7 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                                 .update(Teacher(
                                   name: nameTextEditingController.text,
                                   email: emailTextEditingController.text,
+                                  phoneNo: phoneTextEditingController.text,
                                   qualification:
                                       qualificationTextEditingController.text,
                                   experience: int.parse(
@@ -235,13 +263,17 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                                   ),
                                 ).toJson());
                           } else {
-                            Firestore.instance
-                                .collection('institute')
-                                .document('users')
-                                .updateData({
-                              emailTextEditingController.text.split('@')[0]:
-                                  "teacher_${FireBaseAuth.instance.instituteid}_${FireBaseAuth.instance.branchid}"
-                            });
+                            if (emailTextEditingController.text !=
+                                FireBaseAuth.instance.user.email) {
+                              Firestore.instance
+                                  .collection('institute')
+                                  .document('users')
+                                  .updateData({
+                                emailTextEditingController.text.split('@')[0]:
+                                    "teacher_${FireBaseAuth.instance.instituteid}_${FireBaseAuth.instance.branchid}"
+                              });
+                            }
+
                             FirebaseDatabase.instance
                                 .reference()
                                 .child(

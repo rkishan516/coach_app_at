@@ -1,11 +1,10 @@
+import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
-// import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YTPlayer extends StatefulWidget {

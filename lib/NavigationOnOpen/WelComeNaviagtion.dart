@@ -2,6 +2,7 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/InstituteAdmin/branchList.dart';
 import 'package:coach_app/InstituteAdmin/branchPage.dart';
+import 'package:coach_app/InstituteAdmin/midAdminBranchList.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Student/WaitScreen.dart';
 import 'package:coach_app/Student/all_course_view.dart';
@@ -25,6 +26,8 @@ class WelcomeNavigation {
           builder: (context) {
             if (FireBaseAuth.instance.previlagelevel == 4) {
               return BranchList();
+            } else if (FireBaseAuth.instance.previlagelevel == 34) {
+              return MidAdminBranchList();
             } else if (FireBaseAuth.instance.previlagelevel == 3) {
               return BranchPage();
             } else if (FireBaseAuth.instance.previlagelevel == 2) {
@@ -36,7 +39,7 @@ class WelcomeNavigation {
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    if(snapshot.data.snapshot.value == null){
+                    if (snapshot.data.snapshot.value == null) {
                       FireBaseAuth.instance.signoutWithGoogle();
                       return WelcomePage();
                     }

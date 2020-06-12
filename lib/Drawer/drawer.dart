@@ -2,6 +2,7 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Dialogs/languageDialog.dart';
+import 'package:coach_app/Dialogs/replaceSubAdmin.dart';
 import 'package:coach_app/Drawer/my_institute.dart';
 import 'package:coach_app/Drawer/privacyNPolicies.dart';
 import 'package:coach_app/Profile/next.dart';
@@ -31,6 +32,18 @@ getDrawer(BuildContext context) {
           currentAccountPicture: CircleAvatar(
             backgroundImage: NetworkImage(user.photoUrl),
           ),
+          onDetailsPressed: (FireBaseAuth.instance.previlagelevel == 2)
+              ? () {
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (context) => TeacherProfilePage(
+                        reference: FirebaseDatabase.instance.reference().child(
+                            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${FireBaseAuth.instance.user.uid}'),
+                      ),
+                    ),
+                  );
+                }
+              : null,
         ),
         ListTile(
           title: Text('My Institute'.tr()),
@@ -49,23 +62,6 @@ getDrawer(BuildContext context) {
             );
           },
         ),
-        if (FireBaseAuth.instance.previlagelevel == 2)
-          ListTile(
-            title: Text('My Profile'.tr()),
-            leading: Icon(Icons.person),
-            onTap: () async {
-              Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (context) => TeacherProfilePage(
-                    reference: FirebaseDatabase.instance.reference().child(
-                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${FireBaseAuth.instance.user.uid}'),
-                  ),
-                ),
-              );
-            },
-          )
-        else
-          Container(),
         if (FireBaseAuth.instance.previlagelevel == 1)
           ListView(
             shrinkWrap: true,
@@ -84,29 +80,29 @@ getDrawer(BuildContext context) {
         else
           Container(),
         if (FireBaseAuth.instance.previlagelevel == 4)
-          ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              ListTile(
-                title: Text(
-                  'All branches'.tr(),
-                ),
-                leading: Icon(Icons.business),
-                onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      CupertinoPageRoute(builder: (context) => BranchList()),
-                      (route) => false);
-                },
-              ),
-              ListTile(
-                title: Text('Add new branch'.tr()),
-                leading: Icon(Icons.add_box),
-                onTap: () {
-                  return showCupertinoDialog(
-                      context: context, builder: (context) => BranchRegister());
-                },
-              ),
-            ],
+          ListTile(
+            title: Text(
+              'All branches'.tr(),
+            ),
+            leading: Icon(Icons.business),
+            onTap: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  CupertinoPageRoute(builder: (context) => BranchList()),
+                  (route) => false);
+            },
+          )
+        else
+          Container(),
+        if (FireBaseAuth.instance.previlagelevel >= 4)
+          ListTile(
+            title: Text(
+              'Replace Sub Admin'.tr(),
+            ),
+            leading: Icon(Icons.business),
+            onTap: () {
+              showDialog(
+                  context: context, builder: (context) => ReplaceSubAdmin());
+            },
           )
         else
           Container(),
@@ -120,12 +116,6 @@ getDrawer(BuildContext context) {
                 leading: Icon(Icons.verified_user),
                 onTap: () => Navigator.of(context).push(CupertinoPageRoute(
                     builder: (context) => StudentsRequests())),
-              ),
-              ListTile(
-                title: Text('Add Teacher'.tr()),
-                leading: Icon(Icons.person_add),
-                onTap: () => showCupertinoDialog(
-                    context: context, builder: (context) => TeacherRegister()),
               ),
             ],
           )
@@ -178,7 +168,8 @@ getAppBar(BuildContext context) {
     title: StreamBuilder<Event>(
       stream: FirebaseDatabase.instance
           .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/name')
+          .child(
+              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/name')
           .onValue,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -200,23 +191,41 @@ getAppBar(BuildContext context) {
           child: StreamBuilder<Event>(
             stream: FirebaseDatabase.instance
                 .reference()
-                .child('publicNotice')
+                .child('latestVersion')
                 .onValue,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data.snapshot.value == '') {
-                  return Container();
-                }
-                return Container(
-                  height: 30.0,
-                  width: size.width,
-                  color: Colors.red,
-                  child: Center(
-                    child: Text(
-                      snapshot.data.snapshot.value,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
+            builder: (context, snap) {
+              if (snap.hasData) {
+                return StreamBuilder<Event>(
+                  stream: FirebaseDatabase.instance
+                      .reference()
+                      .child('publicNotice')
+                      .onValue,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data.snapshot.value == '') {
+                        return Container();
+                      }
+                      if (snap.data.snapshot.value >
+                          int.parse(FireBaseAuth.instance.packageInfo.buildNumber)) {
+                        return Container(
+                          height: 30.0,
+                          width: size.width,
+                          color: Colors.red,
+                          child: Center(
+                            child: Text(
+                              snapshot.data.snapshot.value,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        );
+                      }
+                      else{
+                        return Container();
+                      }
+                    } else {
+                      return Container();
+                    }
+                  },
                 );
               } else {
                 return Container();

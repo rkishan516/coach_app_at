@@ -57,7 +57,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
         ),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.exit_to_app), onPressed: (){
+          IconButton(icon: Icon(Icons.exit_to_app,color: Colors.deepOrange,), onPressed: (){
             FireBaseAuth.instance.signoutWithGoogle();
             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => WelcomePage()), (route) => false);
           })

@@ -1,13 +1,14 @@
+import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Events/Calender.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
+import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/courses/content_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_placeholder_textlines/flutter_placeholder_textlines.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class ChapterPage extends StatefulWidget {
@@ -76,7 +77,10 @@ class _ChapterPageState extends State<ChapterPage> {
                               onTap: () => Navigator.of(context).push(
                                 CupertinoPageRoute(
                                   builder: (context) => ContentPage(
-                                    title: subjects.chapters[subjects.chapters.keys.toList()[index]].name,
+                                    title: subjects
+                                        .chapters[subjects.chapters.keys
+                                            .toList()[index]]
+                                        .name,
                                     reference: widget.reference.child(
                                         'chapters/${subjects.chapters.keys.toList()[index]}'),
                                   ),
@@ -127,33 +131,47 @@ class _ChapterPageState extends State<ChapterPage> {
           ],
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            SlideButton(
-              text: 'Live Session'.tr(),
-              onTap: () => Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (context) => Calender(
-                    courseId: widget.courseId,
-                    subjectName: widget.title,
-                  ),
+      bottomNavigationBar: StreamBuilder<Event>(
+          stream: widget.reference.parent().parent().parent().parent().parent().parent().child('/paid').onValue,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    SlideButton(
+                      text: 'Live Session'.tr(),
+                      onTap: () {
+                        if(snapshot.data.snapshot.value != 'Trial' && snapshot.data.snapshot.value != 'Paid'){
+                          Alert.instance.alert(context, "Your Institue doesn't have premium access".tr());
+                          return null;
+                        }
+                        return Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (context) => Calender(
+                              courseId: widget.courseId,
+                              subjectName: widget.title,
+                            ),
+                          ),
+                        );
+                      },
+                      width: 150,
+                      height: 50,
+                      icon: Icon(Icons.add_to_queue),
+                    ),
+                    SlideButtonR(
+                        text: 'Add Chapter'.tr(),
+                        onTap: () => addChapter(context, widget.reference),
+                        width: 150,
+                        height: 50),
+                  ],
                 ),
-              ),
-              width: 150,
-              height: 50,
-              icon: Icon(Icons.add_to_queue),
-            ),
-            SlideButtonR(
-                text: 'Add Chapter'.tr(),
-                onTap: () => addChapter(context, widget.reference),
-                width: 150,
-                height: 50),
-          ],
-        ),
-      ),
+              );
+            } else {
+              return Container();
+            }
+          }),
     );
   }
 }

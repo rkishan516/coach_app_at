@@ -2,11 +2,11 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
+import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/Studentprofileactivity.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class StudentList extends StatefulWidget {
@@ -15,6 +15,7 @@ class StudentList extends StatefulWidget {
 }
 
 class _StudentListState extends State<StudentList> {
+  TextEditingController searchTextEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +37,28 @@ class _StudentListState extends State<StudentList> {
         ),
         child: Column(
           children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: searchTextEditingController,
+                onChanged: (value) {
+                  setState(() {});
+                },
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    borderSide: BorderSide(
+                      color: Color(0xfff3f3f4),
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.only(left: 10),
+                  hintStyle: TextStyle(fontSize: 15),
+                  hintText: 'Search by student name'.tr(),
+                  fillColor: Color(0xfff3f3f4),
+                  filled: true,
+                ),
+              ),
+            ),
             Expanded(
               flex: 12,
               child: StreamBuilder<Event>(
@@ -48,7 +71,15 @@ class _StudentListState extends State<StudentList> {
                   if (snapshot.hasData) {
                     Map<String, Student> students = Map<String, Student>();
                     snapshot.data.snapshot.value?.forEach((k, student) {
-                      students[k] = Student.fromJson(student);
+                      if (searchTextEditingController.text == '') {
+                        students[k] = Student.fromJson(student);
+                      } else {
+                        Student sstudent = Student.fromJson(student);
+                        if (sstudent.name
+                            .contains(searchTextEditingController.text)) {
+                          students[k] = sstudent;
+                        }
+                      }
                     });
                     return ListView.builder(
                       itemCount: students?.length ?? 0,
@@ -275,8 +306,8 @@ class _StudentListState extends State<StudentList> {
                         if (nameTextEditingController.text == '' ||
                             addressTextEditingController.text == '' ||
                             phoneTextEditingController.text == '') {
-                          Alert.instance
-                              .alert(context, 'Something remains unfilled'.tr());
+                          Alert.instance.alert(
+                              context, 'Something remains unfilled'.tr());
                           return;
                         }
                         // bool flag = false;

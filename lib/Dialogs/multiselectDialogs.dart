@@ -141,7 +141,7 @@ class MultiSelectFormField extends FormField<dynamic> {
               List<Widget> selectedOptions = [];
 
               if (state.value != null) {
-                state.value.forEach((item) {
+                state.value?.forEach((item) {
                   var existingItem = dataSource.singleWhere(
                       (itm) => itm[valueField] == item,
                       orElse: () => null);

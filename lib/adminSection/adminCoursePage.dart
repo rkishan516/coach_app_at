@@ -3,13 +3,13 @@ import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
+import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/adminSection/adminSubjectPage.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:coach_app/courses/subject_page.dart';
-import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class AdminCoursePage extends StatefulWidget {
@@ -308,13 +308,17 @@ addCourse(BuildContext context,
                           return;
                         }
                         if (mediumTextEditingController.text == '') {
-                          Alert.instance.alert(context,
-                              'Please Enter the course '.tr(args: ['Medium'.tr()]));
+                          Alert.instance.alert(
+                              context,
+                              'Please Enter the course '
+                                  .tr(args: ['Medium'.tr()]));
                           return;
                         }
                         if (priceTextEditingController.text == '') {
-                          Alert.instance.alert(context,
-                              'Please Enter the course '.tr(args: ['Fee'.tr()]));
+                          Alert.instance.alert(
+                              context,
+                              'Please Enter the course '
+                                  .tr(args: ['Fee'.tr()]));
                           return;
                         }
                         Courses course = Courses(
@@ -344,8 +348,8 @@ addCourse(BuildContext context,
                         FirebaseDatabase.instance
                             .reference()
                             .child(
-                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList/${course.id}')
-                            .set(course.name);
+                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList/')
+                            .update({course.id: course.name});
 
                         Navigator.of(context).pop();
                       },
@@ -362,16 +366,10 @@ addCourse(BuildContext context,
   );
 }
 
-
 //TODO COurse select for student on student request
 //TODO Firebase rules
 //TODO Notification
 //TODO admins corner
-//TODO Teachers contact no. and call now
-//TODO Quiz start at or expired
-//TODO Cloud function copy
-//TODO Mid admin
-//TODO paid wala kaam
+//TODO Set to update for all security rules
 
-//Jitsi name option
-//branch name in appbar ke niche
+//TODO Quiz start at or expired

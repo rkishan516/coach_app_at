@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
+import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_placeholder_textlines/placeholder_lines.dart';
 
 class Quiz extends StatefulWidget {
   DatabaseReference reference;

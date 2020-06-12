@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flare_loading/flare_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FireBaseAuth {
@@ -14,8 +15,9 @@ class FireBaseAuth {
   GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email'],
   );
+  PackageInfo packageInfo;
   FirebaseUser user;
-  var branchid, instituteid, previlagelevel;
+  var branchid, instituteid, previlagelevel,branchList;
 
   Future<List<String>> getAuthGCredentials() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -80,6 +82,9 @@ class FireBaseAuth {
     branchid = idTokenResult.claims['branchid'];
     instituteid = idTokenResult.claims['instituteid'];
     previlagelevel = idTokenResult.claims['previlagelevel'];
+    if(previlagelevel == 34){
+      branchList = branchid;
+    }
     print(previlagelevel);
   }
 

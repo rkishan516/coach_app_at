@@ -1,3 +1,4 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -32,7 +33,7 @@ class WaitScreen extends StatelessWidget {
                 'Please wait till you get access to course'.tr(),
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 22
+                  fontSize: 20
                 ),
               ),
             ),

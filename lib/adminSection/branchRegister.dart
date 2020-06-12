@@ -254,13 +254,17 @@ class _BranchRegisterState extends State<BranchRegister> {
                             },
                             upiId: upiTextEditingController.text,
                           ).toJson());
-                          Firestore.instance
-                              .collection('institute')
-                              .document('users')
-                              .updateData({
-                            adminEmailTextEditingController.text.split('@')[0]:
-                                "subAdmin_${FireBaseAuth.instance.instituteid}_${branchCodeTextEditingController.text}"
-                          });
+                          if (FireBaseAuth.instance.user.email !=
+                              adminEmailTextEditingController.text) {
+                            Firestore.instance
+                                .collection('institute')
+                                .document('users')
+                                .updateData({
+                              adminEmailTextEditingController.text
+                                      .split('@')[0]:
+                                  "subAdmin_${FireBaseAuth.instance.instituteid}_${branchCodeTextEditingController.text}"
+                            });
+                          }
                           Navigator.of(context).pop();
                         }
                       });

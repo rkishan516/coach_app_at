@@ -1,26 +1,31 @@
+import 'dart:convert';
+
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
+import 'package:coach_app/InstituteAdmin/addMidAdminPage.dart';
 import 'package:coach_app/Models/model.dart';
-import 'package:coach_app/Profile/next.dart';
-import 'package:coach_app/adminSection/teacherRegister.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-class TeachersList extends StatefulWidget {
+class MidAdminList extends StatefulWidget {
+  List<Map<String, String>> branches;
+  MidAdminList({@required this.branches});
   @override
-  _TeachersListState createState() => _TeachersListState();
+  _MidAdminListState createState() => _MidAdminListState();
 }
 
-class _TeachersListState extends State<TeachersList> {
+class _MidAdminListState extends State<MidAdminList> {
   TextEditingController searchTextEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: getDrawer(context),
-      appBar: getAppBar(context),
+      appBar: AppBar(
+        title: Text('Mid Admin List'.tr()),
+        elevation: 0,
+      ),
       body: Container(
         padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height / 20),
@@ -53,7 +58,7 @@ class _TeachersListState extends State<TeachersList> {
                   ),
                   contentPadding: EdgeInsets.only(left: 10),
                   hintStyle: TextStyle(fontSize: 15),
-                  hintText: 'Search by teacher name'.tr(),
+                  hintText: 'Search by MidAdmin name'.tr(),
                   fillColor: Color(0xfff3f3f4),
                   filled: true,
                 ),
@@ -65,61 +70,44 @@ class _TeachersListState extends State<TeachersList> {
                 stream: FirebaseDatabase.instance
                     .reference()
                     .child(
-                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers')
+                        'institute/${FireBaseAuth.instance.instituteid}/midAdmin')
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    Map<String, Teacher> teachers = Map<String, Teacher>();
-                    snapshot.data.snapshot.value?.forEach((k, teacher) {
-                      if(searchTextEditingController.text == ''){
-                        teachers[k] = Teacher.fromJson(teacher);
-                      }else{
-                        Teacher sTeacher = Teacher.fromJson(teacher);
-                        if (sTeacher.name
+                    Map<String, MidAdmin> midAdmins = Map<String, MidAdmin>();
+                    snapshot.data.snapshot.value?.forEach((k, midAdmin) {
+                      if (searchTextEditingController.text == '') {
+                        midAdmins[k] = MidAdmin.fromJson(midAdmin);
+                      } else {
+                        MidAdmin sMidAdmin = MidAdmin.fromJson(midAdmin);
+                        if (sMidAdmin.name
                             .contains(searchTextEditingController.text)) {
-                          teachers[k] = sTeacher;
+                          midAdmins[k] = sMidAdmin;
                         }
                       }
-                      
                     });
                     return ListView.builder(
-                      itemCount: teachers?.length ?? 0,
+                      itemCount: midAdmins?.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
                         return Card(
                           child: ListTile(
                             title: Text(
-                              '${teachers[teachers.keys.toList()[index]].name}',
+                              '${midAdmins[midAdmins.keys.toList()[index]].name}',
                               style: TextStyle(color: Color(0xffF36C24)),
                             ),
                             subtitle: Text(
-                              '${teachers[teachers.keys.toList()[index]].email}',
+                              '${midAdmins[midAdmins.keys.toList()[index]].email}',
                               style: TextStyle(color: Color(0xffF36C24)),
                             ),
-                            trailing: Icon(
-                              Icons.chevron_right,
-                              color: Color(0xffF36C24),
-                            ),
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => TeacherProfilePage(
-                                    reference: FirebaseDatabase.instance
-                                        .reference()
-                                        .child(
-                                            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${teachers.keys.toList()[index]}'),
-                                  ),
+                            onLongPress: () {
+                              showCupertinoDialog(
+                                context: context,
+                                builder: (context) => MidAdminRegister(
+                                  midAdmin: midAdmins[midAdmins.keys.toList()[index]],
+                                  branches: widget.branches,
+                                  keyM: midAdmins.keys.toList()[index],
                                 ),
                               );
-                            },
-                            onLongPress: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => TeacherRegister(
-                                        isEdit: true,
-                                        keyT: teachers.keys.toList()[index],
-                                        teacher: teachers[
-                                            teachers.keys.toList()[index]],
-                                      ));
                             },
                           ),
                         );
@@ -150,12 +138,13 @@ class _TeachersListState extends State<TeachersList> {
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: SlideButton(
-        text: 'Add Teacher'.tr(),
-        onTap: () => showDialog(
-            context: context, builder: (context) => TeacherRegister()),
-        width: 150,
+      floatingActionButton: SlideButtonR(
+        text: 'Add Mid Admin'.tr(),
+        onTap: () => showCupertinoDialog(
+          context: context,
+          builder: (context) => MidAdminRegister(branches: widget.branches),
+        ),
+        width: 180,
         height: 50,
       ),
     );

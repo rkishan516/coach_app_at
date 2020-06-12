@@ -56,7 +56,8 @@ class StudentPerformance extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return Card(
                       color: Color(0xffF36C24),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
                       child: ListTile(
                         title: Text(
                           subjectPerformance.keys.toList()[index],
