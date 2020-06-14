@@ -335,7 +335,7 @@ class _StudentListState extends State<StudentList> {
                             .reference()
                             .child(
                                 'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$keyS')
-                            .set(student.toJson());
+                            .update(student.toJson());
                         Navigator.of(context).pop();
                       },
                       child: Text('Update Student'.tr()),

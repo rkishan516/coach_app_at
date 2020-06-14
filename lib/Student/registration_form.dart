@@ -271,7 +271,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         student.classs = course;
                         reference
                             .child('students/${FireBaseAuth.instance.user.uid}')
-                            .set(student.toJson());
+                            .update(student.toJson());
                         Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
                           builder: (context) {
@@ -282,7 +282,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     } else {
                       reference
                           .child('students/${FireBaseAuth.instance.user.uid}')
-                          .set(student.toJson());
+                          .update(student.toJson());
                       Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(builder: (context) {
                         return AllCoursePage(

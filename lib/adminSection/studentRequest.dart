@@ -136,7 +136,7 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
           color: Color(0xffF36C24),
         ),
         onPressed: () {
-          ref.child(widget.keyS + '/status').set('Rejected');
+          ref.child(widget.keyS).update({'status': 'Rejected'});
         },
       ),
       subtitle: Row(
@@ -205,11 +205,11 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                     paymentToken:
                         'Registered By ${FireBaseAuth.instance.user.displayName}',
                   );
-                  ref.child(widget.keyS + '/status').set('Registered');
+                  ref.child(widget.keyS).update({'status': 'Registered'});
                   ref
                       .child(widget.keyS + '/course')
                       .child(selectedCourseID)
-                      .set(course.toJson());
+                      .update(course.toJson());
                   selectedCourse = null;
                   selectedCourseID = null;
                 }

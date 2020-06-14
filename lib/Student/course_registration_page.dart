@@ -193,13 +193,13 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                     .child(
                                       'students/${FireBaseAuth.instance.user.uid}/course/${widget.courseID}',
                                     )
-                                    .set(rCourse.toJson());
+                                    .update(rCourse.toJson());
                                 await widget.ref
                                     .parent()
                                     .parent()
                                     .child(
                                         '/students/${FireBaseAuth.instance.user.uid}/status')
-                                    .set('Registered');
+                                    .update({'status' : 'Registered'});
                                 await Future.delayed(Duration(seconds: 5));
                                 WelcomeNavigation.signInWithGoogleAndGetPage(
                                     context);
@@ -259,14 +259,14 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                     .child(
                                         'students/${FireBaseAuth.instance.user.uid}/course')
                                     .child(widget.courseID)
-                                    .set(rCourse.toJson());
+                                    .update(rCourse.toJson());
                                 await widget.ref
                                     .parent()
                                     .parent()
                                     .child(
-                                      '/students/${FireBaseAuth.instance.user.uid}/status',
+                                      '/students/${FireBaseAuth.instance.user.uid}/',
                                     )
-                                    .set('Registered');
+                                    .update({'status' :'Registered'});
                                 await Future.delayed(Duration(seconds: 5));
                                 WelcomeNavigation.signInWithGoogleAndGetPage(
                                     context);

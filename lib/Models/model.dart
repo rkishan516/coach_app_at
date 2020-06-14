@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 class Branch {
   String name;
   String address;
@@ -139,14 +140,14 @@ class Courses {
 
 class Subjects {
   String name;
-  List<String> mentor;
+  Map<dynamic,dynamic> mentor;
   Map<String, Chapters> chapters;
 
   Subjects({this.name, this.mentor, this.chapters});
 
   Subjects.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
-    mentor = json['mentor']?.cast<String>();
+    mentor = json['mentor'];
     if (json['chapters'] != null) {
       chapters = new Map<String, Chapters>();
       json['chapters']?.forEach((k, v) {
@@ -489,4 +490,19 @@ class PrivacyModal {
   final String subtitile;
 
   PrivacyModal(this.key, this.heading, this.subtitile);
+}
+
+class Messages{
+
+  String key;
+  String textMsg;
+  String uid;
+  String time;
+  Messages(this.key,this.textMsg, this.uid, this.time);
+
+   Messages.fromSnapshot(DataSnapshot snapshot):
+    key= snapshot.key,
+    textMsg=snapshot.value["textMsg"],
+    uid=snapshot.value["selfId"],
+    time=snapshot.value["time"];
 }

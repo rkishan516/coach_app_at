@@ -102,7 +102,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
                                   mentors: courses
                                       .subjects[
                                           courses.subjects.keys.toList()[index]]
-                                      .mentor
+                                      .mentor.values
                                       .join(','),
                                 ),
                               )),
@@ -322,9 +322,7 @@ addSubject(BuildContext context, String courseId,
                           name: nameTextEditingController.text
                               .capitalize()
                               .trim(),
-                          mentor: selectedTeacher.map<String>((e) {
-                            return e.email;
-                          }).toList(),
+                          mentor: {for(var v in selectedTeacher) v.email.split('@')[0] : v.email},
                         );
                         var refe;
                         if (key == null) {
@@ -338,7 +336,7 @@ addSubject(BuildContext context, String courseId,
                           refe = FirebaseDatabase.instance.reference().child(
                               'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$key');
                         }
-                        refe.set(subject.toJson());
+                        refe.update(subject.toJson());
                         selectedTeacher.forEach(
                           (element) {
                             for (int i = 0; i < teachers.length; i++) {
@@ -364,7 +362,7 @@ addSubject(BuildContext context, String courseId,
                                   d = [key];
                                 }
 
-                                ref.child(lengthC.toString()).set(
+                                ref.child(lengthC.toString()).update(
                                     {"id": courseId, "subjects": subjects + d});
                               }
                             }

@@ -279,7 +279,7 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                                 .child(
                                     'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers')
                                 .push()
-                                .set(Teacher(
+                                .update(Teacher(
                                   name: nameTextEditingController.text,
                                   email: emailTextEditingController.text,
                                   qualification:

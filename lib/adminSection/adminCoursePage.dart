@@ -344,7 +344,7 @@ addCourse(BuildContext context,
                             .reference()
                             .child(
                                 'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${course.id}')
-                            .set(course.toJson());
+                            .update(course.toJson());
                         FirebaseDatabase.instance
                             .reference()
                             .child(
@@ -367,9 +367,11 @@ addCourse(BuildContext context,
 }
 
 //TODO COurse select for student on student request
-//TODO Firebase rules
 //TODO Notification
 //TODO admins corner
-//TODO Set to update for all security rules
 
 //TODO Quiz start at or expired
+
+//TODO date ko chhota sa bottom right me, seconds remove
+//TODO all branches button padding
+//TODO institute create date

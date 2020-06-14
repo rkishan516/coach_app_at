@@ -214,7 +214,7 @@ class _BranchRegisterState extends State<BranchRegister> {
                         widget.institute.address =
                             addressTextEditingController.text;
                         widget.institute.upiId = upiTextEditingController.text;
-                        ref.set(widget.institute.toJson());
+                        ref.update(widget.institute.toJson());
                         Navigator.of(context).pop();
                         return;
                       }
@@ -243,7 +243,7 @@ class _BranchRegisterState extends State<BranchRegister> {
                             });
                           });
                         } else {
-                          ref.set(Branch(
+                          ref.update(Branch(
                             name: nameTextEditingController.text,
                             address: addressTextEditingController.text,
                             admin: {

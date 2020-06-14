@@ -7,6 +7,7 @@ import 'package:coach_app/Drawer/my_institute.dart';
 import 'package:coach_app/Drawer/privacyNPolicies.dart';
 import 'package:coach_app/Profile/next.dart';
 import 'package:coach_app/Student/course_page.dart';
+import 'package:coach_app/adminCorner/noticeBoard.dart';
 import 'package:coach_app/adminSection/branchRegister.dart';
 import 'package:coach_app/adminSection/studentRequest.dart';
 import 'package:coach_app/adminSection/teacherRegister.dart';
@@ -79,6 +80,11 @@ getDrawer(BuildContext context) {
           )
         else
           Container(),
+        ListTile(
+          title: Text('Notice Board'.tr()),
+          leading: Icon(Icons.notifications_active),
+          onTap: () => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => NoticeBoard())),
+        ),
         if (FireBaseAuth.instance.previlagelevel == 4)
           ListTile(
             title: Text(
@@ -206,7 +212,8 @@ getAppBar(BuildContext context) {
                         return Container();
                       }
                       if (snap.data.snapshot.value >
-                          int.parse(FireBaseAuth.instance.packageInfo.buildNumber)) {
+                          int.parse(
+                              FireBaseAuth.instance.packageInfo.buildNumber)) {
                         return Container(
                           height: 30.0,
                           width: size.width,
@@ -218,8 +225,7 @@ getAppBar(BuildContext context) {
                             ),
                           ),
                         );
-                      }
-                      else{
+                      } else {
                         return Container();
                       }
                     } else {

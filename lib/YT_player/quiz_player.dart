@@ -68,7 +68,7 @@ class _QuizState extends State<Quiz> {
                     widget.reference
                         .child(
                             'quizModel/result/${FireBaseAuth.instance.user.uid}')
-                        .set({
+                        .update({
                       "name": FireBaseAuth.instance.user.displayName,
                       "score": -1,
                       "response": _fbKey.currentState?.value
@@ -161,7 +161,7 @@ class _QuizState extends State<Quiz> {
                           widget.reference
                               .child(
                                   'quizModel/result/${FireBaseAuth.instance.user.uid}')
-                              .set({
+                              .update({
                             "name": FireBaseAuth.instance.user.displayName,
                             "score": -1,
                             "response": _fbKey.currentState?.value

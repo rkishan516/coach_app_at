@@ -199,7 +199,10 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                       child: CircleAvatar(
                         backgroundColor: Colors.deepOrange[300],
                         radius: 15,
-                        child: Text('?',style: TextStyle(color: Colors.white),),
+                        child: Text(
+                          '?',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                       onTap: () => showDialog(
                         context: context,
@@ -328,7 +331,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                 .reference()
                                 .child('/institute')
                                 .push();
-                            reference.set({
+                            reference.update({
                               "name": nameTextEditingController.text,
                               "Phone No": phoneNoTextEditingController.text,
                               "mainBranchCode":
@@ -339,6 +342,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                         name: value.displayName)
                                     .toJson()
                               },
+                              "creationDate" : DateTime.now(),
                               "paid": 'Trial',
                               "logo": "/instituteLogo/${reference.key}",
                               "branches": {
@@ -396,9 +400,10 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                             await FirebaseDatabase.instance
                                 .reference()
                                 .child('/instituteList')
-                                .child(VyCode.instance
-                                    .getNextVyCode(snap.value.keys.toList()[0]))
-                                .set(reference.key);
+                                .update({
+                              VyCode.instance.getNextVyCode(
+                                  snap.value.keys.toList()[0]): reference.key
+                            });
                             showDialog(
                                 context: context,
                                 builder: (context) => SuccessDialog(

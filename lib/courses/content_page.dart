@@ -470,11 +470,11 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                             widget.reference
                                 .child('content/')
                                 .push()
-                                .set(content.toJson());
+                                .update(content.toJson());
                           } else {
                             widget.reference
                                 .child('content/${widget.keyC}')
-                                .set(content.toJson());
+                                .update(content.toJson());
                           }
                         },
                         color: Colors.white,

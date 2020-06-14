@@ -291,11 +291,11 @@ addChapter(BuildContext context, DatabaseReference reference,
                             reference
                                 .child('chapters/')
                                 .push()
-                                .set(chapter.toJson());
+                                .update(chapter.toJson());
                           } else {
                             reference
                                 .child('chapters/$key')
-                                .set(chapter.toJson());
+                                .update(chapter.toJson());
                           }
                         }
                         Navigator.of(context).pop();

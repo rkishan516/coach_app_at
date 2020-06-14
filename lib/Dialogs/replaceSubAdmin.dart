@@ -80,7 +80,7 @@ class _ReplaceSubAdminState extends State<ReplaceSubAdmin> {
                       .reference()
                       .child(
                           'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/admin')
-                      .set({
+                      .update({
                     emailTextEditingController.text.hashCode.toString(): {
                       "email": emailTextEditingController.text
                     }
