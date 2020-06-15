@@ -54,10 +54,14 @@ class _StudentsRequestsState extends State<StudentsRequests> {
                     return ListView.builder(
                       itemCount: students?.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          child: StudentRequestListTile(
-                            keyS: students.keys.toList()[index],
-                            student: students[students.keys.toList()[index]],
+                        return Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Card(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            child: StudentRequestListTile(
+                              keyS: students.keys.toList()[index],
+                              student: students[students.keys.toList()[index]],
+                            ),
                           ),
                         );
                       },
@@ -151,7 +155,9 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                     snapshot.data.snapshot.value.forEach((k, v) {
                       courses[k] = (Courses.fromJson(v));
                       if (k.toString() == widget.student.classs) {
-                        selectedCourse = Courses.fromJson(v);
+                        if (selectedCourse == null) {
+                          selectedCourse = Courses.fromJson(v);
+                        }
                       }
                     });
                     return DropdownButton<String>(
@@ -180,7 +186,6 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                           setState(() {
                             selectedCourseID = value;
                             selectedCourse = courses[value];
-                            print(selectedCourseID);
                           });
                         });
                   } else {
@@ -190,7 +195,7 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
           ),
           Expanded(
             flex: 5,
-            child: FlatButton(
+            child: IconButton(
               onPressed: () {
                 if (selectedCourseID == null || selectedCourse == null) {
                   Alert.instance
@@ -214,7 +219,10 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                   selectedCourseID = null;
                 }
               },
-              child: Text('Accept'.tr()),
+              icon: Icon(
+                Icons.done,
+                color: Color(0xffF36C24),
+              ),
             ),
           ),
         ],

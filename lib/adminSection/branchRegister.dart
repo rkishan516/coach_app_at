@@ -210,11 +210,12 @@ class _BranchRegisterState extends State<BranchRegister> {
                           .child(
                               'institute/${FireBaseAuth.instance.instituteid}/branches/${branchCodeTextEditingController.text}');
                       if (widget.branchCode != null) {
-                        widget.institute.name = nameTextEditingController.text;
-                        widget.institute.address =
-                            addressTextEditingController.text;
-                        widget.institute.upiId = upiTextEditingController.text;
-                        ref.update(widget.institute.toJson());
+                        Branch branch = Branch(
+                          name: nameTextEditingController.text,
+                          address: addressTextEditingController.text,
+                          upiId: upiTextEditingController.text
+                        );
+                        ref.update(branch.toJson());
                         Navigator.of(context).pop();
                         return;
                       }

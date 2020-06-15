@@ -82,48 +82,52 @@ class _TeachersListState extends State<TeachersList> {
                       }
                       
                     });
-                    return ListView.builder(
-                      itemCount: teachers?.length ?? 0,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          child: ListTile(
-                            title: Text(
-                              '${teachers[teachers.keys.toList()[index]].name}',
-                              style: TextStyle(color: Color(0xffF36C24)),
-                            ),
-                            subtitle: Text(
-                              '${teachers[teachers.keys.toList()[index]].email}',
-                              style: TextStyle(color: Color(0xffF36C24)),
-                            ),
-                            trailing: Icon(
-                              Icons.chevron_right,
-                              color: Color(0xffF36C24),
-                            ),
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => TeacherProfilePage(
-                                    reference: FirebaseDatabase.instance
-                                        .reference()
-                                        .child(
-                                            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${teachers.keys.toList()[index]}'),
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListView.builder(
+                        itemCount: teachers?.length ?? 0,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Card(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            child: ListTile(
+                              title: Text(
+                                '${teachers[teachers.keys.toList()[index]].name}',
+                                style: TextStyle(color: Color(0xffF36C24)),
+                              ),
+                              subtitle: Text(
+                                '${teachers[teachers.keys.toList()[index]].email}',
+                                style: TextStyle(color: Color(0xffF36C24)),
+                              ),
+                              trailing: Icon(
+                                Icons.chevron_right,
+                                color: Color(0xffF36C24),
+                              ),
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => TeacherProfilePage(
+                                      reference: FirebaseDatabase.instance
+                                          .reference()
+                                          .child(
+                                              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${teachers.keys.toList()[index]}'),
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                            onLongPress: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => TeacherRegister(
-                                        isEdit: true,
-                                        keyT: teachers.keys.toList()[index],
-                                        teacher: teachers[
-                                            teachers.keys.toList()[index]],
-                                      ));
-                            },
-                          ),
-                        );
-                      },
+                                );
+                              },
+                              onLongPress: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => TeacherRegister(
+                                          isEdit: true,
+                                          keyT: teachers.keys.toList()[index],
+                                          teacher: teachers[
+                                              teachers.keys.toList()[index]],
+                                        ));
+                              },
+                            ),
+                          );
+                        },
+                      ),
                     );
                   } else if (snapshot.hasError) {
                     return Center(

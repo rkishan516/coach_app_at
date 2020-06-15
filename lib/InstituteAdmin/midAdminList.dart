@@ -86,32 +86,36 @@ class _MidAdminListState extends State<MidAdminList> {
                         }
                       }
                     });
-                    return ListView.builder(
-                      itemCount: midAdmins?.length ?? 0,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          child: ListTile(
-                            title: Text(
-                              '${midAdmins[midAdmins.keys.toList()[index]].name}',
-                              style: TextStyle(color: Color(0xffF36C24)),
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListView.builder(
+                        itemCount: midAdmins?.length ?? 0,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Card(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            child: ListTile(
+                              title: Text(
+                                '${midAdmins[midAdmins.keys.toList()[index]].name}',
+                                style: TextStyle(color: Color(0xffF36C24)),
+                              ),
+                              subtitle: Text(
+                                '${midAdmins[midAdmins.keys.toList()[index]].email}',
+                                style: TextStyle(color: Color(0xffF36C24)),
+                              ),
+                              onLongPress: () {
+                                showCupertinoDialog(
+                                  context: context,
+                                  builder: (context) => MidAdminRegister(
+                                    midAdmin: midAdmins[midAdmins.keys.toList()[index]],
+                                    branches: widget.branches,
+                                    keyM: midAdmins.keys.toList()[index],
+                                  ),
+                                );
+                              },
                             ),
-                            subtitle: Text(
-                              '${midAdmins[midAdmins.keys.toList()[index]].email}',
-                              style: TextStyle(color: Color(0xffF36C24)),
-                            ),
-                            onLongPress: () {
-                              showCupertinoDialog(
-                                context: context,
-                                builder: (context) => MidAdminRegister(
-                                  midAdmin: midAdmins[midAdmins.keys.toList()[index]],
-                                  branches: widget.branches,
-                                  keyM: midAdmins.keys.toList()[index],
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     );
                   } else if (snapshot.hasError) {
                     return Center(

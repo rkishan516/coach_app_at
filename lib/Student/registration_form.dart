@@ -48,6 +48,17 @@ class _RegistrationPageState extends State<RegistrationPage> {
         backgroundColor: Colors.white,
         elevation: 0.0,
         centerTitle: true,
+        leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.deepOrange,
+            ),
+            onPressed: () {
+              FireBaseAuth.instance.signoutWithGoogle();
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => WelcomePage()),
+                  (route) => false);
+            }),
         title: Text(
           'Registration Form'.tr(),
           style: GoogleFonts.portLligatSans(
@@ -56,12 +67,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
             color: Colors.deepOrange,
           ),
         ),
-        actions: <Widget>[
-          IconButton(icon: Icon(Icons.exit_to_app,color: Colors.deepOrange,), onPressed: (){
-            FireBaseAuth.instance.signoutWithGoogle();
-            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => WelcomePage()), (route) => false);
-          })
-        ],
       ),
       body: Container(
         padding: EdgeInsets.symmetric(
@@ -249,7 +254,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             '/instituteList/${instituteCodeTextEditingController.text.substring(0, 4)}')
                         .once();
                     if (dataSnapshot.value == null) {
-                      Alert.instance.alert(context, 'Wrong Institute Code'.tr());
+                      Alert.instance
+                          .alert(context, 'Wrong Institute Code'.tr());
                       return;
                     }
                     preferences.setString('insCode', dataSnapshot.value);
@@ -291,8 +297,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       }), (route) => false);
                     }
                   } else {
-                    _scKey.currentState.showSnackBar(
-                        SnackBar(content: Text('Something remains unfilled'.tr())));
+                    _scKey.currentState.showSnackBar(SnackBar(
+                        content: Text('Something remains unfilled'.tr())));
                   }
                 },
                 child: Text('Register'.tr()),

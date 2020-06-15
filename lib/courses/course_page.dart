@@ -49,6 +49,7 @@ class _CoursePageState extends State<CoursePage> {
                     List<Courses> courses = List<Courses>();
                     widget.teacher?.courses?.forEach((course) {
                       if (snapshot.data.snapshot.value != null) {
+                        print(snapshot.data.snapshot.value);
                         if (snapshot.data.snapshot.value[course.id] != null) {
                           courses.add(Courses.fromJson(
                               snapshot.data.snapshot.value[course.id]));

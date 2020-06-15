@@ -79,18 +79,20 @@ class _ReplaceSubAdminState extends State<ReplaceSubAdmin> {
                   FirebaseDatabase.instance
                       .reference()
                       .child(
-                          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/admin')
+                          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/')
                       .update({
-                    emailTextEditingController.text.hashCode.toString(): {
-                      "email": emailTextEditingController.text
-                    }
+                    "admin": {
+                      emailTextEditingController.text.hashCode.toString(): {
+                        "email": emailTextEditingController.text
+                      }
+                    },
                   });
                   if (emailTextEditingController.text !=
                       FireBaseAuth.instance.user.email) {
                     Firestore.instance
-                        .collection('institue')
+                        .collection('institute')
                         .document('users')
-                        .setData({
+                        .updateData({
                       emailTextEditingController.text.split('@')[0]:
                           "subAdmin_${FireBaseAuth.instance.instituteid}_${FireBaseAuth.instance.branchid}"
                     });

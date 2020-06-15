@@ -329,7 +329,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                             DatabaseReference reference = FirebaseDatabase
                                 .instance
                                 .reference()
-                                .child('/institute')
+                                .child('/tempInstitute')
                                 .push();
                             reference.update({
                               "name": nameTextEditingController.text,
@@ -342,7 +342,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                         name: value.displayName)
                                     .toJson()
                               },
-                              "creationDate" : DateTime.now(),
+                              "creationDate" : DateTime.now().toString(),
                               "paid": 'Trial',
                               "logo": "/instituteLogo/${reference.key}",
                               "branches": {

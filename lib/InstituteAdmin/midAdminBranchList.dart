@@ -23,8 +23,8 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
 
   @override
   void initState() {
-    branchesKey = JsonCodec().decode(FireBaseAuth.instance.branchList).cast<int>();
-    print(branchesKey);
+    var k = JsonCodec().decode(FireBaseAuth.instance.branchList);
+    branchesKey = JsonCodec().decode(k).cast<int>();
     super.initState();
   }
 

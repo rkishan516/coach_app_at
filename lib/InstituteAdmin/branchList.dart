@@ -252,45 +252,49 @@ class _BranchListState extends State<BranchList> {
               ),
             ),
             bottomNavigationBar: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 if (snapshot.data.snapshot.value['paid'] == 'Trial' ||
                     snapshot.data.snapshot.value['paid'] == 'Paid')
-                  SlideButton(
-                    icon: Icon(Icons.list),
-                    text: 'Mid Admin'.tr(),
-                    onTap: () {
-                      if(searchTextEditingController.text != ''){
-                        Alert.instance.alert(context, "Mid admin can't be access during filter mode".tr());
-                        searchTextEditingController.text = '';
-                        return;
-                      }
-                      List<Map<String, String>> branches =
-                          List<Map<String, String>>();
-                      institutes.forEach(
-                        (key, value) {
-                          branches.add(
-                            {
-                              'branchName': value.name,
-                              'branchKey': key,
-                            },
-                          );
-                        },
-                      );
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              MidAdminList(branches: branches)));
-                    },
-                    width: 180,
-                    height: 50,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SlideButton(
+                      icon: Icon(Icons.list),
+                      text: 'Mid Admin'.tr(),
+                      onTap: () {
+                        if(searchTextEditingController.text != ''){
+                          Alert.instance.alert(context, "Mid admin can't be access during filter mode".tr());
+                          searchTextEditingController.text = '';
+                          return;
+                        }
+                        List<Map<String, String>> branches =
+                            List<Map<String, String>>();
+                        institutes.forEach(
+                          (key, value) {
+                            branches.add(
+                              {
+                                'branchName': value.name,
+                                'branchKey': key,
+                              },
+                            );
+                          },
+                        );
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                MidAdminList(branches: branches)));
+                      },
+                      width: 150,
+                      height: 50,
+                    ),
                   )
                 else
                   Container(),
                 SlideButtonR(
-                    text: 'Add new branch'.tr(),
+                    text: 'Add branch'.tr(),
                     onTap: () => showCupertinoDialog(
                         context: context,
                         builder: (context) => BranchRegister()),
-                    width: 180,
+                    width: 150,
                     height: 50)
               ],
             ),

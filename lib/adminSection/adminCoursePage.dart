@@ -366,12 +366,4 @@ addCourse(BuildContext context,
   );
 }
 
-//TODO COurse select for student on student request
-//TODO Notification
-//TODO admins corner
-
 //TODO Quiz start at or expired
-
-//TODO date ko chhota sa bottom right me, seconds remove
-//TODO all branches button padding
-//TODO institute create date

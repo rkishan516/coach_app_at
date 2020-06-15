@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class AreYouSure extends StatelessWidget {
+  String text;
+  AreYouSure({this.text});
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -34,8 +36,8 @@ class AreYouSure extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(
-              'Are You Sure ?'.tr(),
+            Text(text == null ? 
+              'Are You Sure ?'.tr() : text,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16.0,

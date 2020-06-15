@@ -71,7 +71,7 @@ class _SelectInstituteState extends State<SelectInstituteCourse> {
                                   DropdownMenuItem(
                                     child: Container(
                                       width:
-                                          MediaQuery.of(context).size.width / 5,
+                                          MediaQuery.of(context).size.width / 2,
                                       child: Text(
                                         e,
                                         overflow: TextOverflow.ellipsis,
@@ -99,7 +99,7 @@ class _SelectInstituteState extends State<SelectInstituteCourse> {
                     onPressed: () {
                       Navigator.of(context).pop(selectedCourseID);
                     },
-                    child: Text('Close'.tr()),
+                    child: Text('Submit'.tr()),
                   ),
                 ),
               ],

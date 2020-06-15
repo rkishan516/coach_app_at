@@ -347,13 +347,13 @@ addSubject(BuildContext context, String courseId,
                                 List subjects = [];
                                 int lengthC =
                                     teachers[i]['value'].courses?.length ?? 0;
-                                for (int i = 0; i < lengthC; i++) {
-                                  if (teachers[i]['value'].courses[i].id ==
+                                for (int j = 0; j < lengthC; j++) {
+                                  if (teachers[i]['value'].courses[j].id ==
                                       courseId) {
                                     subjects = teachers[i]['value']
-                                        .courses[i]
+                                        .courses[j]
                                         .subjects;
-                                    lengthC = i;
+                                    lengthC = j;
                                     break;
                                   }
                                 }

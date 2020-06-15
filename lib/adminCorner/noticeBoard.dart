@@ -28,7 +28,10 @@ class _NoticeBoardState extends State<NoticeBoard> {
         onLongPress: () async {
           if (previlagelevel == 4) {
             String res = await showDialog(
-                context: context, builder: (context) => AreYouSure());
+                context: context,
+                builder: (context) => AreYouSure(
+                      text: 'Are you sure, You want to delete ?'.tr(),
+                    ));
             if (res == 'Yes') {
               _delFromDatabase(message.key);
               return;
@@ -54,19 +57,22 @@ class _NoticeBoardState extends State<NoticeBoard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text(
-                message.time,
-                style: TextStyle(
-                    color: Colors.blueGrey,
-                    fontSize: 12.0,
-                    fontWeight: FontWeight.w600),
-              ),
-              SizedBox(height: 5.0),
               Text(message.textMsg,
                   style: TextStyle(
                       color: Colors.blueGrey,
                       fontSize: 16.0,
                       fontWeight: FontWeight.w600)),
+              SizedBox(height: 5.0),
+              Align(
+                alignment: Alignment.bottomRight,
+                              child: Text(
+                  message.time.split(' ')[0],
+                  style: TextStyle(
+                      color: Colors.blueGrey,
+                      fontSize: 8.0,
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
             ],
           ),
         ));
