@@ -43,7 +43,6 @@ dependencies:
   upi_pay:
   shared_preferences:
   jitsi_meet:
-  table_calendar:
   firebase_messaging:
   flutter_local_notifications:
   fancy_bottom_navigation:

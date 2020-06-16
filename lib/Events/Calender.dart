@@ -9,7 +9,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:coach_app/Events/TableCalender/table_calendar.dart';
 
 import '../Authentication/FirebaseAuth.dart';
 
