@@ -43,6 +43,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.3"
+  clock:
+    dependency: transitive
+    description:
+      name: clock
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   cloud_firestore:
     dependency: "direct main"
     description:
@@ -99,13 +106,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.1"
-  country_pickers:
-    dependency: transitive
-    description:
-      name: country_pickers
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.1"
   cross_connectivity:
     dependency: "direct main"
     description:
@@ -127,20 +127,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.3"
-  date_range_picker:
-    dependency: transitive
-    description:
-      name: date_range_picker
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.6"
-  datetime_picker_formfield:
-    dependency: transitive
-    description:
-      name: datetime_picker_formfield
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
   decimal:
     dependency: transitive
     description:
@@ -155,6 +141,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.3.2"
+  fake_async:
+    dependency: transitive
+    description:
+      name: fake_async
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   fancy_bottom_navigation:
     dependency: "direct main"
     description:
@@ -265,34 +258,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_chips_input:
-    dependency: transitive
-    description:
-      name: flutter_chips_input
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.8.1"
-  flutter_colorpicker:
-    dependency: transitive
-    description:
-      name: flutter_colorpicker
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.4"
-  flutter_form_builder:
-    dependency: "direct main"
-    description:
-      name: flutter_form_builder
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.10.1"
-  flutter_keyboard_visibility:
-    dependency: transitive
-    description:
-      name: flutter_keyboard_visibility
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.7.0"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -345,20 +310,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_touch_spin:
-    dependency: transitive
-    description:
-      name: flutter_touch_spin
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.1"
-  flutter_typeahead:
-    dependency: transitive
-    description:
-      name: flutter_typeahead
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.8.1"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -482,7 +433,7 @@ packages:
       name: path
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.6.4"
+    version: "1.7.0"
   path_drawing:
     dependency: transitive
     description:
@@ -532,13 +483,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.0"
-  phone_number:
-    dependency: transitive
-    description:
-      name: phone_number
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.6.2+3"
   platform:
     dependency: transitive
     description:
@@ -574,13 +518,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.3"
-  rating_bar:
-    dependency: transitive
-    description:
-      name: rating_bar
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.0"
   rational:
     dependency: transitive
     description:
@@ -623,13 +560,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2+7"
-  signature:
-    dependency: transitive
-    description:
-      name: signature
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.1.1"
   simple_gesture_detector:
     dependency: transitive
     description:
@@ -690,7 +620,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.15"
+    version: "0.2.16"
   tuple:
     dependency: transitive
     description:
@@ -740,13 +670,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.1+6"
-  validators:
-    dependency: transitive
-    description:
-      name: validators
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0+1"
   vector_math:
     dependency: transitive
     description:
@@ -784,4 +707,4 @@ packages:
     version: "6.1.1"
 sdks:
   dart: ">=2.7.0 <3.0.0"
-  flutter: ">=1.12.13+hotfix.6 <2.0.0"
+  flutter: ">=1.12.13+hotfix.5 <2.0.0"

@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:convert';
 
 import 'package:coach_app/Authentication/FirebaseAuth.dart';

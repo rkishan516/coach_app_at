@@ -4,6 +4,7 @@ import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,20 +16,23 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // SystemChrome.setEnabledSystemUIOverlays([]);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  FireBaseAuth.instance.packageInfo = packageInfo;
-  if (packageInfo.packageName != "com.VysionTech.gurucool") {
-    runApp(MaterialApp(
-      title: 'Guru Cool',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        textTheme: GoogleFonts.portLligatSansTextTheme(),
-        primarySwatch: Colors.deepOrange,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MalFunctionedAPK(),
-    ));
-    return;
+  if (!kIsWeb) {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    FireBaseAuth.instance.packageInfo = packageInfo;
+
+    if (packageInfo.packageName != "com.VysionTech.gurucool") {
+      runApp(MaterialApp(
+        title: 'Guru Cool',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          textTheme: GoogleFonts.portLligatSansTextTheme(),
+          primarySwatch: Colors.deepOrange,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: MalFunctionedAPK(),
+      ));
+      return;
+    }
   }
 
   runApp(

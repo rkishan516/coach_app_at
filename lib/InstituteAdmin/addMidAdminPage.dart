@@ -201,7 +201,7 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
                             .document('users')
                             .updateData({
                           emailTextEditingController.text.split('@')[0]:
-                              'midAdmin_${FireBaseAuth.instance.instituteid}_${selectedBranch}'
+                              'midAdmin_${FireBaseAuth.instance.instituteid}_$selectedBranch'
                         });
                         refe = FirebaseDatabase.instance
                             .reference()

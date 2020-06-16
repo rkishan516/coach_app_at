@@ -367,7 +367,6 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                 builder: (context) => UploadDialog(
                                       warning: 'Uploading Logo'.tr(),
                                     ));
-                            StorageTaskSnapshot storageTaskSnapshot =
                                 await FirebaseStorage.instance
                                     .ref()
                                     .child('/instituteLogo/${reference.key}')

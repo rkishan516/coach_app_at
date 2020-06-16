@@ -2,9 +2,15 @@ import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/courses/FormGeneration/fields/form_builder_checkbox_list.dart';
+import 'package:coach_app/courses/FormGeneration/fields/form_builder_radio.dart';
+import 'package:coach_app/courses/FormGeneration/fields/form_builder_switch.dart';
+import 'package:coach_app/courses/FormGeneration/fields/form_builder_text_field.dart';
+import 'package:coach_app/courses/FormGeneration/form_builder.dart';
+import 'package:coach_app/courses/FormGeneration/form_builder_field_option.dart';
+import 'package:coach_app/courses/FormGeneration/form_builder_validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class FormGenerator extends StatefulWidget {

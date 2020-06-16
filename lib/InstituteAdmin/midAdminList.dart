@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';

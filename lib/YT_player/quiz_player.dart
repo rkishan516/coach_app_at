@@ -4,9 +4,14 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/courses/FormGeneration/fields/form_builder_checkbox_list.dart';
+import 'package:coach_app/courses/FormGeneration/fields/form_builder_radio.dart';
+import 'package:coach_app/courses/FormGeneration/fields/form_builder_switch.dart';
+import 'package:coach_app/courses/FormGeneration/fields/form_builder_text_field.dart';
+import 'package:coach_app/courses/FormGeneration/form_builder.dart';
+import 'package:coach_app/courses/FormGeneration/form_builder_field_option.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class Quiz extends StatefulWidget {

@@ -155,7 +155,7 @@ class _StudentListState extends State<StudentList> {
       ..text = student?.address ?? '';
     TextEditingController phoneTextEditingController = TextEditingController()
       ..text = student?.phoneNo ?? '';
-    Courses course;
+    // Courses course;
     showDialog(
       context: context,
       builder: (context) => Dialog(

@@ -38,7 +38,6 @@ dependencies:
   google_fonts:
   firebase_auth:
   image_picker:
-  flutter_form_builder:
   cross_connectivity:
   easy_localization:
   upi_pay:
