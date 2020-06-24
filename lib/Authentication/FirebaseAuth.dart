@@ -47,7 +47,6 @@ class FireBaseAuth {
       final AuthResult authResult =
           (await _auth.signInWithCredential(credential));
       final FirebaseUser user = authResult.user;
-      print(user);
       print("signed in " + user.email);
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -86,7 +85,6 @@ class FireBaseAuth {
     if(previlagelevel == 34){
       branchList = branchid;
     }
-    print(previlagelevel);
   }
 
   Future<void> signoutWithGoogle() async {

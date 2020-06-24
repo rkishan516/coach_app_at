@@ -8,8 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class MyInstitute extends StatefulWidget {
-  dynamic dataSnapshot;
-  MyInstitute({@required this.dataSnapshot});
   @override
   _MyInstituteState createState() => _MyInstituteState();
 }
@@ -39,7 +37,8 @@ class _MyInstituteState extends State<MyInstitute> {
                 child: FutureBuilder<dynamic>(
                     future: FirebaseStorage.instance
                         .ref()
-                        .child(widget.dataSnapshot)
+                        .child(
+                            "/instituteLogo/${FireBaseAuth.instance.instituteid}")
                         .getDownloadURL(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
@@ -48,8 +47,8 @@ class _MyInstituteState extends State<MyInstitute> {
                               borderRadius: BorderRadius.circular(
                                 50.0,
                               ),
-                              border:
-                                  Border.all(color: Color(0xffF36C24), width: 3.0)),
+                              border: Border.all(
+                                  color: Color(0xffF36C24), width: 3.0)),
                           child: CircleAvatar(
                             radius: 50.0,
                             backgroundImage: NetworkImage(
@@ -65,10 +64,23 @@ class _MyInstituteState extends State<MyInstitute> {
             ),
           ),
           Expanded(
-            child: Text(
-              widget.dataSnapshot.split('/')[1][0].toUpperCase() +
-                  widget.dataSnapshot.split('/')[1].toString().substring(1),
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            child: StreamBuilder<Event>(
+              stream: FirebaseDatabase.instance.reference()
+                  .child('/institute/${FireBaseAuth.instance.instituteid}/name')
+                  .onValue,
+              builder: (BuildContext context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text(
+                    snapshot.data.snapshot.value,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  );
+                } else {
+                  return PlaceholderLines(
+                    count: 1,
+                    animate: true,
+                  );
+                }
+              },
             ),
           ),
           Expanded(
@@ -158,11 +170,13 @@ class _MyInstituteState extends State<MyInstitute> {
                       },
                     );
                   } else if (FireBaseAuth.instance.previlagelevel > 1) {
-                    return Text(
-                        'Institute Code'.tr()+' : ${snap.data.snapshot.value.keys.toList()[0]}${FireBaseAuth.instance.branchid}\n('+'Share this code with Student'.tr()+')');
+                    return Text('Institute Code'.tr() +
+                        ' : ${snap.data.snapshot.value.keys.toList()[0]}${FireBaseAuth.instance.branchid}\n(' +
+                        'Share this code with Student'.tr() +
+                        ')');
                   } else {
-                    return Text(
-                        'Institute Code'.tr()+' : ${snap.data.snapshot.value.keys.toList()[0]}${FireBaseAuth.instance.branchid}');
+                    return Text('Institute Code'.tr() +
+                        ' : ${snap.data.snapshot.value.keys.toList()[0]}${FireBaseAuth.instance.branchid}');
                   }
                 } else {
                   return PlaceholderLines(

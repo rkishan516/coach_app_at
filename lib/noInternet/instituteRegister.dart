@@ -10,6 +10,7 @@ import 'package:coach_app/Dialogs/infoDialog.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/GlobalFunction/VyCode.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -93,11 +94,6 @@ class _InstituteRegisterState extends State<InstituteRegister> {
               margin: EdgeInsets.symmetric(vertical: 8),
               child: TextField(
                 controller: nameTextEditingController,
-                onChanged: (value) {
-                  setState(() {
-                    branch1NameTextEditingController.text = value;
-                  });
-                },
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
@@ -342,7 +338,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                         name: value.displayName)
                                     .toJson()
                               },
-                              "creationDate" : DateTime.now().toString(),
+                              "creationDate": DateTime.now().toString(),
                               "paid": 'Trial',
                               "logo": "/instituteLogo/${reference.key}",
                               "branches": {
@@ -367,11 +363,11 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                 builder: (context) => UploadDialog(
                                       warning: 'Uploading Logo'.tr(),
                                     ));
-                                await FirebaseStorage.instance
-                                    .ref()
-                                    .child('/instituteLogo/${reference.key}')
-                                    .putFile(_image)
-                                    .onComplete;
+                            await FirebaseStorage.instance
+                                .ref()
+                                .child('/instituteLogo/${reference.key}')
+                                .putFile(_image)
+                                .onComplete;
                             showDialog(
                               context: context,
                               builder: (context) => UploadDialog(
@@ -410,10 +406,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                         'Your Institute has been successfully Registered'
                                             .tr()));
                             await Future.delayed(Duration(seconds: 2));
-                            Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (context) => WelcomePage()),
-                                (route) => false);
+                            WelcomeNavigation.signInWithGoogleAndGetPage(context);
                           } else {
                             _scKey.currentState.showSnackBar(
                                 SnackBar(content: Text('Login Failed'.tr())));

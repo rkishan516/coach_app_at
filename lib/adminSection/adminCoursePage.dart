@@ -365,5 +365,3 @@ addCourse(BuildContext context,
     },
   );
 }
-
-//TODO Quiz start at or expired

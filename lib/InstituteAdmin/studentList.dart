@@ -87,7 +87,8 @@ class _StudentListState extends State<StudentList> {
                         itemCount: students?.length ?? 0,
                         itemBuilder: (BuildContext context, int index) {
                           return Card(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
                             child: ListTile(
                               title: Text(
                                 '${students[students.keys.toList()[index]].name}',
@@ -105,10 +106,14 @@ class _StudentListState extends State<StudentList> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => Studentprofileactivity(
-                                        student: students[
-                                            students.keys.toList()[index]],
-                                        keyS: students.keys.toList()[index]),
+                                    builder: (context) =>
+                                        Studentprofileactivity(
+                                            student:
+                                                students[students
+                                                    .keys
+                                                    .toList()[index]],
+                                            keyS:
+                                                students.keys.toList()[index]),
                                   ),
                                 );
                               },
@@ -332,14 +337,15 @@ class _StudentListState extends State<StudentList> {
                         //             'Registered By ${FireBaseAuth.instance.user.displayName}');
                         //   }
                         // }
-                        student.name = nameTextEditingController.text;
-                        student.address = addressTextEditingController.text;
-                        student.phoneNo = phoneTextEditingController.text;
+                        Student dstudent = Student(
+                            name: nameTextEditingController.text,
+                            address: addressTextEditingController.text,
+                            phoneNo: phoneTextEditingController.text);
                         FirebaseDatabase.instance
                             .reference()
                             .child(
                                 'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$keyS')
-                            .update(student.toJson());
+                            .update(dstudent.toJson());
                         Navigator.of(context).pop();
                       },
                       child: Text('Update Student'.tr()),

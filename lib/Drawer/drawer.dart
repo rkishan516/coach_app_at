@@ -48,15 +48,9 @@ getDrawer(BuildContext context) {
           title: Text('My Institute'.tr()),
           leading: Icon(Icons.school),
           onTap: () async {
-            DataSnapshot dataSnapshot = await FirebaseDatabase.instance
-                .reference()
-                .child('institute/${FireBaseAuth.instance.instituteid}/logo')
-                .once();
             Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) => MyInstitute(
-                  dataSnapshot: dataSnapshot.value,
-                ),
+                builder: (context) => MyInstitute(),
               ),
             );
           },
@@ -81,7 +75,8 @@ getDrawer(BuildContext context) {
         ListTile(
           title: Text('Notice Board'.tr()),
           leading: Icon(Icons.notifications_active),
-          onTap: () => Navigator.of(context).push(CupertinoPageRoute(builder: (context) => NoticeBoard())),
+          onTap: () => Navigator.of(context)
+              .push(CupertinoPageRoute(builder: (context) => NoticeBoard())),
         ),
         if (FireBaseAuth.instance.previlagelevel == 4)
           ListTile(

@@ -258,6 +258,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           .alert(context, 'Wrong Institute Code'.tr());
                       return;
                     }
+                    DataSnapshot dataSnapshot1 = await FirebaseDatabase.instance.reference()
+                        .child(
+                            '/institute/${dataSnapshot.value}/branches/$branchCode/name')
+                        .once();
+                    if (dataSnapshot1.value == null) {
+                      Alert.instance
+                          .alert(context, 'Wrong Institute Code'.tr());
+                      return;
+                    }
                     preferences.setString('insCode', dataSnapshot.value);
                     preferences.setString('branchCode', branchCode);
                     DatabaseReference reference = FirebaseDatabase.instance
