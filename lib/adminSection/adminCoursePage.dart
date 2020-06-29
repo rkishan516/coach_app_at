@@ -40,6 +40,14 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
           child: Column(
             children: <Widget>[
               Expanded(
+                child: Center(
+                  child: Text(
+                    'Courses'.tr(),
+                    style: TextStyle(color: Color(0xffF36C24)),
+                  ),
+                ),
+              ),
+              Expanded(
                 flex: 12,
                 child: StreamBuilder<Event>(
                   stream: FirebaseDatabase.instance

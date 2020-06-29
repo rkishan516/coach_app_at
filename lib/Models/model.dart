@@ -75,7 +75,7 @@ class MidAdmin {
     name = json['name'];
     email = json['email'];
     tokenid = json['tokenid'];
-    branches = json['branchesKey'];
+    branches = json['branches'];
     district = json['district'];
   }
 
@@ -84,7 +84,7 @@ class MidAdmin {
     data['name'] = this.name;
     data['email'] = this.email;
     data['tokenid'] = this.tokenid;
-    data['branchesKey'] = this.branches;
+    data['branches'] = this.branches;
     data['district'] = this.district;
     return data;
   }

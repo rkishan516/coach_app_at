@@ -14,17 +14,18 @@ class PDFPlayer extends StatefulWidget {
 class _PDFPlayerState extends State<PDFPlayer> {
   static final MobileAdTargetingInfo targetingInfo = new MobileAdTargetingInfo(
     keywords: <String>[
-      'Education',
+      // 'Education',
       'Technology',
-      'Career',
+      // 'Career',
       'news',
       'cricket',
       'current affairs',
       'business',
       'success stories',
       'motivation',
-      'concentration',
+      // 'concentration',
       'exercise',
+      'fitness',
       'workout',
       'fun facts',
       'nature',
@@ -44,7 +45,7 @@ class _PDFPlayerState extends State<PDFPlayer> {
       'army',
       'gamees',
       'adventure',
-      'focus'
+      // 'focus'
     ],
     childDirected: true,
   );

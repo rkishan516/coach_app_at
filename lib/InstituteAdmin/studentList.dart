@@ -81,49 +81,62 @@ class _StudentListState extends State<StudentList> {
                         }
                       }
                     });
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListView.builder(
-                        itemCount: students?.length ?? 0,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: ListTile(
-                              title: Text(
-                                '${students[students.keys.toList()[index]].name}',
-                                style: TextStyle(color: Color(0xffF36C24)),
-                              ),
-                              subtitle: Text(
-                                '${students[students.keys.toList()[index]].email}',
-                                style: TextStyle(color: Color(0xffF36C24)),
-                              ),
-                              trailing: Icon(
-                                Icons.chevron_right,
-                                color: Color(0xffF36C24),
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        Studentprofileactivity(
-                                            student:
-                                                students[students
-                                                    .keys
-                                                    .toList()[index]],
-                                            keyS:
-                                                students.keys.toList()[index]),
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: Center(
+                            child: Text(searchTextEditingController.text =='' ? 'Total Students : ${students.length}': 'Found Students : ${students.length}'),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 12,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListView.builder(
+                              itemCount: students?.length ?? 0,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: ListTile(
+                                    title: Text(
+                                      '${students[students.keys.toList()[index]].name}',
+                                      style:
+                                          TextStyle(color: Color(0xffF36C24)),
+                                    ),
+                                    subtitle: Text(
+                                      '${students[students.keys.toList()[index]].email}',
+                                      style:
+                                          TextStyle(color: Color(0xffF36C24)),
+                                    ),
+                                    trailing: Icon(
+                                      Icons.chevron_right,
+                                      color: Color(0xffF36C24),
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              Studentprofileactivity(
+                                                  student: students[students
+                                                      .keys
+                                                      .toList()[index]],
+                                                  keyS: students.keys
+                                                      .toList()[index]),
+                                        ),
+                                      );
+                                    },
+                                    onLongPress: () => editStudent(
+                                        students[students.keys.toList()[index]],
+                                        students.keys.toList()[index]),
                                   ),
                                 );
                               },
-                              onLongPress: () => editStudent(
-                                  students[students.keys.toList()[index]],
-                                  students.keys.toList()[index]),
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        ),
+                      ],
                     );
                   } else if (snapshot.hasError) {
                     return Center(
@@ -340,7 +353,12 @@ class _StudentListState extends State<StudentList> {
                         Student dstudent = Student(
                             name: nameTextEditingController.text,
                             address: addressTextEditingController.text,
-                            phoneNo: phoneTextEditingController.text);
+                            phoneNo: phoneTextEditingController.text,
+                            email: student.email,
+                            status: student.status,
+                            photoURL: student.photoURL,
+                            classs: student.classs,
+                            rollNo: student.rollNo);
                         FirebaseDatabase.instance
                             .reference()
                             .child(

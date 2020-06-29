@@ -267,9 +267,10 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                                 FireBaseAuth.instance.user.email) {
                               Firestore.instance
                                   .collection('institute')
-                                  .document('users')
-                                  .updateData({
-                                emailTextEditingController.text.split('@')[0]:
+                                  .document(emailTextEditingController.text
+                                      .split('@')[0])
+                                  .setData({
+                                "value":
                                     "teacher_${FireBaseAuth.instance.instituteid}_${FireBaseAuth.instance.branchid}"
                               });
                             }

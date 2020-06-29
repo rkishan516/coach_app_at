@@ -11,9 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class MidAdminRegister extends StatefulWidget {
-  List<Map<String, String>> branches;
-  String keyM;
-  MidAdmin midAdmin;
+  final List<Map<String, String>> branches;
+  final String keyM;
+  final MidAdmin midAdmin;
   MidAdminRegister({@required this.branches, this.keyM, this.midAdmin});
   @override
   _MidAdminRegisterState createState() => _MidAdminRegisterState();
@@ -27,12 +27,18 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
   @override
   void initState() {
     selectedBranch = List<String>();
-    if(widget.midAdmin != null) {
-      selectedBranch = JsonCodec().decode(widget.midAdmin.branches).map((e) => e.toString()).toList();
+    if (widget.midAdmin != null) {
+      selectedBranch = JsonCodec()
+          .decode(widget.midAdmin.branches)
+          .map((e) => e.toString())
+          .toList();
     }
-    emailTextEditingController = TextEditingController()..text = widget.midAdmin?.email ?? '';
-    districtTextEditingController = TextEditingController()..text = widget.midAdmin?.district ?? '';
-    nameTextEditingController = TextEditingController()..text = widget.midAdmin?.name ?? '';
+    emailTextEditingController = TextEditingController()
+      ..text = widget.midAdmin?.email ?? '';
+    districtTextEditingController = TextEditingController()
+      ..text = widget.midAdmin?.district ?? '';
+    nameTextEditingController = TextEditingController()
+      ..text = widget.midAdmin?.name ?? '';
     super.initState();
   }
 
@@ -198,9 +204,10 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
                       if (widget.keyM == null) {
                         Firestore.instance
                             .collection('institute')
-                            .document('users')
-                            .updateData({
-                          emailTextEditingController.text.split('@')[0]:
+                            .document(
+                                emailTextEditingController.text.split('@')[0])
+                            .setData({
+                          "value":
                               'midAdmin_${FireBaseAuth.instance.instituteid}_$selectedBranch'
                         });
                         refe = FirebaseDatabase.instance

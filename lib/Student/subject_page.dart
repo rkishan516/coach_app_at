@@ -30,15 +30,25 @@ class _SubjectPageState extends State<SubjectPage> {
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2)
+          ],
+        ),
         child: Column(
           children: <Widget>[
+            Expanded(
+              flex: 1,
+              child: Center(
+                child: Text(
+                  'Subjects'.tr(),
+                  style: TextStyle(color: Color(0xffF36C24)),
+                ),
+              ),
+            ),
             Expanded(
               flex: 12,
               child: StreamBuilder<Event>(
@@ -58,7 +68,8 @@ class _SubjectPageState extends State<SubjectPage> {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
                             child: ListTile(
                               title: Text(
                                 '${courses.subjects[courses.subjects.keys.toList()[index]].name}',
@@ -72,7 +83,10 @@ class _SubjectPageState extends State<SubjectPage> {
                                 return Navigator.of(context).push(
                                   CupertinoPageRoute(
                                     builder: (context) => ChapterPage(
-                                      title: courses.subjects[courses.subjects.keys.toList()[index]].name,
+                                      title: courses
+                                          .subjects[courses.subjects.keys
+                                              .toList()[index]]
+                                          .name,
                                       reference: FirebaseDatabase.instance
                                           .reference()
                                           .child(

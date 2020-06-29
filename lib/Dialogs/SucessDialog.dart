@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class SuccessDialog extends StatelessWidget {
-  String success;
+  final String success;
   SuccessDialog({@required this.success});
   @override
   Widget build(BuildContext context) {

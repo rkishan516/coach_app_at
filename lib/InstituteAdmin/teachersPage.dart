@@ -71,63 +71,79 @@ class _TeachersListState extends State<TeachersList> {
                   if (snapshot.hasData) {
                     Map<String, Teacher> teachers = Map<String, Teacher>();
                     snapshot.data.snapshot.value?.forEach((k, teacher) {
-                      if(searchTextEditingController.text == ''){
+                      if (searchTextEditingController.text == '') {
                         teachers[k] = Teacher.fromJson(teacher);
-                      }else{
+                      } else {
                         Teacher sTeacher = Teacher.fromJson(teacher);
                         if (sTeacher.name
                             .contains(searchTextEditingController.text)) {
                           teachers[k] = sTeacher;
                         }
                       }
-                      
                     });
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListView.builder(
-                        itemCount: teachers?.length ?? 0,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Card(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            child: ListTile(
-                              title: Text(
-                                '${teachers[teachers.keys.toList()[index]].name}',
-                                style: TextStyle(color: Color(0xffF36C24)),
-                              ),
-                              subtitle: Text(
-                                '${teachers[teachers.keys.toList()[index]].email}',
-                                style: TextStyle(color: Color(0xffF36C24)),
-                              ),
-                              trailing: Icon(
-                                Icons.chevron_right,
-                                color: Color(0xffF36C24),
-                              ),
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => TeacherProfilePage(
-                                      reference: FirebaseDatabase.instance
-                                          .reference()
-                                          .child(
-                                              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${teachers.keys.toList()[index]}'),
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: Center(
+                            child: Text(searchTextEditingController.text =='' ? 'Total Teachers : ${teachers.length}' : 'Found Teachers : ${teachers.length}'),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 12,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListView.builder(
+                              itemCount: teachers?.length ?? 0,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: ListTile(
+                                    title: Text(
+                                      '${teachers[teachers.keys.toList()[index]].name}',
+                                      style:
+                                          TextStyle(color: Color(0xffF36C24)),
                                     ),
+                                    subtitle: Text(
+                                      '${teachers[teachers.keys.toList()[index]].email}',
+                                      style:
+                                          TextStyle(color: Color(0xffF36C24)),
+                                    ),
+                                    trailing: Icon(
+                                      Icons.chevron_right,
+                                      color: Color(0xffF36C24),
+                                    ),
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              TeacherProfilePage(
+                                            reference: FirebaseDatabase.instance
+                                                .reference()
+                                                .child(
+                                                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${teachers.keys.toList()[index]}'),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    onLongPress: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) => TeacherRegister(
+                                                isEdit: true,
+                                                keyT: teachers.keys
+                                                    .toList()[index],
+                                                teacher: teachers[teachers.keys
+                                                    .toList()[index]],
+                                              ));
+                                    },
                                   ),
                                 );
                               },
-                              onLongPress: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) => TeacherRegister(
-                                          isEdit: true,
-                                          keyT: teachers.keys.toList()[index],
-                                          teacher: teachers[
-                                              teachers.keys.toList()[index]],
-                                        ));
-                              },
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        ),
+                      ],
                     );
                   } else if (snapshot.hasError) {
                     return Center(

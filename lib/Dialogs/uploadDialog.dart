@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class UploadDialog extends StatelessWidget {
-  String warning;
+  final String warning;
   UploadDialog({@required this.warning});
-  List<Widget> waitWidgets = [
+  final List<Widget> waitWidgets = [
     SpinKitRipple(
       color: Color(0xffF36C24),
     ),

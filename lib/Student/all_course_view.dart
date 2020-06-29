@@ -1,3 +1,5 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Student/course_registration_page.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -7,7 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class AllCoursePage extends StatefulWidget {
-  DatabaseReference ref;
+  final DatabaseReference ref;
   AllCoursePage({@required this.ref});
   @override
   _AllCoursePageState createState() => _AllCoursePageState();
@@ -29,6 +31,16 @@ class _AllCoursePageState extends State<AllCoursePage> {
             ),
           ),
         ),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.exit_to_app),
+              onPressed: () {
+                FireBaseAuth.instance.signoutWithGoogle();
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => WelcomePage()),
+                    (route) => false);
+              })
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(

@@ -48,12 +48,20 @@ class _ChapterPageState extends State<ChapterPage> {
         child: Column(
           children: <Widget>[
             Expanded(
+              flex: 1,
+                child: Center(
+                  child: Text(
+                    'Chapters'.tr(),
+                    style: TextStyle(color: Color(0xffF36C24)),
+                  ),
+                ),
+              ),
+            Expanded(
               flex: 12,
               child: StreamBuilder<Event>(
                 stream: widget.reference.onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    print(snapshot.data.snapshot.value);
                     Subjects subjects =
                         Subjects.fromJson(snapshot.data.snapshot.value);
                     length = subjects.chapters?.length ?? 0;

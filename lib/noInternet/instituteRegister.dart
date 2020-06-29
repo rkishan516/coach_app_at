@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/SucessDialog.dart';
 import 'package:coach_app/Dialogs/infoDialog.dart';
@@ -378,10 +377,11 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                 branch1AdminTextEditingController.text) {
                               Firestore.instance
                                   .collection('institute')
-                                  .document('users')
-                                  .updateData({
-                                branch1AdminTextEditingController.text
-                                        .split('@')[0]:
+                                  .document(branch1AdminTextEditingController
+                                      .text
+                                      .split('@')[0])
+                                  .setData({
+                                "value":
                                     "subAdmin_${reference.key}_${branch1CodeTextEditingController.text}"
                               });
                             }
@@ -406,7 +406,8 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                         'Your Institute has been successfully Registered'
                                             .tr()));
                             await Future.delayed(Duration(seconds: 2));
-                            WelcomeNavigation.signInWithGoogleAndGetPage(context);
+                            WelcomeNavigation.signInWithGoogleAndGetPage(
+                                context);
                           } else {
                             _scKey.currentState.showSnackBar(
                                 SnackBar(content: Text('Login Failed'.tr())));

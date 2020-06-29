@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
@@ -172,8 +173,9 @@ getAppBar(BuildContext context) {
           .onValue,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Text(
+          return AutoSizeText(
             snapshot.data.snapshot.value,
+            maxLines: 2,
             style: GoogleFonts.portLligatSans(
               fontWeight: FontWeight.w700,
               color: Colors.white,

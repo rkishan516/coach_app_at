@@ -4,6 +4,7 @@ import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Student/content_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class ChapterPage extends StatefulWidget {
@@ -41,6 +42,15 @@ class _ChapterPageState extends State<ChapterPage> {
         child: Column(
           children: <Widget>[
             Expanded(
+              flex: 1,
+              child: Center(
+                child: Text(
+                  'Chapters'.tr(),
+                  style: TextStyle(color: Color(0xffF36C24)),
+                ),
+              ),
+            ),
+            Expanded(
               flex: 12,
               child: StreamBuilder<Event>(
                   stream: widget.reference.onValue,
@@ -55,7 +65,8 @@ class _ChapterPageState extends State<ChapterPage> {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Card(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
                               child: ListTile(
                                 title: Text(
                                   '${subjects.chapters[subjects.chapters.keys.toList()[index]].name}',
@@ -68,9 +79,12 @@ class _ChapterPageState extends State<ChapterPage> {
                                 onTap: () => Navigator.of(context).push(
                                   CupertinoPageRoute(
                                     builder: (context) => ContentPage(
-                                      title: subjects.chapters[subjects.chapters.keys.toList()[index]].name,
-                                      reference: widget.reference
-                                          .child('chapters/${subjects.chapters.keys.toList()[index]}'),
+                                      title: subjects
+                                          .chapters[subjects.chapters.keys
+                                              .toList()[index]]
+                                          .name,
+                                      reference: widget.reference.child(
+                                          'chapters/${subjects.chapters.keys.toList()[index]}'),
                                     ),
                                   ),
                                 ),

@@ -26,57 +26,74 @@ class _CoursePageState extends State<CoursePage> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2,
-                )
-              ],),
-          child: StreamBuilder<Event>(
-            stream: FirebaseDatabase.instance
-                .reference()
-                .child(
-                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}')
-                .onValue,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                Student student =
-                    Student.fromJson(snapshot.data.snapshot.value);
-                return ListView.builder(
-                  itemCount: student.course.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Card(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        child: ListTile(
-                          title: Text(
-                            '${student.course[index].courseName}',
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                          trailing: Icon(
-                            Icons.chevron_right,
-                            color: Colors.blue,
-                          ),
-                          onTap: () => Navigator.of(context).push(
-                            CupertinoPageRoute(
-                              builder: (context) => SubjectPage(
-                                courseID:
-                                    student.course[index].courseID.toString(),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: Colors.grey.shade200,
+                offset: Offset(2, 4),
+                blurRadius: 5,
+                spreadRadius: 2,
+              )
+            ],
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: Center(
+                  child: Text(
+                    'Courses'.tr(),
+                    style: TextStyle(color: Color(0xffF36C24)),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 12,
+                child: StreamBuilder<Event>(
+                  stream: FirebaseDatabase.instance
+                      .reference()
+                      .child(
+                          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}')
+                      .onValue,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      Student student =
+                          Student.fromJson(snapshot.data.snapshot.value);
+                      return ListView.builder(
+                        itemCount: student.course.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: ListTile(
+                                title: Text(
+                                  '${student.course[index].courseName}',
+                                  style: TextStyle(color: Colors.blue),
+                                ),
+                                trailing: Icon(
+                                  Icons.chevron_right,
+                                  color: Colors.blue,
+                                ),
+                                onTap: () => Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                    builder: (context) => SubjectPage(
+                                      courseID: student.course[index].courseID
+                                          .toString(),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      ),
-                    );
+                          );
+                        },
+                      );
+                    } else {
+                      return UploadDialog(warning: 'Fetching'.tr());
+                    }
                   },
-                );
-              } else {
-                return UploadDialog(warning: 'Fetching'.tr());
-              }
-            },
+                ),
+              ),
+            ],
           ),
         ),
       ),

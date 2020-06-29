@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/InstituteAdmin/branchPage.dart';
@@ -41,8 +42,9 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
               .onValue,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return Text(
+              return AutoSizeText(
                 snapshot.data.snapshot.value ?? '',
+                maxLines: 2,
                 style: GoogleFonts.portLligatSans(
                   fontWeight: FontWeight.w700,
                   color: Colors.white,

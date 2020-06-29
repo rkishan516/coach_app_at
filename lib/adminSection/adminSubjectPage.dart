@@ -45,7 +45,16 @@ class _AdminSubjectPageState extends State<AdminSubjectPage> {
         child: Column(
           children: <Widget>[
             Expanded(
-              flex: 12,
+              flex: 1,
+                child: Center(
+                  child: Text(
+                    'Subjects'.tr(),
+                    style: TextStyle(color: Color(0xffF36C24)),
+                  ),
+                ),
+              ),
+            Expanded(
+              flex: 24,
               child: StreamBuilder<Event>(
                 stream: FirebaseDatabase.instance
                     .reference()

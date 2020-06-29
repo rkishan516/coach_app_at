@@ -14,9 +14,9 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class FormGenerator extends StatefulWidget {
-  String title;
-  String description;
-  QuizModel quizModel;
+  final String title;
+  final String description;
+  final QuizModel quizModel;
   FormGenerator(
       {@required this.title,
       @required this.description,

@@ -57,7 +57,8 @@ class _StudentsRequestsState extends State<StudentsRequests> {
                         return Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Card(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
                             child: StudentRequestListTile(
                               keyS: students.keys.toList()[index],
                               student: students[students.keys.toList()[index]],
@@ -96,8 +97,8 @@ class _StudentsRequestsState extends State<StudentsRequests> {
 }
 
 class StudentRequestListTile extends StatefulWidget {
-  String keyS;
-  Student student;
+  final String keyS;
+  final Student student;
   StudentRequestListTile({this.keyS, this.student});
   @override
   _StudentRequestListTileState createState() => _StudentRequestListTileState();
@@ -140,7 +141,7 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
           color: Color(0xffF36C24),
         ),
         onPressed: () {
-          ref.child(widget.keyS).update({'status': 'Rejected'});
+          ref.child(widget.keyS).remove();
         },
       ),
       subtitle: Row(
@@ -215,8 +216,8 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                       .child(widget.keyS + '/course')
                       .child(selectedCourseID)
                       .update(course.toJson());
-                  selectedCourse = null;
-                  selectedCourseID = null;
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => StudentsRequests()));
                 }
               },
               icon: Icon(

@@ -5,15 +5,16 @@ import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
+import 'package:coach_app/Student/WaitScreen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:upi_pay/upi_pay.dart';
 
 class CourseRegistrationPage extends StatefulWidget {
-  DatabaseReference ref;
-  String name;
-  String courseID;
+  final DatabaseReference ref;
+  final String name;
+  final String courseID;
   CourseRegistrationPage(
       {@required this.ref, @required this.name, @required this.courseID});
   @override
@@ -150,132 +151,173 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                   Expanded(
                     child: ListView(
                       children: <Widget>[
-                        Card(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          child: FlatButton(
-                            color: Color(0xffF36C24),
-                            child: StreamBuilder<Event>(
-                                stream: widget.ref.child('price').onValue,
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    price = snapshot.data.snapshot.value;
-                                    return Text(
-                                      'Buy Course @ Rs.'.tr() +
-                                          ' ${snapshot.data.snapshot.value}',
-                                      style: TextStyle(color: Colors.white),
-                                    );
-                                  } else {
-                                    return CircularProgressIndicator();
-                                  }
-                                }),
-                            onPressed: () async {
-                              if (price == null) {
-                                return;
-                              }
-                              if (price < 1) {
-                                Course rCourse = Course(
-                                  academicYear: DateTime.now().year.toString() +
-                                      '-' +
-                                      (DateTime.now().year + 1).toString(),
-                                  courseID: widget.courseID,
-                                  courseName: widget.name,
-                                  paymentToken:
-                                      "It's a free course for student".tr(),
-                                );
-                                showDialog(
-                                    context: context,
-                                    builder: (context) => UploadDialog(
-                                        warning: 'Registering'.tr()));
-                                await widget.ref
-                                    .parent()
-                                    .parent()
-                                    .child(
-                                      'students/${FireBaseAuth.instance.user.uid}/course/${widget.courseID}',
-                                    )
-                                    .update(rCourse.toJson());
-                                await widget.ref
-                                    .parent()
-                                    .parent()
-                                    .child(
-                                        '/students/${FireBaseAuth.instance.user.uid}/status')
-                                    .update({'status' : 'Registered'});
-                                await Future.delayed(Duration(seconds: 5));
-                                WelcomeNavigation.signInWithGoogleAndGetPage(
-                                    context);
-                                return;
-                              }
-                              String upi;
-                              widget.ref
-                                  .parent()
-                                  .parent()
-                                  .child('upiId')
-                                  .once()
-                                  .then((value) {
-                                upi = value.value;
-                              });
-                              UpiApplication application = await showDialog(
-                                context: context,
-                                child: Dialog(
-                                  child: Screen(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  10,
                                 ),
-                              );
-                              if (application == null) {
-                                Alert.instance.alert(
-                                    context,
-                                    'No application selected or available'
-                                        .tr());
-                                return;
-                              }
-                              UpiTransactionResponse txnResponse =
-                                  await UpiPay.initiateTransaction(
-                                amount: "$price.00",
-                                app: application,
-                                receiverName: upi.split('@')[0],
-                                receiverUpiAddress: upi,
-                                transactionRef:
-                                    '${widget.name.hashCode}${widget.courseID.hashCode}${FireBaseAuth.instance.user.uid.hashCode}',
-                                transactionNote:
-                                    'You are purchaing the course ${widget.name}.',
-                              );
-                              if (txnResponse.status ==
-                                  UpiTransactionStatus.success) {
-                                Course rCourse = Course(
-                                    academicYear: DateTime.now()
-                                            .year
-                                            .toString() +
-                                        '-' +
-                                        (DateTime.now().year + 1).toString(),
-                                    courseID: widget.courseID,
-                                    courseName: widget.name,
-                                    paymentToken: txnResponse.txnRef);
-                                showDialog(
+                              ),
+                              child: FlatButton(
+                                onPressed: () {
+                                  widget.ref
+                                      .parent()
+                                      .parent()
+                                      .child(
+                                          '/students/${FireBaseAuth.instance.user.uid}/class')
+                                      .set(widget.courseID);
+                                  widget.ref
+                                      .parent()
+                                      .parent()
+                                      .child(
+                                          '/students/${FireBaseAuth.instance.user.uid}/status')
+                                      .set('Existing Student');
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                    builder: (context) {
+                                      return WaitScreen();
+                                    },
+                                  ), (route) => false);
+                                },
+                                child: Text(
+                                  'Already Paid',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                color: Color(0xffF36C24),
+                              ),
+                            ),
+                            Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: FlatButton(
+                                color: Color(0xffF36C24),
+                                child: StreamBuilder<Event>(
+                                    stream: widget.ref.child('price').onValue,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        price = snapshot.data.snapshot.value;
+                                        return Text(
+                                          'Buy Course @ Rs.'.tr() +
+                                              ' ${snapshot.data.snapshot.value}',
+                                          style: TextStyle(color: Colors.white),
+                                        );
+                                      } else {
+                                        return CircularProgressIndicator();
+                                      }
+                                    }),
+                                onPressed: () async {
+                                  if (price == null) {
+                                    return;
+                                  }
+                                  if (price < 1) {
+                                    Course rCourse = Course(
+                                      academicYear: DateTime.now()
+                                              .year
+                                              .toString() +
+                                          '-' +
+                                          (DateTime.now().year + 1).toString(),
+                                      courseID: widget.courseID,
+                                      courseName: widget.name,
+                                      paymentToken:
+                                          "It's a free course for student".tr(),
+                                    );
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) => UploadDialog(
+                                            warning: 'Registering'.tr()));
+                                    await widget.ref
+                                        .parent()
+                                        .parent()
+                                        .child(
+                                          'students/${FireBaseAuth.instance.user.uid}/course/${widget.courseID}',
+                                        )
+                                        .update(rCourse.toJson());
+                                    await widget.ref
+                                        .parent()
+                                        .parent()
+                                        .child(
+                                            '/students/${FireBaseAuth.instance.user.uid}')
+                                        .update({'status': 'Registered'});
+                                    await Future.delayed(Duration(seconds: 5));
+                                    WelcomeNavigation
+                                        .signInWithGoogleAndGetPage(context);
+                                    return;
+                                  }
+                                  String upi;
+                                  widget.ref
+                                      .parent()
+                                      .parent()
+                                      .child('upiId')
+                                      .once()
+                                      .then((value) {
+                                    upi = value.value;
+                                  });
+                                  UpiApplication application = await showDialog(
                                     context: context,
-                                    builder: (context) => UploadDialog(
-                                        warning: 'Registering'.tr()));
-                                await widget.ref
-                                    .parent()
-                                    .parent()
-                                    .child(
-                                        'students/${FireBaseAuth.instance.user.uid}/course')
-                                    .child(widget.courseID)
-                                    .update(rCourse.toJson());
-                                await widget.ref
-                                    .parent()
-                                    .parent()
-                                    .child(
-                                      '/students/${FireBaseAuth.instance.user.uid}/',
-                                    )
-                                    .update({'status' :'Registered'});
-                                await Future.delayed(Duration(seconds: 5));
-                                WelcomeNavigation.signInWithGoogleAndGetPage(
-                                    context);
-                              } else {
-                                Alert.instance
-                                    .alert(context, 'Registration Failed'.tr());
-                              }
-                            },
-                          ),
+                                    child: Dialog(
+                                      child: Screen(),
+                                    ),
+                                  );
+                                  if (application == null) {
+                                    Alert.instance.alert(
+                                        context,
+                                        'No application selected or available'
+                                            .tr());
+                                    return;
+                                  }
+                                  UpiTransactionResponse txnResponse =
+                                      await UpiPay.initiateTransaction(
+                                    amount: "$price.00",
+                                    app: application,
+                                    receiverName: upi.split('@')[0],
+                                    receiverUpiAddress: upi,
+                                    transactionRef:
+                                        '${widget.name.hashCode}${widget.courseID.hashCode}${FireBaseAuth.instance.user.uid.hashCode}',
+                                    transactionNote:
+                                        'You are purchaing the course ${widget.name}.',
+                                  );
+                                  if (txnResponse.status ==
+                                      UpiTransactionStatus.success) {
+                                    Course rCourse = Course(
+                                        academicYear:
+                                            DateTime.now().year.toString() +
+                                                '-' +
+                                                (DateTime.now().year + 1)
+                                                    .toString(),
+                                        courseID: widget.courseID,
+                                        courseName: widget.name,
+                                        paymentToken: txnResponse.txnRef);
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) => UploadDialog(
+                                            warning: 'Registering'.tr()));
+                                    await widget.ref
+                                        .parent()
+                                        .parent()
+                                        .child(
+                                            'students/${FireBaseAuth.instance.user.uid}/course')
+                                        .child(widget.courseID)
+                                        .update(rCourse.toJson());
+                                    await widget.ref
+                                        .parent()
+                                        .parent()
+                                        .child(
+                                          '/students/${FireBaseAuth.instance.user.uid}/',
+                                        )
+                                        .update({'status': 'Registered'});
+                                    await Future.delayed(Duration(seconds: 5));
+                                    WelcomeNavigation
+                                        .signInWithGoogleAndGetPage(context);
+                                  } else {
+                                    Alert.instance.alert(
+                                        context, 'Registration Failed'.tr());
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

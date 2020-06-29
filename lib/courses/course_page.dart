@@ -6,6 +6,7 @@ import 'package:coach_app/courses/subject_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CoursePage extends StatefulWidget {
   final Teacher teacher;
@@ -37,6 +38,14 @@ class _CoursePageState extends State<CoursePage> {
         child: Column(
           children: <Widget>[
             Expanded(
+              child: Center(
+                child: Text(
+                  'Courses'.tr(),
+                  style: TextStyle(color: Color(0xffF36C24)),
+                ),
+              ),
+            ),
+            Expanded(
               flex: 12,
               child: StreamBuilder<Event>(
                 stream: FirebaseDatabase.instance
@@ -59,7 +68,8 @@ class _CoursePageState extends State<CoursePage> {
                     return ListView.builder(
                       itemCount: courses?.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
-                        TCourses tcourse = widget.teacher?.courses?.firstWhere((element) => element.id == courses[index].id);
+                        TCourses tcourse = widget.teacher?.courses?.firstWhere(
+                            (element) => element.id == courses[index].id);
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(

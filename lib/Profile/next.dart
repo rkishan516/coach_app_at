@@ -6,7 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TeacherProfilePage extends StatelessWidget {
-  DatabaseReference reference;
+  final DatabaseReference reference;
   TeacherProfilePage({@required this.reference});
   @override
   Widget build(BuildContext context) {

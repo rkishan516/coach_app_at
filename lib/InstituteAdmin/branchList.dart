@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:convert';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
@@ -35,7 +36,13 @@ class _BranchListState extends State<BranchList> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           Map<String, Branch> institutes = SplayTreeMap<String, Branch>();
+          List<int> districtWise = List<int>();
           if (snapshot.data.snapshot.value != null) {
+            snapshot.data.snapshot.value['midAdmin']?.forEach((k, v) {
+              if (searchTextEditingController.text == v['district']) {
+                districtWise = JsonCodec().decode(v['branches']).cast<int>();
+              }
+            });
             snapshot.data.snapshot.value['branches']?.forEach((k, v) {
               if (searchTextEditingController.text == '') {
                 institutes[k] = Branch.fromJson(v);
@@ -45,7 +52,8 @@ class _BranchListState extends State<BranchList> {
                         searchTextEditingController.text.toLowerCase()) ||
                     branch.address.toLowerCase().contains(
                         searchTextEditingController.text.toLowerCase()) ||
-                    k.contains(searchTextEditingController.text)) {
+                    k.contains(searchTextEditingController.text) ||
+                    districtWise.contains(int.parse(k))) {
                   institutes[k] = branch;
                 }
               }
@@ -56,11 +64,15 @@ class _BranchListState extends State<BranchList> {
           return Scaffold(
             appBar: AppBar(
               backgroundColor: Color(0xffF36C24),
-              title: Text(
-                snapshot.data.snapshot.value['name'] ?? '',
-                style: GoogleFonts.portLligatSans(
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
+              title: Padding(
+                padding: const EdgeInsets.only(right: 70.0),
+                child: AutoSizeText(
+                  snapshot.data.snapshot.value['name'] ?? '',
+                  maxLines: 2,
+                  style: GoogleFonts.portLligatSans(
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               flexibleSpace: Stack(
@@ -152,6 +164,9 @@ class _BranchListState extends State<BranchList> {
                         filled: true,
                       ),
                     ),
+                  ),
+                  Center(
+                    child: Text(searchTextEditingController.text == '' ? 'Total Institute: ${institutes.length}' : 'Institutes found : ${institutes.length}'),
                   ),
                   Expanded(
                     flex: 12,
@@ -262,8 +277,11 @@ class _BranchListState extends State<BranchList> {
                       icon: Icon(Icons.list),
                       text: 'Mid Admin'.tr(),
                       onTap: () {
-                        if(searchTextEditingController.text != ''){
-                          Alert.instance.alert(context, "Mid admin can't be access during filter mode".tr());
+                        if (searchTextEditingController.text != '') {
+                          Alert.instance.alert(
+                              context,
+                              "Mid admin can't be access during filter mode"
+                                  .tr());
                           searchTextEditingController.text = '';
                           return;
                         }

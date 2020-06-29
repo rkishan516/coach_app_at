@@ -211,10 +211,9 @@ class _BranchRegisterState extends State<BranchRegister> {
                               'institute/${FireBaseAuth.instance.instituteid}/branches/${branchCodeTextEditingController.text}');
                       if (widget.branchCode != null) {
                         Branch branch = Branch(
-                          name: nameTextEditingController.text,
-                          address: addressTextEditingController.text,
-                          upiId: upiTextEditingController.text
-                        );
+                            name: nameTextEditingController.text,
+                            address: addressTextEditingController.text,
+                            upiId: upiTextEditingController.text);
                         ref.update(branch.toJson());
                         Navigator.of(context).pop();
                         return;
@@ -259,10 +258,10 @@ class _BranchRegisterState extends State<BranchRegister> {
                               adminEmailTextEditingController.text) {
                             Firestore.instance
                                 .collection('institute')
-                                .document('users')
-                                .updateData({
-                              adminEmailTextEditingController.text
-                                      .split('@')[0]:
+                                .document(adminEmailTextEditingController.text
+                                    .split('@')[0])
+                                .setData({
+                              "value":
                                   "subAdmin_${FireBaseAuth.instance.instituteid}_${branchCodeTextEditingController.text}"
                             });
                           }

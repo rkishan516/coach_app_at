@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class MidAdminList extends StatefulWidget {
-  List<Map<String, String>> branches;
+  final List<Map<String, String>> branches;
   MidAdminList({@required this.branches});
   @override
   _MidAdminListState createState() => _MidAdminListState();

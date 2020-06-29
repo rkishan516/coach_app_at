@@ -6,7 +6,7 @@ class SlideButton extends StatelessWidget {
   final double width;
   final double height;
   final Function onTap;
-  Icon icon;
+  final Icon icon;
   SlideButton(
       {@required this.text,
       @required this.onTap,
@@ -98,7 +98,7 @@ class SlideButtonCovered extends StatelessWidget {
   final double width;
   final double height;
   final Function onTap;
-  Icon icon;
+  final Icon icon;
   SlideButtonCovered(
       {@required this.text,
       @required this.onTap,

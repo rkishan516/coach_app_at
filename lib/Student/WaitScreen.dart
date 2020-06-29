@@ -2,7 +2,6 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class WaitScreen extends StatelessWidget {
   @override
@@ -35,8 +34,8 @@ class WaitScreen extends StatelessWidget {
                 children: [
                   Center(
                     child: Text(
-                      'Please wait till you get access to course'.tr(),
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      'You will get admission in your digital institute as soon as administrator permits you',
+                      style: TextStyle(color: Colors.white, fontSize: 18),textAlign: TextAlign.center,
                     ),
                   ),
                   RaisedButton(
@@ -45,7 +44,7 @@ class WaitScreen extends StatelessWidget {
                       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => WelcomePage()), (route) => false);
                     },
                     child: Text(
-                      'Withdraw Access',
+                      'Withdraw Request',
                       style: TextStyle(color: Colors.white),
                     ),
                     color: Colors.transparent,
