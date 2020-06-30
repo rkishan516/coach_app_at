@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
@@ -254,6 +255,18 @@ class _BranchRegisterState extends State<BranchRegister> {
                             },
                             upiId: upiTextEditingController.text,
                           ).toJson());
+                          if (FireBaseAuth.instance.previlagelevel == 34) {
+                            List<int> branchesKey;
+                            var k = JsonCodec()
+                                .decode(FireBaseAuth.instance.branchList);
+                            branchesKey = JsonCodec().decode(k).cast<int>();
+                            print(branchesKey.toString());
+                            branchesKey.add(int.parse(
+                                branchCodeTextEditingController.text));
+                            print(branchesKey.toString());
+                            ref.parent().parent().child(
+                                'midAdmin/${FireBaseAuth.instance.user.uid}/branches').set(branchesKey.toString());
+                          }
                           if (FireBaseAuth.instance.user.email !=
                               adminEmailTextEditingController.text) {
                             Firestore.instance

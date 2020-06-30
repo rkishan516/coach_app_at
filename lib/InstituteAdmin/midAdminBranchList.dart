@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
+import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/InstituteAdmin/branchPage.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/adminSection/branchRegister.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -208,6 +210,13 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
           ),
         ),
       ),
+      floatingActionButton: SlideButtonR(
+                        text: 'Add branch'.tr(),
+                        onTap: () => showCupertinoDialog(
+                            context: context,
+                            builder: (context) => BranchRegister()),
+                        width: 150,
+                        height: 50),
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:coach_app/Dialogs/replaceSubAdmin.dart';
 import 'package:coach_app/Drawer/my_institute.dart';
 import 'package:coach_app/Drawer/privacyNPolicies.dart';
 import 'package:coach_app/Profile/next.dart';
+import 'package:coach_app/Student/all_course_view.dart';
 import 'package:coach_app/Student/course_page.dart';
 import 'package:coach_app/adminCorner/noticeBoard.dart';
 import 'package:coach_app/adminSection/studentRequest.dart';
@@ -60,6 +61,15 @@ getDrawer(BuildContext context) {
           ListView(
             shrinkWrap: true,
             children: <Widget>[
+              ListTile(
+                title: Text('All Courses'.tr()),
+                leading: Icon(Icons.book),
+                onTap: () => Navigator.of(context).pushAndRemoveUntil(
+                    CupertinoPageRoute(
+                      builder: (context) => AllCoursePage(ref: FirebaseDatabase.instance.reference().child('/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}'),),
+                    ),
+                    (route) => false),
+              ),
               ListTile(
                 title: Text('My Courses'.tr()),
                 leading: Icon(Icons.book),
