@@ -90,7 +90,7 @@ class _VideoConferencingState extends State<VideoConferencing> {
       _loaddatafromdatabase();
     } else {
       setState(() {
-        roomText.text = eventkey;
+        roomText.text = 'GuruCoolSession' + eventkey;
         subjectText.text = subject;
       });
     }

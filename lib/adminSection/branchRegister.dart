@@ -256,16 +256,14 @@ class _BranchRegisterState extends State<BranchRegister> {
                             upiId: upiTextEditingController.text,
                           ).toJson());
                           if (FireBaseAuth.instance.previlagelevel == 34) {
-                            List<int> branchesKey;
-                            var k = JsonCodec()
-                                .decode(FireBaseAuth.instance.branchList);
-                            branchesKey = JsonCodec().decode(k).cast<int>();
-                            print(branchesKey.toString());
-                            branchesKey.add(int.parse(
+                            FireBaseAuth.instance.branchList.add(int.parse(
                                 branchCodeTextEditingController.text));
-                            print(branchesKey.toString());
-                            ref.parent().parent().child(
-                                'midAdmin/${FireBaseAuth.instance.user.uid}/branches').set(branchesKey.toString());
+                            ref
+                                .parent()
+                                .parent()
+                                .child(
+                                    'midAdmin/${FireBaseAuth.instance.user.uid}/branches')
+                                .set(FireBaseAuth.instance.branchList.toString());
                           }
                           if (FireBaseAuth.instance.user.email !=
                               adminEmailTextEditingController.text) {

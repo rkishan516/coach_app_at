@@ -24,14 +24,8 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
   List<int> branchesKey;
 
   @override
-  void initState() {
-    var k = JsonCodec().decode(FireBaseAuth.instance.branchList);
-    branchesKey = JsonCodec().decode(k).cast<int>();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    branchesKey = FireBaseAuth.instance.branchList;
     Size size = MediaQuery.of(context).size;
     length = branchesKey?.length;
     return Scaffold(

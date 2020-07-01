@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flare_loading/flare_loading.dart';
@@ -17,7 +18,7 @@ class FireBaseAuth {
   );
   PackageInfo packageInfo;
   FirebaseUser user;
-  var branchid, instituteid, previlagelevel,branchList;
+  var branchid, instituteid, previlagelevel, branchList;
 
   Future<List<String>> getAuthGCredentials() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -82,8 +83,8 @@ class FireBaseAuth {
     branchid = idTokenResult.claims['branchid'];
     instituteid = idTokenResult.claims['instituteid'];
     previlagelevel = idTokenResult.claims['previlagelevel'];
-    if(previlagelevel == 34){
-      branchList = branchid;
+    if (previlagelevel == 34) {
+      branchList = JsonCodec().decode(JsonCodec().decode(branchid)).cast<int>();
     }
   }
 

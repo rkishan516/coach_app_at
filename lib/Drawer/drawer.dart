@@ -84,7 +84,7 @@ getDrawer(BuildContext context) {
         else
           Container(),
         ListTile(
-          title: Text('Notice Board'.tr()),
+          title: Text('Admin Corner'.tr()),
           leading: Icon(Icons.notifications_active),
           onTap: () => Navigator.of(context)
               .push(CupertinoPageRoute(builder: (context) => NoticeBoard())),

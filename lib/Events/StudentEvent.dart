@@ -144,58 +144,67 @@ class _StudentEventState extends State<StudentEvent> {
             colors: [Colors.white, Color(0xffF36C24)],
           ),
         ),
-        child: ListView.builder(
-          itemCount: _allEvent.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-              color: Colors.white,
-              elevation: 2.0,
-              child: ListTile(
-                leading: CircleAvatar(
-                  child: Icon(
-                    Icons.video_call,
-                    color: _allEvent[index].isStarted == 1
-                        ? Color(0xffF36C24)
-                        : Colors.grey,
-                  ),
+        child: (_allEvent?.length == 0)
+            ? Center(
+                child: Text(
+                  'Currently no live session is scheduled',
                 ),
-                title: Text(
-                  _allEvent[index].title +
-                      " (" +
-                      _allEvent[index].subject +
-                      ")",
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  _allEvent[index].description,
-                  style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w300),
-                ),
-                trailing: Text(
-                  (_allEvent[index].time),
-                  style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  if (_allEvent[index].isStarted == 1) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return VideoConferencing(
-                            room: _allEvent[index].title,
-                            eventkey: _allEvent[index].eventkey,
-                            subject: _allEvent[index].description,
-                            privilegelevel:
-                                FireBaseAuth.instance.previlagelevel,
-                          );
-                        },
+              )
+            : ListView.builder(
+                itemCount: _allEvent.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    color: Colors.white,
+                    elevation: 2.0,
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        child: Icon(
+                          Icons.video_call,
+                          color: _allEvent[index].isStarted == 1
+                              ? Color(0xffF36C24)
+                              : Colors.grey,
+                        ),
                       ),
-                    );
-                  }
+                      title: Text(
+                        _allEvent[index].title +
+                            " (" +
+                            _allEvent[index].subject +
+                            ")",
+                        style: TextStyle(
+                            fontSize: 18.0, fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        _allEvent[index].description,
+                        style: TextStyle(
+                            fontSize: 13.0, fontWeight: FontWeight.w300),
+                      ),
+                      trailing: Text(
+                        (_allEvent[index].time),
+                        style: TextStyle(
+                            fontSize: 15.0, fontWeight: FontWeight.bold),
+                      ),
+                      onTap: () {
+                        if (_allEvent[index].isStarted == 1) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return VideoConferencing(
+                                  room: _allEvent[index].title,
+                                  eventkey: _allEvent[index].eventkey,
+                                  subject: _allEvent[index].description,
+                                  privilegelevel:
+                                      FireBaseAuth.instance.previlagelevel,
+                                );
+                              },
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  );
                 },
               ),
-            );
-          },
-        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+
 class Branch {
   String name;
   String address;
@@ -140,7 +141,7 @@ class Courses {
 
 class Subjects {
   String name;
-  Map<dynamic,dynamic> mentor;
+  Map<dynamic, dynamic> mentor;
   Map<String, Chapters> chapters;
 
   Subjects({this.name, this.mentor, this.chapters});
@@ -201,6 +202,7 @@ class Content {
   String link;
   String ylink;
   String title;
+  String time;
   String description;
   QuizModel quizModel;
 
@@ -209,6 +211,7 @@ class Content {
       this.kind,
       this.link,
       this.title,
+      this.time,
       this.description,
       this.quizModel});
 
@@ -217,6 +220,7 @@ class Content {
     kind = json['kind'];
     link = json['link'];
     title = json['title'];
+    time = json['time'];
     description = json['description'];
     quizModel = json['quizModel'] != null
         ? QuizModel.fromJson(json['quizModel'])
@@ -230,6 +234,7 @@ class Content {
     data['link'] = this.link;
     data['title'] = this.title;
     data['description'] = this.description;
+    data['time'] = this.time;
     data['quizModel'] = this.quizModel?.toJson();
     return data;
   }
@@ -492,17 +497,43 @@ class PrivacyModal {
   PrivacyModal(this.key, this.heading, this.subtitile);
 }
 
-class Messages{
-
+class Messages {
   String key;
   String textMsg;
   String uid;
   String time;
-  Messages(this.key,this.textMsg, this.uid, this.time);
+  Messages(this.key, this.textMsg, this.uid, this.time);
 
-   Messages.fromSnapshot(DataSnapshot snapshot):
-    key= snapshot.key,
-    textMsg=snapshot.value["textMsg"],
-    uid=snapshot.value["selfId"],
-    time=snapshot.value["time"];
+  Messages.fromSnapshot(DataSnapshot snapshot)
+      : key = snapshot.key,
+        textMsg = snapshot.value["textMsg"],
+        uid = snapshot.value["selfId"],
+        time = snapshot.value["time"];
+}
+
+class Section {
+  String name;
+  Map<String, Content> content;
+
+  Section({this.name, this.content});
+
+  Section.fromJson(Map<dynamic, dynamic> json) {
+    name = json['name'];
+    if (json['content'] != null) {
+      content = Map<String, Content>();
+      json['content'].forEach((k, v) {
+        content[k] = Content.fromJson(v);
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    if (this.content != null) {
+      data['content'] =
+          this.content.map((key, value) => MapEntry(key, value.toJson()));
+    }
+    return data;
+  }
 }
