@@ -89,7 +89,6 @@ class _CalenderState extends State<Calender> {
         }
       }
     });
-    //_showsnackbar(context,"New Event is Added");
   }
 
   onEventRemoved(Event event) {

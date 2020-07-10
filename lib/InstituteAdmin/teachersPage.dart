@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class TeachersList extends StatefulWidget {
+  final String courseId;
+  final String subjectId;
+  TeachersList({this.courseId, this.subjectId});
   @override
   _TeachersListState createState() => _TeachersListState();
 }
@@ -19,8 +22,8 @@ class _TeachersListState extends State<TeachersList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: getDrawer(context),
-      appBar: getAppBar(context),
+      drawer: (widget.courseId != null) ? null : getDrawer(context),
+      appBar: (widget.courseId != null) ? null : getAppBar(context),
       body: Container(
         padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height / 20),
@@ -71,13 +74,39 @@ class _TeachersListState extends State<TeachersList> {
                   if (snapshot.hasData) {
                     Map<String, Teacher> teachers = Map<String, Teacher>();
                     snapshot.data.snapshot.value?.forEach((k, teacher) {
-                      if (searchTextEditingController.text == '') {
-                        teachers[k] = Teacher.fromJson(teacher);
+                      if (widget.courseId == null || widget.subjectId == null) {
+                        if (searchTextEditingController.text == '') {
+                          teachers[k] = Teacher.fromJson(teacher);
+                        } else {
+                          Teacher sTeacher = Teacher.fromJson(teacher);
+                          if (sTeacher.name
+                              .contains(searchTextEditingController.text)) {
+                            teachers[k] = sTeacher;
+                          }
+                        }
                       } else {
-                        Teacher sTeacher = Teacher.fromJson(teacher);
-                        if (sTeacher.name
-                            .contains(searchTextEditingController.text)) {
-                          teachers[k] = sTeacher;
+                        if (searchTextEditingController.text == '') {
+                          Teacher teach = Teacher.fromJson(teacher);
+                          TCourses tCourses = teach?.courses?.firstWhere(
+                              (element) => element.id == widget.courseId);
+                          if (tCourses != null) {
+                            if (tCourses.subjects.contains(widget.subjectId)) {
+                              teachers[k] = teach;
+                            }
+                          }
+                        } else {
+                          Teacher sTeacher = Teacher.fromJson(teacher);
+                          if (sTeacher.name
+                                  .contains(searchTextEditingController.text) &&
+                              (sTeacher?.courses
+                                      ?.firstWhere((element) =>
+                                          element.id == widget.courseId)
+                                      ?.subjects
+                                      ?.firstWhere((element) =>
+                                          element == widget.subjectId) !=
+                                  null)) {
+                            teachers[k] = sTeacher;
+                          }
                         }
                       }
                     });
@@ -85,7 +114,9 @@ class _TeachersListState extends State<TeachersList> {
                       children: [
                         Expanded(
                           child: Center(
-                            child: Text(searchTextEditingController.text =='' ? 'Total Teachers : ${teachers.length}' : 'Found Teachers : ${teachers.length}'),
+                            child: Text(searchTextEditingController.text == ''
+                                ? 'Total Teachers : ${teachers.length}'
+                                : 'Found Teachers : ${teachers.length}'),
                           ),
                         ),
                         Expanded(

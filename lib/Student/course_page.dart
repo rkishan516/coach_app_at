@@ -57,6 +57,7 @@ class _CoursePageState extends State<CoursePage> {
                     if (snapshot.hasData) {
                       Student student =
                           Student.fromJson(snapshot.data.snapshot.value);
+                      student.course.sort((a,b)=> a.courseName.compareTo(b.courseName));
                       return ListView.builder(
                         itemCount: student.course.length,
                         itemBuilder: (BuildContext context, int index) {

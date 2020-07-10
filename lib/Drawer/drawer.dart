@@ -7,6 +7,7 @@ import 'package:coach_app/Dialogs/replaceSubAdmin.dart';
 import 'package:coach_app/Drawer/my_institute.dart';
 import 'package:coach_app/Drawer/privacyNPolicies.dart';
 import 'package:coach_app/Profile/next.dart';
+import 'package:coach_app/Profile/subAdminProfile.dart';
 import 'package:coach_app/Student/all_course_view.dart';
 import 'package:coach_app/Student/course_page.dart';
 import 'package:coach_app/adminCorner/noticeBoard.dart';
@@ -112,6 +113,19 @@ getDrawer(BuildContext context) {
             onTap: () {
               showDialog(
                   context: context, builder: (context) => ReplaceSubAdmin());
+            },
+          )
+        else
+          Container(),
+        if (FireBaseAuth.instance.previlagelevel >= 4)
+          ListTile(
+            title: Text(
+              'Sub Admin Profile'.tr(),
+            ),
+            leading: Icon(Icons.person),
+            onTap: () {
+              showDialog(
+                  context: context, builder: (context) => SubAdminProfile());
             },
           )
         else

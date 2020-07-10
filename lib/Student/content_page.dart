@@ -50,26 +50,32 @@ class _ContentPageState extends State<ContentPage> {
                   if (snapshot.hasData) {
                     Chapters chapter =
                         Chapters.fromJson(snapshot.data.snapshot.value);
+                    var keys;
+                    if (chapter.content != null) {
+                      keys = chapter.content.keys.toList()
+                        ..sort((a, b) => chapter.content[a].title.toLowerCase()
+                            .compareTo(chapter.content[b].title.toLowerCase()));
+                    }
                     length = chapter.content?.length ?? 0;
                     return ListView.builder(
                       itemCount: length,
                       itemBuilder: (BuildContext context, int index) {
                         bool isEnabled = true;
                         if (chapter
-                                .content[chapter.content.keys.toList()[index]]
+                                .content[keys.toList()[index]]
                                 .kind ==
                             'Quiz') {
                           isEnabled = false;
                           DateTime endTime = chapter
-                              .content[chapter.content.keys.toList()[index]]
+                              .content[keys.toList()[index]]
                               .quizModel
                               .startTime
                               .add(chapter
-                                  .content[chapter.content.keys.toList()[index]]
+                                  .content[keys.toList()[index]]
                                   .quizModel
                                   .testTime);
                           if (DateTime.now().isAfter(chapter
-                                  .content[chapter.content.keys.toList()[index]]
+                                  .content[keys.toList()[index]]
                                   .quizModel
                                   .startTime) &&
                               DateTime.now().isBefore(endTime)) {
@@ -87,13 +93,13 @@ class _ContentPageState extends State<ContentPage> {
                                     isEnabled ? Color(0xffF36C24) : null,
                                 child: Icon(
                                   chapter
-                                              .content[chapter.content.keys
+                                              .content[keys
                                                   .toList()[index]]
                                               .kind ==
                                           'Youtube Video'
                                       ? Icons.videocam
                                       : chapter
-                                                  .content[chapter.content.keys
+                                                  .content[keys
                                                       .toList()[index]]
                                                   .kind ==
                                               'PDF'
@@ -104,7 +110,7 @@ class _ContentPageState extends State<ContentPage> {
                               ),
                               enabled: isEnabled,
                               title: Text(
-                                '${chapter.content[chapter.content.keys.toList()[index]].title}',
+                                '${chapter.content[keys.toList()[index]].title}',
                                 style: TextStyle(color: Colors.blue),
                               ),
                               trailing: Icon(
@@ -113,7 +119,7 @@ class _ContentPageState extends State<ContentPage> {
                               ),
                               onTap: () {
                                 if (chapter
-                                        .content[chapter.content.keys
+                                        .content[keys
                                             .toList()[index]]
                                         .kind ==
                                     'Youtube Video') {
@@ -121,15 +127,15 @@ class _ContentPageState extends State<ContentPage> {
                                     CupertinoPageRoute(
                                       builder: (context) => YTPlayer(
                                           reference: widget.reference.child(
-                                              'content/${chapter.content.keys.toList()[index]}'),
+                                              'content/${keys.toList()[index]}'),
                                           link: chapter
-                                              .content[chapter.content.keys
+                                              .content[keys
                                                   .toList()[index]]
                                               .ylink),
                                     ),
                                   );
                                 } else if (chapter
-                                        .content[chapter.content.keys
+                                        .content[keys
                                             .toList()[index]]
                                         .kind ==
                                     'PDF') {
@@ -137,24 +143,24 @@ class _ContentPageState extends State<ContentPage> {
                                     CupertinoPageRoute(
                                       builder: (context) => PDFPlayer(
                                         link: chapter
-                                            .content[chapter.content.keys
+                                            .content[keys
                                                 .toList()[index]]
                                             .link,
                                       ),
                                     ),
                                   );
                                 } else if (chapter
-                                        .content[chapter.content.keys
+                                        .content[keys
                                             .toList()[index]]
                                         .kind ==
                                     'Quiz') {
                                   if (snapshot.data.snapshot.value['content'][
-                                              chapter.content.keys
+                                              keys
                                                   .toList()[index]]['quizModel']
                                           ['result'] !=
                                       null) {
                                     if (snapshot.data.snapshot.value['content'][
-                                                    chapter.content.keys
+                                                    keys
                                                         .toList()[index]]
                                                 ['quizModel']['result']
                                             [FireBaseAuth.instance.user.uid] !=
@@ -168,16 +174,16 @@ class _ContentPageState extends State<ContentPage> {
                                   }
                                   DateTime endTime = chapter
                                       .content[
-                                          chapter.content.keys.toList()[index]]
+                                          keys.toList()[index]]
                                       .quizModel
                                       .startTime
                                       .add(chapter
-                                          .content[chapter.content.keys
+                                          .content[keys
                                               .toList()[index]]
                                           .quizModel
                                           .testTime);
                                   if (DateTime.now().isAfter(chapter
-                                          .content[chapter.content.keys
+                                          .content[keys
                                               .toList()[index]]
                                           .quizModel
                                           .startTime) &&
@@ -186,7 +192,7 @@ class _ContentPageState extends State<ContentPage> {
                                       CupertinoPageRoute(
                                         builder: (context) => Quiz(
                                           reference: widget.reference.child(
-                                              'content/${chapter.content.keys.toList()[index]}'),
+                                              'content/${keys.toList()[index]}'),
                                         ),
                                       ),
                                     );

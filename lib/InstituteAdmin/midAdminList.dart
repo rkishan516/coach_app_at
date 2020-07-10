@@ -3,6 +3,7 @@ import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/InstituteAdmin/addMidAdminPage.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Profile/midAdminProfile.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -90,7 +91,8 @@ class _MidAdminListState extends State<MidAdminList> {
                         itemCount: midAdmins?.length ?? 0,
                         itemBuilder: (BuildContext context, int index) {
                           return Card(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
                             child: ListTile(
                               title: Text(
                                 '${midAdmins[midAdmins.keys.toList()[index]].name}',
@@ -100,11 +102,25 @@ class _MidAdminListState extends State<MidAdminList> {
                                 '${midAdmins[midAdmins.keys.toList()[index]].email}',
                                 style: TextStyle(color: Color(0xffF36C24)),
                               ),
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => MidAdminProfile(
+                                      databaseReference: FirebaseDatabase
+                                          .instance
+                                          .reference()
+                                          .child(
+                                              'institute/${FireBaseAuth.instance.instituteid}/midAdmin/${midAdmins.keys.toList()[index]}'),
+                                    ),
+                                  ),
+                                );
+                              },
                               onLongPress: () {
                                 showCupertinoDialog(
                                   context: context,
                                   builder: (context) => MidAdminRegister(
-                                    midAdmin: midAdmins[midAdmins.keys.toList()[index]],
+                                    midAdmin: midAdmins[
+                                        midAdmins.keys.toList()[index]],
                                     branches: widget.branches,
                                     keyM: midAdmins.keys.toList()[index],
                                   ),

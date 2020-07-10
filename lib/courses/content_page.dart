@@ -53,6 +53,12 @@ class _ContentPageState extends State<ContentPage> {
                   if (snapshot.hasData) {
                     Chapters chapter =
                         Chapters.fromJson(snapshot.data.snapshot.value);
+                    var keys;
+                    if (chapter.content != null) {
+                      keys = chapter.content.keys.toList()
+                        ..sort((a, b) => chapter.content[a].title.toLowerCase()
+                            .compareTo(chapter.content[b].title.toLowerCase()));
+                    }
                     length = chapter.content?.length ?? 0;
                     return ListView.builder(
                       itemCount: length,
@@ -66,13 +72,13 @@ class _ContentPageState extends State<ContentPage> {
                               leading: CircleAvatar(
                                 child: Icon(
                                   chapter
-                                              .content[chapter.content.keys
+                                              .content[keys
                                                   .toList()[index]]
                                               .kind ==
                                           'Youtube Video'
                                       ? Icons.videocam
                                       : chapter
-                                                  .content[chapter.content.keys
+                                                  .content[keys
                                                       .toList()[index]]
                                                   .kind ==
                                               'PDF'
@@ -83,7 +89,7 @@ class _ContentPageState extends State<ContentPage> {
                                 backgroundColor: Color(0xffF36C24),
                               ),
                               title: Text(
-                                '${chapter.content[chapter.content.keys.toList()[index]].title}',
+                                '${chapter.content[keys.toList()[index]].title}',
                                 style: TextStyle(color: Color(0xffF36C24)),
                               ),
                               trailing: Icon(
@@ -92,7 +98,7 @@ class _ContentPageState extends State<ContentPage> {
                               ),
                               onTap: () {
                                 if (chapter
-                                        .content[chapter.content.keys
+                                        .content[keys
                                             .toList()[index]]
                                         .kind ==
                                     'Youtube Video') {
@@ -100,15 +106,15 @@ class _ContentPageState extends State<ContentPage> {
                                     CupertinoPageRoute(
                                       builder: (context) => YTPlayer(
                                           reference: widget.reference.child(
-                                              'content/${chapter.content.keys.toList()[index]}'),
+                                              'content/${keys.toList()[index]}'),
                                           link: chapter
-                                              .content[chapter.content.keys
+                                              .content[keys
                                                   .toList()[index]]
                                               .ylink),
                                     ),
                                   );
                                 } else if (chapter
-                                        .content[chapter.content.keys
+                                        .content[keys
                                             .toList()[index]]
                                         .kind ==
                                     'PDF') {
@@ -116,14 +122,14 @@ class _ContentPageState extends State<ContentPage> {
                                     CupertinoPageRoute(
                                       builder: (context) => PDFPlayer(
                                         link: chapter
-                                            .content[chapter.content.keys
+                                            .content[keys
                                                 .toList()[index]]
                                             .link,
                                       ),
                                     ),
                                   );
                                 } else if (chapter
-                                        .content[chapter.content.keys
+                                        .content[keys
                                             .toList()[index]]
                                         .kind ==
                                     'Quiz') {
@@ -135,7 +141,7 @@ class _ContentPageState extends State<ContentPage> {
                                                 QuizModalResponse(
                                                   databaseReference:
                                                       widget.reference.child(
-                                                          'content/${chapter.content.keys.toList()[index]}'),
+                                                          'content/${keys.toList()[index]}'),
                                                 )));
                                     return;
                                   }
@@ -143,7 +149,7 @@ class _ContentPageState extends State<ContentPage> {
                                     CupertinoPageRoute(
                                       builder: (context) => Quiz(
                                         reference: widget.reference.child(
-                                            'content/${chapter.content.keys.toList()[index]}'),
+                                            'content/${keys.toList()[index]}'),
                                       ),
                                     ),
                                   );
@@ -151,27 +157,27 @@ class _ContentPageState extends State<ContentPage> {
                               },
                               onLongPress: () => addContent(
                                   context, widget.reference,
-                                  key: chapter.content.keys.toList()[index],
+                                  key: keys.toList()[index],
                                   title: chapter
                                       .content[
-                                          chapter.content.keys.toList()[index]]
+                                          keys.toList()[index]]
                                       .title,
-                                  link: chapter.content[chapter.content.keys.toList()[index]].kind == 'Youtube Video'
+                                  link: chapter.content[keys.toList()[index]].kind == 'Youtube Video'
                                       ? chapter
-                                          .content[chapter.content.keys
+                                          .content[keys
                                               .toList()[index]]
                                           .ylink
-                                      : chapter.content[chapter.content.keys.toList()[index]].kind == 'PDF'
+                                      : chapter.content[keys.toList()[index]].kind == 'PDF'
                                           ? chapter
-                                              .content[chapter.content.keys
+                                              .content[keys
                                                   .toList()[index]]
                                               .link
                                           : '',
                                   quizModel: chapter
-                                      .content[chapter.content.keys.toList()[index]]
+                                      .content[keys.toList()[index]]
                                       .quizModel,
-                                  description: chapter.content[chapter.content.keys.toList()[index]].description,
-                                  type: chapter.content[chapter.content.keys.toList()[index]].kind),
+                                  description: chapter.content[keys.toList()[index]].description,
+                                  type: chapter.content[keys.toList()[index]].kind),
                             ),
                           ),
                         );

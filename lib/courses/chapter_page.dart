@@ -1,9 +1,11 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Events/Calender.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
+import 'package:coach_app/InstituteAdmin/teachersPage.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/courses/content_page.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -24,123 +26,175 @@ class ChapterPage extends StatefulWidget {
   _ChapterPageState createState() => _ChapterPageState();
 }
 
-class _ChapterPageState extends State<ChapterPage> {
+class _ChapterPageState extends State<ChapterPage>
+    with SingleTickerProviderStateMixin {
   int length;
+  TabController _tabController;
+  bool isAdmin;
+  @override
+  void initState() {
+    isAdmin = FireBaseAuth.instance.previlagelevel != 2;
+    _tabController = TabController(length: isAdmin ? 2 : 1, vsync: this);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: getDrawer(context),
       appBar: getAppBar(context),
-      body: Container(
-        padding: EdgeInsets.symmetric(
-            vertical: MediaQuery.of(context).size.height / 20),
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-        ),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-                child: Center(
-                  child: Text(
-                    'Chapters'.tr(),
-                    style: TextStyle(color: Color(0xffF36C24)),
-                  ),
+      body: Column(
+        children: [
+          TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(
+                child: Text(
+                  'Chapters',
+                  style: TextStyle(color: Color(0xffF36C24)),
                 ),
               ),
-            Expanded(
-              flex: 12,
-              child: StreamBuilder<Event>(
-                stream: widget.reference.onValue,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    Subjects subjects =
-                        Subjects.fromJson(snapshot.data.snapshot.value);
-                    length = subjects.chapters?.length ?? 0;
-                    return ListView.builder(
-                      itemCount: length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: ListTile(
-                              title: Text(
-                                '${subjects.chapters[subjects.chapters.keys.toList()[index]].name}',
-                                style: TextStyle(color: Color(0xffF36C24)),
-                              ),
-                              trailing: Icon(
-                                Icons.chevron_right,
-                                color: Color(0xffF36C24),
-                              ),
-                              onTap: () => Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) => ContentPage(
-                                    title: subjects
-                                        .chapters[subjects.chapters.keys
-                                            .toList()[index]]
-                                        .name,
-                                    reference: widget.reference.child(
-                                        'chapters/${subjects.chapters.keys.toList()[index]}'),
-                                  ),
-                                ),
-                              ),
-                              onLongPress: () => addChapter(
-                                  context, widget.reference,
-                                  key: subjects.chapters.keys.toList()[index],
-                                  name: subjects
-                                      .chapters[subjects.chapters.keys
-                                          .toList()[index]]
-                                      .name,
-                                  description: subjects
-                                      .chapters[subjects.chapters.keys
-                                          .toList()[index]]
-                                      .description,
-                                  content: subjects
-                                      .chapters[subjects.chapters.keys
-                                          .toList()[index]]
-                                      .content),
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text('${snapshot.error}'),
-                    );
-                  } else {
-                    return ListView.builder(
-                      itemCount: 3,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          child: ListTile(
-                            title: PlaceholderLines(
-                              count: 1,
-                              animate: true,
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                },
-              ),
+              if (isAdmin)
+                Tab(
+                  child: Text('Teachers',
+                      style: TextStyle(color: Color(0xffF36C24))),
+                ),
+            ],
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.height / 20),
+            height: MediaQuery.of(context).size.height-194,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: Colors.grey.shade200,
+                    offset: Offset(2, 4),
+                    blurRadius: 5,
+                    spreadRadius: 2)
+              ],
             ),
-          ],
-        ),
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                Column(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: Center(
+                        child: Text(
+                          'Chapters'.tr(),
+                          style: TextStyle(color: Color(0xffF36C24)),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 12,
+                      child: StreamBuilder<Event>(
+                        stream: widget.reference.onValue,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            Subjects subjects =
+                                Subjects.fromJson(snapshot.data.snapshot.value);
+                            var keys;
+                            if (subjects.chapters != null) {
+                              keys = subjects.chapters?.keys.toList()
+                                ..sort((a, b) => subjects.chapters[a].name
+                                    .compareTo(subjects.chapters[b].name));
+                            }
+                            var length = subjects.chapters?.length ?? 0;
+                            return ListView.builder(
+                              itemCount: length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: ListTile(
+                                      title: Text(
+                                        '${subjects.chapters[keys.toList()[index]].name}',
+                                        style:
+                                            TextStyle(color: Color(0xffF36C24)),
+                                      ),
+                                      trailing: Icon(
+                                        Icons.chevron_right,
+                                        color: Color(0xffF36C24),
+                                      ),
+                                      onTap: () => Navigator.of(context).push(
+                                        CupertinoPageRoute(
+                                          builder: (context) => ContentPage(
+                                            title: subjects
+                                                .chapters[keys.toList()[index]]
+                                                .name,
+                                            reference: widget.reference.child(
+                                                'chapters/${keys.toList()[index]}'),
+                                          ),
+                                        ),
+                                      ),
+                                      onLongPress: () => addChapter(
+                                          context, widget.reference,
+                                          key: keys.toList()[index],
+                                          name: subjects
+                                              .chapters[keys.toList()[index]]
+                                              .name,
+                                          description: subjects
+                                              .chapters[keys.toList()[index]]
+                                              .description,
+                                          content: subjects
+                                              .chapters[keys.toList()[index]]
+                                              .content),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          } else if (snapshot.hasError) {
+                            return Center(
+                              child: Text('${snapshot.error}'),
+                            );
+                          } else {
+                            return ListView.builder(
+                              itemCount: 3,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Card(
+                                  child: ListTile(
+                                    title: PlaceholderLines(
+                                      count: 1,
+                                      animate: true,
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                if (isAdmin)
+                  TeachersList(
+                    courseId: widget.courseId,
+                    subjectId: widget.reference.key,
+                  )
+              ],
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: StreamBuilder<Event>(
-          stream: widget.reference.parent().parent().parent().parent().parent().parent().child('/paid').onValue,
+          stream: widget.reference
+              .parent()
+              .parent()
+              .parent()
+              .parent()
+              .parent()
+              .parent()
+              .child('/paid')
+              .onValue,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Padding(
@@ -151,8 +205,10 @@ class _ChapterPageState extends State<ChapterPage> {
                     SlideButton(
                       text: 'Live Session'.tr(),
                       onTap: () {
-                        if(snapshot.data.snapshot.value != 'Trial' && snapshot.data.snapshot.value != 'Paid'){
-                          Alert.instance.alert(context, "Your Institue doesn't have premium access".tr());
+                        if (snapshot.data.snapshot.value != 'Trial' &&
+                            snapshot.data.snapshot.value != 'Paid') {
+                          Alert.instance.alert(context,
+                              "Your Institue doesn't have premium access".tr());
                           return null;
                         }
                         return Navigator.of(context).push(

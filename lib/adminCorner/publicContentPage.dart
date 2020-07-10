@@ -224,12 +224,12 @@ class _PublicContentPageState extends State<PublicContentPage> {
           ],
         ),
       ),
-      floatingActionButton: SlideButtonR(
+      floatingActionButton: (FireBaseAuth.instance.previlagelevel == 4) ? SlideButtonR(
         text: 'Add Content'.tr(),
         onTap: () => addContent(context, widget.reference),
         width: 150,
         height: 50,
-      ),
+      ) : null,
     );
   }
 

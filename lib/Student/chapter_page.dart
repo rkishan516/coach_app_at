@@ -58,6 +58,12 @@ class _ChapterPageState extends State<ChapterPage> {
                     if (snapshot.hasData) {
                       Subjects subjects =
                           Subjects.fromJson(snapshot.data.snapshot.value);
+                      var keys;
+                      if (subjects.chapters != null) {
+                        keys = subjects.chapters?.keys.toList()
+                          ..sort((a, b) => subjects.chapters[a].name
+                              .compareTo(subjects.chapters[b].name));
+                      }
                       length = subjects.chapters?.length ?? 0;
                       return ListView.builder(
                         itemCount: length,
@@ -69,7 +75,7 @@ class _ChapterPageState extends State<ChapterPage> {
                                   borderRadius: BorderRadius.circular(10)),
                               child: ListTile(
                                 title: Text(
-                                  '${subjects.chapters[subjects.chapters.keys.toList()[index]].name}',
+                                  '${subjects.chapters[keys.toList()[index]].name}',
                                   style: TextStyle(color: Colors.blue),
                                 ),
                                 trailing: Icon(
@@ -80,11 +86,11 @@ class _ChapterPageState extends State<ChapterPage> {
                                   CupertinoPageRoute(
                                     builder: (context) => ContentPage(
                                       title: subjects
-                                          .chapters[subjects.chapters.keys
+                                          .chapters[keys
                                               .toList()[index]]
                                           .name,
                                       reference: widget.reference.child(
-                                          'chapters/${subjects.chapters.keys.toList()[index]}'),
+                                          'chapters/${keys.toList()[index]}'),
                                     ),
                                   ),
                                 ),

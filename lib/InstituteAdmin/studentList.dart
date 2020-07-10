@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class StudentList extends StatefulWidget {
+  final String courseId;
+  StudentList({this.courseId});
   @override
   _StudentListState createState() => _StudentListState();
 }
@@ -19,11 +21,13 @@ class _StudentListState extends State<StudentList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: getDrawer(context),
-      appBar: getAppBar(context),
+      drawer: widget.courseId != null ? null : getDrawer(context),
+      appBar: widget.courseId != null ? null : getAppBar(context),
       body: Container(
-        padding: EdgeInsets.symmetric(
-            vertical: MediaQuery.of(context).size.height / 20),
+        padding: widget.courseId != null
+            ? EdgeInsets.all(0)
+            : EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.height / 20),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
@@ -71,13 +75,32 @@ class _StudentListState extends State<StudentList> {
                   if (snapshot.hasData) {
                     Map<String, Student> students = Map<String, Student>();
                     snapshot.data.snapshot.value?.forEach((k, student) {
-                      if (searchTextEditingController.text == '') {
-                        students[k] = Student.fromJson(student);
+                      if (widget.courseId != null) {
+                        if (searchTextEditingController.text == '') {
+                          if (student['course'] != null) {
+                            if (student['course'][widget.courseId] != null) {
+                              students[k] = Student.fromJson(student);
+                            }
+                          }
+                        } else {
+                          Student sstudent = Student.fromJson(student);
+                          if (sstudent.name
+                                  .contains(searchTextEditingController.text) &&
+                              sstudent.course?.firstWhere((element) =>
+                                      element.courseID == widget.courseId) !=
+                                  null) {
+                            students[k] = sstudent;
+                          }
+                        }
                       } else {
-                        Student sstudent = Student.fromJson(student);
-                        if (sstudent.name
-                            .contains(searchTextEditingController.text)) {
-                          students[k] = sstudent;
+                        if (searchTextEditingController.text == '') {
+                          students[k] = Student.fromJson(student);
+                        } else {
+                          Student sstudent = Student.fromJson(student);
+                          if (sstudent.name
+                              .contains(searchTextEditingController.text)) {
+                            students[k] = sstudent;
+                          }
                         }
                       }
                     });
@@ -85,7 +108,9 @@ class _StudentListState extends State<StudentList> {
                       children: [
                         Expanded(
                           child: Center(
-                            child: Text(searchTextEditingController.text =='' ? 'Total Students : ${students.length}': 'Found Students : ${students.length}'),
+                            child: Text(searchTextEditingController.text == ''
+                                ? 'Total Students : ${students.length}'
+                                : 'Found Students : ${students.length}'),
                           ),
                         ),
                         Expanded(

@@ -4,9 +4,9 @@ import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jitsi_meet/jitsi_meet.dart';
-import 'package:jitsi_meet/jitsi_meeting_listener.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../Authentication/FirebaseAuth.dart';
 
 class VideoConferencing extends StatefulWidget {
@@ -61,18 +61,13 @@ class _VideoConferencingState extends State<VideoConferencing> {
     dbRef
         .reference()
         .child(
-          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events',
+          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events/$passVariable',
         )
-        .child(passVariable)
         .once()
         .then(
       (value) {
-        setState(
-          () {
-            roomText.text = value.value['eventkey'];
-            subjectText.text = value.value['description'];
-          },
-        );
+        roomText.text = value?.value['eventkey'];
+        subjectText.text = value?.value['description'];
       },
     );
   }
@@ -80,12 +75,6 @@ class _VideoConferencingState extends State<VideoConferencing> {
   @override
   void initState() {
     super.initState();
-
-    JitsiMeet.addListener(JitsiMeetingListener(
-        onConferenceWillJoin: _onConferenceWillJoin,
-        onConferenceJoined: _onConferenceJoined,
-        onConferenceTerminated: _onConferenceTerminated,
-        onError: _onError));
     if (privilegelevel >= 2) {
       _loaddatafromdatabase();
     } else {
@@ -94,16 +83,10 @@ class _VideoConferencingState extends State<VideoConferencing> {
         subjectText.text = subject;
       });
     }
-    Timer(Duration(seconds: 3), () async {
+    Timer(Duration(seconds: 0), () async {
       await _joinMeeting();
       Navigator.of(context).pop();
     });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    JitsiMeet.removeAllListeners();
   }
 
   @override
@@ -141,11 +124,36 @@ class _VideoConferencingState extends State<VideoConferencing> {
       dbRef
           .reference()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events')
-          .child(passVariable)
+              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events/$passVariable')
           .update({
         'isStarted': 1,
       });
+    }
+  }
+
+  bool toggleValue = false;
+  _launchURL() async {
+    var midurl = "https://coachapp-5a4c.firebaseapp.com?previlagelevel=" +
+        FireBaseAuth.instance.previlagelevel.toString() +
+        "&photourl=" +
+        FireBaseAuth.instance.user.photoUrl +
+        "&title=" +
+        roomText.text.toString() +
+        "&displayName=" +
+        FireBaseAuth.instance.user.displayName +
+        "&eventkey=" +
+        widget.eventkey.toString() +
+        "&email=" +
+        FireBaseAuth.instance.user.email;
+
+    var url = 'googlechrome://navigate?url=$midurl';
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceWebView: false,
+      );
+    } else {
+      throw 'Could not launch $url';
     }
   }
 
@@ -154,55 +162,6 @@ class _VideoConferencingState extends State<VideoConferencing> {
     String serverUrl =
         serverText.text?.trim()?.isEmpty ?? "" ? null : serverText.text;
 
-    try {
-      var options = JitsiMeetingOptions()
-        ..room = roomText.text
-        ..serverURL = serverUrl
-        ..subject = subjectText.text
-        ..userDisplayName = FireBaseAuth.instance.user.displayName
-        ..userEmail = FireBaseAuth.instance.user.email
-        //..iosAppBarRGBAColor = iosAppBarRGBAColor.text
-        ..audioOnly = isAudioOnly
-        ..audioMuted = isAudioMuted
-        ..videoMuted = isVideoMuted;
-
-      debugPrint("JitsiMeetingOptions: $options");
-      await JitsiMeet.joinMeeting(options,
-          listener: JitsiMeetingListener(onConferenceWillJoin: ({message}) {
-            debugPrint("${options.room} will join with message: $message");
-          }, onConferenceJoined: ({message}) {
-            debugPrint("${options.room} joined with message: $message");
-          }, onConferenceTerminated: ({message}) {
-            if (privilegelevel >= 2) {
-              dbRef
-                  .reference()
-                  .child(
-                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events')
-                  .child(passVariable)
-                  .update({
-                'isStarted': 0,
-              });
-            }
-            debugPrint("${options.room} terminated with message: $message");
-          }));
-    } catch (error) {
-      debugPrint("error: $error");
-    }
-  }
-
-  void _onConferenceWillJoin({message}) {
-    debugPrint("_onConferenceWillJoin broadcasted with message: $message");
-  }
-
-  void _onConferenceJoined({message}) {
-    debugPrint("_onConferenceJoined broadcasted with message: $message");
-  }
-
-  void _onConferenceTerminated({message}) {
-    debugPrint("_onConferenceTerminated broadcasted with message: $message");
-  }
-
-  _onError(error) {
-    debugPrint("_onError broadcasted: $error");
+    _launchURL();
   }
 }

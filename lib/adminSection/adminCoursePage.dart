@@ -61,6 +61,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                       snapshot.data.snapshot.value?.values?.forEach((course) {
                         courses.add(Courses.fromJson(course));
                       });
+                      courses.sort((a,b)=> a.date.compareTo(b.date));
                       return ListView.builder(
                         itemCount: courses?.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -88,6 +89,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                   context,
                                   name: courses[index].name,
                                   description: courses[index].description,
+                                  date: courses[index].date,
                                   price: courses[index].price.toString(),
                                   medium: courses[index].medium,
                                   subjects: courses[index].subjects,
@@ -138,6 +140,7 @@ addCourse(BuildContext context,
     String medium = '',
     String price = '',
     String id = '',
+    String date = '',
     Map<String, Subjects> subjects}) {
   TextEditingController nameTextEditingController = TextEditingController()
     ..text = name;
@@ -336,7 +339,7 @@ addCourse(BuildContext context,
                           description: descriptionTextEditingController.text
                               .capitalize()
                               .trim(),
-                          date: DateTime.now().toIso8601String(),
+                          date: date == '' ? DateTime.now().toIso8601String() : date,
                           medium: mediumTextEditingController.text
                               .capitalize()
                               .trim(),
@@ -375,4 +378,5 @@ addCourse(BuildContext context,
 }
 
 
-//Khud ka appbar bnana or public section k niche or TabBar daalana
+//TODO: Khud ka appbar bnana or public section k niche or TabBar daalana
+//TODO: Student Request me mobile no. buttons

@@ -56,13 +56,9 @@ class _StudentsRequestsState extends State<StudentsRequests> {
                       itemBuilder: (BuildContext context, int index) {
                         return Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: StudentRequestListTile(
-                              keyS: students.keys.toList()[index],
-                              student: students[students.keys.toList()[index]],
-                            ),
+                          child: StudentRequestListTile(
+                            keyS: students.keys.toList()[index],
+                            student: students[students.keys.toList()[index]],
                           ),
                         );
                       },
@@ -117,6 +113,161 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
 
   @override
   Widget build(BuildContext context) {
+    return Card(
+      elevation: 5.0,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              CircleAvatar(
+                radius: 35,
+                backgroundImage: NetworkImage(widget.student.photoURL),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top:8.0,bottom: 0),
+                    child: Text(
+                      ' ${widget.student.name}',
+                      style: TextStyle(
+                        color: Color(
+                          0xffF36C24,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(
+                      '${widget.student.email}',
+                      style: TextStyle(
+                        color: Color(
+                          0xffF36C24,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(
+                      '${widget.student.phoneNo}',
+                      style: TextStyle(
+                        color: Color(
+                          0xffF36C24,
+                        ),
+                      ),
+                    ),
+                  ),
+                  StreamBuilder<Event>(
+                    stream: ref.parent().child('/courses').onValue,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        Map<String, Courses> courses = Map<String, Courses>();
+                        snapshot.data.snapshot.value.forEach((k, v) {
+                          courses[k] = (Courses.fromJson(v));
+                          if (k.toString() == widget.student.classs) {
+                            if (selectedCourse == null) {
+                              selectedCourse = Courses.fromJson(v);
+                            }
+                          }
+                        });
+                        return DropdownButton<String>(
+                            value: selectedCourseID,
+                            hint: Text('Select Course'.tr()),
+                            items: courses
+                                .map(
+                                  (k, e) => MapEntry(
+                                    k,
+                                    DropdownMenuItem(
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                3,
+                                        child: Text(
+                                          e.name,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      value: e.id,
+                                    ),
+                                  ),
+                                )
+                                .values
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedCourseID = value;
+                                selectedCourse = courses[value];
+                              });
+                            });
+                      } else {
+                        return Container();
+                      }
+                    },
+                  )
+                ],
+              ),
+            ],
+          ),
+          Container(
+            child: ButtonBar(
+              alignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FlatButton(
+                  color: Color(0xffF36C24),
+                  onPressed: () {
+                    if (selectedCourseID == null || selectedCourse == null) {
+                      Alert.instance
+                          .alert(context, 'Select the course for Student'.tr());
+                    } else {
+                      Course course = Course(
+                        academicYear: DateTime.now().year.toString() +
+                            '-' +
+                            (DateTime.now().year + 1).toString(),
+                        courseID: selectedCourseID,
+                        courseName: selectedCourse.name,
+                        paymentToken:
+                            'Registered By ${FireBaseAuth.instance.user.displayName}',
+                      );
+                      ref.child(widget.keyS).update({'status': 'Registered'});
+                      ref
+                          .child(widget.keyS + '/course')
+                          .child(selectedCourseID)
+                          .update(course.toJson());
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => StudentsRequests()));
+                    }
+                  },
+                  child: Text(
+                    'ACCEPT',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                FlatButton(
+                  color: Color(0xffF36C24),
+                  onPressed: () {
+                    ref.child(widget.keyS).remove();
+                  },
+                  child: Text(
+                    'REJECT',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
     return ListTile(
       title: Text(
         'Name'.tr() +

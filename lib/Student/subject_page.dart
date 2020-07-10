@@ -61,6 +61,12 @@ class _SubjectPageState extends State<SubjectPage> {
                   if (snapshot.hasData) {
                     Courses courses =
                         Courses.fromJson(snapshot.data.snapshot.value);
+                    var keys;
+                    if (courses.subjects != null) {
+                      keys = courses.subjects.keys.toList()
+                        ..sort((a, b) => courses.subjects[a].name
+                            .compareTo(courses.subjects[b].name));
+                    }
                     length = courses.subjects?.length ?? 0;
                     return ListView.builder(
                       itemCount: length,
@@ -72,7 +78,7 @@ class _SubjectPageState extends State<SubjectPage> {
                                 borderRadius: BorderRadius.circular(10)),
                             child: ListTile(
                               title: Text(
-                                '${courses.subjects[courses.subjects.keys.toList()[index]].name}',
+                                '${courses.subjects[keys.toList()[index]].name}',
                                 style: TextStyle(color: Colors.blue),
                               ),
                               trailing: Icon(
@@ -84,13 +90,13 @@ class _SubjectPageState extends State<SubjectPage> {
                                   CupertinoPageRoute(
                                     builder: (context) => ChapterPage(
                                       title: courses
-                                          .subjects[courses.subjects.keys
+                                          .subjects[keys
                                               .toList()[index]]
                                           .name,
                                       reference: FirebaseDatabase.instance
                                           .reference()
                                           .child(
-                                              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${courses.subjects.keys.toList()[index]}'),
+                                              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${keys.toList()[index]}'),
                                     ),
                                   ),
                                 );
