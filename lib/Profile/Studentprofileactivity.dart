@@ -1,3 +1,4 @@
+import 'package:coach_app/FeeSection/ToggleButton.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/student_performance.dart';
 import 'package:flutter/material.dart';
@@ -209,6 +210,7 @@ class _Studentinfostate extends State<Studentprofileactivity> {
                                     fontSize: 15, color: Colors.white),
                               ),
                             ),
+                            ToggleButton(studentUid: widget.keyS,courseId: widget.student.course[index].courseID,),
                             SizedBox(
                               height: 5,
                               width: _width,

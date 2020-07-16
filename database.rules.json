@@ -1,0 +1,204 @@
+{
+  "rules": {
+       "latestVersion":{
+         ".read": true,
+         ".write":false
+       },
+       "privacyPolicy":{
+         ".read": true,
+         ".write":false
+       },
+       "publicNotice":{
+         ".read": true,
+         ".write":false
+       },
+      "tempInstitute" : {
+        ".read" : false,
+        ".write" : "auth!= null",
+      },
+       "instituteList":{
+         ".read": "auth != null",
+         "$vycode":{
+           ".write": "data.val() == null && auth != null",
+         }
+       },
+       "institute":{
+         "$instituteid":{
+           ".read" : "(auth.token.instituteid == $instituteid && auth.token.previlagelevel==4)",
+           "paid":{
+           			".write": "data.val() == null && auth != null",
+                ".read": "auth != null && auth.token.instituteid==$instituteid"
+           },
+           "Phone No":{
+           			".write": "data.val() == null && auth != null",
+                ".read": "auth != null"
+           },  
+           "name":{
+           			".write": "data.val() == null && auth != null",
+                ".read": "auth != null"
+           },
+           "mainBranchCode":{
+           			".write": "data.val() == null && auth != null",
+                ".read": "auth != null && auth.token.instituteid==$instituteid"
+           },
+           "logo":{
+           			".write": "data.val() == null && auth != null",
+                ".read": "auth != null && auth.token.instituteid==$instituteid"
+           },  
+           "notices":{
+           			".write": "auth.token.instituteid == $instituteid && auth.token.previlagelevel==4",
+                ".read": "auth != null && auth.token.instituteid==$instituteid"
+           },
+          	"publicContent" : {
+              ".write": "auth.token.instituteid == $instituteid && auth.token.previlagelevel==4",
+              ".read": "auth != null && auth.token.instituteid==$instituteid"
+            },
+           "admin":{
+             	"$uid":{
+                ".write": "data.val() == null && auth.uid == $uid",
+                ".read": "auth.uid == $uid"
+              }
+            },  
+            "midAdmin":{
+              "$uid":{
+                ".write": "(auth.token.instituteid == $instituteid && auth.token.previlagelevel==4)",
+                  ".read": "(auth.uid == $uid) || (auth.token.instituteid == $instituteid && auth.token.previlagelevel==4)",
+                "branches" : {
+                  ".write" : "(auth.uid == $uid)"
+                }
+              }
+            },
+            "branches":{
+              "$branchid":{
+                ".read" : "(auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)",
+                ".write" : "(auth.token.instituteid == $instituteid && auth.token.previlagelevel>=4)",
+                  "address":{
+           			     ".write": "data.val() == null && auth != null",
+                     ".read": "auth != null"
+                },
+                "name":{
+           			     ".write": "data.val() == null && auth != null",
+                     ".read": "auth != null"
+                },  
+                "upiId":{
+           			     ".write": "data.val() == null && auth != null",
+                     ".read": "auth != null"
+                }, 
+                "admin":{
+                  "$uid":{
+                    ".read": "(auth.uid== $uid && auth!=null)"
+                  }
+                },
+                "coursesList":{
+                  ".write": "(auth.token.previlagelevel>=3 && auth.token.instituteid == $instituteid)",
+                  ".read" : "auth!=null"
+                },
+                "students":{
+                  ".write" : "(auth.token.instituteid == $instituteid && auth.token.branchid == $branchid && auth.token.previlagelevel==3)",
+              		"$uid":{
+                    ".read" : "auth.uid == $uid",
+                      ".write" : "(auth.uid == $uid && data.val() == null)",
+                     "name":{
+                       ".write": "(auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)",
+                  		".read": "(auth.uid == $uid) || (auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)"
+                     },
+                     "address":{
+                       ".write": "(auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)",
+                  		".read": "(auth.uid == $uid) || (auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)"
+                     },
+                     "class":{
+                       ".write": "(auth.uid == $uid) || (auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)",
+                  		".read": "(auth.uid == $uid) || (auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)"
+                     },  
+                		 "email":{
+                       ".write": "(auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)",
+                  		".read": "(auth.uid == $uid) || (auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)"
+                     },	
+                     "phone No":{
+                       ".write": "(auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)",
+                  		".read": "(auth.uid == $uid) || (auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)"
+                     },
+                     "photoURL":{
+                       ".write": "(auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)",
+                  		".read": "(auth.uid == $uid) || (auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)"
+                     },
+                     "status":{
+                       ".write": "(auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3) ||((((data.val()==null || data.val() == 'Registered') && (newData.val()=='New Student' || newData.val() =='Existing Student')) || (data.val()=='New Student' && newData.val() == 'Registered') || (data.val()=='New Student' && newData.val() == 'Existing Student')) && auth.uid== $uid)",
+                  		".read": "(auth.uid == $uid) || (auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)"
+                     },
+                     "course":{
+                       ".write": "(auth.token.instituteid == $instituteid && auth.token.previlagelevel>=2) ||(auth.uid== $uid)",
+                  		".read": "(auth.uid == $uid) || (auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)"
+                     },  
+             			 }
+            		},
+                "teachers":{
+              		"$uid":{
+                			".write": "(auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)",
+                  		".read": "(auth.uid == $uid) || (auth.token.instituteid == $instituteid && auth.token.previlagelevel>=3)"
+             			 }
+            		},  
+                 "events":{
+                   ".write": "(auth.token.instituteid == $instituteid && auth.token.previlagelevel>=2)",
+                   ".read": "(auth.token.instituteid == $instituteid && auth.token.branchid == $branchid )||(auth.token.instituteid == $instituteid && auth.token.previlagelevel>=4)"
+                 } ,
+                 "courses":{
+                   // for teacher also get some jugaad
+                   ".read" : "(auth.token.instituteid == $instituteid && auth.token.previlagelevel==2)",
+                    "$courseid":{
+                      // for student get from database
+                      ".read" : "(auth.token.instituteid == $instituteid && (auth.token.previlagelevel==3 || auth.token.previlagelevel==1))",
+                      ".write" : "(auth.token.instituteid == $instituteid && auth.token.previlagelevel==3)",
+                      "date":{
+                        ".read": "(auth!=null)" 
+                      },
+                      "description":{
+                        ".read": "(auth!=null)" 
+                      },
+                      "id":{
+                        ".read": "(auth!=null)" 
+                      },
+                      "fees" : {
+                        ".read" : "(auth!= null)",
+                      },
+                      "medium":{
+                        ".read": "(auth!=null)" 
+                      },
+                      "name":{
+                        ".read": "(auth!=null)" 
+                      },
+                      "price":{
+                        ".read": "(auth!=null)" 
+                      },
+                      "subjects":{
+                        ".read" : "(auth.token.instituteid == $instituteid && auth.token.previlagelevel==1)",
+                        "$subjectid":{
+                          ".read" : "(auth.token.instituteid == $instituteid && auth.token.branchid == $branchid)",  
+                          "chapters":{
+                            ".write": "(auth.token.instituteid == $instituteid && auth.token.branchid == $branchid && auth.token.previlagelevel==2 && data.parent().child('mentor').hasChild(auth.email.replace('@gmail.com','').replace('.',',')))",
+                              "$chaptersid":{
+                                 "content":{
+                                   "$contentid":{
+                                     "quizModel":{
+                                       
+                                         "result":{
+                                            "$uid":{
+                                              ".write": "auth.uid == $uid && data.val() == null"
+                                            }      
+                                        }
+                                     }
+                                   }
+                                 }
+                              }
+                          }
+                  },         
+                },      
+              }
+            }  
+          },  
+        } , 
+      }
+  	}  
+  }
+}
+

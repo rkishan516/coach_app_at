@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  	function isSameInstitute() {
+    	return (request.auth.token.instituteid in request.resource.data[request.writeFields[0]].split('_'));
+    }
+    function isSameBranch() {
+    	return (request.auth.token.branchid in request.resource.data[request.writeFields[0]].split('_'));
+    }
+    function MidAdminBranches() {
+    	return true;
+    // return (string(request.resource.data[request.writeFields[0]].split('_')[request.resource.data[request.writeFields[0]].split('_').size()-1]) == "1101");
+    	// return (request.auth.token.branchid.matches());
+    }
+    function isAdmin(){
+      return (request.auth.token.previlagelevel == 4);
+    }
+    
+    function isSubAdmin(){
+    	return (request.auth.token.previlagelevel == 3);
+    }
+    
+    function isMidAdmin(){
+    	return (request.auth.token.previlagelevel == 34);
+    }
+    match /institute/{users} {
+      allow write: if request.auth != null;
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Events/FirebaseMessaging.dart';
 import 'package:coach_app/Events/SessionDetail.dart';
 import 'package:coach_app/Events/videoConferencing.dart';
@@ -253,17 +254,31 @@ class _CalenderState extends State<Calender> {
                 color: isStarted == 1 ? Colors.blue : Colors.white,
                 elevation: 2.0,
                 child: ListTile(
-                  onTap: () {
+                  onTap: () async {
                     String pass2 = _pref.getString(e.description);
-                    Navigator.push(
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => VideoConferencing(
                           passVariable: pass2,
                           privilegelevel: FireBaseAuth.instance.previlagelevel,
+                          eventkey: e.eventkey,
                         ),
                       ),
                     );
+                    var res = await showDialog(
+                        context: context,
+                        builder: (context) => AreYouSure(
+                              text: 'Do you want to close the session ?',
+                            ));
+                    if (res != 'Yes') {
+                      return;
+                    }
+                    FirebaseDatabase.instance
+                        .reference()
+                        .child(
+                            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events/$pass2/')
+                        .update({"isStarted": 0});
                   },
                   onLongPress: () {
                     String pass = _pref.getString(e.description);
@@ -275,7 +290,7 @@ class _CalenderState extends State<Calender> {
                           courseId: widget.courseId,
                           subjectName: widget.subjectName,
                           passVaraible: pass,
-                          eventkey: pass.substring(10, 16),
+                          eventkey: pass?.substring(10, 16),
                           isedit: true,
                         ),
                       ),

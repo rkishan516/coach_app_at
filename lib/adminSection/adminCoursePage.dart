@@ -2,6 +2,7 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
+import 'package:coach_app/FeeSection/FeeReceipt.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
@@ -61,7 +62,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                       snapshot.data.snapshot.value?.values?.forEach((course) {
                         courses.add(Courses.fromJson(course));
                       });
-                      courses.sort((a,b)=> a.date.compareTo(b.date));
+                      courses.sort((a, b) => a.date.compareTo(b.date));
                       return ListView.builder(
                         itemCount: courses?.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -339,7 +340,9 @@ addCourse(BuildContext context,
                           description: descriptionTextEditingController.text
                               .capitalize()
                               .trim(),
-                          date: date == '' ? DateTime.now().toIso8601String() : date,
+                          date: date == ''
+                              ? DateTime.now().toIso8601String()
+                              : date,
                           medium: mediumTextEditingController.text
                               .capitalize()
                               .trim(),
@@ -351,18 +354,17 @@ addCourse(BuildContext context,
                                   .toString()
                               : id,
                         );
-                        FirebaseDatabase.instance
-                            .reference()
-                            .child(
-                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${course.id}')
-                            .update(course.toJson());
-                        FirebaseDatabase.instance
-                            .reference()
-                            .child(
-                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList/')
-                            .update({course.id: course.name});
+                        
 
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => FeeReceipt(
+                              course: course,
+                              courseid: course.id,
+                              isEdit: id == '' ? false : true,
+                            ),
+                          ),
+                        );
                       },
                       child: Text('Add Course'.tr()),
                     ),
@@ -377,6 +379,4 @@ addCourse(BuildContext context,
   );
 }
 
-
 //TODO: Khud ka appbar bnana or public section k niche or TabBar daalana
-//TODO: Student Request me mobile no. buttons

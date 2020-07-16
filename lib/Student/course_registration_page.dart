@@ -3,12 +3,14 @@ import 'dart:async';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
+import 'package:coach_app/FeeSection/StudentReport/PaymentType.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:coach_app/Student/WaitScreen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upi_pay/upi_pay.dart';
 
 class CourseRegistrationPage extends StatefulWidget {
@@ -208,6 +210,36 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                       }
                                     }),
                                 onPressed: () async {
+                                  bool isPaid;
+                                  var value =
+                                      await SharedPreferences.getInstance();
+                                  FireBaseAuth.instance.instituteid =
+                                      value.get('insCode');
+                                  FireBaseAuth.instance.branchid =
+                                      value.get('branchCode');
+
+                                  await Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) => PaymentType(
+                                                courseId: widget.courseID,
+                                                courseName: widget.name,
+                                              )));
+                                  await widget.ref
+                                      .parent()
+                                      .parent()
+                                      .child(
+                                          "students/${FireBaseAuth.instance.user.uid}/course/${widget.courseID}/fees/Installments/AllowedThrough")
+                                      .once()
+                                      .then((value) {
+                                    if (value.value != null) {
+                                      isPaid = true;
+                                    } else {
+                                      isPaid = false;
+                                    }
+                                  });
+                                  if (isPaid == false) {
+                                    return;
+                                  }
                                   if (price == null) {
                                     return;
                                   }
@@ -245,41 +277,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                         .signInWithGoogleAndGetPage(context);
                                     return;
                                   }
-                                  String upi;
-                                  widget.ref
-                                      .parent()
-                                      .parent()
-                                      .child('upiId')
-                                      .once()
-                                      .then((value) {
-                                    upi = value.value;
-                                  });
-                                  UpiApplication application = await showDialog(
-                                    context: context,
-                                    child: Dialog(
-                                      child: Screen(),
-                                    ),
-                                  );
-                                  if (application == null) {
-                                    Alert.instance.alert(
-                                        context,
-                                        'No application selected or available'
-                                            .tr());
-                                    return;
-                                  }
-                                  UpiTransactionResponse txnResponse =
-                                      await UpiPay.initiateTransaction(
-                                    amount: "$price.00",
-                                    app: application,
-                                    receiverName: upi.split('@')[0],
-                                    receiverUpiAddress: upi,
-                                    transactionRef:
-                                        '${widget.name.hashCode}${widget.courseID.hashCode}${FireBaseAuth.instance.user.uid.hashCode}',
-                                    transactionNote:
-                                        'You are purchaing the course ${widget.name}.',
-                                  );
-                                  if (txnResponse.status ==
-                                      UpiTransactionStatus.success) {
+                                  if (isPaid) {
                                     Course rCourse = Course(
                                         academicYear:
                                             DateTime.now().year.toString() +
@@ -288,7 +286,8 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                                     .toString(),
                                         courseID: widget.courseID,
                                         courseName: widget.name,
-                                        paymentToken: txnResponse.txnRef);
+                                        paymentToken:
+                                            '${widget.name.hashCode}${widget.courseID.hashCode}${FireBaseAuth.instance.user.uid.hashCode}');
                                     showDialog(
                                         context: context,
                                         builder: (context) => UploadDialog(

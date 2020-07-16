@@ -3,7 +3,7 @@ import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
-import 'package:coach_app/Profile/next.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
 import 'package:coach_app/adminSection/teacherRegister.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';

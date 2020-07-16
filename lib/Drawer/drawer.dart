@@ -6,6 +6,8 @@ import 'package:coach_app/Dialogs/languageDialog.dart';
 import 'package:coach_app/Dialogs/replaceSubAdmin.dart';
 import 'package:coach_app/Drawer/my_institute.dart';
 import 'package:coach_app/Drawer/privacyNPolicies.dart';
+import 'package:coach_app/FeeSection/CouponList.dart';
+import 'package:coach_app/FeeSection/FeeStructure.dart';
 import 'package:coach_app/Profile/next.dart';
 import 'package:coach_app/Profile/subAdminProfile.dart';
 import 'package:coach_app/Student/all_course_view.dart';
@@ -67,7 +69,10 @@ getDrawer(BuildContext context) {
                 leading: Icon(Icons.book),
                 onTap: () => Navigator.of(context).pushAndRemoveUntil(
                     CupertinoPageRoute(
-                      builder: (context) => AllCoursePage(ref: FirebaseDatabase.instance.reference().child('/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}'),),
+                      builder: (context) => AllCoursePage(
+                        ref: FirebaseDatabase.instance.reference().child(
+                            '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}'),
+                      ),
                     ),
                     (route) => false),
               ),
@@ -127,9 +132,7 @@ getDrawer(BuildContext context) {
               showDialog(
                   context: context, builder: (context) => SubAdminProfile());
             },
-          )
-        else
-          Container(),
+          ),
         if (FireBaseAuth.instance.previlagelevel >= 3)
           ListView(
             controller: ScrollController(),
@@ -142,9 +145,31 @@ getDrawer(BuildContext context) {
                     builder: (context) => StudentsRequests())),
               ),
             ],
-          )
-        else
-          Container(),
+          ),
+        if (FireBaseAuth.instance.previlagelevel > 2)
+          ListTile(
+            title: Text('Coupon List'),
+            leading: Icon(Icons.crop_landscape),
+            onTap: () async {
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) => CouponList(),
+                ),
+              );
+            },
+          ),
+        if (FireBaseAuth.instance.previlagelevel > 2)
+          ListTile(
+            title: Text('Fee Management'),
+            leading: Icon(Icons.featured_video),
+            onTap: () async {
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (context) => FeeStructure(),
+                ),
+              );
+            },
+          ),
         ListTile(
           title: Text('Privacy & Policy'.tr()),
           leading: Icon(Icons.local_parking),

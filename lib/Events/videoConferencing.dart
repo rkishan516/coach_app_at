@@ -1,13 +1,12 @@
 import 'dart:async';
 
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import '../Authentication/FirebaseAuth.dart';
 
 class VideoConferencing extends StatefulWidget {
   final String passVariable;
@@ -38,7 +37,7 @@ class VideoConferencing extends StatefulWidget {
 
 class _VideoConferencingState extends State<VideoConferencing> {
   final String passVariable;
-  final String room, eventkey;
+  String room, eventkey;
   final String subject;
   int privilegelevel;
   _VideoConferencingState({
@@ -57,32 +56,10 @@ class _VideoConferencingState extends State<VideoConferencing> {
 
   final dbRef = FirebaseDatabase.instance;
 
-  _loaddatafromdatabase() async {
-    dbRef
-        .reference()
-        .child(
-          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events/$passVariable',
-        )
-        .once()
-        .then(
-      (value) {
-        roomText.text = value?.value['eventkey'];
-        subjectText.text = value?.value['description'];
-      },
-    );
-  }
-
   @override
   void initState() {
     super.initState();
-    if (privilegelevel >= 2) {
-      _loaddatafromdatabase();
-    } else {
-      setState(() {
-        roomText.text = 'GuruCoolSession' + eventkey;
-        subjectText.text = subject;
-      });
-    }
+    roomText.text = 'GuruCoolSession' + widget.eventkey;
     Timer(Duration(seconds: 0), () async {
       await _joinMeeting();
       Navigator.of(context).pop();
@@ -159,9 +136,6 @@ class _VideoConferencingState extends State<VideoConferencing> {
 
   _joinMeeting() async {
     _makeupdate();
-    String serverUrl =
-        serverText.text?.trim()?.isEmpty ?? "" ? null : serverText.text;
-
     _launchURL();
   }
 }
