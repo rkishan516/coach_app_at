@@ -1,6 +1,7 @@
 
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Coupon/random_string.dart';
+import 'package:coach_app/FeeSection/random_string.dart';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
