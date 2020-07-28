@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
@@ -25,8 +23,6 @@ class _NoticeBoardState extends State<NoticeBoard>
   final dbRef = FirebaseDatabase.instance;
   Query _query;
   int previlagelevel = FireBaseAuth.instance.previlagelevel;
-  StreamSubscription<Event> _onDataAddedSubscription;
-  StreamSubscription<Event> _onDataRemovedSubscription;
   TabController _controller;
   int items = 2;
 
@@ -40,7 +36,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                       text: 'Are you sure, You want to delete ?'.tr(),
                     ));
             if (res == 'Yes') {
-              _delFromDatabase(message.key);
+              _deleteNotice(message.key);
               return;
             }
           }
@@ -93,11 +89,10 @@ class _NoticeBoardState extends State<NoticeBoard>
     );
   }
 
-  _saveintoDatabase() async {
+  _createNotice() async {
     String time = DateTime.now().toString().split(' ')[0] +
         " " +
         DateFormat('jms').format(new DateTime.now());
-    print(time);
     await dbRef
         .reference()
         .child('institute/${FireBaseAuth.instance.instituteid}/notices')
@@ -106,7 +101,7 @@ class _NoticeBoardState extends State<NoticeBoard>
             {'textMsg': _textController.text, 'time': time, 'selfId': _selfId});
   }
 
-  _delFromDatabase(String key) async {
+  _deleteNotice(String key) async {
     await dbRef
         .reference()
         .child('institute/${FireBaseAuth.instance.instituteid}/notices/$key')
@@ -137,7 +132,7 @@ class _NoticeBoardState extends State<NoticeBoard>
             iconSize: 25.0,
             color: Theme.of(context).primaryColor,
             onPressed: () {
-              _saveintoDatabase();
+              _createNotice();
               setState(() {
                 _textController.text = "";
               });
@@ -152,19 +147,11 @@ class _NoticeBoardState extends State<NoticeBoard>
     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
   }
 
-  onEventAdded(Event event) {
-    setState(() {
-      _allMessages.add(Messages.fromSnapshot(event.snapshot));
-    });
-  }
-
   onEventRemoved(Event event) {
-    print(_allMessages);
     var index;
     _allMessages.forEach((element) {
       if (element.key == event.snapshot.key) {
         index = _allMessages.indexOf(element);
-        print(_allMessages[index]);
       }
     });
     setState(() {
@@ -179,8 +166,9 @@ class _NoticeBoardState extends State<NoticeBoard>
     _query = dbRef
         .reference()
         .child('institute/${FireBaseAuth.instance.instituteid}/notices');
-    _onDataAddedSubscription = _query.onChildAdded.listen(onEventAdded);
-    _onDataRemovedSubscription = _query.onChildRemoved.listen(onEventRemoved);
+    _query.onChildAdded.listen((Event event) => setState(
+        () => _allMessages.add(Messages.fromSnapshot(event.snapshot))));
+    _query.onChildRemoved.listen(onEventRemoved);
   }
 
   @override
@@ -245,11 +233,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                     ),
                   ),
                 ),
-                previlagelevel < 4 || previlagelevel == 34
-                    ? SizedBox(
-                        height: 4.0,
-                      )
-                    : _buildMessageComposer()
+                if (previlagelevel == 4) _buildMessageComposer(),
               ],
             ),
           ),
@@ -311,12 +295,17 @@ class _NoticeBoardState extends State<NoticeBoard>
                                     Icons.chevron_right,
                                     color: Color(0xffF36C24),
                                   ),
-                                  onTap: (){
-                                    Navigator.of(context).push(MaterialPageRoute(builder: (context){
-                                      return PublicContentPage(title: sections[sections.keys.toList()[index]].name, reference: FirebaseDatabase.instance
-                        .reference()
-                        .child(
-                            'institute/${FireBaseAuth.instance.instituteid}/publicContent/${sections.keys.toList()[index]}'));
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(builder: (context) {
+                                      return PublicContentPage(
+                                          title: sections[
+                                                  sections.keys.toList()[index]]
+                                              .name,
+                                          reference: FirebaseDatabase.instance
+                                              .reference()
+                                              .child(
+                                                  'institute/${FireBaseAuth.instance.instituteid}/publicContent/${sections.keys.toList()[index]}'));
                                     }));
                                   },
                                   onLongPress: () => addSection(

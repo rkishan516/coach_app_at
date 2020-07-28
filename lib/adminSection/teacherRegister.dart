@@ -11,7 +11,15 @@ class TeacherRegister extends StatefulWidget {
   final bool isEdit;
   final String keyT;
   final Teacher teacher;
-  TeacherRegister({this.isEdit = false, this.teacher, this.keyT});
+  final String courseId;
+  final String subjectId;
+  TeacherRegister({
+    this.isEdit = false,
+    this.teacher,
+    this.keyT,
+    this.courseId,
+    this.subjectId,
+  });
   @override
   _TeacherRegisterState createState() => _TeacherRegisterState();
 }
@@ -261,6 +269,14 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                                         .replaceAll(' ', '')
                                         .replaceAll('-', ''),
                                   ),
+                                  courses: [
+                                    TCourses(
+                                      id: widget.courseId,
+                                      subjects: [
+                                        widget.subjectId,
+                                      ],
+                                    ),
+                                  ],
                                 ).toJson());
                           } else {
                             if (emailTextEditingController.text !=

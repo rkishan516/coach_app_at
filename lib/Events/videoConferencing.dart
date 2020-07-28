@@ -12,56 +12,25 @@ class VideoConferencing extends StatefulWidget {
   final String passVariable;
   final String room, eventkey;
   final String subject;
-  final int privilegelevel;
   VideoConferencing({
     this.passVariable,
     this.room,
     this.eventkey,
     this.subject,
-    this.privilegelevel,
   });
   @override
   _VideoConferencingState createState() {
-    if (privilegelevel >= 2)
-      return _VideoConferencingState(
-          passVariable: passVariable, privilegelevel: privilegelevel);
-    else
-      return _VideoConferencingState(
-        room: room,
-        eventkey: eventkey,
-        subject: subject,
-        privilegelevel: privilegelevel,
-      );
+    return _VideoConferencingState();
   }
 }
 
 class _VideoConferencingState extends State<VideoConferencing> {
-  final String passVariable;
-  String room, eventkey;
-  final String subject;
-  int privilegelevel;
-  _VideoConferencingState({
-    this.passVariable,
-    this.room,
-    this.eventkey,
-    this.subject,
-    this.privilegelevel,
-  });
-  final serverText = TextEditingController();
-  final roomText = TextEditingController();
-  final subjectText = TextEditingController();
-  var isAudioOnly = true;
-  var isAudioMuted = false;
-  var isVideoMuted = true;
-
-  final dbRef = FirebaseDatabase.instance;
-
   @override
   void initState() {
     super.initState();
-    roomText.text = 'GuruCoolSession' + widget.eventkey;
     Timer(Duration(seconds: 0), () async {
-      await _joinMeeting();
+      _makeupdate();
+      await _launchURL();
       Navigator.of(context).pop();
     });
   }
@@ -69,53 +38,30 @@ class _VideoConferencingState extends State<VideoConferencing> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-        ),
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Center(child: UploadDialog(warning: 'Connecting to server'.tr()))
-            ],
-          ),
-        ),
-      ),
+      body: Center(child: UploadDialog(warning: 'Connecting to server'.tr())),
     );
   }
 
   _makeupdate() async {
-    if (privilegelevel >= 2) {
-      dbRef
+    if (FireBaseAuth.instance.previlagelevel >= 2) {
+      FirebaseDatabase.instance
           .reference()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events/$passVariable')
+              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events/${widget.passVariable}')
           .update({
         'isStarted': 1,
       });
     }
   }
 
-  bool toggleValue = false;
   _launchURL() async {
     var midurl = "https://coachapp-5a4c.firebaseapp.com?previlagelevel=" +
         FireBaseAuth.instance.previlagelevel.toString() +
         "&photourl=" +
         FireBaseAuth.instance.user.photoUrl +
         "&title=" +
-        roomText.text.toString() +
+        'GuruCoolSession' +
+        widget.eventkey.toString() +
         "&displayName=" +
         FireBaseAuth.instance.user.displayName +
         "&eventkey=" +
@@ -132,10 +78,5 @@ class _VideoConferencingState extends State<VideoConferencing> {
     } else {
       throw 'Could not launch $url';
     }
-  }
-
-  _joinMeeting() async {
-    _makeupdate();
-    _launchURL();
   }
 }

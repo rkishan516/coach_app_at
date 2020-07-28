@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';

@@ -3,8 +3,8 @@ import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Student/course_registration_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:upi_pay/upi_pay.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:upi_india/upi_india.dart';
 
 import 'StuInstallment.dart';
 
@@ -12,7 +12,6 @@ class PayInstallment extends StatelessWidget {
   final String courseId;
   final String courseName;
   final NoofInstallment seqinstallment;
-  bool isSuccessfull = false;
   PayInstallment(this.seqinstallment,
       {@required this.courseId, @required this.courseName});
   final dbref = FirebaseDatabase.instance;
@@ -27,7 +26,6 @@ class PayInstallment extends StatelessWidget {
         : dateTime.month.toString();
     String yyyy = dateTime.year.toString();
     String date = dd + " " + mm + " " + yyyy;
-    print(date);
     return Scaffold(
       appBar: AppBar(
         title: Text("Pay Installment"),
@@ -37,12 +35,15 @@ class PayInstallment extends StatelessWidget {
           onPressed: () async {
             String upi;
             var value = await FirebaseDatabase.instance
-                .reference().child('/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/')
+                .reference()
+                .child(
+                    '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/')
                 .child('upiId')
                 .once();
             upi = value.value;
 
-            UpiApplication application = await showDialog(
+            // UpiApplication application
+            String application = await showDialog(
               context: context,
               child: Dialog(
                 child: Screen(),
@@ -53,22 +54,28 @@ class PayInstallment extends StatelessWidget {
                   .alert(context, 'No application selected or available'.tr());
               return;
             }
-            UpiTransactionResponse txnResponse =
-                await UpiPay.initiateTransaction(
-              amount: "${double.parse(seqinstallment.amount).toInt() + int.parse(seqinstallment.fine)}.00",
-              app: application,
-              receiverName: upi.split('@')[0],
-              receiverUpiAddress: upi,
-              transactionRef:
-                  '${courseName.hashCode}${courseId.hashCode}${FireBaseAuth.instance.user.uid.hashCode}',
-              transactionNote: 'You are purchaing the course ${courseName}.',
-            );
-            isSuccessfull = txnResponse.status == UpiTransactionStatus.success;
-            if (isSuccessfull) {
+            UpiResponse txnResponse = await UpiIndia().startTransaction(
+                app: application,
+                receiverUpiId: upi,
+                receiverName: upi.split('@')[0],
+                transactionNote: 'You are purchaing the course $courseName.',
+                amount: double.parse(seqinstallment.amount) + double.parse(seqinstallment.fine == '' ? '0' : seqinstallment.fine) );
+            // UpiTransactionResponse txnResponse =
+            //     await UpiPay.initiateTransaction(
+            //   amount:
+            //       "${double.parse(seqinstallment.amount).toInt() + double.parse(seqinstallment.fine == '' ? '0' : seqinstallment.fine).toInt()}.00",
+            //   app: application,
+            //   receiverName: upi.split('@')[0],
+            //   receiverUpiAddress: upi,
+            //   transactionRef:
+            //       '${courseName.hashCode}${courseId.hashCode}${FireBaseAuth.instance.user.uid.hashCode}',
+            //   transactionNote: 'You are purchaing the course $courseName.',
+            // );
+            if (txnResponse.status == UpiPaymentStatus.SUCCESS) {
               await dbref
                   .reference()
                   .child(
-                      "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${courseId}/fees/Installments")
+                      "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/$courseId/fees/Installments")
                   .update({
                 seqinstallment.sequence: {
                   "Amount": seqinstallment.amount,

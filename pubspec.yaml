@@ -39,7 +39,10 @@ dependencies:
   firebase_auth:
   image_picker:
   easy_localization:
-  upi_pay:
+  upi_india:
+  # upi_pay:
+  slide_to_confirm:
+  esys_flutter_share:
   shared_preferences:
   firebase_messaging:
   flutter_local_notifications:

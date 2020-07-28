@@ -1,3 +1,4 @@
+import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,22 +11,18 @@ class SessionDetail extends StatefulWidget {
   final bool isedit;
   final String courseId;
   final String subjectName;
-  SessionDetail(
-      {this.passVaraible,
-      this.eventkey,
-      this.isedit,
-      @required this.courseId,
-      @required this.subjectName});
+  SessionDetail({
+    this.passVaraible,
+    this.eventkey,
+    this.isedit,
+    @required this.courseId,
+    @required this.subjectName,
+  });
   @override
-  _SessionDetailState createState() =>
-      _SessionDetailState(passVaraible, eventkey, isedit);
+  _SessionDetailState createState() => _SessionDetailState();
 }
 
 class _SessionDetailState extends State<SessionDetail> {
-  String passVariable;
-  final String eventkey;
-  final bool isedit;
-  _SessionDetailState(this.passVariable, this.eventkey, this.isedit);
   final titleText = TextEditingController();
   final descriptionText = TextEditingController();
   final dbRef = FirebaseDatabase.instance;
@@ -39,7 +36,7 @@ class _SessionDetailState extends State<SessionDetail> {
         .reference()
         .child(
             'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events')
-        .child(passVariable)
+        .child(widget.passVaraible)
         .once()
         .then((DataSnapshot value) {
       setState(() {
@@ -52,9 +49,8 @@ class _SessionDetailState extends State<SessionDetail> {
   }
 
   _saveintodatabase() async {
-    _pref.setString(descriptionText.text, passVariable);
-    print(passVariable);
-    if (isedit && descriptionText.text != previousDescriptionText) {
+    _pref.setString(descriptionText.text, widget.passVaraible);
+    if (widget.isedit && descriptionText.text != previousDescriptionText) {
       _pref.remove(previousDescriptionText);
     }
 
@@ -62,17 +58,17 @@ class _SessionDetailState extends State<SessionDetail> {
         .reference()
         .child(
             'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events')
-        .child(passVariable)
-        .update({
-      'title': titleText.text,
-      'description': descriptionText.text,
-      'time': _time.hour.toString() + ":" + _time.minute.toString(),
-      'eventkey': eventkey,
-      'isStarted': 0,
-      'teacheruid': "${FireBaseAuth.instance.user.uid}",
-      "courseid": "${widget.courseId}",
-      "subject": "${widget.subjectName}"
-    });
+        .child(widget.passVaraible)
+        .update(EventsModal(
+          title: titleText.text,
+          description: descriptionText.text,
+          time: _time.hour.toString() + ":" + _time.minute.toString(),
+          isStarted: 0,
+          eventkey: widget.eventkey,
+          courseid: widget.courseId,
+          subject: widget.subjectName,
+          teacheruid: FireBaseAuth.instance.user.uid,
+        ).toJson());
     Navigator.of(context).pop();
   }
 
@@ -81,7 +77,7 @@ class _SessionDetailState extends State<SessionDetail> {
         .reference()
         .child(
             'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events')
-        .child(passVariable)
+        .child(widget.passVaraible)
         .remove();
     _pref.remove(previousDescriptionText);
     Navigator.of(context).pop();
@@ -107,7 +103,7 @@ class _SessionDetailState extends State<SessionDetail> {
   void initState() {
     super.initState();
     _sharedprefinit();
-    if (isedit) _loaddatafromdatabase();
+    if (widget.isedit) _loaddatafromdatabase();
   }
 
   @override
@@ -156,14 +152,15 @@ class _SessionDetailState extends State<SessionDetail> {
                     height: 20.0,
                   ),
                   TextField(
-                      controller: descriptionText,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.only(left: 8.0),
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                        hintText: "Enter Description".tr(),
-                      )),
+                    controller: descriptionText,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.only(left: 8.0),
+                      fillColor: Color(0xfff3f3f4),
+                      filled: true,
+                      hintText: "Enter Description".tr(),
+                    ),
+                  ),
                   SizedBox(
                     height: 20.0,
                   ),
@@ -187,40 +184,56 @@ class _SessionDetailState extends State<SessionDetail> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      isedit
-                          ? GestureDetector(
-                              onTap: () {
-                                _delfromdatabase();
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    color: Color(0xffF36C24)),
-                                width: MediaQuery.of(context).size.width / 3.5,
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "Delete Session".tr(),
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16),
-                                ),
+                      if (widget.isedit)
+                        GestureDetector(
+                          onTap: () {
+                            _delfromdatabase();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                5.0,
                               ),
-                            )
-                          : Container(),
+                              color: Color(
+                                0xffF36C24,
+                              ),
+                            ),
+                            width: MediaQuery.of(context).size.width / 3.5,
+                            padding: EdgeInsets.symmetric(
+                              vertical: 10,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Delete Session".tr(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
                       GestureDetector(
                         onTap: () {
                           _saveintodatabase();
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5.0),
-                              color: Color(0xffF36C24)),
+                            borderRadius: BorderRadius.circular(
+                              5.0,
+                            ),
+                            color: Color(
+                              0xffF36C24,
+                            ),
+                          ),
                           width: MediaQuery.of(context).size.width / 3.5,
                           padding: EdgeInsets.symmetric(vertical: 10),
                           alignment: Alignment.center,
                           child: Text(
                             "Save".tr(),
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       ),

@@ -4,7 +4,7 @@ import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +20,7 @@ void main() async {
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   FireBaseAuth.instance.packageInfo = packageInfo;
+  FirebaseDatabase.instance.setPersistenceEnabled(true);
 
   if (packageInfo.packageName != "com.VysionTech.gurucool") {
     runApp(MaterialApp(

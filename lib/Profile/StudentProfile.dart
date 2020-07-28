@@ -12,8 +12,6 @@ class StudentProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     var b = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
-    var bb = 1 / b;
-    var hh = 1 / h;
     return Scaffold(
       appBar: getAppBar(context),
       body: Stack(

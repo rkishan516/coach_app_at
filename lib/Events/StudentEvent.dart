@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:coach_app/Events/FirebaseMessaging.dart';
 import 'package:coach_app/Events/videoConferencing.dart';
-import 'package:coach_app/Models/Events.dart';
+import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,6 @@ class StudentEvent extends StatefulWidget {
 class _StudentEventState extends State<StudentEvent> {
   List<EventsModal> _allEvent;
   Query _query;
-  final dbRef = FirebaseDatabase.instance;
   StreamSubscription<Event> _onDataAddedSubscription;
   StreamSubscription<Event> _onDataChangedSubscription;
   StreamSubscription<Event> _onDataRemovedSubscription;
@@ -30,90 +29,67 @@ class _StudentEventState extends State<StudentEvent> {
   @override
   void initState() {
     _allEvent = [];
-
     _initializeevent();
     storeTokenintoDatabase();
     super.initState();
   }
 
-  void storeTokenintoDatabase() async {
+  void storeTokenintoDatabase() {
     _firebaseMessaging.getToken().then((token) {
-      print("/////////-----.........");
-      print("........$token.............");
-
-      final dbref = FirebaseDatabase.instance.reference();
-      dbref
+      FirebaseDatabase.instance
+          .reference()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students')
-          .child(FireBaseAuth.instance.user.uid)
+              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}')
           .update({"tokenid": token.toString()});
     });
   }
 
   _initializeevent() {
-    _query = dbRef.reference().child(
+    //Getting Query
+    _query = FirebaseDatabase.instance.reference().child(
         'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events');
-    _onDataAddedSubscription = _query.onChildAdded.listen(onEventAdded);
-    _onDataChangedSubscription = _query.onChildChanged.listen(onEventChanged);
-    _onDataRemovedSubscription = _query.onChildRemoved.listen(onEventRemoved);
+
+    //Setting Listener for data add
+    _onDataAddedSubscription = _query.onChildAdded.listen((Event event) {
+      setState(() {
+        if (event.snapshot.key != null &&
+            event.snapshot.value['courseid'] == widget.courseId) {
+          _allEvent.add(EventsModal.fromJson(event.snapshot.value));
+        }
+      });
+    });
+
+    //Setting Listener for data change
+    _onDataChangedSubscription = _query.onChildChanged.listen((Event event) {
+      _allEvent.forEach((element) {
+        if (element.eventkey == event.snapshot.value['eventkey']) {
+          var index = _allEvent.indexOf(element);
+          setState(() {
+            _allEvent[index] = EventsModal.fromJson(event.snapshot.value);
+          });
+        }
+      });
+    });
+
+    //Setting Listener for data removal
+    _onDataRemovedSubscription = _query.onChildRemoved.listen((Event event) {
+      _allEvent.forEach((element) {
+        if (element.eventkey == event.snapshot.value['eventkey']) {
+          var index = _allEvent.indexOf(element);
+          setState(() {
+            _allEvent.removeAt(index);
+          });
+        }
+      });
+    });
     _firebaseMessagingService.sendNotification();
-  }
-
-  onEventAdded(Event event) {
-    setState(() {
-      print(event.snapshot.key);
-      if (event.snapshot.key != null &&
-          event.snapshot.value['courseid'] == widget.courseId) {
-        _allEvent.add(EventsModal(
-            event.snapshot.value['title'],
-            event.snapshot.value['description'],
-            event.snapshot.value['time'],
-            event.snapshot.value['eventkey'],
-            event.snapshot.value['isStarted'],
-            event.snapshot.value['courseid'],
-            event.snapshot.value['subject']));
-      }
-    });
-  }
-
-  onEventRemoved(Event event) {
-    print(_allEvent);
-    _allEvent.forEach((element) {
-      if (element.eventkey == event.snapshot.value['eventkey']) {
-        var index = _allEvent.indexOf(element);
-        print(_allEvent[index]);
-        setState(() {
-          _allEvent.removeAt(index);
-        });
-      }
-    });
-  }
-
-  onEventChanged(Event event) {
-    print(_allEvent);
-    _allEvent.forEach((element) {
-      if (element.eventkey == event.snapshot.value['eventkey']) {
-        var index = _allEvent.indexOf(element);
-        print(_allEvent[index]);
-        setState(() {
-          _allEvent[index] = EventsModal(
-              event.snapshot.value['title'],
-              event.snapshot.value['description'],
-              event.snapshot.value['time'],
-              event.snapshot.value['eventkey'],
-              event.snapshot.value['isStarted'],
-              event.snapshot.value['courseid'],
-              event.snapshot.value['subject']);
-        });
-      }
-    });
   }
 
   @override
   void dispose() {
-    _onDataAddedSubscription.cancel();
-    _onDataChangedSubscription.cancel();
-    _onDataRemovedSubscription.cancel();
+    _onDataAddedSubscription?.cancel();
+    _onDataChangedSubscription?.cancel();
+    _onDataRemovedSubscription?.cancel();
     super.dispose();
   }
 
@@ -185,18 +161,13 @@ class _StudentEventState extends State<StudentEvent> {
                       ),
                       onTap: () {
                         if (_allEvent[index].isStarted == 1) {
-                          Navigator.push(
-                            context,
+                          Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) {
-                                return VideoConferencing(
-                                  room: _allEvent[index].title,
-                                  eventkey: _allEvent[index].eventkey,
-                                  subject: _allEvent[index].description,
-                                  privilegelevel:
-                                      FireBaseAuth.instance.previlagelevel,
-                                );
-                              },
+                              builder: (context) => VideoConferencing(
+                                room: _allEvent[index].title,
+                                eventkey: _allEvent[index].eventkey,
+                                subject: _allEvent[index].description,
+                              ),
                             ),
                           );
                         }

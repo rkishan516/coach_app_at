@@ -60,7 +60,7 @@ class _ChapterPageState extends State<ChapterPage> {
                           Subjects.fromJson(snapshot.data.snapshot.value);
                       var keys;
                       if (subjects.chapters != null) {
-                        keys = subjects.chapters?.keys.toList()
+                        keys = subjects.chapters.keys.toList()
                           ..sort((a, b) => subjects.chapters[a].name
                               .compareTo(subjects.chapters[b].name));
                       }

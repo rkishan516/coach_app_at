@@ -1,11 +1,6 @@
-import 'dart:collection';
-import 'dart:convert';
-
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-
-import 'FeeReceipt.dart';
 import 'FeeReport.dart';
 
 class FeeStructure extends StatefulWidget {
@@ -15,7 +10,6 @@ class FeeStructure extends StatefulWidget {
 
 class _FeeStructureState extends State<FeeStructure> {
   final dbRef = FirebaseDatabase.instance;
-  HashMap<dynamic, dynamic> _hashMap = new HashMap();
   List<Courses> _list = [];
   Map<String, String> map = new Map();
   @override
@@ -32,9 +26,7 @@ class _FeeStructureState extends State<FeeStructure> {
         .child("coursesList")
         .once()
         .then((snapshot) {
-      print(snapshot.value);
-      Map map = snapshot.value;
-      map.forEach((key, value) {
+      snapshot.value.forEach((key, value) {
         setState(() {
           _list.add(Courses(key, value));
         });
@@ -77,19 +69,6 @@ class _FeeStructureState extends State<FeeStructure> {
                                     )));
                           },
                         ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.attach_money,
-                            color: Color(0xffF36C24),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => FeeReceipt(
-                                      isEdit: true,
-                                      courseid: _list[index].key,
-                                    )));
-                          },
-                        )
                       ],
                     ),
                   ),

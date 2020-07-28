@@ -4,15 +4,29 @@ class Branch {
   String name;
   String address;
   String upiId;
+  String accountHolderName;
+  String accountNo;
+  String accountIFSC;
   Map<String, Admin> admin;
   List<Courses> courses;
 
-  Branch({this.name, this.courses, this.address, this.admin, this.upiId});
+  Branch(
+      {this.name,
+      this.courses,
+      this.address,
+      this.admin,
+      this.upiId,
+      this.accountHolderName,
+      this.accountNo,
+      this.accountIFSC});
 
   Branch.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
     address = json['address'];
     upiId = json['upiId'];
+    accountHolderName = json['accountHolderName'];
+    accountNo = json['accountNo'];
+    accountIFSC = json['accountIFSC'];
     if (json['courses'] != null) {
       courses = new List<Courses>();
       json['courses'].forEach((k, v) {
@@ -32,6 +46,9 @@ class Branch {
     data['name'] = this.name;
     data['address'] = this.address;
     data['upiId'] = this.upiId;
+    data['accountHolderName'] = this.accountHolderName;
+    data['accountNo'] = this.accountNo;
+    data['accountIFSC'] = this.accountIFSC;
     if (this.courses != null) {
       data['courses'] = this.courses.map((v) => v.toJson()).toList();
     }
@@ -70,7 +87,14 @@ class MidAdmin {
   String tokenid;
   String district;
   String branches;
-  MidAdmin({this.name, this.email, this.tokenid, this.branches, this.district});
+  String photoUrl;
+  MidAdmin(
+      {this.name,
+      this.email,
+      this.tokenid,
+      this.branches,
+      this.district,
+      this.photoUrl});
 
   MidAdmin.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
@@ -78,6 +102,7 @@ class MidAdmin {
     tokenid = json['tokenid'];
     branches = json['branches'];
     district = json['district'];
+    photoUrl = json['photoUrl'];
   }
 
   Map<String, dynamic> toJson() {
@@ -87,6 +112,7 @@ class MidAdmin {
     data['tokenid'] = this.tokenid;
     data['branches'] = this.branches;
     data['district'] = this.district;
+    data['photoUrl'] = this.photoUrl;
     return data;
   }
 }
@@ -315,6 +341,7 @@ class Student {
   String phoneNo;
   String photoURL;
   String rollNo;
+  String fatherName;
   String status;
 
   Student(
@@ -326,6 +353,7 @@ class Student {
       this.photoURL,
       this.rollNo,
       this.status,
+      this.fatherName,
       this.classs});
 
   Student.fromJson(Map<dynamic, dynamic> json) {
@@ -342,6 +370,7 @@ class Student {
     phoneNo = json['phone No'];
     photoURL = json['photoURL'];
     rollNo = json['rollNo'];
+    fatherName = json['fatherName'];
     status = json['status'];
   }
 
@@ -357,6 +386,7 @@ class Student {
     data['phone No'] = this.phoneNo;
     data['photoURL'] = this.photoURL;
     data['rollNo'] = this.rollNo;
+    data['fatherName'] = this.fatherName;
     data['status'] = this.status;
     return data;
   }
@@ -534,6 +564,50 @@ class Section {
       data['content'] =
           this.content.map((key, value) => MapEntry(key, value.toJson()));
     }
+    return data;
+  }
+}
+
+class EventsModal {
+  String title;
+  String description;
+  String eventkey;
+  String time;
+  String courseid;
+  String teacheruid;
+  String subject;
+  int isStarted;
+  EventsModal(
+      {this.title,
+      this.description,
+      this.time,
+      this.eventkey,
+      this.isStarted,
+      this.courseid,
+      this.teacheruid,
+      this.subject});
+
+  EventsModal.fromJson(Map<dynamic, dynamic> json) {
+    title = json['title'];
+    description = json['description'];
+    eventkey = json['eventKey'];
+    time = json['time'];
+    isStarted = json['isStarted'];
+    courseid = json['courseid'];
+    subject = json['subject'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['title'] = this.title;
+    data['description'] = this.description;
+    data['eventkey'] = this.eventkey;
+    data['time'] = this.time;
+    data['teacheruid'] = this.teacheruid;
+    data['isStarted'] = this.isStarted;
+    data['courseid'] = this.courseid;
+    data['subject'] = this.subject;
+
     return data;
   }
 }

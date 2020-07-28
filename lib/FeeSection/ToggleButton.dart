@@ -18,58 +18,57 @@ class _ToggleButtonState extends State<ToggleButton> {
   final dbRef = FirebaseDatabase.instance;
   Future showErrorDialog(BuildContext context) {
     return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Select Coupon'),
-            content: DropdownButton<String>(
-              items: couponslist.map((String dropDownStringitem) {
-                return DropdownMenuItem<String>(
-                  value: dropDownStringitem,
-                  child: Text(dropDownStringitem),
-                );
-              }).toList(),
-              onChanged: (String newValueSelected) {
-                setState(() {
-                  this._currentItemSelected = newValueSelected;
-                  if (_currentItemSelected == "none") {
-                    toggleValue = false;
-                    doOpen = true;
-                  } else {
-                    toggleValue = true;
-                    doOpen = true;
-                  }
-                });
-                Navigator.of(context).pop("Selected");
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Select Coupon'),
+          content: DropdownButton<String>(
+            items: couponslist.map((String dropDownStringitem) {
+              return DropdownMenuItem<String>(
+                value: dropDownStringitem,
+                child: Text(dropDownStringitem),
+              );
+            }).toList(),
+            onChanged: (String newValueSelected) {
+              setState(() {
+                this._currentItemSelected = newValueSelected;
+                if (_currentItemSelected == "none") {
+                  toggleValue = false;
+                  doOpen = true;
+                } else {
+                  toggleValue = true;
+                  doOpen = true;
+                }
+              });
+              Navigator.of(context).pop("Selected");
+            },
+            isExpanded: false,
+            hint: Text('Select Coupon'),
+            value: _currentItemSelected,
+          ),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text('CANCEL'),
+              onPressed: () {
+                Navigator.of(context).pop("cancel");
               },
-              isExpanded: false,
-              hint: Text('Select Coupon'),
-              value: _currentItemSelected,
-            ),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text('CANCEL'),
-                onPressed: () {
-                  Navigator.of(context).pop("cancel");
-                },
-              )
-            ],
-          );
-        });
+            )
+          ],
+        );
+      },
+    );
   }
 
-  _loadFromDatabase() async {
+  @override
+  void initState() {
     dbRef
         .reference()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}")
-        .child("coupons")
+            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coupons")
         .once()
         .then((snapshot) {
-      Map map = snapshot.value;
-      print(map);
-      map.forEach((key, value) {
-        couponslist.add(map[key]["discount"]);
+      snapshot.value.forEach((key, value) {
+        couponslist.add(snapshot.value[key]["discount"]);
       });
     });
     dbRef
@@ -90,18 +89,13 @@ class _ToggleButtonState extends State<ToggleButton> {
         }
       });
     });
-  }
-
-  @override
-  void initState() {
     super.initState();
-    _loadFromDatabase();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width/1.5,
+      width: MediaQuery.of(context).size.width / 1.5,
       child: Center(
         child: Padding(
           padding: EdgeInsets.all(20.0),

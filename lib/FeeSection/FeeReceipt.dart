@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -10,7 +12,7 @@ class FeeReceipt extends StatefulWidget {
   final bool isEdit;
   final String courseid;
   final Courses course;
-  FeeReceipt({this.isEdit, this.courseid,this.course});
+  FeeReceipt({this.isEdit, this.courseid, this.course});
   @override
   _FeeReceiptState createState() => _FeeReceiptState();
 }
@@ -83,11 +85,6 @@ class _FeeReceiptState extends State<FeeReceipt> {
         });
   }
 
-  _sharedprefinit() async {
-    _pref = await SharedPreferences.getInstance();
-    _prevTotalText = _pref.getString("${widget.courseid}");
-  }
-
   _saveintodatabase() {
     if (toggleValue1 && _totalText.text != _prevTotalText) {
       showErrorDialog(context);
@@ -137,12 +134,6 @@ class _FeeReceiptState extends State<FeeReceipt> {
               "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseid}/fees")
           .child("MaxInstallment")
           .update({"IsMaxAllowed": false});
-      dbRef
-          .reference()
-          .child(
-              "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseid}/fees")
-          .child("MaxInstallment/Installments")
-          .remove();
     }
     _pref.setString("${widget.courseid}", _totalText.text);
     Navigator.of(context).pop();
@@ -151,20 +142,18 @@ class _FeeReceiptState extends State<FeeReceipt> {
   Widget _feeSection() {
     return Container(
       padding: EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-          color: Color(0xffF36C24), borderRadius: BorderRadius.circular(10.0)),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Expanded(
-                  flex: 2,
-                  child: Text(
-                    'Admission Fees',
-                    style:
-                        TextStyle(fontSize: 17.0, fontWeight: FontWeight.w400),
-                  )),
+                flex: 2,
+                child: Text(
+                  'Admission Fees',
+                  style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w400),
+                ),
+              ),
               SizedBox(
                 width: 10.0,
               ),
@@ -176,13 +165,36 @@ class _FeeReceiptState extends State<FeeReceipt> {
                   },
                   controller: _admissionText,
                   keyboardType: TextInputType.number,
+                  style: TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center,
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: "Enter value"),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: Color(0xffF36C24),
+                    hintText: "Enter value",
+                  ),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text(
+                  '₹',
+                  style: TextStyle(
+                    fontSize: 22,
+                  ),
+                ),
+              )
             ],
           ),
           SizedBox(
@@ -208,14 +220,36 @@ class _FeeReceiptState extends State<FeeReceipt> {
                     _changeTotalFees(value);
                   },
                   controller: _tutionText,
+                  style: TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                      ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Color(0xffF36C24),
                       hintText: "Enter value"),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text(
+                  '₹',
+                  style: TextStyle(
+                    fontSize: 22,
+                  ),
+                ),
+              )
             ],
           ),
           SizedBox(
@@ -241,14 +275,36 @@ class _FeeReceiptState extends State<FeeReceipt> {
                     _changeTotalFees(value);
                   },
                   controller: _libraryText,
+                  style: TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                      ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Color(0xffF36C24),
                       hintText: "Enter value"),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text(
+                  '₹',
+                  style: TextStyle(
+                    fontSize: 22,
+                  ),
+                ),
+              )
             ],
           ),
           SizedBox(
@@ -275,13 +331,35 @@ class _FeeReceiptState extends State<FeeReceipt> {
                   },
                   controller: _labText,
                   keyboardType: TextInputType.number,
+                  style: TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center,
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                      ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Color(0xffF36C24),
                       hintText: "Enter value"),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text(
+                  '₹',
+                  style: TextStyle(
+                    fontSize: 22,
+                  ),
+                ),
+              )
             ],
           ),
           SizedBox(
@@ -308,13 +386,35 @@ class _FeeReceiptState extends State<FeeReceipt> {
                   },
                   controller: _extraText,
                   keyboardType: TextInputType.number,
+                  style: TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center,
                   decoration: InputDecoration(
                       filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(),
+                      fillColor: Color(0xffF36C24),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                      ),
                       hintText: "Enter Value"),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text(
+                  '₹',
+                  style: TextStyle(
+                    fontSize: 22,
+                  ),
+                ),
+              )
             ],
           )
         ],
@@ -343,14 +443,36 @@ class _FeeReceiptState extends State<FeeReceipt> {
               readOnly: true,
               controller: _totalText,
               keyboardType: TextInputType.number,
+              style: TextStyle(color: Colors.white),
+              textAlign: TextAlign.center,
               decoration: InputDecoration(
                 filled: true,
                 enabled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(),
+                fillColor: Color(0xffF36C24),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: Text(
+              '₹',
+              style: TextStyle(
+                fontSize: 22,
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -378,9 +500,11 @@ class _FeeReceiptState extends State<FeeReceipt> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => Installments(_totalText.text,
-                            toggleValue1, widget.courseid))).then((value) {
-                  if (value == "confirm") _prevTotalText = _totalText.text;
-                });
+                            toggleValue1, widget.courseid))).then(
+                  (value) {
+                    if (value == "confirm") _prevTotalText = _totalText.text;
+                  },
+                );
               }
             },
             child: AnimatedContainer(
@@ -470,7 +594,6 @@ class _FeeReceiptState extends State<FeeReceipt> {
                     });
                   }
                 });
-              ;
             },
             child: AnimatedContainer(
               duration: Duration(milliseconds: 1000),
@@ -491,15 +614,13 @@ class _FeeReceiptState extends State<FeeReceipt> {
                     right: toggleValue3 ? 0.0 : 60.0,
                     child: InkWell(
                       onTap: () {
-                        if (_totalText.text != "0") {
-                          isEdit = false;
-                          if (!toggleValue3) {
-                            _ddText.text = "";
-                            _yyText.text = "";
-                            _mmSelected = "MM";
-                          }
-                          toogleButton3();
+                        isEdit = false;
+                        if (!toggleValue3) {
+                          _ddText.text = "";
+                          _yyText.text = "";
+                          _mmSelected = "MM";
                         }
+                        toogleButton3();
                       },
                       child: AnimatedSwitcher(
                         duration: Duration(microseconds: 1000),
@@ -561,7 +682,6 @@ class _FeeReceiptState extends State<FeeReceipt> {
                     });
                   }
                 });
-              ;
             },
             child: AnimatedContainer(
               duration: Duration(milliseconds: 1000),
@@ -641,6 +761,7 @@ class _FeeReceiptState extends State<FeeReceipt> {
         child: Text(
           "Save",
           style: TextStyle(color: Colors.white),
+          textAlign: TextAlign.center,
         ),
       ),
     );
@@ -682,8 +803,13 @@ class _FeeReceiptState extends State<FeeReceipt> {
     });
   }
 
+  String checkinstallment;
+
   @override
   void initState() {
+    Timer(Duration(seconds: 0), () async {
+      _pref = await SharedPreferences.getInstance();
+    });
     super.initState();
     if (widget.isEdit != null)
       isEdit = true;
@@ -691,6 +817,13 @@ class _FeeReceiptState extends State<FeeReceipt> {
       isEdit = false;
 
     if (isEdit) _loadFromDatabase();
+    dbRef
+        .reference()
+        .child(
+            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseid}")
+        .child("fees/MaxInstallment/MaxAllowedInstallment")
+        .once()
+        .then((value) => setState(() => checkinstallment = value.value));
   }
 
   @override
@@ -707,8 +840,265 @@ class _FeeReceiptState extends State<FeeReceipt> {
             thickness: 2.0,
           ),
           _attachMaxNoofInstallment(),
+          if (toggleValue1)
+            Container(
+              height: MediaQuery.of(context).size.height,
+              child: Installments(
+                _totalText.text,
+                checkinstallment != null ? toggleValue1 : !toggleValue1,
+                widget.courseid,
+              ),
+            ),
+          Divider(
+            height: 48.0,
+            thickness: 2.0,
+          ),
           _attachOneTimePay(),
+          if (toggleValue3)
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  10,
+                ),
+                color: Color(0xffF36C24),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Last Submission Date',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          top: 16.0, bottom: 16.0, right: 2.0, left: 2.0),
+                      child: TextField(
+                        onChanged: (value) {
+                          //TODO
+                        },
+                        controller: _ddText,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
+                            fillColor: Colors.white,
+                            filled: true,
+                            hintText: "DD"),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          top: 16.0, bottom: 16.0, right: 2.0, left: 2.0),
+                      child: DropdownButton<String>(
+                        dropdownColor: Color(0xffF36C24),
+                        iconEnabledColor: Colors.white,
+                        items: _mmperiod.map((String dropDownStringitem) {
+                          return DropdownMenuItem<String>(
+                            value: dropDownStringitem,
+                            child: Text(
+                              dropDownStringitem,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String newValueSelected) {
+                          setState(() {
+                            _mmSelected = newValueSelected;
+                            print(_mmSelected);
+                          });
+                        },
+                        isExpanded: true,
+                        hint: Text(
+                          'MM',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        value: _mmSelected,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          top: 16.0, bottom: 16.0, right: 2.0, left: 2.0),
+                      child: TextField(
+                        onChanged: (value) {
+                          //TODO
+                        },
+                        controller: _yyText,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
+                            hintText: "YYYY"),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 4.0,
+                  )
+                ],
+              ),
+            ),
+          Divider(
+            height: 48.0,
+            thickness: 2.0,
+          ),
           _setFine(),
+          if (toggleValue2)
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  10,
+                ),
+                color: Color(0xffF36C24),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0, right: 8),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Fine Amount',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextField(
+                              controller: _setFineText,
+                              keyboardType: TextInputType.number,
+                              style: TextStyle(color: Color(0xffF36C24)),
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  hintText: "Enter value"),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16.0,
+                          ),
+                          child: Text(
+                            '₹',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 16,
+                          child: Text(
+                            'Enter Duration',
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 10,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextField(
+                              controller: _fineDurationText,
+                              keyboardType: TextInputType.number,
+                              style: TextStyle(
+                                color: Color(
+                                  0xffF36C24,
+                                ),
+                              ),
+                              textAlign: TextAlign.center,
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  hintText: "Enter value"),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 10,
+                          child: DropdownButton<String>(
+                            dropdownColor: Color(0xffF36C24),
+                            iconEnabledColor: Colors.white,
+                            items:
+                                durationperiod.map((String dropDownStringitem) {
+                              return DropdownMenuItem<String>(
+                                value: dropDownStringitem,
+                                child: Text(
+                                  dropDownStringitem,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String newValueSelected) {
+                              setState(() {
+                                this._currentFineDurationSelected =
+                                    newValueSelected;
+                              });
+                            },
+                            isExpanded: false,
+                            hint: Text('Select Period'),
+                            value: _currentFineDurationSelected,
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
           Divider(
             height: 48.0,
             thickness: 2.0,
@@ -717,29 +1107,42 @@ class _FeeReceiptState extends State<FeeReceipt> {
         ]));
   }
 
-  toogleButton1() {
+  toogleButton1() async {
+    DataSnapshot _maxallowedsnapshot = await dbRef
+        .reference()
+        .child(
+            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseid}")
+        .child("fees/MaxInstallment/MaxAllowedInstallment")
+        .once();
+    String checkinstallment = _maxallowedsnapshot.value;
     setState(() {
       toggleValue1 = !toggleValue1;
-      bool dup = !toggleValue1;
+      bool dup = checkinstallment != null ? toggleValue1 : !toggleValue1;
       if (toggleValue1 && !isEdit) {
-        Navigator.of(context)
-            .push(MaterialPageRoute(
-                builder: (context) =>
-                    Installments(_totalText.text, dup, widget.courseid)))
-            .then((value) {
-          if (value == "confirm") {
-            setState(() {
-              toggleValue1 = true;
-              _prevTotalText = _totalText.text;
-              print("iii");
-            });
-          } else {
-            setState(() {
-              toggleValue1 = false;
-              print("LLLL");
-            });
-          }
-        });
+        // Navigator.of(context)
+        //     .push(
+        //   MaterialPageRoute(
+        //     builder: (context) => Installments(
+        //       _totalText.text,
+        //       dup,
+        //       widget.courseid,
+        //     ),
+        //   ),
+        // )
+        //     .then((value) {
+        //   if (value == "confirm") {
+        //     setState(() {
+        //       toggleValue1 = true;
+        //       _prevTotalText = _totalText.text;
+        //       print("iii");
+        //     });
+        //   } else {
+        //     setState(() {
+        //       toggleValue1 = false;
+        //       print("LLLL");
+        //     });
+        //   }
+        // });
       } else {}
     });
   }
@@ -748,83 +1151,122 @@ class _FeeReceiptState extends State<FeeReceipt> {
     return showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: Text('Set Fine'),
-            content: SingleChildScrollView(
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _setFineText,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(), hintText: "Enter value"),
-                  ),
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  Text(
-                    'Enter Duration for Fine',
-                    style:
-                        TextStyle(fontSize: 15.0, fontWeight: FontWeight.w400),
-                  ),
-                  SizedBox(
-                    height: 6.0,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: TextField(
-                          controller: _fineDurationText,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: "Enter value"),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: DropdownButton<String>(
-                          items:
-                              durationperiod.map((String dropDownStringitem) {
-                            return DropdownMenuItem<String>(
-                              value: dropDownStringitem,
-                              child: Text(dropDownStringitem),
-                            );
-                          }).toList(),
-                          onChanged: (String newValueSelected) {
-                            setState(() {
-                              this._currentFineDurationSelected =
-                                  newValueSelected;
-                            });
-                          },
-                          isExpanded: false,
-                          hint: Text('Select Period'),
-                          value: _currentFineDurationSelected,
-                        ),
-                      )
-                    ],
-                  )
-                ],
+          return StatefulBuilder(
+            builder: (context, setState) => AlertDialog(
+              backgroundColor: Color(0xffF36C24),
+              title: Text(
+                'Set Fine',
+                style: TextStyle(color: Colors.white),
               ),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _setFineText,
+                      keyboardType: TextInputType.number,
+                      style: TextStyle(color: Color(0xffF36C24)),
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                            ),
+                          ),
+                          fillColor: Colors.white,
+                          filled: true,
+                          hintText: "Enter value"),
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Text(
+                      'Enter Duration for Fine',
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 6.0,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: TextField(
+                            controller: _fineDurationText,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(color: Color(0xffF36C24)),
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide: BorderSide(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                fillColor: Colors.white,
+                                filled: true,
+                                hintText: "Enter value"),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10.0,
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: DropdownButton<String>(
+                            dropdownColor: Color(0xffF36C24),
+                            iconEnabledColor: Colors.white,
+                            items:
+                                durationperiod.map((String dropDownStringitem) {
+                              return DropdownMenuItem<String>(
+                                value: dropDownStringitem,
+                                child: Text(
+                                  dropDownStringitem,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String newValueSelected) {
+                              setState(() {
+                                this._currentFineDurationSelected =
+                                    newValueSelected;
+                              });
+                            },
+                            isExpanded: false,
+                            hint: Text('Select Period'),
+                            value: _currentFineDurationSelected,
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text(
+                    'OK',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop("ok");
+                  },
+                ),
+                new FlatButton(
+                  child: new Text(
+                    'CANCEL',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop("cancel");
+                  },
+                )
+              ],
             ),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop("ok");
-                },
-              ),
-              new FlatButton(
-                child: new Text('CANCEL'),
-                onPressed: () {
-                  Navigator.of(context).pop("cancel");
-                },
-              )
-            ],
           );
         });
   }
@@ -833,18 +1275,18 @@ class _FeeReceiptState extends State<FeeReceipt> {
     setState(() {
       toggleValue2 = !toggleValue2;
       if (toggleValue2 && !isEdit) {
-        showErrorDialog2(context).then((value) {
-          if (value == "ok") {
-            setState(() {
-              if (_fineDurationText.text == "0" || _setFineText.text == "0")
-                toggleValue2 = false;
-            });
-          } else {
-            setState(() {
-              toggleValue2 = false;
-            });
-          }
-        });
+        // showErrorDialog2(context).then((value) {
+        //   if (value == "ok") {
+        //     setState(() {
+        //       if (_fineDurationText.text == "0" || _setFineText.text == "0")
+        //         toggleValue2 = false;
+        //     });
+        //   } else {
+        //     setState(() {
+        //       toggleValue2 = false;
+        //     });
+        //   }
+        // });
       } else {
         if (!isEdit) {
           _fineDurationText.text = "0";
@@ -859,81 +1301,119 @@ class _FeeReceiptState extends State<FeeReceipt> {
     return showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: Text('Set End Time'),
-            content: SingleChildScrollView(
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: TextField(
-                      onChanged: (value) {
-                        //TODO
-                      },
-                      controller: _ddText,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(), hintText: "DD"),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 4.0,
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: DropdownButton<String>(
-                      items: _mmperiod.map((String dropDownStringitem) {
-                        return DropdownMenuItem<String>(
-                          value: dropDownStringitem,
-                          child: Text(dropDownStringitem),
-                        );
-                      }).toList(),
-                      onChanged: (String newValueSelected) {
-                        setState(() {
-                          _mmSelected = newValueSelected;
-                          print(_mmSelected);
-                        });
-                      },
-                      isExpanded: true,
-                      hint: Text('MM'),
-                      value: _mmSelected,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 4.0,
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: TextField(
-                      onChanged: (value) {
-                        //TODO
-                      },
-                      controller: _yyText,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(), hintText: "YYYY"),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 4.0,
-                  )
-                ],
+          return StatefulBuilder(
+            builder: (context, setState) => AlertDialog(
+              backgroundColor: Color(0xffF36C24),
+              title: Text(
+                'Set End Time',
+                style: TextStyle(color: Colors.white),
               ),
+              content: SingleChildScrollView(
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: TextField(
+                        onChanged: (value) {
+                          //TODO
+                        },
+                        controller: _ddText,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
+                            fillColor: Colors.white,
+                            filled: true,
+                            hintText: "DD"),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 4.0,
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: DropdownButton<String>(
+                        dropdownColor: Color(0xffF36C24),
+                        iconEnabledColor: Colors.white,
+                        items: _mmperiod.map((String dropDownStringitem) {
+                          return DropdownMenuItem<String>(
+                            value: dropDownStringitem,
+                            child: Text(
+                              dropDownStringitem,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String newValueSelected) {
+                          setState(() {
+                            _mmSelected = newValueSelected;
+                            print(_mmSelected);
+                          });
+                        },
+                        isExpanded: true,
+                        hint: Text(
+                          'MM',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        value: _mmSelected,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 4.0,
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: TextField(
+                        onChanged: (value) {
+                          //TODO
+                        },
+                        controller: _yyText,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
+                            hintText: "YYYY"),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 4.0,
+                    )
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text(
+                    'OK',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop("ok");
+                  },
+                ),
+                new FlatButton(
+                  child: new Text(
+                    'CANCEL',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop("cancel");
+                  },
+                )
+              ],
             ),
-            actions: <Widget>[
-              new FlatButton(
-                child: new Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop("ok");
-                },
-              ),
-              new FlatButton(
-                child: new Text('CANCEL'),
-                onPressed: () {
-                  Navigator.of(context).pop("cancel");
-                },
-              )
-            ],
           );
         });
   }
@@ -942,19 +1422,19 @@ class _FeeReceiptState extends State<FeeReceipt> {
     setState(() {
       toggleValue3 = !toggleValue3;
       if (toggleValue3 && !isEdit) {
-        showErrorDialog3(context).then((value) {
-          if (value == "ok") {
-            setState(() {
-              if (_yyText.text == "" ||
-                  _ddText.text == "" ||
-                  _mmSelected == "MM") toggleValue3 = false;
-            });
-          } else {
-            setState(() {
-              toggleValue3 = false;
-            });
-          }
-        });
+        // showErrorDialog3(context).then((value) {
+        //   if (value == "ok") {
+        //     setState(() {
+        //       if (_yyText.text == "" ||
+        //           _ddText.text == "" ||
+        //           _mmSelected == "MM") toggleValue3 = false;
+        //     });
+        //   } else {
+        //     setState(() {
+        //       toggleValue3 = false;
+        //     });
+        //   }
+        // });
       } else {
         if (!isEdit) {
           _yyText.text = "";

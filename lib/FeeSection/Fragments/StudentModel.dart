@@ -13,6 +13,8 @@ class StudentModel {
   String email;
   String photoURL;
   String totalFees;
+  String courseID;
+  bool isinstallmentAllowed;
   List<NoInstallments> listInstallment;
   Map map;
   String lastpaidInstallment;
@@ -28,12 +30,11 @@ class StudentModel {
       this.phoneNo,
       this.email,
       this.photoURL,
+      this.courseID,
       this.lastpaidInstallment,
       this.totalfees);
 
   StudentModel.fromJSON(String key, Map value, Map fineMap, String courseID) {
-    print(">>>>>??????/////");
-    print(value["course"]);
     uid = key;
     address = value["address"];
     acaedmicYear = value["course"][courseID]["Academic Year"];
@@ -43,12 +44,14 @@ class StudentModel {
     phoneNo = value["phone No"];
     email = value["email"];
     photoURL = value["photoURL"];
+    this.courseID = courseID;
     lastpaidInstallment = value["course"][courseID]["fees"]["Installments"]
         ["LastPaidInstallment"];
     allowedthrough =
         value["course"][courseID]["fees"]["Installments"]["AllowedThrough"];
     totalFees = fineMap["FeeSection"]["TotalFees"];
     map = value["course"][courseID]["fees"]["Installments"];
+    isinstallmentAllowed = fineMap["MaxInstallment"]["IsMaxAllowed"];
 
     _createInstallmentmodel(map, [], fineMap, discount, key, courseID)
         .then((value) => listInstallment = value);
@@ -115,7 +118,19 @@ Future<List<NoInstallments>> _createInstallmentmodel(
         ((fees * (double.parse(discount) / 100)) / count).toStringAsFixed(2));
 
   if (count != 0) {
+    int postivecount = 0;
     minusSum = unpaidSum / count;
+    installments.forEach((key, value) {
+      if (key != "AllowedThrough" &&
+          key != "LastPaidInstallment" &&
+          value["Status"] != "Paid") {
+        if ((double.parse(
+                    fineMap["MaxInstallment"]["Installments"][key]["Amount"]) -
+                minusSum) <
+            0) postivecount++;
+      }
+    });
+    if (postivecount != 0) minusSum = unpaidSum / postivecount;
   }
 
   installments.forEach((key, value) {
@@ -172,7 +187,7 @@ Future<List<NoInstallments>> _createInstallmentmodel(
           dbref
               .reference()
               .child(
-                  "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${keyS}/course/${courseID}/fees/Installments/$key")
+                  "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$keyS/course/$courseID/fees/Installments/$key")
               .update({"Fine": fine});
         }
         String amountPass = (double.parse(
@@ -180,6 +195,7 @@ Future<List<NoInstallments>> _createInstallmentmodel(
                 minusValue -
                 minusSum)
             .toStringAsFixed(2);
+        amountPass = amountPass.contains("-") ? "0.0" : amountPass;
 
         _listInstallment.add(NoInstallments(key, amountPass, value["Duration"],
             fine, status, value["PaidTime"]));

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -148,11 +146,19 @@ class _StuInstallmentState extends State<StuInstallment> {
                   .toStringAsFixed(2));
 
         if (count != 0) {
+          int postivecount = 0;
           minusSum = unpaidSum / count;
-          print("/////////////??????????");
-          print(unpaidSum);
-          print(count);
-          print(minusSum);
+          installments.forEach((key, value) {
+            if (key != "AllowedThrough" &&
+                key != "LastPaidInstallment" &&
+                value["Status"] != "Paid") {
+              if ((double.parse(
+                          changeAmountMap["Installments"][key]["Amount"]) -
+                      minusSum) <
+                  0) postivecount++;
+            }
+          });
+          if (postivecount != 0) minusSum = unpaidSum / postivecount;
         }
 
         installments.forEach((key, value) {
@@ -212,6 +218,7 @@ class _StuInstallmentState extends State<StuInstallment> {
                       minusValue -
                       minusSum)
                   .toStringAsFixed(2);
+              amountPass = amountPass.contains("-") ? "0.0" : amountPass;
               _listInstallment.add(NoofInstallment(
                   key,
                   amountPass,
@@ -357,6 +364,7 @@ class _StuInstallmentState extends State<StuInstallment> {
                             : _listInstallment[index].status == "Fine"
                                 ? "Pay Now"
                                 : "Paid";
+                    String prevbuttonStatus = "";
                     return Card(
                       child: ListTile(
                         leading: Text(
@@ -373,23 +381,34 @@ class _StuInstallmentState extends State<StuInstallment> {
                             _listInstallment[index].status),
                         trailing: RaisedButton(
                           onPressed: () {
-                            if (buttonStatus == "Pay Now")
-                              Navigator.of(context)
-                                  .push(
-                                MaterialPageRoute(
-                                  builder: (context) => PayInstallment(
-                                    _listInstallment[index],
-                                    courseId: widget.courseId,
-                                    courseName: widget.courseName,
+                            if (buttonStatus == "Pay Now") {
+                              if (index != 0)
+                                prevbuttonStatus =
+                                    _listInstallment[index - 1].status == "Due"
+                                        ? "Pay Now"
+                                        : _listInstallment[index - 1].status ==
+                                                "Fine"
+                                            ? "Pay Now"
+                                            : "Paid";
+
+                              if (prevbuttonStatus != "Pay Now")
+                                Navigator.of(context)
+                                    .push(
+                                  MaterialPageRoute(
+                                    builder: (context) => PayInstallment(
+                                      _listInstallment[index],
+                                      courseId: widget.courseId,
+                                      courseName: widget.courseName,
+                                    ),
                                   ),
-                                ),
-                              )
-                                  .then((value) async {
-                                if (value == "Paid")
-                                  await _updateList(
-                                      _listInstallment[index].sequence);
-                                Navigator.of(context).pop(value);
-                              });
+                                )
+                                    .then((value) async {
+                                  if (value == "Paid")
+                                    await _updateList(
+                                        _listInstallment[index].sequence);
+                                  Navigator.of(context).pop(value);
+                                });
+                            }
                           },
                           color: Color(0xffF36C24),
                           child: Text(buttonStatus),

@@ -28,7 +28,10 @@ class _InstituteRegisterState extends State<InstituteRegister> {
       branch1UpiIdTextEditiingController,
       branch1addressTextEditingController,
       branch1CodeTextEditingController,
-      branch1AdminTextEditingController;
+      branch1AdminTextEditingController,
+      accoundHolderNameTextEditingController,
+      accountNoTextEditingController,
+      accountIFSCTextEditingController;
   GlobalKey<ScaffoldState> _scKey;
 
   File _image;
@@ -51,6 +54,9 @@ class _InstituteRegisterState extends State<InstituteRegister> {
     branch1CodeTextEditingController = TextEditingController();
     branch1NameTextEditingController = TextEditingController();
     branch1addressTextEditingController = TextEditingController();
+    accoundHolderNameTextEditingController = TextEditingController();
+    accountNoTextEditingController = TextEditingController();
+    accountIFSCTextEditingController = TextEditingController();
     super.initState();
   }
 
@@ -161,6 +167,63 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                   contentPadding: EdgeInsets.only(left: 10),
                   hintStyle: TextStyle(fontSize: 15),
                   hintText: 'Main Branch Address'.tr(),
+                  fillColor: Color(0xfff3f3f4),
+                  filled: true,
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 8),
+              child: TextField(
+                controller: accoundHolderNameTextEditingController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    borderSide: BorderSide(
+                      color: Color(0xfff3f3f4),
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.only(left: 10),
+                  hintStyle: TextStyle(fontSize: 15),
+                  hintText: 'Bank Account Holder Name (Optional)',
+                  fillColor: Color(0xfff3f3f4),
+                  filled: true,
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 8),
+              child: TextField(
+                controller: accountNoTextEditingController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    borderSide: BorderSide(
+                      color: Color(0xfff3f3f4),
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.only(left: 10),
+                  hintStyle: TextStyle(fontSize: 15),
+                  hintText: 'Bank Account No. (Optional)',
+                  fillColor: Color(0xfff3f3f4),
+                  filled: true,
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 8),
+              child: TextField(
+                controller: accountIFSCTextEditingController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    borderSide: BorderSide(
+                      color: Color(0xfff3f3f4),
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.only(left: 10),
+                  hintStyle: TextStyle(fontSize: 15),
+                  hintText: 'Bank Account IFSC Code (Optional)',
                   fillColor: Color(0xfff3f3f4),
                   filled: true,
                 ),
@@ -316,6 +379,11 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                             .signInWithGoogle(context)
                             .then((value) async {
                           if (value != null) {
+                            if (FireBaseAuth.instance.instituteid != null) {
+                              WelcomeNavigation.signInWithGoogleAndGetPage(
+                                  context);
+                              return;
+                            }
                             showDialog(
                                 context: context,
                                 builder: (context) => UploadDialog(
@@ -354,6 +422,22 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                   },
                                   upiId:
                                       branch1UpiIdTextEditiingController.text,
+                                  accountHolderName:
+                                      accoundHolderNameTextEditingController
+                                                  .text ==
+                                              ''
+                                          ? null
+                                          : accoundHolderNameTextEditingController
+                                              .text,
+                                  accountNo:
+                                      accountNoTextEditingController.text == ''
+                                          ? null
+                                          : accountNoTextEditingController.text,
+                                  accountIFSC: accountIFSCTextEditingController
+                                              .text ==
+                                          ''
+                                      ? null
+                                      : accountIFSCTextEditingController.text,
                                 ).toJson()
                               }
                             });

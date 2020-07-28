@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
@@ -23,7 +22,10 @@ class _BranchRegisterState extends State<BranchRegister> {
       branchCodeTextEditingController,
       adminEmailTextEditingController,
       addressTextEditingController,
-      upiTextEditingController;
+      upiTextEditingController,
+      accoundHolderNameTextEditingController,
+      accountNoTextEditingController,
+      accountIFSCTextEditingController;
   Widget errorBox;
   bool isEnable;
 
@@ -39,6 +41,12 @@ class _BranchRegisterState extends State<BranchRegister> {
     adminEmailTextEditingController = TextEditingController();
     upiTextEditingController = TextEditingController()
       ..text = widget.institute?.upiId ?? '';
+    accoundHolderNameTextEditingController = TextEditingController()
+      ..text = widget.institute?.accountHolderName ?? '';
+    accountNoTextEditingController = TextEditingController()
+      ..text = widget.institute?.accountNo ?? '';
+    accountIFSCTextEditingController = TextEditingController()
+      ..text = widget.institute?.accountIFSC ?? '';
     if (widget.institute?.name == null &&
         widget.institute?.address == null &&
         widget.institute?.admin == null &&
@@ -144,6 +152,63 @@ class _BranchRegisterState extends State<BranchRegister> {
                   ),
                 ),
                 Container(
+                  margin: EdgeInsets.symmetric(vertical: 8),
+                  child: TextField(
+                    controller: accoundHolderNameTextEditingController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(
+                          color: Color(0xfff3f3f4),
+                        ),
+                      ),
+                      contentPadding: EdgeInsets.only(left: 10),
+                      hintStyle: TextStyle(fontSize: 15),
+                      hintText: 'Bank Account Holder Name (Optional)',
+                      fillColor: Color(0xfff3f3f4),
+                      filled: true,
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 8),
+                  child: TextField(
+                    controller: accountNoTextEditingController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(
+                          color: Color(0xfff3f3f4),
+                        ),
+                      ),
+                      contentPadding: EdgeInsets.only(left: 10),
+                      hintStyle: TextStyle(fontSize: 15),
+                      hintText: 'Bank Account No. (Optional)',
+                      fillColor: Color(0xfff3f3f4),
+                      filled: true,
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 8),
+                  child: TextField(
+                    controller: accountIFSCTextEditingController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(
+                          color: Color(0xfff3f3f4),
+                        ),
+                      ),
+                      contentPadding: EdgeInsets.only(left: 10),
+                      hintStyle: TextStyle(fontSize: 15),
+                      hintText: 'Bank Account IFSC Code (Optional)',
+                      fillColor: Color(0xfff3f3f4),
+                      filled: true,
+                    ),
+                  ),
+                ),
+                Container(
                   margin: EdgeInsets.symmetric(vertical: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,9 +277,21 @@ class _BranchRegisterState extends State<BranchRegister> {
                               'institute/${FireBaseAuth.instance.instituteid}/branches/${branchCodeTextEditingController.text}');
                       if (widget.branchCode != null) {
                         Branch branch = Branch(
-                            name: nameTextEditingController.text,
-                            address: addressTextEditingController.text,
-                            upiId: upiTextEditingController.text);
+                          name: nameTextEditingController.text,
+                          address: addressTextEditingController.text,
+                          upiId: upiTextEditingController.text,
+                          accountHolderName:
+                              accoundHolderNameTextEditingController.text == ''
+                                  ? null
+                                  : accoundHolderNameTextEditingController.text,
+                          accountNo: accountNoTextEditingController.text == ''
+                              ? null
+                              : accountNoTextEditingController.text,
+                          accountIFSC:
+                              accountIFSCTextEditingController.text == ''
+                                  ? null
+                                  : accountIFSCTextEditingController.text,
+                        );
                         ref.update(branch.toJson());
                         Navigator.of(context).pop();
                         return;
@@ -254,6 +331,19 @@ class _BranchRegisterState extends State<BranchRegister> {
                               )
                             },
                             upiId: upiTextEditingController.text,
+                            accountHolderName:
+                                accoundHolderNameTextEditingController.text ==
+                                        ''
+                                    ? null
+                                    : accoundHolderNameTextEditingController
+                                        .text,
+                            accountNo: accountNoTextEditingController.text == ''
+                                ? null
+                                : accountNoTextEditingController.text,
+                            accountIFSC:
+                                accountIFSCTextEditingController.text == ''
+                                    ? null
+                                    : accountIFSCTextEditingController.text,
                           ).toJson());
                           if (FireBaseAuth.instance.previlagelevel == 34) {
                             FireBaseAuth.instance.branchList.add(int.parse(
@@ -263,7 +353,8 @@ class _BranchRegisterState extends State<BranchRegister> {
                                 .parent()
                                 .child(
                                     'midAdmin/${FireBaseAuth.instance.user.uid}/branches')
-                                .set(FireBaseAuth.instance.branchList.toString());
+                                .set(FireBaseAuth.instance.branchList
+                                    .toString());
                           }
                           if (FireBaseAuth.instance.user.email !=
                               adminEmailTextEditingController.text) {

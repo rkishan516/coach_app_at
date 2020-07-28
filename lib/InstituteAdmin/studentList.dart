@@ -79,7 +79,10 @@ class _StudentListState extends State<StudentList> {
                         if (searchTextEditingController.text == '') {
                           if (student['course'] != null) {
                             if (student['course'][widget.courseId] != null) {
-                              students[k] = Student.fromJson(student);
+                              Student sstudent = Student.fromJson(student);
+                              if (sstudent.status == 'Registered') {
+                                students[k] = sstudent;
+                              }
                             }
                           }
                         } else {
@@ -89,17 +92,24 @@ class _StudentListState extends State<StudentList> {
                               sstudent.course?.firstWhere((element) =>
                                       element.courseID == widget.courseId) !=
                                   null) {
-                            students[k] = sstudent;
+                            if (sstudent.status == 'Registered') {
+                              students[k] = sstudent;
+                            }
                           }
                         }
                       } else {
                         if (searchTextEditingController.text == '') {
-                          students[k] = Student.fromJson(student);
+                          Student sstudent = Student.fromJson(student);
+                          if (sstudent.status == 'Registered') {
+                            students[k] = sstudent;
+                          }
                         } else {
                           Student sstudent = Student.fromJson(student);
                           if (sstudent.name
                               .contains(searchTextEditingController.text)) {
-                            students[k] = sstudent;
+                            if (sstudent.status == 'Registered') {
+                              students[k] = sstudent;
+                            }
                           }
                         }
                       }
@@ -142,13 +152,11 @@ class _StudentListState extends State<StudentList> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              StudentProfile(
-                                                  student: students[students
-                                                      .keys
-                                                      .toList()[index]],
-                                                  keyS: students.keys
-                                                      .toList()[index]),
+                                          builder: (context) => StudentProfile(
+                                              student: students[students.keys
+                                                  .toList()[index]],
+                                              keyS: students.keys
+                                                  .toList()[index]),
                                         ),
                                       );
                                     },

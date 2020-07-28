@@ -5,24 +5,70 @@ import 'package:flutter/material.dart';
 import 'PayOneTime.dart';
 
 class OneTimeInstallment extends StatefulWidget {
-  final bool toggleValue;
   final String courseId;
   final String courseName;
-  OneTimeInstallment(this.toggleValue,{this.courseId,this.courseName});
+  final bool toggleValue;
+  final String displaysum;
+  final double paidsum;
+  final double paidfine;
+  OneTimeInstallment(
+      {this.toggleValue,
+      this.displaysum,
+      this.paidsum,
+      this.paidfine,
+      this.courseId,
+      this.courseName});
   @override
-  _StuInstallmentState createState() => _StuInstallmentState(toggleValue);
+  _StuInstallmentState createState() =>
+      _StuInstallmentState(toggleValue, paidsum, paidfine);
 }
 
 class _StuInstallmentState extends State<OneTimeInstallment> {
+  double paidsum;
+  double paidfine;
   bool toggleValue;
-  String payableFees;
-  _StuInstallmentState(this.toggleValue);
+  _StuInstallmentState(this.toggleValue, this.paidsum, this.paidfine);
   final dbref = FirebaseDatabase.instance;
   double totalfees = 0.0;
   String discount = "";
   String duration = "";
   String fine = "";
+
   String paymentDate = "";
+  Widget _payButton() {
+    return GestureDetector(
+      onTap: () {
+        if (!toggleValue)
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PayOneTime(
+                totalfees: totalfees.toString(),
+                duration: duration,
+                fine: fine,
+                paidfine: paidfine,
+                paidsum: paidsum,
+                courseId: widget.courseId,
+                courseName: widget.courseName,
+              ),
+            ),
+          ).then((value) {
+            print(value);
+          });
+      },
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.0), color: Colors.orange),
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.symmetric(vertical: 15),
+        alignment: Alignment.center,
+        child: Text(
+          !toggleValue ? "Pay Now" : "Paid",
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    );
+  }
 
   _loadFromDatabase() {
     if (!toggleValue) {
@@ -106,6 +152,8 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
         setState(() {
           fine = map["Fine"];
           paymentDate = map["PaidTime"];
+          paidsum = double.parse(map["PaidInstallment"]);
+          paidfine = double.parse(map["paidFine"]);
         });
       });
       dbref
@@ -131,6 +179,15 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
   Widget build(BuildContext context) {
     double addfine = fine != "" ? double.parse(fine) : 0.0;
     double addTotalFees = totalfees != 0.0 ? totalfees : 0.0;
+    String discountfeesadded = "";
+    if (discount != "")
+      discountfeesadded = (totalfees *
+                  (1 - (double.parse(discount.replaceAll("%", "")) / 100)) +
+              addfine -
+              paidsum)
+          .toString();
+    else
+      discountfeesadded = (addfine + addTotalFees - paidsum).toString();
     return Scaffold(
         appBar: AppBar(
           title: Text("Full Payment"),
@@ -141,7 +198,7 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
             Container(
                 padding: EdgeInsets.all(20.0),
                 width: MediaQuery.of(context).size.width * 0.8,
-                height: MediaQuery.of(context).size.height * 0.6,
+                height: MediaQuery.of(context).size.height * 0.75,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.0),
                   color: Colors.orange,
@@ -166,6 +223,56 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
                           ))
                     ],
                   ),
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                  if (widget.displaysum != "")
+                    Row(
+                      children: [
+                        Expanded(
+                            flex: 2,
+                            child: Text(
+                              "Paid Installment",
+                              style: TextStyle(fontSize: 22.0),
+                            )),
+                        SizedBox(
+                          width: 35.0,
+                        ),
+                        Expanded(
+                            flex: 2,
+                            child: Text(
+                              widget.displaysum != "0.0"
+                                  ? paidsum.toString()
+                                  : widget.displaysum,
+                              style: TextStyle(fontSize: 20.0),
+                            ))
+                      ],
+                    ),
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                  if (widget.displaysum != "")
+                    Row(
+                      children: [
+                        Expanded(
+                            flex: 2,
+                            child: Text(
+                              "Paid Fine",
+                              style: TextStyle(fontSize: 22.0),
+                            )),
+                        SizedBox(
+                          width: 35.0,
+                        ),
+                        Expanded(
+                            flex: 2,
+                            child: Text(
+                              widget.displaysum != "0.0"
+                                  ? paidfine.toString()
+                                  : "0.0",
+                              style: TextStyle(fontSize: 20.0),
+                            ))
+                      ],
+                    ),
                   SizedBox(
                     height: 15.0,
                   ),
@@ -275,15 +382,9 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
                       Expanded(
                           flex: 2,
                           child: Text(
-                            discount != ""
-                                ? (totalfees *
-                                            (1 -
-                                                (double.parse(discount
-                                                        .replaceAll("%", "")) /
-                                                    100)) +
-                                        addfine)
-                                    .toString()
-                                : (addfine + addTotalFees).toString(),
+                            discountfeesadded.contains("-")
+                                ? "0.0"
+                                : discountfeesadded,
                             style: TextStyle(fontSize: 20.0),
                           ))
                     ],
@@ -292,47 +393,7 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
             SizedBox(
               height: 15.0,
             ),
-            GestureDetector(
-              onTap: () {
-                if (!toggleValue)
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PayOneTime(
-                        totalfees: discount != ""
-                            ? (totalfees *
-                                        (1 -
-                                            (double.parse(
-                                                  discount.replaceAll(
-                                                    "%",
-                                                    "",
-                                                  ),
-                                                ) /
-                                                100)) +
-                                    addfine)
-                                .toString()
-                            : (addfine + addTotalFees).toString(),
-                        duration: duration,
-                        fine: fine,
-                        courseId: widget.courseId,
-                        courseName: widget.courseName,
-                      ),
-                    ),
-                  );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    color: Colors.orange),
-                width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.symmetric(vertical: 15),
-                alignment: Alignment.center,
-                child: Text(
-                  !toggleValue ? "Pay Now" : "Paid",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
+            _payButton(),
           ],
         ));
   }

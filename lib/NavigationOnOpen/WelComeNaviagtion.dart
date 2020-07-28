@@ -25,10 +25,19 @@ class WelcomeNavigation {
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
           builder: (context) {
             if (FireBaseAuth.instance.previlagelevel == 4) {
+              FirebaseDatabase.instance
+                  .reference()
+                  .child("institute/${FireBaseAuth.instance.instituteid}")
+                  .keepSynced(true);
               return BranchList();
             } else if (FireBaseAuth.instance.previlagelevel == 34) {
               return MidAdminBranchList();
             } else if (FireBaseAuth.instance.previlagelevel == 3) {
+              FirebaseDatabase.instance
+                  .reference()
+                  .child(
+                      "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}")
+                  .keepSynced(true);
               return BranchPage();
             } else if (FireBaseAuth.instance.previlagelevel == 2) {
               return StreamBuilder<Event>(
@@ -54,6 +63,10 @@ class WelcomeNavigation {
                 },
               );
             } else if (FireBaseAuth.instance.previlagelevel == 1) {
+              FirebaseDatabase.instance
+                      .reference()
+                      .child(
+                          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}').keepSynced(true);
               return st_cp.CoursePage();
             } else {
               if (preferences.getString('insCode') == null ||

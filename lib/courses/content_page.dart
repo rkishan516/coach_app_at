@@ -56,7 +56,8 @@ class _ContentPageState extends State<ContentPage> {
                     var keys;
                     if (chapter.content != null) {
                       keys = chapter.content.keys.toList()
-                        ..sort((a, b) => chapter.content[a].title.toLowerCase()
+                        ..sort((a, b) => chapter.content[a].title
+                            .toLowerCase()
                             .compareTo(chapter.content[b].title.toLowerCase()));
                     }
                     length = chapter.content?.length ?? 0;
@@ -71,15 +72,10 @@ class _ContentPageState extends State<ContentPage> {
                             child: ListTile(
                               leading: CircleAvatar(
                                 child: Icon(
-                                  chapter
-                                              .content[keys
-                                                  .toList()[index]]
-                                              .kind ==
+                                  chapter.content[keys.toList()[index]].kind ==
                                           'Youtube Video'
                                       ? Icons.videocam
-                                      : chapter
-                                                  .content[keys
-                                                      .toList()[index]]
+                                      : chapter.content[keys.toList()[index]]
                                                   .kind ==
                                               'PDF'
                                           ? Icons.library_books
@@ -92,15 +88,17 @@ class _ContentPageState extends State<ContentPage> {
                                 '${chapter.content[keys.toList()[index]].title}',
                                 style: TextStyle(color: Color(0xffF36C24)),
                               ),
+                              subtitle: Text(
+                                '${chapter.content[keys.toList()[index]].time ?? 'Before 19 July'}',
+                                style: TextStyle(color: Color(0xffF36C24)),
+                              ),
                               trailing: Icon(
                                 Icons.chevron_right,
                                 color: Color(0xffF36C24),
                               ),
                               onTap: () {
                                 if (chapter
-                                        .content[keys
-                                            .toList()[index]]
-                                        .kind ==
+                                        .content[keys.toList()[index]].kind ==
                                     'Youtube Video') {
                                   Navigator.of(context).push(
                                     CupertinoPageRoute(
@@ -108,30 +106,23 @@ class _ContentPageState extends State<ContentPage> {
                                           reference: widget.reference.child(
                                               'content/${keys.toList()[index]}'),
                                           link: chapter
-                                              .content[keys
-                                                  .toList()[index]]
+                                              .content[keys.toList()[index]]
                                               .ylink),
                                     ),
                                   );
                                 } else if (chapter
-                                        .content[keys
-                                            .toList()[index]]
-                                        .kind ==
+                                        .content[keys.toList()[index]].kind ==
                                     'PDF') {
                                   Navigator.of(context).push(
                                     CupertinoPageRoute(
                                       builder: (context) => PDFPlayer(
                                         link: chapter
-                                            .content[keys
-                                                .toList()[index]]
-                                            .link,
+                                            .content[keys.toList()[index]].link,
                                       ),
                                     ),
                                   );
                                 } else if (chapter
-                                        .content[keys
-                                            .toList()[index]]
-                                        .kind ==
+                                        .content[keys.toList()[index]].kind ==
                                     'Quiz') {
                                   if (FireBaseAuth.instance.previlagelevel >
                                       1) {
@@ -159,24 +150,26 @@ class _ContentPageState extends State<ContentPage> {
                                   context, widget.reference,
                                   key: keys.toList()[index],
                                   title: chapter
-                                      .content[
-                                          keys.toList()[index]]
-                                      .title,
-                                  link: chapter.content[keys.toList()[index]].kind == 'Youtube Video'
+                                      .content[keys.toList()[index]].title,
+                                  link: chapter.content[keys.toList()[index]]
+                                              .kind ==
+                                          'Youtube Video'
                                       ? chapter
-                                          .content[keys
-                                              .toList()[index]]
-                                          .ylink
-                                      : chapter.content[keys.toList()[index]].kind == 'PDF'
+                                          .content[keys.toList()[index]].ylink
+                                      : chapter.content[keys.toList()[index]]
+                                                  .kind ==
+                                              'PDF'
                                           ? chapter
-                                              .content[keys
-                                                  .toList()[index]]
+                                              .content[keys.toList()[index]]
                                               .link
                                           : '',
                                   quizModel: chapter
+                                      .content[keys.toList()[index]].quizModel,
+                                  description: chapter
                                       .content[keys.toList()[index]]
-                                      .quizModel,
-                                  description: chapter.content[keys.toList()[index]].description,
+                                      .description,
+                                  time: chapter
+                                      .content[keys.toList()[index]].time,
                                   type: chapter.content[keys.toList()[index]].kind),
                             ),
                           ),
@@ -223,6 +216,7 @@ class _ContentPageState extends State<ContentPage> {
       String description = '',
       String link = '',
       String type = 'Youtube Video',
+      String time = '',
       QuizModel quizModel}) async {
     await showDialog(
       context: context,
@@ -233,6 +227,7 @@ class _ContentPageState extends State<ContentPage> {
         description: description,
         reference: reference,
         keyC: key,
+        time: time,
         quizModel: quizModel,
       ),
     );
@@ -246,6 +241,7 @@ class ContentUploadDialog extends StatefulWidget {
   final DatabaseReference reference;
   final String keyC;
   final String type;
+  final String time;
   final QuizModel quizModel;
   ContentUploadDialog({
     @required this.title,
@@ -254,6 +250,7 @@ class ContentUploadDialog extends StatefulWidget {
     @required this.link,
     @required this.keyC,
     @required this.type,
+    @required this.time,
     @required this.quizModel,
   });
   @override
@@ -378,29 +375,28 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                     ],
                   ),
                 ),
-                (type == 'Youtube Video' || type == 'PDF')
-                    ? Container(
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            TextField(
-                              controller: linkTextEditingController,
-                              decoration: InputDecoration(
-                                hintText: type == 'Youtube Video'
-                                    ? 'Youtube Video Link'.tr()
-                                    : 'Google Drive Link'.tr(),
-                                hintStyle: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
-                                border: InputBorder.none,
-                                fillColor: Color(0xfff3f3f4),
-                                filled: true,
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    : Container(),
+                if (type == 'Youtube Video' || type == 'PDF')
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        TextField(
+                          controller: linkTextEditingController,
+                          decoration: InputDecoration(
+                            hintText: type == 'Youtube Video'
+                                ? 'Youtube Video Link'.tr()
+                                : 'Google Drive Link'.tr(),
+                            hintStyle: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15),
+                            border: InputBorder.none,
+                            fillColor: Color(0xfff3f3f4),
+                            filled: true,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Row(
@@ -453,6 +449,12 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                             } else {
                               content.quizModel = cal;
                             }
+                          }
+                          if (widget.time == '') {
+                            content.time =
+                                DateTime.now().toIso8601String().split('T')[0];
+                          } else {
+                            content.time = widget.time;
                           }
                           if (widget.keyC == null) {
                             widget.reference

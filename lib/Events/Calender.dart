@@ -4,7 +4,7 @@ import 'package:coach_app/Events/FirebaseMessaging.dart';
 import 'package:coach_app/Events/SessionDetail.dart';
 import 'package:coach_app/Events/videoConferencing.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
-import 'package:coach_app/Models/Events.dart';
+import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Models/random_string.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,32 +60,15 @@ class _CalenderState extends State<Calender> {
 
   onEventAdded(Event event) {
     setState(() {
-      print(event.snapshot.key);
       if (event.snapshot.key != null) {
         String str = event.snapshot.key.substring(0, 10) + 'T12:00:00.000Z';
         DateTime _key = DateTime.parse(str);
         if (event.snapshot.value['teacheruid'] ==
             "${FireBaseAuth.instance.user.uid}") {
           if (_events[_key] == null) {
-            _events[_key] = [
-              EventsModal(
-                  event.snapshot.value['title'],
-                  event.snapshot.value['description'],
-                  event.snapshot.value['time'],
-                  event.snapshot.value['eventkey'],
-                  event.snapshot.value['isStarted'],
-                  event.snapshot.value['courseid'],
-                  event.snapshot.value['subject'])
-            ];
+            _events[_key] = [EventsModal.fromJson(event.snapshot.value)];
           } else {
-            _events[_key].add(EventsModal(
-                event.snapshot.value['title'],
-                event.snapshot.value['description'],
-                event.snapshot.value['time'],
-                event.snapshot.value['eventkey'],
-                event.snapshot.value['isStarted'],
-                event.snapshot.value['courseid'],
-                event.snapshot.value['subject']));
+            _events[_key].add(EventsModal.fromJson(event.snapshot.value));
           }
         }
       }
@@ -96,11 +79,9 @@ class _CalenderState extends State<Calender> {
     _showsnackbar(context, "Session is Removed".tr());
     String str = event.snapshot.key.substring(0, 10) + 'T12:00:00.000Z';
     DateTime _key = DateTime.parse(str);
-    print(_events);
     _events[_key].forEach((element) {
       if (element.eventkey == event.snapshot.value['eventkey']) {
         var index = _events[_key].indexOf(element);
-        print(_events[_key][index]);
         setState(() {
           _events[_key].removeAt(index);
         });
@@ -111,20 +92,11 @@ class _CalenderState extends State<Calender> {
   onEventChanged(Event event) {
     String str = event.snapshot.key.substring(0, 10) + 'T12:00:00.000Z';
     DateTime _key = DateTime.parse(str);
-    print(_events);
     _events[_key].forEach((element) {
       if (element.eventkey == event.snapshot.value['eventkey']) {
         var index = _events[_key].indexOf(element);
-        print(_events[_key][index]);
         setState(() {
-          _events[_key][index] = EventsModal(
-              event.snapshot.value['title'],
-              event.snapshot.value['description'],
-              event.snapshot.value['time'],
-              event.snapshot.value['eventkey'],
-              event.snapshot.value['isStarted'],
-              event.snapshot.value['courseid'],
-              event.snapshot.value['subject']);
+          _events[_key][index] = EventsModal.fromJson(event.snapshot.value);
         });
       }
     });
@@ -138,10 +110,10 @@ class _CalenderState extends State<Calender> {
 
   @override
   void dispose() {
-    _calendarController.dispose();
-    _onDataAddedSubscription.cancel();
-    _onDataChangedSubscription.cancel();
-    _onDataRemovedSubscription.cancel();
+    _calendarController?.dispose();
+    _onDataAddedSubscription?.cancel();
+    _onDataChangedSubscription?.cancel();
+    _onDataRemovedSubscription?.cancel();
     super.dispose();
   }
 
@@ -225,8 +197,6 @@ class _CalenderState extends State<Calender> {
                         _day +
                         eventkey;
                     previouspassVariable = passVariable;
-                    print(passVariable);
-                    print(_calendarController.selectedDay);
                     if (events != null) {
                       setState(() {
                         _selectedEvents = events;
@@ -261,7 +231,6 @@ class _CalenderState extends State<Calender> {
                       MaterialPageRoute(
                         builder: (context) => VideoConferencing(
                           passVariable: pass2,
-                          privilegelevel: FireBaseAuth.instance.previlagelevel,
                           eventkey: e.eventkey,
                         ),
                       ),
