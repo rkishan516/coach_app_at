@@ -1,10 +1,10 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
-import 'package:coach_app/Student/course_registration_page.dart';
+import 'package:coach_app/Payment/razorPay.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:upi_india/upi_india.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class PayOneTime extends StatelessWidget {
   final String totalfees;
@@ -50,45 +50,8 @@ class PayOneTime extends StatelessWidget {
                 .once();
             upi = value.value;
 
-            // UpiApplication application = await showDialog(
-            //   context: context,
-            //   child: Dialog(
-            //     child: Screen(),
-            //   ),
-            // );
-            // if (application == null) {
-            //   Alert.instance
-            //       .alert(context, 'No application selected or available'.tr());
-            //   return;
-            // }
-            String application = await showDialog(
-              context: context,
-              child: Dialog(
-                child: Screen(),
-              ),
-            );
-            if (application == null) {
-              Alert.instance
-                  .alert(context, 'No application selected or available'.tr());
-              return;
-            }
-            UpiResponse txnResponse = await UpiIndia().startTransaction(
-                app: application,
-                receiverUpiId: upi,
-                receiverName: upi.split('@')[0],
-                transactionNote: 'You are purchaing the course $courseName.',
-                amount: double.parse(totalfees));
-            // UpiTransactionResponse txnResponse =
-            //     await UpiPay.initiateTransaction(
-            //   amount: "$totalfees",
-            //   app: application,
-            //   receiverName: upi.split('@')[0],
-            //   receiverUpiAddress: upi,
-            //   transactionRef:
-            //       '${courseName.hashCode}${courseId.hashCode}${FireBaseAuth.instance.user.uid.hashCode}',
-            //   transactionNote: 'You are purchaing the course $courseName.',
-            // );
-            if (txnResponse.status == UpiPaymentStatus.SUCCESS) {
+            void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+              print('Payment Successful');
               await dbref
                   .reference()
                   .child(
@@ -110,7 +73,29 @@ class PayOneTime extends StatelessWidget {
               });
 
               Navigator.of(context).pop("Paid");
+
+              // Do something when payment succeeds
             }
+
+            void _handlePaymentError(PaymentFailureResponse response) {
+              print('Payment Failed');
+              // Do something when payment fails
+            }
+
+            void _handleExternalWallet(ExternalWalletResponse response) {
+              print('Payment External Wallet');
+              // Do something when an external wallet was selected
+            }
+
+            RazorPayPayment _razorPay = RazorPayPayment(_handlePaymentSuccess,
+                _handlePaymentError, _handleExternalWallet);
+
+            _razorPay.checkoutPayment(
+                double.parse(totalfees).toInt(),
+                FireBaseAuth.instance.user.displayName,
+                'You are purchaing the course $courseName.',
+                FireBaseAuth.instance.user.phoneNumber,
+                FireBaseAuth.instance.user.email);
           },
           child: Text("Pay"),
         ),

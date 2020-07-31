@@ -125,15 +125,18 @@ class Courses {
   String date;
   String medium;
   Map<String, Subjects> subjects;
+  Fees fees;
 
-  Courses(
-      {this.id,
-      this.name,
-      this.description,
-      this.price,
-      this.date,
-      this.medium,
-      this.subjects});
+  Courses({
+    this.id,
+    this.name,
+    this.description,
+    this.price,
+    this.date,
+    this.medium,
+    this.subjects,
+    this.fees,
+  });
 
   Courses.fromJson(Map<dynamic, dynamic> json) {
     id = json['id'];
@@ -148,6 +151,9 @@ class Courses {
         subjects[k] = Subjects.fromJson(v);
       });
     }
+    if (json['fees'] != null) {
+      fees = Fees.fromJson(json['fees']);
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -161,6 +167,181 @@ class Courses {
     if (this.subjects != null) {
       data['subjects'] = this.subjects.map((k, v) => MapEntry(k, v.toJson()));
     }
+    data['fees'] = this.fees.toJson();
+    return data;
+  }
+}
+
+class Fees {
+  FeeSection feeSection;
+  MaxInstallment maxInstallment;
+  OneTime oneTime;
+  Fine fine;
+
+  Fees({
+    this.feeSection,
+    this.maxInstallment,
+    this.oneTime,
+    this.fine,
+  });
+
+  Fees.fromJson(Map<dynamic, dynamic> json) {
+    if (json['FeeSection'] != null) {
+      feeSection = FeeSection.fromJson(json['FeeSection']);
+    }
+    if (json['MaxInstallment'] != null) {
+      maxInstallment = MaxInstallment.fromJson(json['MaxInstallment']);
+    }
+    if (json['OneTime'] != null) {
+      oneTime = OneTime.fromJson(json['OneTime']);
+    }
+    if (json['SetFine'] != null) {
+      fine = Fine.fromJson(json['SetFine']);
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['FeeSection'] = feeSection.toJson();
+    data['MaxInstallment'] = maxInstallment.toJson();
+    data['OneTime'] = oneTime.toJson();
+    data['SetFine'] = fine.toJson();
+    return data;
+  }
+}
+
+class MaxInstallment {
+  String maxAllowedInstallment;
+  bool isMaxAllowed;
+  Map<String, Installment> installment;
+
+  MaxInstallment({
+    this.installment,
+    this.isMaxAllowed,
+    this.maxAllowedInstallment,
+  });
+
+  MaxInstallment.fromJson(Map<dynamic, dynamic> json) {
+    maxAllowedInstallment = json['MaxAllowedInstallment'];
+    isMaxAllowed = json['IsMaxAllowed'];
+    if (json['Installments'] != null) {
+      installment = Map<String, Installment>();
+      json['Installments'].forEach((k, v) {
+        installment[k] = Installment.fromJson(v);
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['MaxAllowedInstallment'] = this.maxAllowedInstallment;
+    data['IsMaxAllowed'] = this.isMaxAllowed;
+    data['Installments'] =
+        this.installment.map((k, v) => MapEntry(k, v.toJson()));
+    return data;
+  }
+}
+
+class Installment {
+  String duration;
+  String amount;
+
+  Installment({
+    this.duration,
+    this.amount,
+  });
+
+  Installment.fromJson(Map<dynamic, dynamic> json) {
+    duration = json['Duration'];
+    amount = json['Amount'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['Duration'] = this.duration;
+    data['Amount'] = this.amount;
+    return data;
+  }
+}
+
+class OneTime {
+  String duration;
+  bool isOneTimeAllowed;
+
+  OneTime({this.duration, this.isOneTimeAllowed});
+
+  OneTime.fromJson(Map<dynamic, dynamic> json) {
+    duration = json['Duration'];
+    isOneTimeAllowed = json['IsOneTimeAllowed'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['Duration'] = this.duration;
+    data['IsOneTimeAllowed'] = this.isOneTimeAllowed;
+    return data;
+  }
+}
+
+class Fine {
+  String duration;
+  String fineAmount;
+  bool isFineAllowed;
+  Fine({
+    this.duration,
+    this.isFineAllowed,
+    this.fineAmount,
+  });
+
+  Fine.fromJson(Map<dynamic, dynamic> json) {
+    duration = json['Duration'];
+    fineAmount = json['FineAmount'];
+    isFineAllowed = json['IsFineAllowed'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['Duration'] = this.duration;
+    data['FineAmount'] = this.fineAmount;
+    data['IsFineAllowed'] = this.isFineAllowed;
+    return data;
+  }
+}
+
+class FeeSection {
+  String admissionFees;
+  String extraFees;
+  String labFees;
+  String libraryFees;
+  String tutionFees;
+  String totalFees;
+
+  FeeSection({
+    this.totalFees,
+    this.tutionFees,
+    this.libraryFees,
+    this.labFees,
+    this.extraFees,
+    this.admissionFees,
+  });
+
+  FeeSection.fromJson(Map<dynamic, dynamic> json) {
+    admissionFees = json['AdmissionFees'];
+    extraFees = json['ExtraFees'];
+    labFees = json['LabFees'];
+    libraryFees = json['LibraryFees'];
+    tutionFees = json['TutionFees'];
+    totalFees = json['TotalFees'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['AdmissionFees'] = this.admissionFees;
+    data['ExtraFees'] = this.extraFees;
+    data['LabFees'] = this.labFees;
+    data['LibraryFees'] = this.libraryFees;
+    data['TutionFees'] = this.tutionFees;
+    data['TotalFees'] = this.totalFees;
     return data;
   }
 }
@@ -337,6 +518,7 @@ class Student {
   List<Course> course;
   String email;
   String classs;
+  RequestedCourseFee requestedCourseFee;
   String name;
   String phoneNo;
   String photoURL;
@@ -353,18 +535,24 @@ class Student {
       this.photoURL,
       this.rollNo,
       this.status,
+      this.requestedCourseFee,
       this.fatherName,
       this.classs});
 
   Student.fromJson(Map<dynamic, dynamic> json) {
     address = json['address'];
     classs = json['class'];
+    if (json['requestedCourseFee'] != null) {
+      requestedCourseFee =
+          RequestedCourseFee.fromJson(json['requestedCourseFee']);
+    }
     if (json['course'] != null) {
       course = new List<Course>();
       json['course'].forEach((k, v) {
         course.add(new Course.fromJson(v));
       });
     }
+
     email = json['email'];
     name = json['name'];
     phoneNo = json['phone No'];
@@ -377,6 +565,9 @@ class Student {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['class'] = this.classs;
+    if (this.requestedCourseFee != null) {
+      data['requestedCourseFee'] = this.requestedCourseFee.toJson();
+    }
     data['address'] = this.address;
     if (this.course != null) {
       data['course'] = this.course.map((v) => v.toJson()).toList();
@@ -388,6 +579,32 @@ class Student {
     data['rollNo'] = this.rollNo;
     data['fatherName'] = this.fatherName;
     data['status'] = this.status;
+    return data;
+  }
+}
+
+class RequestedCourseFee {
+  bool isPaidOneTime;
+  List<bool> installments;
+
+  RequestedCourseFee({this.isPaidOneTime, this.installments});
+
+  RequestedCourseFee.fromJson(Map<dynamic, dynamic> json) {
+    isPaidOneTime = json['isPaidOneTime'];
+    if (json['installments'] != null) {
+      installments = List<bool>();
+      json['installments'].forEach((v) {
+        installments.add(v);
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['isPaidOneTime'] = this.isPaidOneTime;
+    if (this.isPaidOneTime == false) {
+      data['installments'] = installments;
+    }
     return data;
   }
 }

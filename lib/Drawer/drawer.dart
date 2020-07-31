@@ -27,6 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 getDrawer(BuildContext context) {
   FirebaseUser user = FireBaseAuth.instance.user;
@@ -50,8 +51,8 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        children: <Widget>[
+      child: Column(
+        children: [
           UserAccountsDrawerHeader(
             accountName: Text(widget.user.displayName),
             accountEmail: Text(
@@ -73,114 +74,110 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                   }
                 : null,
           ),
-          ListTile(
-            title: Text('My Institute'.tr()),
-            leading: Icon(Icons.school),
-            trailing: IconButton(
-              icon: Icon(Icons.share),
-              onPressed: () async {
-                var key;
-                await FirebaseDatabase.instance
-                    .reference()
-                    .child('/instituteList/')
-                    .orderByValue()
-                    .equalTo(FireBaseAuth.instance.instituteid)
-                    .once()
-                    .then((value) => key = value.value.keys.toList()[0]);
-                try {
-                  final ByteData bytes =
-                      await rootBundle.load('assets/images/logo.png');
-                  await Share.file('Share The Institute', 'esys.jpg',
-                      bytes.buffer.asUint8List(), 'logo/png',
-                      text:
-                          'Hello, Our digital institute is on GuruCool, Download GuruCool from Following link:\n\n https://play.google.com/store/apps/details?id=com.VysionTech.gurucool\n\n and register with our Institute Code: ${key}${FireBaseAuth.instance.branchid}');
-                } catch (e) {
-                  print('error: $e');
-                }
-              },
-            ),
-            onTap: () async {
-              Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (context) => MyInstitute(),
-                ),
-              );
-            },
-          ),
-          if (FireBaseAuth.instance.previlagelevel == 1)
-            ListTile(
-              title: Text('All Courses'.tr()),
-              leading: Icon(Icons.book),
-              onTap: () => Navigator.of(context).pushAndRemoveUntil(
-                  CupertinoPageRoute(
-                    builder: (context) => AllCoursePage(
-                      ref: FirebaseDatabase.instance.reference().child(
-                          '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}'),
-                    ),
+          Expanded(
+            child: ListView(
+              children: <Widget>[
+                ListTile(
+                  title: Text('My Institute'.tr()),
+                  leading: Icon(Icons.school),
+                  trailing: IconButton(
+                    icon: Icon(Icons.share),
+                    onPressed: () async {
+                      var key;
+                      await FirebaseDatabase.instance
+                          .reference()
+                          .child('/instituteList/')
+                          .orderByValue()
+                          .equalTo(FireBaseAuth.instance.instituteid)
+                          .once()
+                          .then((value) => key = value.value.keys.toList()[0]);
+                      try {
+                        final ByteData bytes =
+                            await rootBundle.load('assets/images/logo.png');
+                        await Share.file('Share The Institute', 'esys.jpg',
+                            bytes.buffer.asUint8List(), 'logo/png',
+                            text:
+                                'Hello, Our digital institute is on GuruCool, Download GuruCool from Following link:\n\n https://play.google.com/store/apps/details?id=com.VysionTech.gurucool\n\n and register with our Institute Code: ${key}${FireBaseAuth.instance.branchid}');
+                      } catch (e) {
+                        print('error: $e');
+                      }
+                    },
                   ),
-                  (route) => false),
-            ),
-          if (FireBaseAuth.instance.previlagelevel == 1)
-            ListTile(
-              title: Text('My Courses'.tr()),
-              leading: Icon(Icons.book),
-              onTap: () => Navigator.of(context).pushAndRemoveUntil(
-                  CupertinoPageRoute(
-                    builder: (context) => CoursePage(),
-                  ),
-                  (route) => false),
-            ),
-          if (FireBaseAuth.instance.previlagelevel == 1)
-            ListTile(
-              title: Text('Fee Section'),
-              leading: Icon(Icons.attach_money),
-              onTap: () => Navigator.of(context).pushAndRemoveUntil(
-                  CupertinoPageRoute(
-                    builder: (context) => CoursePage(
-                      isFromDrawer: true,
-                    ),
-                  ),
-                  (route) => false),
-            ),
-          ListTile(
-            title: Text('Admin Corner'.tr()),
-            leading: Icon(Icons.notifications_active),
-            onTap: () => Navigator.of(context)
-                .push(CupertinoPageRoute(builder: (context) => NoticeBoard())),
-          ),
-          if (FireBaseAuth.instance.previlagelevel == 4)
-            ListTile(
-              title: Text(
-                'All branches'.tr(),
-              ),
-              leading: Icon(Icons.business),
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    CupertinoPageRoute(builder: (context) => BranchList()),
-                    (route) => false);
-              },
-            ),
-          if (FireBaseAuth.instance.previlagelevel >= 4)
-            ExpansionPanelList(
-              expansionCallback: (index, isOn) {
-                setState(() {
-                  isExpandedSS = !isExpandedSS;
-                });
-              },
-              children: [
-                ExpansionPanel(
-                  canTapOnHeader: true,
-                  headerBuilder: (context, isOn) {
-                    return ListTile(
-                      leading: Icon(Icons.person),
-                      title: Text(
-                        'SubAdmin Section',
+                  onTap: () async {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => MyInstitute(),
                       ),
                     );
                   },
-                  isExpanded: isExpandedSS,
-                  body: ListView(
-                    shrinkWrap: true,
+                ),
+                if (FireBaseAuth.instance.previlagelevel == 1)
+                  ListTile(
+                    title: Text('All Courses'.tr()),
+                    leading: Icon(Icons.book),
+                    onTap: () => Navigator.of(context).pushAndRemoveUntil(
+                        CupertinoPageRoute(
+                          builder: (context) => AllCoursePage(
+                            ref: FirebaseDatabase.instance.reference().child(
+                                '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}'),
+                          ),
+                        ),
+                        (route) => false),
+                  ),
+                if (FireBaseAuth.instance.previlagelevel == 1)
+                  ListTile(
+                    title: Text('My Courses'.tr()),
+                    leading: Icon(Icons.book),
+                    onTap: () => Navigator.of(context).pushAndRemoveUntil(
+                        CupertinoPageRoute(
+                          builder: (context) => CoursePage(),
+                        ),
+                        (route) => false),
+                  ),
+                if (FireBaseAuth.instance.previlagelevel == 1)
+                  ListTile(
+                    title: Text('Fee Section'),
+                    leading: Icon(Icons.attach_money),
+                    onTap: () => Navigator.of(context).pushAndRemoveUntil(
+                        CupertinoPageRoute(
+                          builder: (context) => CoursePage(
+                            isFromDrawer: true,
+                          ),
+                        ),
+                        (route) => false),
+                  ),
+                ListTile(
+                  title: Text('Admin Corner'.tr()),
+                  leading: Icon(Icons.notifications_active),
+                  onTap: () => Navigator.of(context).push(
+                      CupertinoPageRoute(builder: (context) => NoticeBoard())),
+                ),
+                if (FireBaseAuth.instance.previlagelevel == 4)
+                  ListTile(
+                    title: Text(
+                      'All branches'.tr(),
+                    ),
+                    leading: Icon(Icons.business),
+                    onTap: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                          CupertinoPageRoute(
+                              builder: (context) => BranchList()),
+                          (route) => false);
+                    },
+                  ),
+                if (FireBaseAuth.instance.previlagelevel >= 4)
+                  ExpansionTile(
+                    title: Text(
+                      'SubAdmin Section',
+                    ),
+                    leading: Icon(Icons.person),
+                    onExpansionChanged: (val) {
+                      setState(() {
+                        isExpandedSS = !isExpandedSS;
+                      });
+                    },
+                    backgroundColor: Colors.grey[200],
+                    initiallyExpanded: false,
                     children: [
                       ListTile(
                         title: Text(
@@ -206,65 +203,55 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          if (FireBaseAuth.instance.previlagelevel != 4 &&
-              FireBaseAuth.instance.previlagelevel != 1)
-            ListTile(
-              title: Text('Show Meeting'),
-              leading: Icon(Icons.video_call),
-              onTap: () {
-                Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) => StudentEvent(),
-                  ),
-                );
-              },
-            ),
-          if (FireBaseAuth.instance.previlagelevel >= 3)
-            ListView(
-              controller: ScrollController(),
-              shrinkWrap: true,
-              children: <Widget>[
-                ListTile(
-                  title: Text('Arrange Meeting'),
-                  leading: Icon(Icons.video_call),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (context) => Calender(),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: Text('Student Requests'.tr()),
-                  leading: Icon(Icons.verified_user),
-                  onTap: () => Navigator.of(context).push(CupertinoPageRoute(
-                      builder: (context) => StudentsRequests())),
-                ),
-                if (FireBaseAuth.instance.previlagelevel >= 3)
-                  ExpansionPanelList(
-                    expansionCallback: (index, isOn) {
-                      setState(() {
-                        isExpandedFS = !isExpandedFS;
-                      });
+                if (FireBaseAuth.instance.previlagelevel != 4 &&
+                    FireBaseAuth.instance.previlagelevel != 1)
+                  ListTile(
+                    title: Text('Show Meeting'),
+                    leading: Icon(Icons.video_call),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (context) => StudentEvent(),
+                        ),
+                      );
                     },
-                    children: [
-                      ExpansionPanel(
-                        canTapOnHeader: true,
-                        headerBuilder: (context, isOn) {
-                          return ListTile(
-                            leading: Icon(Icons.attach_money),
-                            title: Text(
-                              'Fee Section',
+                  ),
+                if (FireBaseAuth.instance.previlagelevel >= 3)
+                  ListView(
+                    controller: ScrollController(),
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      ListTile(
+                        title: Text('Arrange Meeting'),
+                        leading: Icon(Icons.video_call),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (context) => Calender(),
                             ),
                           );
                         },
-                        isExpanded: isExpandedFS,
-                        body: ListView(
-                          shrinkWrap: true,
+                      ),
+                      ListTile(
+                        title: Text('Student Requests'.tr()),
+                        leading: Icon(Icons.verified_user),
+                        onTap: () => Navigator.of(context).push(
+                            CupertinoPageRoute(
+                                builder: (context) => StudentsRequests())),
+                      ),
+                      if (FireBaseAuth.instance.previlagelevel >= 3)
+                        ExpansionTile(
+                          title: Text(
+                            'Fee Section',
+                          ),
+                          leading: Icon(MdiIcons.currencyInr),
+                          onExpansionChanged: (val) {
+                            setState(() {
+                              isExpandedFS = !isExpandedFS;
+                            });
+                          },
+                          backgroundColor: Colors.grey[200],
+                          initiallyExpanded: false,
                           children: [
                             ListTile(
                               title: Text('Coupon List'),
@@ -355,59 +342,50 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                                 );
                               },
                             ),
-                            ListTile(
-                              title: Text('Fee Management'),
-                              leading: Icon(Icons.featured_video),
-                              onTap: () async {
-                                Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) => FeeStructure(),
-                                  ),
-                                );
-                              },
-                            ),
                           ],
                         ),
-                      ),
                     ],
                   ),
+                ListTile(
+                  title: Text('Privacy & Policy'.tr()),
+                  leading: Icon(Icons.local_parking),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => PrivacyPolicy()),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text('Language'.tr()),
+                  leading: Icon(Icons.language),
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) => LanguageDialog());
+                  },
+                ),
+                ListTile(
+                  title: Text('Log Out'.tr()),
+                  leading: Icon(Icons.exit_to_app),
+                  onTap: () async {
+                    String res = await showDialog(
+                        context: context, builder: (context) => AreYouSure());
+                    if (res != 'Yes') {
+                      return;
+                    }
+                    FireBaseAuth.instance.signoutWithGoogle().then(
+                      (value) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (context) => WelcomePage()),
+                            (route) => false);
+                      },
+                    );
+                  },
+                )
               ],
             ),
-          ListTile(
-            title: Text('Privacy & Policy'.tr()),
-            leading: Icon(Icons.local_parking),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => PrivacyPolicy()),
-              );
-            },
           ),
-          ListTile(
-            title: Text('Language'.tr()),
-            leading: Icon(Icons.language),
-            onTap: () {
-              showDialog(
-                  context: context, builder: (context) => LanguageDialog());
-            },
-          ),
-          ListTile(
-            title: Text('Log Out'.tr()),
-            leading: Icon(Icons.exit_to_app),
-            onTap: () async {
-              String res = await showDialog(
-                  context: context, builder: (context) => AreYouSure());
-              if (res != 'Yes') {
-                return;
-              }
-              FireBaseAuth.instance.signoutWithGoogle().then(
-                (value) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => WelcomePage()),
-                      (route) => false);
-                },
-              );
-            },
-          )
         ],
       ),
     );

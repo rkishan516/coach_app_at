@@ -12,7 +12,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:upi_india/upi_india.dart';
 
 class CourseRegistrationPage extends StatefulWidget {
   final DatabaseReference ref;
@@ -179,39 +178,16 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                       ),
                                       child: FlatButton(
                                         onPressed: () {
-                                          //TODO: Remove till next todo
-                                          widget.ref
-                                              .parent()
-                                              .parent()
-                                              .child(
-                                                  '/students/${FireBaseAuth.instance.user.uid}/class')
-                                              .set(widget.courseID);
-                                          widget.ref
-                                              .parent()
-                                              .parent()
-                                              .child(
-                                                  '/students/${FireBaseAuth.instance.user.uid}/status')
-                                              .set('Existing Student');
-                                          Navigator.of(context)
-                                              .pushAndRemoveUntil(
+                                          Navigator.of(context).push(
                                             MaterialPageRoute(
                                               builder: (context) {
-                                                return WaitScreen();
+                                                return InstallMentList(
+                                                  ref: widget.ref,
+                                                  courseID: widget.courseID,
+                                                );
                                               },
                                             ),
-                                            (route) => false,
                                           );
-                                          //TODO: remove till here and umcomment below navigator
-                                          // Navigator.of(context).push(
-                                          //   MaterialPageRoute(
-                                          //     builder: (context) {
-                                          //       return InstallMentList(
-                                          //         ref: widget.ref,
-                                          //         courseID: widget.courseID,
-                                          //       );
-                                          //     },
-                                          //   ),
-                                          // );
                                         },
                                         child: Text(
                                           'Paid Offline',
@@ -374,202 +350,6 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
               return UploadDialog(warning: 'Fetching'.tr());
             }
           },
-        ),
-      ),
-    );
-  }
-}
-
-// class Screen extends StatefulWidget {
-//   @override
-//   _ScreenState createState() => _ScreenState();
-// }
-
-// class _ScreenState extends State<Screen> {
-//   Future<List<ApplicationMeta>> _appsFuture;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _appsFuture = UpiPay.getInstalledUpiApplications();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Card(
-//       child: Container(
-//         width: MediaQuery.of(context).size.width,
-//         height: MediaQuery.of(context).size.width,
-//         child: ListView(
-//           children: <Widget>[
-//             Container(
-//               margin: EdgeInsets.only(top: 20),
-//               child: Column(
-//                 mainAxisSize: MainAxisSize.min,
-//                 children: <Widget>[
-//                   Container(
-//                     margin: EdgeInsets.only(bottom: 12),
-//                     child: Text(
-//                       'Pay Using'.tr(),
-//                       style: Theme.of(context).textTheme.caption,
-//                     ),
-//                   ),
-//                   FutureBuilder<List<ApplicationMeta>>(
-//                     future: _appsFuture,
-//                     builder: (context, snapshot) {
-//                       if (snapshot.connectionState != ConnectionState.done) {
-//                         return UploadDialog(
-//                           warning: 'Fetching Apps'.tr(),
-//                         );
-//                       }
-//                       if (snapshot.data.length == 0) {
-//                         Timer(Duration(seconds: 1), () {
-//                           Navigator.of(context).pop();
-//                         });
-//                         return UploadDialog(
-//                           warning: 'Fetching Apps'.tr(),
-//                         );
-//                       }
-
-//                       return GridView.count(
-//                         crossAxisCount: 2,
-//                         shrinkWrap: true,
-//                         mainAxisSpacing: 8,
-//                         crossAxisSpacing: 8,
-//                         childAspectRatio: 1,
-//                         physics: NeverScrollableScrollPhysics(),
-//                         children: snapshot.data
-//                             .map((it) => Material(
-//                                   key: ObjectKey(it.upiApplication),
-//                                   color: Colors.white,
-//                                   child: InkWell(
-//                                     onTap: () => Navigator.of(context)
-//                                         .pop(it.upiApplication),
-//                                     child: Column(
-//                                       mainAxisSize: MainAxisSize.min,
-//                                       mainAxisAlignment:
-//                                           MainAxisAlignment.center,
-//                                       children: <Widget>[
-//                                         Image.memory(
-//                                           it.icon,
-//                                           width: 64,
-//                                           height: 64,
-//                                         ),
-//                                         Container(
-//                                           margin: EdgeInsets.only(top: 4),
-//                                           child: Text(
-//                                             it.upiApplication.getAppName(),
-//                                           ),
-//                                         ),
-//                                       ],
-//                                     ),
-//                                   ),
-//                                 ))
-//                             .toList(),
-//                       );
-//                     },
-//                   ),
-//                 ],
-//               ),
-//             )
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-class Screen extends StatefulWidget {
-  @override
-  _ScreenState createState() => _ScreenState();
-}
-
-class _ScreenState extends State<Screen> {
-  Future<List<UpiApp>> _appsFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _appsFuture = UpiIndia().getAllUpiApps();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.width,
-        child: ListView(
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(top: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(bottom: 12),
-                    child: Text(
-                      'Pay Using'.tr(),
-                      style: Theme.of(context).textTheme.caption,
-                    ),
-                  ),
-                  FutureBuilder<List<UpiApp>>(
-                    future: _appsFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState != ConnectionState.done) {
-                        return UploadDialog(
-                          warning: 'Fetching Apps'.tr(),
-                        );
-                      }
-                      if (snapshot.data.length == 0) {
-                        Timer(Duration(seconds: 1), () {
-                          Navigator.of(context).pop();
-                        });
-                        return UploadDialog(
-                          warning: 'Fetching Apps'.tr(),
-                        );
-                      }
-
-                      return GridView.count(
-                        crossAxisCount: 2,
-                        shrinkWrap: true,
-                        mainAxisSpacing: 8,
-                        crossAxisSpacing: 8,
-                        childAspectRatio: 1,
-                        physics: NeverScrollableScrollPhysics(),
-                        children: snapshot.data
-                            .map((it) => Material(
-                                  key: ObjectKey(it.app),
-                                  color: Colors.white,
-                                  child: InkWell(
-                                    onTap: () =>
-                                        Navigator.of(context).pop(it.app),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Image.memory(
-                                          it.icon,
-                                          width: 64,
-                                          height: 64,
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(top: 4),
-                                          child: Text(it.name),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ))
-                            .toList(),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            )
-          ],
         ),
       ),
     );

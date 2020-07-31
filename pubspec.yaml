@@ -39,9 +39,8 @@ dependencies:
   firebase_auth:
   image_picker:
   easy_localization:
-  upi_india:
-  # upi_pay:
-  slide_to_confirm:
+  material_design_icons_flutter:
+  razorpay_flutter:
   esys_flutter_share:
   shared_preferences:
   firebase_messaging:
@@ -80,6 +79,7 @@ flutter:
   assets:
     - assets/translation/
     - assets/images/
+    - assets/icons/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
