@@ -58,7 +58,8 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
       },
       child: Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.0), color: Colors.orange),
+            borderRadius: BorderRadius.circular(20.0),
+            color: Color(0xffF36C24)),
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(vertical: 15),
         alignment: Alignment.center,
@@ -201,7 +202,7 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
                 height: MediaQuery.of(context).size.height * 0.75,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.0),
-                  color: Colors.orange,
+                  color: Color(0xffF36C24),
                 ),
                 child: Column(children: [
                   Row(

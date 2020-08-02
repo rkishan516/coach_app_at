@@ -1,6 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Drawer/drawer.dart';
+import 'package:coach_app/FeeSection/StudentSection/installmentList.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/StudentProfile.dart';
@@ -115,8 +116,10 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context)=> StudentProfile(student: widget.student, keyS: widget.keyS)));
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                StudentProfile(student: widget.student, keyS: widget.keyS)));
       },
       child: Card(
         elevation: 5.0,
@@ -219,6 +222,71 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                     )
                   ],
                 ),
+              ],
+            ),
+            ListView(
+              shrinkWrap: true,
+              controller: ScrollController(),
+              children: [
+                SwitchListTile.adaptive(
+                  title: Text('Paid One Time'),
+                  value: widget.student.requestedCourseFee.isPaidOneTime,
+                  onChanged: (val) {
+                    setState(() {
+                      widget.student.requestedCourseFee.isPaidOneTime =
+                          !widget.student.requestedCourseFee.isPaidOneTime;
+                    });
+                  },
+                ),
+                SwitchListTile.adaptive(
+                  title: Text('Paid In Installments'),
+                  value: !widget.student.requestedCourseFee.isPaidOneTime,
+                  onChanged: (val) {
+                    setState(() {
+                      widget.student.requestedCourseFee.isPaidOneTime =
+                          !widget.student.requestedCourseFee.isPaidOneTime;
+                    });
+                  },
+                ),
+                if (!widget.student.requestedCourseFee.isPaidOneTime)
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: int.parse(selectedCourse
+                            ?.fees?.maxInstallment?.maxAllowedInstallment ??
+                        "0"),
+                    itemBuilder: (context, index) {
+                      if (widget.student.requestedCourseFee.installments ==
+                          null) {
+                        widget.student.requestedCourseFee.installments =
+                            List<bool>.filled(
+                                int.parse(selectedCourse?.fees?.maxInstallment
+                                        ?.maxAllowedInstallment ??
+                                    "0"),
+                                false,
+                                growable: true);
+                      }
+                      return CheckboxListTile(
+                        title: Text('Installment ${index + 1}'),
+                        value: widget
+                            .student.requestedCourseFee.installments[index],
+                        onChanged: (val) {
+                          setState(
+                            () {
+                              if (val == true) {
+                                for (int i = 0; i <= index; i++) {
+                                  widget.student.requestedCourseFee
+                                      .installments[i] = true;
+                                }
+                              } else {
+                                widget.student.requestedCourseFee
+                                    .installments[index] = false;
+                              }
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
               ],
             ),
             Container(

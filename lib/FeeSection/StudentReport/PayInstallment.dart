@@ -78,9 +78,10 @@ class PayInstallment extends StatelessWidget {
             _razorPay.checkoutPayment(
                 double.parse(seqinstallment.amount).toInt() +
                     double.parse(seqinstallment.fine == ''
-                            ? '0'
-                            : seqinstallment.fine)
-                        .toInt(),
+                                ? '0'
+                                : seqinstallment.fine)
+                            .toInt() *
+                        100,
                 FireBaseAuth.instance.user.displayName,
                 'You are purchaing the course $courseName.',
                 FireBaseAuth.instance.user.phoneNumber,

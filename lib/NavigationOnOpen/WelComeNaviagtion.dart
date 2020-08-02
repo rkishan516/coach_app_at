@@ -64,9 +64,10 @@ class WelcomeNavigation {
               );
             } else if (FireBaseAuth.instance.previlagelevel == 1) {
               FirebaseDatabase.instance
-                      .reference()
-                      .child(
-                          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}').keepSynced(true);
+                  .reference()
+                  .child(
+                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}')
+                  .keepSynced(true);
               return st_cp.CoursePage();
             } else {
               if (preferences.getString('insCode') == null ||

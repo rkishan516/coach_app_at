@@ -91,7 +91,7 @@ class PayOneTime extends StatelessWidget {
                 _handlePaymentError, _handleExternalWallet);
 
             _razorPay.checkoutPayment(
-                double.parse(totalfees).toInt(),
+                double.parse(totalfees).toInt() * 100,
                 FireBaseAuth.instance.user.displayName,
                 'You are purchaing the course $courseName.',
                 FireBaseAuth.instance.user.phoneNumber,

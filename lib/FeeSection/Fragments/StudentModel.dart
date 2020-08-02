@@ -181,7 +181,9 @@ Future<List<NoInstallments>> _createInstallmentmodel(
                     double.parse(fineMap["SetFine"]["FineAmount"]))
                 .toStringAsFixed(2));
             fine = val.toString();
-            status = "Fine";
+            if (val != 0.00) {
+              status = "Fine";
+            }
           }
 
           dbref

@@ -59,7 +59,6 @@ class _AddCourseState extends State<AddCourse> {
   bool toggleValue3 = false;
   String _prevTotalText = "";
   _changeTotalFees(value) {
-    print(value);
     setState(() {
       _totalText.text = (double.parse(
                   _admissionText.text != '' ? _admissionText.text : "0") +
@@ -199,29 +198,6 @@ class _AddCourseState extends State<AddCourse> {
                             setState(() {
                               noOfTextFields =
                                   int.parse(value != "" ? value : "0");
-                              _listEditingControllerDD =
-                                  new List<TextEditingController>(
-                                      noOfTextFields);
-                              _listEditingControllerYYYY =
-                                  new List<TextEditingController>(
-                                      noOfTextFields);
-                              _listEditingControllerMoney =
-                                  new List(noOfTextFields);
-                              for (int i = 0; i < noOfTextFields; i++) {
-                                _listEditingControllerMoney[i] =
-                                    TextEditingController(
-                                        text: !toggleValue1
-                                            ? (double.parse((double.parse(
-                                                            _totalText.text) /
-                                                        noOfTextFields)
-                                                    .toStringAsFixed(2))
-                                                .toString())
-                                            : "");
-                                _listEditingControllerDD[i] =
-                                    TextEditingController();
-                                _listEditingControllerYYYY[i] =
-                                    TextEditingController();
-                              }
                             });
                           },
                           controller: _maxInstallText,
@@ -324,7 +300,6 @@ class _AddCourseState extends State<AddCourse> {
                           onChanged: (String newValueSelected) {
                             setState(() {
                               _mmSelected = newValueSelected;
-                              print(_mmSelected);
                             });
                           },
                           isExpanded: true,
@@ -403,16 +378,17 @@ class _AddCourseState extends State<AddCourse> {
                                 keyboardType: TextInputType.number,
                                 style: TextStyle(color: Color(0xffF36C24)),
                                 decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0)),
-                                      borderSide: BorderSide(
-                                        color: Colors.white,
-                                      ),
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(
+                                      color: Colors.white,
                                     ),
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                    hintText: "Enter value"),
+                                  ),
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  hintText: "Enter value",
+                                ),
                               ),
                             ),
                           ),
@@ -457,16 +433,17 @@ class _AddCourseState extends State<AddCourse> {
                                 ),
                                 textAlign: TextAlign.center,
                                 decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10.0)),
-                                      borderSide: BorderSide(
-                                        color: Colors.white,
-                                      ),
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide: BorderSide(
+                                      color: Colors.white,
                                     ),
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                    hintText: "Enter value"),
+                                  ),
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  hintText: "Enter value",
+                                ),
                               ),
                             ),
                           ),
@@ -507,40 +484,40 @@ class _AddCourseState extends State<AddCourse> {
               thickness: 2.0,
             ),
             _saveButton(),
-            // Align(
-            //   alignment: Alignment.bottomRight,
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //     children: <Widget>[
-            //       (widget.courseid == '')
-            //           ? Container()
-            //           : FlatButton(
-            //               onPressed: () async {
-            //                 String res = await showDialog(
-            //                     context: context,
-            //                     builder: (context) => AreYouSure());
-            //                 if (res != 'Yes') {
-            //                   return;
-            //                 }
-            //                 FirebaseDatabase.instance
-            //                     .reference()
-            //                     .child(
-            //                         'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseid}')
-            //                     .remove();
-            //                 FirebaseDatabase.instance
-            //                     .reference()
-            //                     .child(
-            //                         'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList/${widget.courseid}')
-            //                     .remove();
-            //                 Navigator.of(context).pop();
-            //               },
-            //               child: Text(
-            //                 'Remove'.tr(),
-            //               ),
-            //             ),
-            //     ],
-            //   ),
-            // ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  (widget.course.id == null)
+                      ? Container()
+                      : FlatButton(
+                          onPressed: () async {
+                            String res = await showDialog(
+                                context: context,
+                                builder: (context) => AreYouSure());
+                            if (res != 'Yes') {
+                              return;
+                            }
+                            FirebaseDatabase.instance
+                                .reference()
+                                .child(
+                                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.course.id}')
+                                .remove();
+                            FirebaseDatabase.instance
+                                .reference()
+                                .child(
+                                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList/${widget.course.id}')
+                                .remove();
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            'Remove'.tr(),
+                          ),
+                        ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -593,9 +570,20 @@ class _AddCourseState extends State<AddCourse> {
           amount: _listEditingControllerMoney[i].text,
           duration: _listEditingControllerDD[i].text +
               " " +
-              _currentDurationSelected[i] +
+              _listEditingControllerMM[i].text +
               " " +
               _listEditingControllerYYYY[i].text);
+    }
+
+    if (toggleValue1) {
+      double amount = 0.0;
+      installments.forEach((key, value) {
+        amount += double.parse(value.amount);
+      });
+      if (amount != double.parse(_totalText.text)) {
+        Alert.instance.alert(context, 'Please adjust installment price');
+        return;
+      }
     }
 
     Courses course = Courses(
@@ -640,13 +628,11 @@ class _AddCourseState extends State<AddCourse> {
             'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${course.id}')
         .update(course.toJson());
 
-    if (widget.isEdit == false) {
-      FirebaseDatabase.instance
-          .reference()
-          .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList/')
-          .update({course.id: course.name});
-    }
+    FirebaseDatabase.instance
+        .reference()
+        .child(
+            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList/')
+        .update({course.id: course.name});
 
     _pref.setString("${widget.course.id}", _totalText.text);
     Navigator.of(context).pop();
@@ -744,22 +730,23 @@ class _AddCourseState extends State<AddCourse> {
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.white,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.white,
                       ),
-                      filled: true,
-                      fillColor: Color(0xffF36C24),
-                      hintStyle: TextStyle(color: Colors.white),
-                      hintText: "Enter value"),
+                    ),
+                    filled: true,
+                    fillColor: Color(0xffF36C24),
+                    hintStyle: TextStyle(color: Colors.white),
+                    hintText: "Enter value",
+                  ),
                 ),
               ),
               Padding(
@@ -803,22 +790,23 @@ class _AddCourseState extends State<AddCourse> {
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.white,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.white,
                       ),
-                      filled: true,
-                      fillColor: Color(0xffF36C24),
-                      hintStyle: TextStyle(color: Colors.white),
-                      hintText: "Enter value"),
+                    ),
+                    filled: true,
+                    fillColor: Color(0xffF36C24),
+                    hintStyle: TextStyle(color: Colors.white),
+                    hintText: "Enter value",
+                  ),
                 ),
               ),
               Padding(
@@ -862,22 +850,23 @@ class _AddCourseState extends State<AddCourse> {
                   style: TextStyle(color: Colors.white),
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.white,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.white,
                       ),
-                      filled: true,
-                      fillColor: Color(0xffF36C24),
-                      hintStyle: TextStyle(color: Colors.white),
-                      hintText: "Enter value"),
+                    ),
+                    filled: true,
+                    fillColor: Color(0xffF36C24),
+                    hintStyle: TextStyle(color: Colors.white),
+                    hintText: "Enter value",
+                  ),
                 ),
               ),
               Padding(
@@ -921,22 +910,23 @@ class _AddCourseState extends State<AddCourse> {
                   style: TextStyle(color: Colors.white),
                   textAlign: TextAlign.center,
                   decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Color(0xffF36C24),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
+                    filled: true,
+                    fillColor: Color(0xffF36C24),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.white,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Colors.white,
                       ),
-                      hintStyle: TextStyle(color: Colors.white),
-                      hintText: "Enter Value"),
+                    ),
+                    hintStyle: TextStyle(color: Colors.white),
+                    hintText: "Enter value",
+                  ),
                 ),
               ),
               Padding(
@@ -1170,7 +1160,9 @@ class _AddCourseState extends State<AddCourse> {
     _listEditingControllerDD = new List<TextEditingController>(noOfTextFields);
     _listEditingControllerYYYY =
         new List<TextEditingController>(noOfTextFields);
-    _listEditingControllerMoney = new List(noOfTextFields);
+    _listEditingControllerMM = List<TextEditingController>(noOfTextFields);
+    _listEditingControllerMoney =
+        new List<TextEditingController>(noOfTextFields);
     for (int i = 0; i < noOfTextFields; i++) {
       _listEditingControllerMoney[i] = TextEditingController(
           text: !toggleValue1
@@ -1178,6 +1170,7 @@ class _AddCourseState extends State<AddCourse> {
                       .toStringAsFixed(2))
                   .toString())
               : "");
+      _listEditingControllerMM[i] = TextEditingController();
       _listEditingControllerDD[i] = TextEditingController();
       _listEditingControllerYYYY[i] = TextEditingController();
     }
@@ -1187,7 +1180,7 @@ class _AddCourseState extends State<AddCourse> {
 
   //From Installment Page
   int noOfTextFields = 0;
-  List<String> _currentDurationSelected = List(25);
+  List<TextEditingController> _listEditingControllerMM;
   List<TextEditingController> _listEditingControllerDD;
   List<TextEditingController> _listEditingControllerYYYY;
   List<TextEditingController> _listEditingControllerMoney;
@@ -1197,101 +1190,193 @@ class _AddCourseState extends State<AddCourse> {
   Widget _createTextFields(int value) {
     if (value != 0) {
       if (toggleValue1) {
+        if (_listEditingControllerMM == null) {
+          _listEditingControllerMM =
+              List<TextEditingController>(noOfTextFields);
+          _listEditingControllerMoney =
+              List<TextEditingController>(noOfTextFields);
+          _listEditingControllerYYYY =
+              List<TextEditingController>(noOfTextFields);
+          _listEditingControllerDD =
+              List<TextEditingController>(noOfTextFields);
+        }
         for (int i = 0; i < noOfTextFields; i++) {
           String pass = (i + 1).toString() + "Installment";
           if (widget.isEdit) {
             if (widget.course.fees?.maxInstallment?.installment != null) {
-              _listEditingControllerMoney[i].text = widget
-                      .course.fees?.maxInstallment?.installment[pass]?.amount ??
-                  (double.parse((double.parse(_totalText.text) / noOfTextFields)
-                          .toStringAsFixed(2))
-                      .toString());
+              _listEditingControllerMoney[i] = TextEditingController()
+                ..text = widget.course.fees?.maxInstallment?.installment[pass]
+                        ?.amount ??
+                    double.parse(
+                        (double.parse(_totalText.text) / noOfTextFields)
+                            .toStringAsFixed(
+                              2,
+                            )
+                            .toString());
 
               List<String> duration = widget
                   .course.fees?.maxInstallment?.installment[pass]?.duration
                   ?.split(" ");
               if (duration.length > 2) {
-                _listEditingControllerDD[i].text = duration[0];
-                _currentDurationSelected[i] = duration[1];
-                _listEditingControllerYYYY[i].text = duration[2];
+                _listEditingControllerDD[i] = TextEditingController()
+                  ..text = duration[0];
+                _listEditingControllerMM[i] = TextEditingController()
+                  ..text = duration[1];
+                _listEditingControllerYYYY[i] = TextEditingController()
+                  ..text = duration[2];
               }
+            }
+          } else {
+            if (_listEditingControllerMoney[i] == null) {
+              _listEditingControllerMoney[i] = TextEditingController()
+                ..text = (double.parse(
+                        (double.parse(_totalText.text) / noOfTextFields)
+                            .toStringAsFixed(2))
+                    .toString());
+            }
+            if (_listEditingControllerMM[i] == null) {
+              _listEditingControllerMM[i] = TextEditingController();
+            }
+            if (_listEditingControllerDD[i] == null) {
+              _listEditingControllerDD[i] = TextEditingController();
+            }
+            if (_listEditingControllerYYYY[i] == null) {
+              _listEditingControllerYYYY[i] = TextEditingController();
             }
           }
         }
       }
 
-      return ListView.builder(
-          shrinkWrap: true,
-          controller: ScrollController(),
-          itemCount: value,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onLongPress: () async {
-                String res = await showDialog(
-                    context: context, builder: (context) => AreYouSure());
-                if (res != 'Yes') {
-                  return;
-                }
-                setState(() {
-                  dbRef
-                      .reference()
-                      .child(
-                          "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.course.id}/fees")
-                      .child(
-                          "MaxInstallment/Installments/${(index + 1).toString() + "Installment"}")
-                      .remove();
-                  noOfTextFields -= 1;
-                });
-              },
-              child: Card(
-                  child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.35,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                    10,
+      return Form(
+        child: ListView.builder(
+            shrinkWrap: true,
+            controller: ScrollController(),
+            itemCount: value,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onLongPress: () async {
+                  String res = await showDialog(
+                      context: context, builder: (context) => AreYouSure());
+                  if (res != 'Yes') {
+                    return;
+                  }
+                  setState(() {
+                    dbRef
+                        .reference()
+                        .child(
+                            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.course.id}/fees")
+                        .child(
+                            "MaxInstallment/Installments/${(index + 1).toString() + "Installment"}")
+                        .remove();
+                    noOfTextFields -= 1;
+                  });
+                },
+                child: Card(
+                    child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.35,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                      10,
+                    ),
+                    color: Color(0xffF36C24),
                   ),
-                  color: Color(0xffF36C24),
-                ),
-                child: Column(
-                  children: [
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          '${index + 1} Installment',
-                          style: TextStyle(color: Colors.white),
+                  child: Column(
+                    children: [
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '${index + 1} Installment',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
-                    ),
-                    Divider(
-                      color: Colors.white,
-                      height: 2,
-                      thickness: 4,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          Expanded(
+                      Divider(
+                        color: Colors.white,
+                        height: 2,
+                        thickness: 4,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Amount',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )),
+                            Expanded(
+                              flex: 1,
                               child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'Amount',
-                              style: TextStyle(
-                                color: Colors.white,
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextFormField(
+                                  onChanged: (value) {
+                                    //TODO
+                                  },
+                                  controller:
+                                      _listEditingControllerMoney[index],
+                                  style: TextStyle(color: Color(0xffF36C24)),
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        10,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          10,
+                                        ),
+                                        borderSide:
+                                            BorderSide(color: Colors.white)),
+                                    contentPadding: EdgeInsets.only(top: 0),
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    hintText: "Enter value",
+                                  ),
+                                ),
                               ),
                             ),
-                          )),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Text(
+                                '₹',
+                                style: TextStyle(
+                                    fontSize: 22, color: Colors.white),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [
                           Expanded(
-                            flex: 1,
+                            flex: 6,
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: TextField(
+                              child: Text(
+                                'Last Submission Date',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: TextFormField(
                                 onChanged: (value) {
                                   //TODO
                                 },
-                                controller: _listEditingControllerMoney[index],
+                                controller: _listEditingControllerDD[index],
                                 style: TextStyle(color: Color(0xffF36C24)),
                                 textAlign: TextAlign.center,
                                 keyboardType: TextInputType.number,
@@ -1310,145 +1395,87 @@ class _AddCourseState extends State<AddCourse> {
                                     contentPadding: EdgeInsets.only(top: 0),
                                     filled: true,
                                     fillColor: Colors.white,
-                                    hintText: "Enter value"),
+                                    hintStyle:
+                                        TextStyle(color: Color(0xffF36C24)),
+                                    hintText: "DD"),
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: Text(
-                              '₹',
-                              style:
-                                  TextStyle(fontSize: 22, color: Colors.white),
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: TextFormField(
+                                controller: _listEditingControllerMM[index],
+                                style: TextStyle(color: Color(0xffF36C24)),
+                                textAlign: TextAlign.center,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        10,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          10,
+                                        ),
+                                        borderSide:
+                                            BorderSide(color: Colors.white)),
+                                    contentPadding: EdgeInsets.only(top: 0),
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    hintStyle:
+                                        TextStyle(color: Color(0xffF36C24)),
+                                    hintText: "MM"),
+                              ),
                             ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: TextFormField(
+                                onChanged: (value) {
+                                  //TODO
+                                },
+                                controller: _listEditingControllerYYYY[index],
+                                style: TextStyle(color: Color(0xffF36C24)),
+                                textAlign: TextAlign.center,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      10,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        10,
+                                      ),
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
+                                  contentPadding: EdgeInsets.only(top: 0),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  hintStyle:
+                                      TextStyle(color: Color(0xffF36C24)),
+                                  hintText: "YYYY",
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 4.0,
                           )
                         ],
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 6,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'Last Submission Date',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: TextField(
-                              onChanged: (value) {
-                                //TODO
-                              },
-                              controller: _listEditingControllerDD[index],
-                              style: TextStyle(color: Color(0xffF36C24)),
-                              textAlign: TextAlign.center,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      10,
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        10,
-                                      ),
-                                      borderSide:
-                                          BorderSide(color: Colors.white)),
-                                  contentPadding: EdgeInsets.only(top: 0),
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  hintStyle:
-                                      TextStyle(color: Color(0xffF36C24)),
-                                  hintText: "DD"),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: TextField(
-                              onChanged: (value) {
-                                setState(() {
-                                  _currentDurationSelected[index] = value;
-                                });
-                              },
-                              style: TextStyle(color: Color(0xffF36C24)),
-                              textAlign: TextAlign.center,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      10,
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        10,
-                                      ),
-                                      borderSide:
-                                          BorderSide(color: Colors.white)),
-                                  contentPadding: EdgeInsets.only(top: 0),
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  hintStyle:
-                                      TextStyle(color: Color(0xffF36C24)),
-                                  hintText: "MM"),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: TextField(
-                              onChanged: (value) {
-                                //TODO
-                              },
-                              controller: _listEditingControllerYYYY[index],
-                              style: TextStyle(color: Color(0xffF36C24)),
-                              textAlign: TextAlign.center,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    10,
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      10,
-                                    ),
-                                    borderSide:
-                                        BorderSide(color: Colors.white)),
-                                contentPadding: EdgeInsets.only(top: 0),
-                                filled: true,
-                                fillColor: Colors.white,
-                                hintStyle: TextStyle(color: Color(0xffF36C24)),
-                                hintText: "YYYY",
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 4.0,
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              )),
-            );
-          });
+                    ],
+                  ),
+                )),
+              );
+            }),
+      );
     } else
       return SizedBox(
         height: 4.0,

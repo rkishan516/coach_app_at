@@ -86,7 +86,9 @@ class _StuInstallmentState extends State<StuInstallment> {
                       double.parse(map["SetFine"]["FineAmount"]))
                   .toStringAsFixed(2));
               fine = val.toString();
-              status = "Fine";
+              if (val != 0.00) {
+                status = "Fine";
+              }
             }
           }
 

@@ -35,16 +35,17 @@ void main() async {
     ));
     return;
   }
-  InAppUpdate.checkForUpdate().then((value){
-    if(value.updateAvailable){
-       InAppUpdate.startFlexibleUpdate().then((value){
-         InAppUpdate.completeFlexibleUpdate().then((value){
-           print('Updated Successfully');
-         }).catchError((e) => print('completeFlexibleUpdateError : ' +e.toString()));
-       }).catchError((e) => print('startFlexibleUpdateError : ' +e.toString()));
+  InAppUpdate.checkForUpdate().then((value) {
+    if (value.updateAvailable) {
+      InAppUpdate.startFlexibleUpdate().then((value) {
+        InAppUpdate.completeFlexibleUpdate().then((value) {
+          print('Updated Successfully');
+        }).catchError(
+            (e) => print('completeFlexibleUpdateError : ' + e.toString()));
+      }).catchError((e) => print('startFlexibleUpdateError : ' + e.toString()));
     }
     print(value);
-  }).catchError((e) => print('checkUpdateError : ' +e.toString()));
+  }).catchError((e) => print('checkUpdateError : ' + e.toString()));
 
   runApp(
     EasyLocalization(

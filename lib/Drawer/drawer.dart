@@ -11,6 +11,7 @@ import 'package:coach_app/FeeSection/FeeReportPages/DueFeeReport.dart';
 import 'package:coach_app/FeeSection/FeeStructure.dart';
 import 'package:coach_app/Meeting/Calender.dart';
 import 'package:coach_app/Meeting/StudentEvent.dart';
+import 'package:coach_app/Plugins/AppIcons.dart';
 import 'package:coach_app/Profile/next.dart';
 import 'package:coach_app/Profile/subAdminProfile.dart';
 import 'package:coach_app/Student/all_course_view.dart';
@@ -255,7 +256,7 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                           children: [
                             ListTile(
                               title: Text('Coupon List'),
-                              leading: Icon(Icons.crop_landscape),
+                              leading: Icon(AppIcons.coupon_list),
                               onTap: () async {
                                 Navigator.of(context).push(
                                   CupertinoPageRoute(
@@ -266,7 +267,7 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                             ),
                             ListTile(
                               title: Text('Due Fee Report'),
-                              leading: Icon(Icons.crop_landscape),
+                              leading: Icon(AppIcons.due_fee_report),
                               onTap: () async {
                                 Navigator.of(context).push(
                                   CupertinoPageRoute(
@@ -279,7 +280,7 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                             ),
                             ListTile(
                               title: Text('Payment Report'),
-                              leading: Icon(Icons.crop_landscape),
+                              leading: Icon(AppIcons.payment_report),
                               onTap: () async {
                                 Navigator.of(context).push(
                                   CupertinoPageRoute(
@@ -292,7 +293,7 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                             ),
                             ListTile(
                               title: Text('Discount Report'),
-                              leading: Icon(Icons.crop_landscape),
+                              leading: Icon(AppIcons.discount_repor),
                               onTap: () async {
                                 Navigator.of(context).push(
                                   CupertinoPageRoute(
@@ -305,7 +306,7 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                             ),
                             ListTile(
                               title: Text('Fine Report'),
-                              leading: Icon(Icons.crop_landscape),
+                              leading: Icon(AppIcons.fine_report),
                               onTap: () async {
                                 Navigator.of(context).push(
                                   CupertinoPageRoute(
@@ -318,7 +319,7 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                             ),
                             ListTile(
                               title: Text('Paid Report'),
-                              leading: Icon(Icons.crop_landscape),
+                              leading: Icon(AppIcons.paid_report),
                               onTap: () async {
                                 Navigator.of(context).push(
                                   CupertinoPageRoute(
@@ -331,7 +332,7 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                             ),
                             ListTile(
                               title: Text('OneTime Paid Report'),
-                              leading: Icon(Icons.crop_landscape),
+                              leading: Icon(AppIcons.one_time_paid_report),
                               onTap: () async {
                                 Navigator.of(context).push(
                                   CupertinoPageRoute(

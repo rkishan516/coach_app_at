@@ -105,6 +105,9 @@ class _PaymentTypeState extends State<PaymentType> {
               toggleValue: toggleValue2,
               courseName: widget.courseName,
               courseId: widget.courseId,
+              displaysum: _displaySum,
+              paidfine: fine,
+              paidsum: sum,
             ),
           ),
         );
@@ -276,12 +279,18 @@ class _PaymentTypeState extends State<PaymentType> {
                       child: GestureDetector(
                         onLongPress: () {
                           if (toggleValue2)
-                            Navigator.of(context).push(MaterialPageRoute(
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
                                 builder: (context) => OneTimeInstallment(
-                                      toggleValue: toggleValue2,
-                                      courseName: widget.courseName,
-                                      courseId: widget.courseId,
-                                    )));
+                                  toggleValue: toggleValue2,
+                                  courseName: widget.courseName,
+                                  courseId: widget.courseId,
+                                  displaysum: _displaySum,
+                                  paidfine: fine,
+                                  paidsum: sum,
+                                ),
+                              ),
+                            );
                         },
                         child: AnimatedContainer(
                           duration: Duration(milliseconds: 1000),
@@ -377,6 +386,9 @@ class _PaymentTypeState extends State<PaymentType> {
               courseName: widget.courseName,
               courseId: widget.courseId,
               toggleValue: !toggleValue2,
+              displaysum: _displaySum,
+              paidfine: fine,
+              paidsum: sum,
             ),
           ),
         )
