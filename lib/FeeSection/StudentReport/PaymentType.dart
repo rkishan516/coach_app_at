@@ -84,35 +84,35 @@ class _PaymentTypeState extends State<PaymentType> {
           toggleValue1 = true;
           toggleValue2 = false;
         });
-        if (toggleValue1 && _installmentsnapshot.value) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (coontext) => StuInstallment(
-                toggleValue1,
-                courseId: widget.courseId,
-                courseName: widget.courseName,
-              ),
-            ),
-          );
-        }
+        // if (toggleValue1 && _installmentsnapshot.value) {
+        //   Navigator.of(context).pushReplacement(
+        //     MaterialPageRoute(
+        //       builder: (coontext) => StuInstallment(
+        //         toggleValue1,
+        //         courseId: widget.courseId,
+        //         courseName: widget.courseName,
+        //       ),
+        //     ),
+        //   );
+        // }
       } else if (snapshot.value == "OneTime") {
         setState(() {
           toggleValue2 = true;
           toggleValue1 = false;
         });
-        if (toggleValue2 && _onetimesnapshot.value)
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => OneTimeInstallment(
-                toggleValue: toggleValue2,
-                courseName: widget.courseName,
-                courseId: widget.courseId,
-                displaysum: _displaySum,
-                paidfine: fine,
-                paidsum: sum,
-              ),
-            ),
-          );
+        // if (toggleValue2 && _onetimesnapshot.value)
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     builder: (context) => OneTimeInstallment(
+        //       toggleValue: toggleValue2,
+        //       courseName: widget.courseName,
+        //       courseId: widget.courseId,
+        //       displaysum: _displaySum,
+        //       paidfine: fine,
+        //       paidsum: sum,
+        //     ),
+        //   ),
+        // );
       } else {
         setState(() {
           toggleValue1 = false;
@@ -123,6 +123,9 @@ class _PaymentTypeState extends State<PaymentType> {
 
     _showInstallmenttype = _installmentsnapshot.value ?? false;
     _showOneTimetype = _onetimesnapshot.value ?? false;
+
+    print(_showOneTimetype);
+    print(_showInstallmenttype);
 
     setState(() {
       toggleValue1 = !_showInstallmenttype;

@@ -238,11 +238,19 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                               var value =
                                                   await SharedPreferences
                                                       .getInstance();
-                                              FireBaseAuth
-                                                      .instance.instituteid =
-                                                  value.get('insCode');
-                                              FireBaseAuth.instance.branchid =
-                                                  value.get('branchCode');
+                                              if (FireBaseAuth
+                                                      .instance.instituteid ==
+                                                  null) {
+                                                FireBaseAuth
+                                                        .instance.instituteid =
+                                                    value.get('insCode');
+                                              }
+                                              if (FireBaseAuth
+                                                      .instance.branchid ==
+                                                  null) {
+                                                FireBaseAuth.instance.branchid =
+                                                    value.get('branchCode');
+                                              }
 
                                               await Navigator.of(context).push(
                                                   MaterialPageRoute(
