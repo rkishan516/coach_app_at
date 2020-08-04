@@ -311,8 +311,9 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                           false)
                         SwitchListTile.adaptive(
                           title: Text('Paid One Time'),
-                          value:
-                              widget.student.requestedCourseFee.isPaidOneTime,
+                          value: widget
+                                  .student.requestedCourseFee?.isPaidOneTime ??
+                              false,
                           onChanged: ((selectedCourse
                                           ?.fees?.oneTime?.isOneTimeAllowed ??
                                       false) &&
@@ -333,8 +334,9 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                           false)
                         SwitchListTile.adaptive(
                           title: Text('Paid In Installments'),
-                          value:
-                              !widget.student.requestedCourseFee.isPaidOneTime,
+                          value: !(widget
+                                  .student.requestedCourseFee?.isPaidOneTime ??
+                              true),
                           onChanged: ((selectedCourse
                                           ?.fees?.oneTime?.isOneTimeAllowed ??
                                       false) &&
@@ -351,7 +353,8 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                                 }
                               : null,
                         ),
-                      if (!widget.student.requestedCourseFee.isPaidOneTime &&
+                      if (!(widget.student.requestedCourseFee?.isPaidOneTime ??
+                              true) &&
                           (selectedCourse?.fees?.maxInstallment?.isMaxAllowed ??
                               false))
                         ListView.builder(
@@ -438,7 +441,8 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                         String date = dd + " " + mm + " " + yyyy;
                         if ((selectedCourse?.fees?.oneTime?.isOneTimeAllowed ??
                                 false) &&
-                            (widget.student.requestedCourseFee.isPaidOneTime)) {
+                            (widget.student.requestedCourseFee?.isPaidOneTime ??
+                                false)) {
                           paidOneTime(
                               double.parse(
                                   selectedCourse.fees.feeSection.totalFees),
@@ -446,8 +450,9 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                               (date),
                               selectedCourse.id,
                               widget.keyS);
-                        } else if (!widget
-                                .student.requestedCourseFee.isPaidOneTime &&
+                        } else if (!(widget.student.requestedCourseFee
+                                    ?.isPaidOneTime ??
+                                true) &&
                             (selectedCourse
                                     ?.fees?.maxInstallment?.isMaxAllowed ??
                                 false)) {

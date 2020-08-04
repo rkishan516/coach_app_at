@@ -123,9 +123,16 @@ class _PaymentTypeState extends State<PaymentType> {
       }
     });
 
+    _showInstallmenttype = _installmentsnapshot.value ?? false;
+    _showOneTimetype = _onetimesnapshot.value ?? false;
+
     setState(() {
-      _showInstallmenttype = _installmentsnapshot.value ?? false;
-      _showOneTimetype = _onetimesnapshot.value ?? false;
+      toggleValue1 = !_showInstallmenttype;
+      toggleValue2 = !_showOneTimetype;
+      if (!_showInstallmenttype && _showOneTimetype && sum == 0.0)
+        toggleButton2();
+      else if (_showInstallmenttype && !_showOneTimetype) toggleButton1();
+
       _titleString = _showOneTimetype || _showInstallmenttype
           ? 'Select Payment Type'
           : "No Type available";

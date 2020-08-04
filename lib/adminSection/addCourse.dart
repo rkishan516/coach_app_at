@@ -1135,23 +1135,25 @@ class _AddCourseState extends State<AddCourse> {
   }
 
   _loadFromDatabase() {
-    toggleValue1 = widget.course.fees.maxInstallment.isMaxAllowed;
-    toggleValue2 = widget.course.fees.fine.isFineAllowed;
-    toggleValue3 = widget.course.fees.oneTime.isOneTimeAllowed;
+    toggleValue1 = widget.course.fees?.maxInstallment?.isMaxAllowed ?? false;
+    toggleValue2 = widget.course.fees?.fine?.isFineAllowed ?? false;
+    toggleValue3 = widget.course.fees?.oneTime?.isOneTimeAllowed ?? false;
 
     List<String> durationOneTime =
         widget.course.fees?.oneTime?.duration?.split(" ");
 
-    if (durationOneTime.length > 2) {
-      _ddText.text = durationOneTime[0];
-      _mmSelected = durationOneTime[1];
-      _yyText.text = durationOneTime[2];
+    if (durationOneTime != null) {
+      if (durationOneTime.length > 2) {
+        _ddText.text = durationOneTime[0];
+        _mmSelected = durationOneTime[1];
+        _yyText.text = durationOneTime[2];
+      }
     }
 
     noOfTextFields = int.parse(
-        widget.course.fees.maxInstallment.maxAllowedInstallment == ''
+        widget.course.fees?.maxInstallment?.maxAllowedInstallment == ''
             ? "0"
-            : widget.course.fees.maxInstallment.maxAllowedInstallment);
+            : widget.course.fees?.maxInstallment?.maxAllowedInstallment ?? "0");
     _maxInstallText.text = noOfTextFields.toString();
     _listEditingControllerDD = new List<TextEditingController>(noOfTextFields);
     _listEditingControllerYYYY =
@@ -1498,10 +1500,15 @@ class _AddCourseState extends State<AddCourse> {
     if (widget.isEdit) {
       List<String> fineDuration =
           widget.course.fees?.fine?.duration?.split(" ");
-      _fineDurationText = TextEditingController()
-        ..text = (fineDuration.length > 1) ? fineDuration[0] : "0";
-      _currentFineDurationSelected =
-          (fineDuration.length > 1) ? fineDuration[1] : "Day(s)";
+      if (fineDuration != null) {
+        _fineDurationText = TextEditingController()
+          ..text = (fineDuration.length > 1) ? fineDuration[0] : "0";
+        _currentFineDurationSelected =
+            (fineDuration.length > 1) ? fineDuration[1] : "Day(s)";
+      } else {
+        _fineDurationText = TextEditingController()..text = "0";
+        _currentFineDurationSelected = "Day(s)";
+      }
       _setFineText = TextEditingController()
         ..text = widget.course.fees?.fine?.fineAmount ?? "0";
     } else {
@@ -1517,7 +1524,7 @@ class _AddCourseState extends State<AddCourse> {
     if (widget.isEdit) _loadFromDatabase();
     if (widget.isEdit)
       checkinstallment =
-          widget.course.fees.maxInstallment.maxAllowedInstallment;
+          widget.course.fees?.maxInstallment?.maxAllowedInstallment;
 
     super.initState();
   }

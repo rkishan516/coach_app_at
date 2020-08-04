@@ -342,15 +342,19 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                                         'students/${FireBaseAuth.instance.user.uid}/course')
                                                     .child(widget.courseID)
                                                     .update(rCourse.toJson());
-                                                await widget.ref
-                                                    .parent()
-                                                    .parent()
-                                                    .child(
-                                                      '/students/${FireBaseAuth.instance.user.uid}/',
-                                                    )
-                                                    .update({
-                                                  'status': 'Registered'
-                                                });
+                                                try {
+                                                  await widget.ref
+                                                      .parent()
+                                                      .parent()
+                                                      .child(
+                                                        '/students/${FireBaseAuth.instance.user.uid}/',
+                                                      )
+                                                      .update({
+                                                    'status': 'Registered'
+                                                  });
+                                                } catch (e) {
+                                                  Navigator.of(context).pop();
+                                                }
                                                 await Future.delayed(
                                                     Duration(seconds: 5));
                                                 WelcomeNavigation

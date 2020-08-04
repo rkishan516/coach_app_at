@@ -106,6 +106,7 @@ class _DueFeeReportState extends State<DueFeeReport> {
                   " and Fine " +
                   _coresspondingDueMap[_studentList[index].uid].fine;
           return Card(
+            elevation: 20,
             child: GestureDetector(
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(
@@ -115,11 +116,33 @@ class _DueFeeReportState extends State<DueFeeReport> {
                 ),
               ),
               child: Container(
-                child: Column(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(
+                    50,
+                  ),
+                ),
+                padding: EdgeInsets.only(left: 20, top: 20, bottom: 20),
+                child: ListView(
+                  controller: ScrollController(),
+                  shrinkWrap: true,
                   children: [
                     Text(
                       _studentList[index]?.name,
+                      style: TextStyle(
+                        color: Color(0xffF36C24),
+                        fontSize: 22,
+                      ),
                     ),
+                    // if (_studentList[index].isinstallmentAllowed)
+                    //   Text(
+                    //     'Last Paid : ${_studentList[index].lastpaidInstallment}',
+                    //   ),
+                    // if (_studentList[index].isinstallmentAllowed)
+                    //   Text(
+                    //       'Due Date: ${_coresspondingmap[_studentList[index].uid].paidTime}'),
+                    // if (_studentList[index].isinstallmentAllowed)
+                    //   Text(
+                    //       'Due Amount: ${_coresspondingmap[_studentList[index].uid].totalfees}'),
                     Text(
                       text,
                     ),

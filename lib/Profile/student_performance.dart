@@ -29,26 +29,52 @@ class StudentPerformance extends StatelessWidget {
             if (snap.hasData) {
               Branch branch = Branch.fromJson(snap.data.snapshot.value);
               Map<String, int> subjectPerformance = Map<String, int>();
-              snap.data.snapshot
-                  .value['students']['$uid']['courses']['$courseId']['subjects']
-                  ?.forEach((k, v) {
-                double score = 0;
-                int count = 0;
-                String name;
-                v['chapters']?.forEach((k, v) {
-                  v['content']?.forEach((k, v) {
-                    score += v['score'];
-                    count++;
-                  });
-                });
-                branch.courses.forEach((element) {
-                  if (element.id == courseId) {
-                    name = element.subjects[k].name;
-                  }
-                });
+              if (snap.data.snapshot.value != null) {
+                if (snap.data.snapshot.value['students'] != null) {
+                  if (snap.data.snapshot.value['students']['$uid'] != null) {
+                    if (snap.data.snapshot.value['students']['$uid']
+                            ['courses'] !=
+                        null) {
+                      if (snap.data.snapshot.value['students']['$uid']
+                              ['courses']['$courseId'] !=
+                          null) {
+                        if (snap.data.snapshot.value['students']['$uid']
+                                ['courses']['$courseId']['subjects'] !=
+                            null) {
+                          snap
+                              .data
+                              .snapshot
+                              .value['students']['$uid']['courses']['$courseId']
+                                  ['subjects']
+                              ?.forEach((k, v) {
+                            double score = 0;
+                            int count = 0;
+                            String name;
+                            v['chapters']?.forEach((k, v) {
+                              v['content']?.forEach((k, v) {
+                                score += v['score'];
+                                count++;
+                              });
+                            });
+                            branch.courses.forEach((element) {
+                              if (element.id == courseId) {
+                                name = element.subjects[k].name;
+                              }
+                            });
 
-                subjectPerformance[name] = score * 100 ~/ count;
-              });
+                            subjectPerformance[name] = score * 100 ~/ count;
+                          });
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              if (subjectPerformance.length == 0) {
+                return Center(
+                  child: Text('No Test Performance Recorded'),
+                );
+              }
               return Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: ListView.builder(

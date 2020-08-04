@@ -135,13 +135,16 @@ List<NoInstallments> _createInstallmentmodel(
   installments.forEach((key, value) {
     if (key != "AllowedThrough" && key != "LastPaidInstallment") {
       if (value["Status"] == "Paid") {
-        _listInstallment.add(NoInstallments(
+        _listInstallment.add(
+          NoInstallments(
             key,
-            value["Amount"],
-            value["Duration"],
-            value["Fine"],
-            value["Status"],
-            value["PaidTime"]));
+            value["Amount"].toString(),
+            value["Duration"].toString(),
+            value["Fine"].toString(),
+            value["Status"].toString(),
+            value["PaidTime"].toString(),
+          ),
+        );
       } else {
         String status = "Due";
         String fine = "";

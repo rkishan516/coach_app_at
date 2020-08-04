@@ -235,24 +235,29 @@ class StudentProfile extends StatelessWidget {
                           children: <Widget>[
                             Row(
                               children: <Widget>[
-                                Container(
-                                    padding: EdgeInsets.only(
-                                        left: b * 0.063, top: h * 0.0204),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Text("Student Status:",
-                                            style: TextStyle(
-                                                fontSize: b * 0.042,
-                                                color: Colors.black)),
-                                        SizedBox(
-                                          width: b * 0.02512,
-                                        ),
-                                        Text(student.status,
-                                            style: TextStyle(
-                                                fontSize: b * 0.0402,
-                                                color: Colors.white)),
-                                      ],
-                                    )),
+                                GestureDetector(
+                                  onTap: (){
+                                    
+                                  },
+                                  child: Container(
+                                      padding: EdgeInsets.only(
+                                          left: b * 0.063, top: h * 0.0204),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Text("Student Status:",
+                                              style: TextStyle(
+                                                  fontSize: b * 0.042,
+                                                  color: Colors.black)),
+                                          SizedBox(
+                                            width: b * 0.02512,
+                                          ),
+                                          Text(student.status,
+                                              style: TextStyle(
+                                                  fontSize: b * 0.0402,
+                                                  color: Colors.white)),
+                                        ],
+                                      )),
+                                ),
                               ],
                             ),
                           ],

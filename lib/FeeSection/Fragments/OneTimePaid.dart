@@ -37,8 +37,6 @@ class _PayementReportState extends State<OneTimeReport> {
 
     return Container(
         padding: EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12.0), color: Colors.orange),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         child: ListView.builder(
@@ -76,11 +74,37 @@ class _PayementReportState extends State<OneTimeReport> {
               }
 
               return Card(
-                child: ListTile(
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => FullReport(_studentList[index]))),
-                  title: Text(_studentList[index]?.name ?? ""),
-                  subtitle: Text(subTitle),
+                elevation: 20,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => FullReport(
+                        _studentList[index],
+                      ),
+                    ),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        50,
+                      ),
+                    ),
+                    padding: EdgeInsets.only(left: 20, top: 20, bottom: 20),
+                    child: ListView(
+                      controller: ScrollController(),
+                      shrinkWrap: true,
+                      children: [
+                        Text(
+                          _studentList[index]?.name ?? "",
+                          style: TextStyle(
+                            color: Color(0xffF36C24),
+                            fontSize: 22,
+                          ),
+                        ),
+                        Text(subTitle)
+                      ],
+                    ),
+                  ),
                 ),
               );
             }));
