@@ -57,13 +57,21 @@ class _PayementReportState extends State<DiscountReport> {
                   shrinkWrap: true,
                   children: [
                     Text(
-                      _studentList[index]?.name,
+                      (index + 1).toString() + ". " + _studentList[index]?.name,
                       style: TextStyle(
                         color: Color(0xffF36C24),
-                        fontSize: 22,
+                        fontSize: 16,
                       ),
                     ),
-                    Text(_studentList[index].discount + "%")
+                    Text(
+                      "Type: " +
+                          _studentList[index].allowedthrough +
+                          "\n"
+                              "Discount Coupon: " +
+                          _studentList[index].discount +
+                          "%",
+                      style: TextStyle(fontSize: 12.0),
+                    ),
                   ],
                 ),
               ),

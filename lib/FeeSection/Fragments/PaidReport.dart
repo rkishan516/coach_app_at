@@ -44,6 +44,10 @@ class _PaidReportState extends State<PaidReport> {
                   _studentList[index].listInstallment.indexOf(indexof)]
               .paidTime
               .toString();
+          String amount = _studentList[index]
+              .listInstallment[
+                  _studentList[index].listInstallment.indexOf(indexof)]
+              .amount;
 
           return Card(
             elevation: 20,
@@ -67,20 +71,25 @@ class _PaidReportState extends State<PaidReport> {
                   shrinkWrap: true,
                   children: [
                     Text(
-                      _studentList[index]?.name,
+                      (index + 1).toString() + ". " + _studentList[index]?.name,
                       style: TextStyle(
                         color: Color(0xffF36C24),
-                        fontSize: 22,
+                        fontSize: 16,
                       ),
                     ),
                     Text(
-                      "Last Paid " +
+                      "Last Paid: " +
                           _studentList[index]
                               .lastpaidInstallment
                               .replaceAll("Installment", " Installment") +
-                          " on " +
-                          lastpaidtime.replaceAll(" ", "/"),
-                    )
+                          "\n" +
+                          "Paid Date: " +
+                          lastpaidtime.replaceAll(" ", "/") +
+                          "\n"
+                              "Paid Amount: " +
+                          amount,
+                      style: TextStyle(fontSize: 12.0),
+                    ),
                   ],
                 ),
               ),

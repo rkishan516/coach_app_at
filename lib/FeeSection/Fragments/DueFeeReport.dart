@@ -100,7 +100,16 @@ class _DueFeeReportState extends State<DueFeeReport> {
         itemCount: _studentList.length,
         itemBuilder: (context, index) {
           String text = _studentList[index].isinstallmentAllowed
-              ? "Due " + _coresspondingmap[_studentList[index].uid].sequence
+              ? "Type: " +
+                  _coresspondingmap[_studentList[index].uid].sequence +
+                  "\n" +
+                  "Due Date: " +
+                  _coresspondingmap[_studentList[index].uid]
+                      .duration
+                      .replaceAll(" ", "/") +
+                  "\n"
+                      "Due Amount: " +
+                  _coresspondingmap[_studentList[index].uid].amount
               : "Due " +
                   _coresspondingDueMap[_studentList[index].uid].amount +
                   " and Fine " +
@@ -127,24 +136,15 @@ class _DueFeeReportState extends State<DueFeeReport> {
                   shrinkWrap: true,
                   children: [
                     Text(
-                      _studentList[index]?.name,
+                      (index + 1).toString() + ". " + _studentList[index]?.name,
                       style: TextStyle(
                         color: Color(0xffF36C24),
-                        fontSize: 22,
+                        fontSize: 16,
                       ),
                     ),
-                    // if (_studentList[index].isinstallmentAllowed)
-                    //   Text(
-                    //     'Last Paid : ${_studentList[index].lastpaidInstallment}',
-                    //   ),
-                    // if (_studentList[index].isinstallmentAllowed)
-                    //   Text(
-                    //       'Due Date: ${_coresspondingmap[_studentList[index].uid].paidTime}'),
-                    // if (_studentList[index].isinstallmentAllowed)
-                    //   Text(
-                    //       'Due Amount: ${_coresspondingmap[_studentList[index].uid].totalfees}'),
                     Text(
                       text,
+                      style: TextStyle(fontSize: 12.0),
                     ),
                   ],
                 ),

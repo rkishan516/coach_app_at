@@ -19,8 +19,7 @@ class _PayementReportState extends State<PayementReport> {
   _setstudentlist() {
     List<StudentModel> list = [];
     widget._listStudentModel.forEach((element) {
-      if (element.lastpaidInstallment != null &&
-          element.lastpaidInstallment != "OneTime") {
+      if (element.lastpaidInstallment != null) {
         list.add(element);
 
         _coresspondingStatus[element.uid] = "Paid";
@@ -82,20 +81,34 @@ class _PayementReportState extends State<PayementReport> {
                     .paidTime
                     .toString();
 
-                subTitle = "Last Paid " +
+                subTitle = "Status: " +
+                    "Paid" +
+                    "\n" +
+                    "Last Paid: " +
                     _studentList[index]
                         .lastpaidInstallment
                         .replaceAll("Installment", " Installment") +
-                    " on " +
+                    "\n" +
+                    "Paid Date: " +
                     lastpaidtime.replaceAll(" ", "/");
               } else if (_coresspondingStatus[_studentList[index].uid] ==
                   "Fine") {
-                subTitle = "Fine of " +
+                subTitle = "Status: Fine" +
+                    "\n" +
+                    "Fine Amount: " +
                     _coresspondingmap[_studentList[index].uid].fine +
-                    " in " +
+                    "Type: " +
                     _coresspondingmap[_studentList[index].phoneNo].sequence;
               } else {
-                subTitle = "Due " +
+                subTitle = "Status: Due" +
+                    "\n" +
+                    "Due Amount: " +
+                    _coresspondingmap[_studentList[index].uid].amount +
+                    "\n" +
+                    "Due Date: " +
+                    _coresspondingmap[_studentList[index].uid].duration +
+                    "\n" +
+                    "Type: " +
                     _coresspondingmap[_studentList[index].uid].sequence;
               }
 
@@ -121,13 +134,19 @@ class _PayementReportState extends State<PayementReport> {
                       shrinkWrap: true,
                       children: [
                         Text(
-                          _studentList[index]?.name ?? "",
+                          (index + 1).toString() +
+                                  ". " +
+                                  _studentList[index]?.name ??
+                              "",
                           style: TextStyle(
                             color: Color(0xffF36C24),
-                            fontSize: 22,
+                            fontSize: 16,
                           ),
                         ),
-                        Text(subTitle)
+                        Text(
+                          subTitle,
+                          style: TextStyle(fontSize: 12.0),
+                        )
                       ],
                     ),
                   ),
