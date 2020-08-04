@@ -1058,11 +1058,6 @@ class _AddCourseState extends State<AddCourse> {
                   setState(() {
                     toggleValue3 = !toggleValue3;
                   });
-                  if (!toggleValue3) {
-                    _ddText.text = "";
-                    _yyText.text = "";
-                    _mmSelected = "MM";
-                  }
                 },
               ),
             ),
@@ -1098,11 +1093,6 @@ class _AddCourseState extends State<AddCourse> {
                     setState(() {
                       toggleValue2 = !toggleValue2;
                     });
-                    if (!toggleValue2) {
-                      _fineDurationText.text = "0";
-                      _setFineText.text = "0";
-                      _currentFineDurationSelected = "Day(s)";
-                    }
                   }
                 },
               ),
@@ -1185,11 +1175,13 @@ class _AddCourseState extends State<AddCourse> {
   Map map;
   bool editValue = false;
   final TextEditingController _maxInstallText = TextEditingController();
+  int prevValue = 0;
 
   Widget _createTextFields(int value) {
     if (value != 0) {
       if (toggleValue1) {
-        if (_listEditingControllerMM == null) {
+        if (_listEditingControllerMM == null || prevValue != value) {
+          prevValue = value;
           _listEditingControllerMM =
               List<TextEditingController>(noOfTextFields);
           _listEditingControllerMoney =

@@ -136,7 +136,14 @@ class _InstallMentListState extends State<InstallMentList> {
                                     installments[i] = true;
                                   }
                                 } else {
-                                  installments[index] = false;
+                                  for (int i = index;
+                                      i <
+                                          int.parse(snapshot.data.snapshot
+                                                  .value['MaxInstallment']
+                                              ['MaxAllowedInstallment']);
+                                      i++) {
+                                    installments[index] = false;
+                                  }
                                 }
                               },
                             );

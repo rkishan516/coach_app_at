@@ -1,49 +1,88 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
-import 'package:coach_app/Student/WaitScreen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class InstallMentList extends StatefulWidget {
+class FeeUpdate extends StatefulWidget {
   final DatabaseReference ref;
   final String courseID;
-  InstallMentList({
-    this.ref,
-    this.courseID,
-  });
+  final String keyS;
+  FeeUpdate({this.ref, this.courseID, this.keyS});
   @override
-  _InstallMentListState createState() => _InstallMentListState();
+  _FeeUpdateState createState() => _FeeUpdateState();
 }
 
-class _InstallMentListState extends State<InstallMentList> {
+class _FeeUpdateState extends State<FeeUpdate> {
   bool paidOneTime = true;
   List<bool> installments;
-  registerStudent() {
-    RequestedCourseFee requestedCourseFee = RequestedCourseFee(
-        isPaidOneTime: paidOneTime, installments: installments);
-    widget.ref
-        .parent()
-        .parent()
-        .child('/students/${FireBaseAuth.instance.user.uid}/class')
-        .set(widget.courseID);
-    widget.ref
-        .parent()
-        .parent()
-        .child('/students/${FireBaseAuth.instance.user.uid}/status')
-        .set('Existing Student');
-    widget.ref
-        .parent()
-        .parent()
-        .child('/students/${FireBaseAuth.instance.user.uid}/requestedCourseFee')
-        .update(requestedCourseFee.toJson());
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) {
-          return WaitScreen();
+
+  paidOneTimeS(double totalfees, String duration, String date, String courseId,
+      String studentUid) async {
+    await FirebaseDatabase.instance
+        .reference()
+        .child(
+            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/")
+        .update({
+      "Installments": {
+        "OneTime": {
+          "Amount": totalfees,
+          "Duration": duration,
+          "Status": "Paid",
+          "PaidTime": date,
+          "Fine": "",
+          "PaidInstallment": "",
+          "PaidFine": "",
         },
-      ),
-      (route) => false,
-    );
+        "AllowedThrough": "OneTime",
+        "LastPaidInstallment": "OneTime"
+      }
+    });
+  }
+
+  _updateList(
+      List<bool> paidInstallment,
+      Map<String, Installment> _listInstallment,
+      String courseId,
+      String studentUid,
+      String date) async {
+    var keys = _listInstallment.keys.toList()..sort();
+
+    for (int i = 0; i < _listInstallment.length; i++) {
+      if (i < paidInstallment.length ? !paidInstallment[i] : false) {
+        FirebaseDatabase.instance
+            .reference()
+            .child(
+                "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/Installments")
+            .update({
+          keys[i]: {
+            "Amount":
+                (double.parse(_listInstallment[keys[i]].amount)).toString(),
+            "Duration": _listInstallment[keys[i]].duration,
+            "Status": "Due",
+            "PaidTime": "",
+            "Fine": ""
+          }
+        });
+      } else {
+        FirebaseDatabase.instance
+            .reference()
+            .child(
+                "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/Installments")
+            .update(
+          {
+            keys[i]: {
+              "Amount": _listInstallment[keys[i]].amount,
+              "Duration": _listInstallment[keys[i]].duration,
+              "Status": "Paid",
+              "PaidTime": date,
+              "Fine": ""
+            },
+            "AllowedThrough": "Installments",
+            "LastPaidInstallment": keys[i]
+          },
+        );
+      }
+    }
   }
 
   @override
@@ -51,7 +90,7 @@ class _InstallMentListState extends State<InstallMentList> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Installments',
+          'Fee Update',
         ),
       ),
       body: Container(
@@ -66,35 +105,30 @@ class _InstallMentListState extends State<InstallMentList> {
             if (snapshot.data.snapshot.value == null) {
               return Center(child: Text('No Payment Option Available'));
             }
+            Fees fees = Fees.fromJson(snapshot.data.snapshot.value);
             if (installments == null &&
-                snapshot.data.snapshot.value['MaxInstallment']
-                    ['IsMaxAllowed']) {
+                (fees.maxInstallment?.isMaxAllowed ?? false)) {
               installments = List<bool>();
               for (int i = 0;
-                  i <
-                      int.parse(snapshot.data.snapshot.value['MaxInstallment']
-                          ['MaxAllowedInstallment']);
+                  i < int.parse(fees.maxInstallment.maxAllowedInstallment);
                   i++) {
                 installments.add(false);
               }
             }
-            if (snapshot.data.snapshot.value['OneTime']['IsOneTimeAllowed'] &&
-                snapshot.data.snapshot.value['MaxInstallment']
-                    ['IsMaxAllowed']) {
+            if ((fees.oneTime?.isOneTimeAllowed ?? false) &&
+                (fees.maxInstallment?.isMaxAllowed ?? false)) {
             } else {
-              paidOneTime =
-                  snapshot.data.snapshot.value['OneTime']['IsOneTimeAllowed'];
+              paidOneTime = fees.oneTime?.isOneTimeAllowed ?? false;
             }
+
             return ListView(
               children: [
-                if (snapshot.data.snapshot.value['OneTime']['IsOneTimeAllowed'])
+                if (fees.oneTime?.isOneTimeAllowed ?? false)
                   SwitchListTile.adaptive(
                     title: Text('Paid One Time'),
                     value: paidOneTime,
-                    onChanged: (snapshot.data.snapshot.value['OneTime']
-                                ['IsOneTimeAllowed'] &&
-                            snapshot.data.snapshot.value['MaxInstallment']
-                                ['IsMaxAllowed'])
+                    onChanged: ((fees.oneTime?.isOneTimeAllowed ?? false) &&
+                            (fees.maxInstallment?.isMaxAllowed ?? false))
                         ? (val) {
                             setState(() {
                               paidOneTime = !paidOneTime;
@@ -102,15 +136,12 @@ class _InstallMentListState extends State<InstallMentList> {
                           }
                         : null,
                   ),
-                if (snapshot.data.snapshot.value['MaxInstallment']
-                    ['IsMaxAllowed'])
+                if (fees.maxInstallment?.isMaxAllowed ?? false)
                   SwitchListTile.adaptive(
                     title: Text('Paid In Installments'),
                     value: !paidOneTime,
-                    onChanged: (snapshot.data.snapshot.value['OneTime']
-                                ['IsOneTimeAllowed'] &&
-                            snapshot.data.snapshot.value['MaxInstallment']
-                                ['IsMaxAllowed'])
+                    onChanged: ((fees.oneTime?.isOneTimeAllowed ?? false) &&
+                            (fees.maxInstallment?.isMaxAllowed ?? false))
                         ? (val) {
                             setState(() {
                               paidOneTime = !paidOneTime;
@@ -121,8 +152,8 @@ class _InstallMentListState extends State<InstallMentList> {
                 if (!paidOneTime)
                   ListView.builder(
                     shrinkWrap: true,
-                    itemCount: int.parse(snapshot.data.snapshot
-                        .value['MaxInstallment']['MaxAllowedInstallment']),
+                    itemCount: int.parse(
+                        fees.maxInstallment?.maxAllowedInstallment ?? "0"),
                     itemBuilder: (context, index) {
                       return CheckboxListTile(
                         title: Text('Installment ${index + 1}'),
@@ -135,7 +166,13 @@ class _InstallMentListState extends State<InstallMentList> {
                                   installments[i] = true;
                                 }
                               } else {
-                                installments[index] = false;
+                                for (int i = index;
+                                    i <
+                                        int.parse(fees.maxInstallment
+                                            .maxAllowedInstallment);
+                                    i++) {
+                                  installments[index] = false;
+                                }
                               }
                             },
                           );
@@ -145,7 +182,37 @@ class _InstallMentListState extends State<InstallMentList> {
                   ),
                 RaisedButton(
                   color: Color(0xffF36C24),
-                  onPressed: registerStudent,
+                  onPressed: () {
+                    DateTime dateTime = DateTime.now();
+                    String dd = dateTime.day.toString().length == 1
+                        ? "0" + dateTime.day.toString()
+                        : dateTime.day.toString();
+                    String mm = dateTime.month.toString().length == 1
+                        ? "0" + dateTime.month.toString()
+                        : dateTime.month.toString();
+                    String yyyy = dateTime.year.toString();
+                    String date = dd + " " + mm + " " + yyyy;
+                    if ((fees.oneTime?.isOneTimeAllowed ?? false) &&
+                        paidOneTime) {
+                      paidOneTimeS(
+                        double.parse(fees?.feeSection?.totalFees ?? "0"),
+                        (fees.oneTime?.duration),
+                        (date),
+                        widget.courseID,
+                        widget.keyS,
+                      );
+                    } else if (!paidOneTime &&
+                        (fees.maxInstallment?.isMaxAllowed ?? false)) {
+                      _updateList(
+                        installments,
+                        fees.maxInstallment?.installment,
+                        widget.courseID,
+                        widget.keyS,
+                        date,
+                      );
+                    }
+                    Navigator.of(context).pop();
+                  },
                   child: Text(
                     'Update Fees',
                     style: TextStyle(

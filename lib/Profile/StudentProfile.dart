@@ -1,7 +1,10 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/drawer.dart';
+import 'package:coach_app/FeeSection/StudentSection/feeUpdate.dart';
 import 'package:coach_app/FeeSection/ToggleButton.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/student_performance.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class StudentProfile extends StatelessWidget {
@@ -158,13 +161,25 @@ class StudentProfile extends StatelessWidget {
                           itemCount: student.course.length,
                           itemBuilder: (context, index) {
                             return InkWell(
-                              onTap: () =>
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => StudentPerformance(
-                                            uid: keyS,
-                                            courseId:
-                                                student.course[index].courseID,
-                                          ))),
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => StudentPerformance(
+                                    uid: keyS,
+                                    courseId: student.course[index].courseID,
+                                  ),
+                                ),
+                              ),
+                              onLongPress: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => FeeUpdate(
+                                      courseID: student.course[index].courseID,
+                                      keyS: keyS,
+                                      ref: FirebaseDatabase.instance
+                                          .reference()
+                                          .child(
+                                              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${student.course[index].courseID}')),
+                                ),
+                              ),
                               child: Padding(
                                 padding: new EdgeInsets.only(
                                     top: 5.0,
@@ -235,29 +250,24 @@ class StudentProfile extends StatelessWidget {
                           children: <Widget>[
                             Row(
                               children: <Widget>[
-                                GestureDetector(
-                                  onTap: (){
-                                    
-                                  },
-                                  child: Container(
-                                      padding: EdgeInsets.only(
-                                          left: b * 0.063, top: h * 0.0204),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Text("Student Status:",
-                                              style: TextStyle(
-                                                  fontSize: b * 0.042,
-                                                  color: Colors.black)),
-                                          SizedBox(
-                                            width: b * 0.02512,
-                                          ),
-                                          Text(student.status,
-                                              style: TextStyle(
-                                                  fontSize: b * 0.0402,
-                                                  color: Colors.white)),
-                                        ],
-                                      )),
-                                ),
+                                Container(
+                                    padding: EdgeInsets.only(
+                                        left: b * 0.063, top: h * 0.0204),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Text("Student Status:",
+                                            style: TextStyle(
+                                                fontSize: b * 0.042,
+                                                color: Colors.black)),
+                                        SizedBox(
+                                          width: b * 0.02512,
+                                        ),
+                                        Text(student.status,
+                                            style: TextStyle(
+                                                fontSize: b * 0.0402,
+                                                color: Colors.white)),
+                                      ],
+                                    )),
                               ],
                             ),
                           ],
