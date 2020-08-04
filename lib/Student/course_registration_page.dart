@@ -7,7 +7,6 @@ import 'package:coach_app/FeeSection/StudentReport/PaymentType.dart';
 import 'package:coach_app/FeeSection/StudentSection/installmentList.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
-import 'package:coach_app/Student/WaitScreen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -196,147 +195,175 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                         color: Color(0xffF36C24),
                                       ),
                                     ),
-                                  Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    child: FlatButton(
-                                      color: Color(0xffF36C24),
-                                      child: StreamBuilder<Event>(
-                                          stream:
-                                              widget.ref.child('price').onValue,
-                                          builder: (context, snapshot) {
-                                            if (snapshot.hasData) {
-                                              price =
-                                                  snapshot.data.snapshot.value;
-                                              return Text(
-                                                'Buy Course @ Rs.'.tr() +
-                                                    ' ${snapshot.data.snapshot.value}',
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              );
-                                            } else {
-                                              return CircularProgressIndicator();
-                                            }
-                                          }),
-                                      onPressed: () async {
-                                        bool isPaid;
-                                        var value = await SharedPreferences
-                                            .getInstance();
-                                        FireBaseAuth.instance.instituteid =
-                                            value.get('insCode');
-                                        FireBaseAuth.instance.branchid =
-                                            value.get('branchCode');
+                                  StreamBuilder<Event>(
+                                      stream: widget.ref
+                                          .parent()
+                                          .parent()
+                                          .child("accountNo")
+                                          .onValue,
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return Container();
+                                        }
+                                        if (snapshot.data.snapshot.value ==
+                                            null) {
+                                          return Container();
+                                        }
+                                        return Card(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: FlatButton(
+                                            color: Color(0xffF36C24),
+                                            child: StreamBuilder<Event>(
+                                                stream: widget.ref
+                                                    .child('price')
+                                                    .onValue,
+                                                builder: (context, snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    price = snapshot
+                                                        .data.snapshot.value;
+                                                    return Text(
+                                                      'Buy Course @ Rs.'.tr() +
+                                                          ' ${snapshot.data.snapshot.value}',
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    );
+                                                  } else {
+                                                    return CircularProgressIndicator();
+                                                  }
+                                                }),
+                                            onPressed: () async {
+                                              bool isPaid;
+                                              var value =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              FireBaseAuth
+                                                      .instance.instituteid =
+                                                  value.get('insCode');
+                                              FireBaseAuth.instance.branchid =
+                                                  value.get('branchCode');
 
-                                        await Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PaymentType(
-                                                      courseId: widget.courseID,
-                                                      courseName: widget.name,
-                                                    )));
-                                        await widget.ref
-                                            .parent()
-                                            .parent()
-                                            .child(
-                                                "students/${FireBaseAuth.instance.user.uid}/course/${widget.courseID}/fees/Installments/AllowedThrough")
-                                            .once()
-                                            .then((value) {
-                                          if (value.value != null) {
-                                            isPaid = true;
-                                          } else {
-                                            isPaid = false;
-                                          }
-                                        });
-                                        if (isPaid == false) {
-                                          return;
-                                        }
-                                        if (price == null) {
-                                          return;
-                                        }
-                                        if (price < 1) {
-                                          Course rCourse = Course(
-                                            academicYear:
-                                                DateTime.now().year.toString() +
-                                                    '-' +
-                                                    (DateTime.now().year + 1)
-                                                        .toString(),
-                                            courseID: widget.courseID,
-                                            courseName: widget.name,
-                                            paymentToken:
-                                                "It's a free course for student"
-                                                    .tr(),
-                                          );
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) => UploadDialog(
-                                                  warning:
-                                                      'Registering, Please do not close'
-                                                          .tr()));
-                                          await widget.ref
-                                              .parent()
-                                              .parent()
-                                              .child(
-                                                'students/${FireBaseAuth.instance.user.uid}/course/${widget.courseID}',
-                                              )
-                                              .update(rCourse.toJson());
-                                          await widget.ref
-                                              .parent()
-                                              .parent()
-                                              .child(
-                                                  '/students/${FireBaseAuth.instance.user.uid}')
-                                              .update({'status': 'Registered'});
-                                          await Future.delayed(
-                                              Duration(seconds: 5));
-                                          WelcomeNavigation
-                                              .signInWithGoogleAndGetPage(
-                                                  context);
-                                          return;
-                                        }
-                                        if (isPaid) {
-                                          Course rCourse = Course(
-                                              academicYear: DateTime.now()
-                                                      .year
-                                                      .toString() +
-                                                  '-' +
-                                                  (DateTime.now().year + 1)
-                                                      .toString(),
-                                              courseID: widget.courseID,
-                                              courseName: widget.name,
-                                              paymentToken:
-                                                  '${widget.name.hashCode}${widget.courseID.hashCode}${FireBaseAuth.instance.user.uid.hashCode}');
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  UploadDialog(
-                                                      warning:
-                                                          'Registering'.tr()));
-                                          await widget.ref
-                                              .parent()
-                                              .parent()
-                                              .child(
-                                                  'students/${FireBaseAuth.instance.user.uid}/course')
-                                              .child(widget.courseID)
-                                              .update(rCourse.toJson());
-                                          await widget.ref
-                                              .parent()
-                                              .parent()
-                                              .child(
-                                                '/students/${FireBaseAuth.instance.user.uid}/',
-                                              )
-                                              .update({'status': 'Registered'});
-                                          await Future.delayed(
-                                              Duration(seconds: 5));
-                                          WelcomeNavigation
-                                              .signInWithGoogleAndGetPage(
-                                                  context);
-                                        } else {
-                                          Alert.instance.alert(context,
-                                              'Registration Failed'.tr());
-                                        }
-                                      },
-                                    ),
-                                  ),
+                                              await Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PaymentType(
+                                                            courseId:
+                                                                widget.courseID,
+                                                            courseName:
+                                                                widget.name,
+                                                          )));
+                                              await widget.ref
+                                                  .parent()
+                                                  .parent()
+                                                  .child(
+                                                      "students/${FireBaseAuth.instance.user.uid}/course/${widget.courseID}/fees/Installments/AllowedThrough")
+                                                  .once()
+                                                  .then((value) {
+                                                if (value.value != null) {
+                                                  isPaid = true;
+                                                } else {
+                                                  isPaid = false;
+                                                }
+                                              });
+                                              if (isPaid == false) {
+                                                return;
+                                              }
+                                              if (price == null) {
+                                                return;
+                                              }
+                                              if (price < 1) {
+                                                Course rCourse = Course(
+                                                  academicYear: DateTime.now()
+                                                          .year
+                                                          .toString() +
+                                                      '-' +
+                                                      (DateTime.now().year + 1)
+                                                          .toString(),
+                                                  courseID: widget.courseID,
+                                                  courseName: widget.name,
+                                                  paymentToken:
+                                                      "It's a free course for student"
+                                                          .tr(),
+                                                );
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        UploadDialog(
+                                                            warning:
+                                                                'Registering, Please do not close'
+                                                                    .tr()));
+                                                await widget.ref
+                                                    .parent()
+                                                    .parent()
+                                                    .child(
+                                                      'students/${FireBaseAuth.instance.user.uid}/course/${widget.courseID}',
+                                                    )
+                                                    .update(rCourse.toJson());
+                                                await widget.ref
+                                                    .parent()
+                                                    .parent()
+                                                    .child(
+                                                        '/students/${FireBaseAuth.instance.user.uid}')
+                                                    .update({
+                                                  'status': 'Registered'
+                                                });
+                                                await Future.delayed(
+                                                    Duration(seconds: 5));
+                                                WelcomeNavigation
+                                                    .signInWithGoogleAndGetPage(
+                                                        context);
+                                                return;
+                                              }
+                                              if (isPaid) {
+                                                Course rCourse = Course(
+                                                    academicYear: DateTime.now()
+                                                            .year
+                                                            .toString() +
+                                                        '-' +
+                                                        (DateTime.now().year +
+                                                                1)
+                                                            .toString(),
+                                                    courseID: widget.courseID,
+                                                    courseName: widget.name,
+                                                    paymentToken:
+                                                        '${widget.name.hashCode}${widget.courseID.hashCode}${FireBaseAuth.instance.user.uid.hashCode}');
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        UploadDialog(
+                                                            warning:
+                                                                'Registering'
+                                                                    .tr()));
+                                                await widget.ref
+                                                    .parent()
+                                                    .parent()
+                                                    .child(
+                                                        'students/${FireBaseAuth.instance.user.uid}/course')
+                                                    .child(widget.courseID)
+                                                    .update(rCourse.toJson());
+                                                await widget.ref
+                                                    .parent()
+                                                    .parent()
+                                                    .child(
+                                                      '/students/${FireBaseAuth.instance.user.uid}/',
+                                                    )
+                                                    .update({
+                                                  'status': 'Registered'
+                                                });
+                                                await Future.delayed(
+                                                    Duration(seconds: 5));
+                                                WelcomeNavigation
+                                                    .signInWithGoogleAndGetPage(
+                                                        context);
+                                              } else {
+                                                Alert.instance.alert(context,
+                                                    'Registration Failed'.tr());
+                                              }
+                                            },
+                                          ),
+                                        );
+                                      }),
                                 ],
                               ),
                             ],

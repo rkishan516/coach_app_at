@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -53,8 +52,8 @@ class StudentModel {
     map = value["course"][courseID]["fees"]["Installments"];
     isinstallmentAllowed = fineMap["MaxInstallment"]["IsMaxAllowed"];
 
-    _createInstallmentmodel(map, [], fineMap, discount, key, courseID)
-        .then((value) => listInstallment = value);
+    listInstallment =
+        _createInstallmentmodel(map, [], fineMap, discount, key, courseID);
   }
 }
 
@@ -78,13 +77,13 @@ class NoInstallments {
         paidTime = snapshot.value["PaidTime"];
 }
 
-Future<List<NoInstallments>> _createInstallmentmodel(
+List<NoInstallments> _createInstallmentmodel(
     Map installments,
     List<NoInstallments> _listInstallment,
     Map fineMap,
     String discount,
     String keyS,
-    String courseID) async {
+    String courseID) {
   double minusValue = 0.0;
   final dbref = FirebaseDatabase.instance;
   DateTime dateTime = DateTime.now();

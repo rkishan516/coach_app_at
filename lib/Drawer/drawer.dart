@@ -8,7 +8,6 @@ import 'package:coach_app/Drawer/my_institute.dart';
 import 'package:coach_app/Drawer/privacyNPolicies.dart';
 import 'package:coach_app/FeeSection/CouponSection/CouponList.dart';
 import 'package:coach_app/FeeSection/FeeReportPages/DueFeeReport.dart';
-import 'package:coach_app/FeeSection/FeeStructure.dart';
 import 'package:coach_app/Meeting/Calender.dart';
 import 'package:coach_app/Meeting/StudentEvent.dart';
 import 'package:coach_app/Plugins/AppIcons.dart';
@@ -98,7 +97,7 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                         await Share.file('Share The Institute', 'esys.jpg',
                             bytes.buffer.asUint8List(), 'logo/png',
                             text:
-                                'Hello, Our digital institute is on GuruCool, Download GuruCool from Following link:\n\n https://play.google.com/store/apps/details?id=com.VysionTech.gurucool\n\n and register with our Institute Code: ${key}${FireBaseAuth.instance.branchid}');
+                                'Hello, Our digital institute is on GuruCool, Download GuruCool from Following link:\n\n https://play.google.com/store/apps/details?id=com.VysionTech.gurucool\n\n and register with our Institute Code: $key${FireBaseAuth.instance.branchid}');
                       } catch (e) {
                         print('error: $e');
                       }

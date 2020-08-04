@@ -1,5 +1,4 @@
 import 'package:coach_app/Dialogs/uploadDialog.dart';
-import 'package:coach_app/Drawer/drawer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';

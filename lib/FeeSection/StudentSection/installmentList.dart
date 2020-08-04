@@ -78,30 +78,46 @@ class _InstallMentListState extends State<InstallMentList> {
                   installments.add(false);
                 }
               }
+              if (snapshot.data.snapshot.value['OneTime']['IsOneTimeAllowed'] &&
+                  snapshot.data.snapshot.value['MaxInstallment']
+                      ['IsMaxAllowed']) {
+              } else {
+                paidOneTime =
+                    snapshot.data.snapshot.value['OneTime']['IsOneTimeAllowed'];
+              }
               return ListView(
                 children: [
                   if (snapshot.data.snapshot.value['OneTime']
-                          ['IsOneTimeAllowed'] ==
-                      false)
+                      ['IsOneTimeAllowed'])
                     SwitchListTile.adaptive(
                       title: Text('Paid One Time'),
                       value: paidOneTime,
-                      onChanged: (val) {
-                        setState(() {
-                          paidOneTime = !paidOneTime;
-                        });
-                      },
+                      onChanged: (snapshot.data.snapshot.value['OneTime']
+                                  ['IsOneTimeAllowed'] &&
+                              snapshot.data.snapshot.value['MaxInstallment']
+                                  ['IsMaxAllowed'])
+                          ? (val) {
+                              setState(() {
+                                paidOneTime = !paidOneTime;
+                              });
+                            }
+                          : null,
                     ),
                   if (snapshot.data.snapshot.value['MaxInstallment']
                       ['IsMaxAllowed'])
                     SwitchListTile.adaptive(
                       title: Text('Paid In Installments'),
                       value: !paidOneTime,
-                      onChanged: (val) {
-                        setState(() {
-                          paidOneTime = !paidOneTime;
-                        });
-                      },
+                      onChanged: (snapshot.data.snapshot.value['OneTime']
+                                  ['IsOneTimeAllowed'] &&
+                              snapshot.data.snapshot.value['MaxInstallment']
+                                  ['IsMaxAllowed'])
+                          ? (val) {
+                              setState(() {
+                                paidOneTime = !paidOneTime;
+                              });
+                            }
+                          : null,
                     ),
                   if (!paidOneTime)
                     ListView.builder(

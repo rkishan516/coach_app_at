@@ -1,7 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Drawer/drawer.dart';
-import 'package:coach_app/FeeSection/StudentSection/installmentList.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/StudentProfile.dart';
@@ -113,6 +112,75 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
     super.initState();
   }
 
+  paidOneTime(double totalfees, String duration, String date, String courseId,
+      String studentUid) async {
+    await FirebaseDatabase.instance
+        .reference()
+        .child(
+            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/")
+        .update({
+      "Installments": {
+        "OneTime": {
+          "Amount": totalfees,
+          "Duration": duration,
+          "Status": "Paid",
+          "PaidTime": date,
+          "Fine": "",
+          "PaidInstallment": "",
+          "PaidFine": "",
+        },
+        "AllowedThrough": "OneTime",
+        "LastPaidInstallment": "OneTime"
+      }
+    });
+  }
+
+  _updateList(
+      List<bool> paidInstallment,
+      Map<String, Installment> _listInstallment,
+      String courseId,
+      String studentUid,
+      String date) async {
+    var keys = _listInstallment.keys.toList()..sort();
+
+    for (int i = 0; i < _listInstallment.length; i++) {
+      if (i < paidInstallment.length ? !paidInstallment[i] : false) {
+        FirebaseDatabase.instance
+            .reference()
+            .child(
+                "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/Installments")
+            .update({
+          keys[i]: {
+            "Amount":
+                (double.parse(_listInstallment[keys[i]].amount)).toString(),
+            "Duration": _listInstallment[keys[i]].duration,
+            "Status": "Due",
+            "PaidTime": "",
+            "Fine": ""
+          }
+        });
+      } else {
+        FirebaseDatabase.instance
+            .reference()
+            .child(
+                "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/Installments")
+            .update(
+          {
+            keys[i]: {
+              "Amount": _listInstallment[keys[i]].amount,
+              "Duration": _listInstallment[keys[i]].duration,
+              "Status": "Paid",
+              "PaidTime": date,
+              "Fine": ""
+            },
+            "AllowedThrough": "Installments",
+            "LastPaidInstallment": keys[i]
+          },
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -210,10 +278,12 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                                   .values
                                   .toList(),
                               onChanged: (value) {
-                                setState(() {
-                                  selectedCourseID = value;
-                                  selectedCourse = courses[value];
-                                });
+                                setState(
+                                  () {
+                                    selectedCourseID = value;
+                                    selectedCourse = courses[value];
+                                  },
+                                );
                               });
                         } else {
                           return Container();
@@ -224,71 +294,110 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                 ),
               ],
             ),
-            ListView(
-              shrinkWrap: true,
-              controller: ScrollController(),
-              children: [
-                SwitchListTile.adaptive(
-                  title: Text('Paid One Time'),
-                  value: widget.student.requestedCourseFee.isPaidOneTime,
-                  onChanged: (val) {
-                    setState(() {
-                      widget.student.requestedCourseFee.isPaidOneTime =
-                          !widget.student.requestedCourseFee.isPaidOneTime;
-                    });
-                  },
-                ),
-                SwitchListTile.adaptive(
-                  title: Text('Paid In Installments'),
-                  value: !widget.student.requestedCourseFee.isPaidOneTime,
-                  onChanged: (val) {
-                    setState(() {
-                      widget.student.requestedCourseFee.isPaidOneTime =
-                          !widget.student.requestedCourseFee.isPaidOneTime;
-                    });
-                  },
-                ),
-                if (!widget.student.requestedCourseFee.isPaidOneTime)
-                  ListView.builder(
+            StreamBuilder<Event>(
+                stream:
+                    ref.parent().child('/courses/$selectedCourseID').onValue,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Container();
+                  }
+                  Courses selectedCourse =
+                      Courses.fromJson(snapshot.data.snapshot.value);
+                  return ListView(
                     shrinkWrap: true,
-                    itemCount: int.parse(selectedCourse
-                            ?.fees?.maxInstallment?.maxAllowedInstallment ??
-                        "0"),
-                    itemBuilder: (context, index) {
-                      if (widget.student.requestedCourseFee.installments ==
-                          null) {
-                        widget.student.requestedCourseFee.installments =
-                            List<bool>.filled(
-                                int.parse(selectedCourse?.fees?.maxInstallment
-                                        ?.maxAllowedInstallment ??
-                                    "0"),
-                                false,
-                                growable: true);
-                      }
-                      return CheckboxListTile(
-                        title: Text('Installment ${index + 1}'),
-                        value: widget
-                            .student.requestedCourseFee.installments[index],
-                        onChanged: (val) {
-                          setState(
-                            () {
-                              if (val == true) {
-                                for (int i = 0; i <= index; i++) {
-                                  widget.student.requestedCourseFee
-                                      .installments[i] = true;
+                    controller: ScrollController(),
+                    children: [
+                      if (selectedCourse?.fees?.oneTime?.isOneTimeAllowed ??
+                          false)
+                        SwitchListTile.adaptive(
+                          title: Text('Paid One Time'),
+                          value:
+                              widget.student.requestedCourseFee.isPaidOneTime,
+                          onChanged: ((selectedCourse
+                                          ?.fees?.oneTime?.isOneTimeAllowed ??
+                                      false) &&
+                                  (selectedCourse?.fees?.maxInstallment
+                                          ?.isMaxAllowed ??
+                                      false))
+                              ? (val) {
+                                  setState(() {
+                                    widget.student.requestedCourseFee
+                                            .isPaidOneTime =
+                                        !widget.student.requestedCourseFee
+                                            .isPaidOneTime;
+                                  });
                                 }
-                              } else {
-                                widget.student.requestedCourseFee
-                                    .installments[index] = false;
-                              }
-                            },
-                          );
-                        },
-                      );
-                    },
-                  ),
-              ],
-            ),
+                              : null,
+                        ),
+                      if (selectedCourse?.fees?.maxInstallment?.isMaxAllowed ??
+                          false)
+                        SwitchListTile.adaptive(
+                          title: Text('Paid In Installments'),
+                          value:
+                              !widget.student.requestedCourseFee.isPaidOneTime,
+                          onChanged: ((selectedCourse
+                                          ?.fees?.oneTime?.isOneTimeAllowed ??
+                                      false) &&
+                                  (selectedCourse?.fees?.maxInstallment
+                                          ?.isMaxAllowed ??
+                                      false))
+                              ? (val) {
+                                  setState(() {
+                                    widget.student.requestedCourseFee
+                                            .isPaidOneTime =
+                                        !widget.student.requestedCourseFee
+                                            .isPaidOneTime;
+                                  });
+                                }
+                              : null,
+                        ),
+                      if (!widget.student.requestedCourseFee.isPaidOneTime &&
+                          (selectedCourse?.fees?.maxInstallment?.isMaxAllowed ??
+                              false))
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: int.parse(selectedCourse?.fees
+                                  ?.maxInstallment?.maxAllowedInstallment ??
+                              "0"),
+                          itemBuilder: (context, index) {
+                            if (widget
+                                    .student.requestedCourseFee.installments ==
+                                null) {
+                              widget.student.requestedCourseFee.installments =
+                                  List<bool>.filled(
+                                      int.parse(selectedCourse
+                                              ?.fees
+                                              ?.maxInstallment
+                                              ?.maxAllowedInstallment ??
+                                          "0"),
+                                      false,
+                                      growable: true);
+                            }
+                            return CheckboxListTile(
+                              title: Text('Installment ${index + 1}'),
+                              value: widget.student.requestedCourseFee
+                                  .installments[index],
+                              onChanged: (val) {
+                                setState(
+                                  () {
+                                    if (val == true) {
+                                      for (int i = 0; i <= index; i++) {
+                                        widget.student.requestedCourseFee
+                                            .installments[i] = true;
+                                      }
+                                    } else {
+                                      widget.student.requestedCourseFee
+                                          .installments[index] = false;
+                                    }
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        ),
+                    ],
+                  );
+                }),
             Container(
               child: ButtonBar(
                 alignment: MainAxisAlignment.spaceEvenly,
@@ -309,11 +418,46 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                           paymentToken:
                               'Registered By ${FireBaseAuth.instance.user.displayName}',
                         );
-                        ref.child(widget.keyS).update({'status': 'Registered'});
+                        ref.child(widget.keyS).update(
+                          {
+                            'status': 'Registered',
+                          },
+                        );
                         ref
                             .child(widget.keyS + '/course')
                             .child(selectedCourseID)
                             .update(course.toJson());
+                        DateTime dateTime = DateTime.now();
+                        String dd = dateTime.day.toString().length == 1
+                            ? "0" + dateTime.day.toString()
+                            : dateTime.day.toString();
+                        String mm = dateTime.month.toString().length == 1
+                            ? "0" + dateTime.month.toString()
+                            : dateTime.month.toString();
+                        String yyyy = dateTime.year.toString();
+                        String date = dd + " " + mm + " " + yyyy;
+                        if ((selectedCourse?.fees?.oneTime?.isOneTimeAllowed ??
+                                false) &&
+                            (widget.student.requestedCourseFee.isPaidOneTime)) {
+                          paidOneTime(
+                              double.parse(
+                                  selectedCourse.fees.feeSection.totalFees),
+                              (selectedCourse.fees.oneTime.duration),
+                              (date),
+                              selectedCourse.id,
+                              widget.keyS);
+                        } else if (!widget
+                                .student.requestedCourseFee.isPaidOneTime &&
+                            (selectedCourse
+                                    ?.fees?.maxInstallment?.isMaxAllowed ??
+                                false)) {
+                          _updateList(
+                              widget.student.requestedCourseFee.installments,
+                              selectedCourse.fees.maxInstallment.installment,
+                              selectedCourse.id,
+                              widget.keyS,
+                              date);
+                        }
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                             builder: (context) => StudentsRequests()));
                       }

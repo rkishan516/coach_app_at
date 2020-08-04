@@ -100,7 +100,7 @@ class FeeReport extends StatelessWidget {
                                   ),
                                 ),
                                 Expanded(
-                                  flex: 4,
+                                  flex: 5,
                                   child: StreamBuilder<Event>(
                                       stream: FirebaseDatabase.instance
                                           .reference()
@@ -142,37 +142,68 @@ class FeeReport extends StatelessWidget {
                                                   ),
                                                 );
                                             });
-                                            return _getReportFragment(
-                                                type, _list);
+                                            return Column(
+                                              children: [
+                                                Expanded(
+                                                  flex: 4,
+                                                  child: _getReportFragment(
+                                                    type,
+                                                    _list,
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 8.0,
+                                                            right: 8.0,
+                                                            top: 4.0,
+                                                            bottom: 4.0),
+                                                    child: RaisedButton(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10,
+                                                        ),
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .push(
+                                                          MaterialPageRoute(
+                                                            builder: (context) {
+                                                              return Scaffold(
+                                                                appBar: AppBar(
+                                                                  title: Text(
+                                                                      type),
+                                                                ),
+                                                                body:
+                                                                    _getReportFragment(
+                                                                        type,
+                                                                        _list),
+                                                              );
+                                                            },
+                                                          ),
+                                                        );
+                                                      },
+                                                      color: Color(0xffF36C24),
+                                                      child: Center(
+                                                        child: Text(
+                                                          'See Full List',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
                                           },
                                         );
                                       }),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 8.0,
-                                        right: 8.0,
-                                        top: 4.0,
-                                        bottom: 4.0),
-                                    child: RaisedButton(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          10,
-                                        ),
-                                      ),
-                                      onPressed: () {},
-                                      color: Color(0xffF36C24),
-                                      child: Center(
-                                        child: Text(
-                                          'See Full List',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
                                 ),
                               ],
                             ),

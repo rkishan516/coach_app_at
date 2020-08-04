@@ -21,7 +21,7 @@ class _PaymentTypeState extends State<PaymentType> {
   String _titleString = "";
   double sum = 0.0;
   double fine = 0.0;
-  String _displaySum = "", _noticetext = "";
+  String _displaySum = "";
   bool _allowonetime = false;
   final dbref = FirebaseDatabase.instance;
   _loadFromDatabase() async {
@@ -41,12 +41,13 @@ class _PaymentTypeState extends State<PaymentType> {
       DataSnapshot _onetimesnapshot = await dbref
           .reference()
           .child(
-              "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/fees/Installments/")
+              "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees/Installments")
           .once();
       if (_onetimesnapshot.value != null) {
         Map map = _onetimesnapshot.value;
         sum = 0.0;
         fine = 0.0;
+
         map.forEach((key, value) {
           if (key != "AllowedThrough" &&
               key != "LastPaidInstallment" &&
@@ -78,41 +79,43 @@ class _PaymentTypeState extends State<PaymentType> {
         .reference()
         .child(
             "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees/Installments/AllowedThrough")
-        .onValue
-        .listen((event) {
-      if (event.snapshot.value == "Installments") {
+        .once()
+        .then((snapshot) {
+      if (snapshot.value == "Installments") {
         setState(() {
           toggleValue1 = true;
           toggleValue2 = false;
         });
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (coontext) => StuInstallment(
-              toggleValue1,
-              courseId: widget.courseId,
-              courseName: widget.courseName,
+        if (toggleValue1 && _installmentsnapshot.value) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (coontext) => StuInstallment(
+                toggleValue1,
+                courseId: widget.courseId,
+                courseName: widget.courseName,
+              ),
             ),
-          ),
-        );
-      } else if (event.snapshot.value == "OneTime") {
+          );
+        }
+      } else if (snapshot.value == "OneTime") {
         setState(() {
           toggleValue2 = true;
           toggleValue1 = false;
         });
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => OneTimeInstallment(
-              toggleValue: toggleValue2,
-              courseName: widget.courseName,
-              courseId: widget.courseId,
-              displaysum: _displaySum,
-              paidfine: fine,
-              paidsum: sum,
+        if (toggleValue2 && _onetimesnapshot.value)
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => OneTimeInstallment(
+                toggleValue: toggleValue2,
+                courseName: widget.courseName,
+                courseId: widget.courseId,
+                displaysum: _displaySum,
+                paidfine: fine,
+                paidsum: sum,
+              ),
             ),
-          ),
-        );
+          );
       } else {
-        print("back");
         setState(() {
           toggleValue1 = false;
           toggleValue2 = false;
@@ -133,6 +136,7 @@ class _PaymentTypeState extends State<PaymentType> {
   @override
   void initState() {
     super.initState();
+
     _loadFromDatabase();
   }
 
@@ -311,8 +315,8 @@ class _PaymentTypeState extends State<PaymentType> {
                                 right: toggleValue2 ? 0.0 : 60.0,
                                 child: InkWell(
                                   onTap: () {
-                                    if (!toggleValue1 && !toggleValue2)
-                                      toggleButton2();
+                                    if (!toggleValue1 && !toggleValue2 ||
+                                        _allowonetime) toggleButton2();
                                   },
                                   child: AnimatedSwitcher(
                                     duration: Duration(microseconds: 1000),
@@ -368,7 +372,8 @@ class _PaymentTypeState extends State<PaymentType> {
           ),
         )
             .then((value) {
-          Navigator.of(context).pop(value);
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
           return;
         });
       } else {}
@@ -393,7 +398,7 @@ class _PaymentTypeState extends State<PaymentType> {
           ),
         )
             .then((value) {
-          Navigator.of(context).pop(value);
+          Navigator.of(context).pop();
           return;
         });
       } else {}

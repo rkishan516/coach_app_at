@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Events/TableCalender/table_calendar.dart';
@@ -114,8 +113,6 @@ class _CalenderState extends State<Calender> {
   onEventChanged(Event event) {
     String str = event.snapshot.key.substring(0, 10) + 'T12:00:00.000Z';
     DateTime _key = DateTime.parse(str);
-    print(_events);
-    var index;
     _events[_key].forEach((element) {
       if (element.eventkey == event.snapshot.value['eventkey']) {
         var index = _events[_key].indexOf(element);

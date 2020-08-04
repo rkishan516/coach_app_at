@@ -35,7 +35,7 @@ class _FullReportState extends State<FullReport> {
         double totalfees = double.parse(_totalFees);
         double discount = double.parse(
             _studentModel.discount != null ? _studentModel.discount : "0.0");
-        double fine = double.parse(_studentModel.listInstallment[0].fine != null
+        double fine = double.parse(_studentModel.listInstallment[0].fine != ""
             ? _studentModel.listInstallment[0].fine
             : "0.0");
         amountPaidstr = _studentModel.discount != null
@@ -446,9 +446,7 @@ class _FullReportState extends State<FullReport> {
                     color: Colors.white,
                   ),
                 ),
-                onPressed: () {
-                  //TODO
-                },
+                onPressed: () {},
               ),
             ),
           ],

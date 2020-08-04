@@ -9,7 +9,7 @@ class VideoConferencing extends StatefulWidget {
   final String passVariable;
   final String room, eventkey;
   final String subject;
-  int privilegelevel;
+  final int privilegelevel;
   final int hostprevilagelevel;
   final String hostuid;
   VideoConferencing(

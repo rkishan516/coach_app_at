@@ -1,8 +1,8 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Payment/razorPay.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-
-import 'PayInstallment.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class StuInstallment extends StatefulWidget {
   final bool toogleValue;
@@ -382,7 +382,7 @@ class _StuInstallmentState extends State<StuInstallment> {
                             "Status: " +
                             _listInstallment[index].status),
                         trailing: RaisedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (buttonStatus == "Pay Now") {
                               if (index != 0)
                                 prevbuttonStatus =
@@ -393,23 +393,85 @@ class _StuInstallmentState extends State<StuInstallment> {
                                             ? "Pay Now"
                                             : "Paid";
 
-                              if (prevbuttonStatus != "Pay Now")
-                                Navigator.of(context)
-                                    .push(
-                                  MaterialPageRoute(
-                                    builder: (context) => PayInstallment(
-                                      _listInstallment[index],
-                                      courseId: widget.courseId,
-                                      courseName: widget.courseName,
-                                    ),
-                                  ),
-                                )
-                                    .then((value) async {
-                                  if (value == "Paid")
-                                    await _updateList(
-                                        _listInstallment[index].sequence);
-                                  Navigator.of(context).pop(value);
-                                });
+                              if (prevbuttonStatus != "Pay Now") {
+                                DateTime dateTime = DateTime.now();
+                                String dd = dateTime.day.toString().length == 1
+                                    ? "0" + dateTime.day.toString()
+                                    : dateTime.day.toString();
+                                String mm =
+                                    dateTime.month.toString().length == 1
+                                        ? "0" + dateTime.month.toString()
+                                        : dateTime.month.toString();
+                                String yyyy = dateTime.year.toString();
+                                String date = dd + " " + mm + " " + yyyy;
+                                // String upi;
+                                // var value = await FirebaseDatabase.instance
+                                //     .reference()
+                                //     .child(
+                                //         '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/')
+                                //     .child('upiId')
+                                //     .once();
+                                // upi = value.value;
+
+                                void _handlePaymentSuccess(
+                                    PaymentSuccessResponse response) async {
+                                  print('Payment Successful');
+                                  await FirebaseDatabase.instance
+                                      .reference()
+                                      .reference()
+                                      .child(
+                                          "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees/Installments")
+                                      .update(
+                                    {
+                                      _listInstallment[index].sequence: {
+                                        "Amount":
+                                            _listInstallment[index].amount,
+                                        "Duration":
+                                            _listInstallment[index].duration,
+                                        "Status": "Paid",
+                                        "PaidTime": date,
+                                        "Fine": _listInstallment[index].fine
+                                      },
+                                      "AllowedThrough": "Installments",
+                                      "LastPaidInstallment":
+                                          _listInstallment[index].sequence
+                                    },
+                                  );
+                                  _updateList(_listInstallment[index].sequence);
+                                  // Do something when payment succeeds
+                                }
+
+                                void _handlePaymentError(
+                                    PaymentFailureResponse response) {
+                                  print('Payment Failed');
+                                  // Do something when payment fails
+                                }
+
+                                void _handleExternalWallet(
+                                    ExternalWalletResponse response) {
+                                  print('Payment External Wallet');
+                                  // Do something when an external wallet was selected
+                                }
+
+                                RazorPayPayment _razorPay = RazorPayPayment(
+                                  _handlePaymentSuccess,
+                                  _handlePaymentError,
+                                  _handleExternalWallet,
+                                );
+                                double payment = double.parse(
+                                        _listInstallment[index]?.amount) +
+                                    double.parse(
+                                        _listInstallment[index]?.fine == ''
+                                            ? '0'
+                                            : _listInstallment[index]?.fine);
+                                _razorPay.checkoutPayment(
+                                  (payment * 100).toInt(),
+                                  FireBaseAuth.instance.user.displayName,
+                                  'You are purchaing the course ${widget.courseName}.',
+                                  FireBaseAuth.instance.user.phoneNumber,
+                                  FireBaseAuth.instance.user.email,
+                                );
+                              }
                             }
                           },
                           color: Color(0xffF36C24),

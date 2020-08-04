@@ -1,8 +1,8 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Payment/razorPay.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-
-import 'PayOneTime.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class OneTimeInstallment extends StatefulWidget {
   final String courseId;
@@ -37,24 +37,73 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
   String paymentDate = "";
   Widget _payButton() {
     return GestureDetector(
-      onTap: () {
-        if (!toggleValue)
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PayOneTime(
-                totalfees: totalfees.toString(),
-                duration: duration,
-                fine: fine,
-                paidfine: paidfine,
-                paidsum: paidsum,
-                courseId: widget.courseId,
-                courseName: widget.courseName,
-              ),
-            ),
-          ).then((value) {
-            print(value);
-          });
+      onTap: () async {
+        if (!toggleValue) {
+          DateTime dateTime = DateTime.now();
+          String dd = dateTime.day.toString().length == 1
+              ? "0" + dateTime.day.toString()
+              : dateTime.day.toString();
+          String mm = dateTime.month.toString().length == 1
+              ? "0" + dateTime.month.toString()
+              : dateTime.month.toString();
+          String yyyy = dateTime.year.toString();
+          String date = dd + " " + mm + " " + yyyy;
+          // String upi;
+          // var value = await FirebaseDatabase.instance
+          //     .reference()
+          //     .child(
+          //         '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/')
+          //     .child('upiId')
+          //     .once();
+          // upi = value.value;
+
+          void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+            print('Payment Successful');
+            await dbref
+                .reference()
+                .child(
+                    "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees/")
+                .update({
+              "Installments": {
+                "OneTime": {
+                  "Amount": totalfees,
+                  "Duration": duration,
+                  "Status": "Paid",
+                  "PaidTime": date,
+                  "Fine": fine,
+                  "PaidInstallment": paidsum.toString(),
+                  "PaidFine": paidfine.toString()
+                },
+                "AllowedThrough": "OneTime",
+                "LastPaidInstallment": "OneTime"
+              }
+            });
+
+            Navigator.of(context).pop("Paid");
+
+            // Do something when payment succeeds
+          }
+
+          void _handlePaymentError(PaymentFailureResponse response) {
+            print('Payment Failed');
+            // Do something when payment fails
+          }
+
+          void _handleExternalWallet(ExternalWalletResponse response) {
+            print('Payment External Wallet');
+            // Do something when an external wallet was selected
+          }
+
+          RazorPayPayment _razorPay = RazorPayPayment(_handlePaymentSuccess,
+              _handlePaymentError, _handleExternalWallet);
+
+          _razorPay.checkoutPayment(
+              totalfees.toInt() * 100,
+              FireBaseAuth.instance.user.displayName,
+              'You are purchaing the course ${widget.courseName}.',
+              FireBaseAuth.instance.user.phoneNumber,
+              FireBaseAuth.instance.user.email);
+        }
       },
       child: Container(
         decoration: BoxDecoration(
@@ -74,10 +123,10 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
   _loadFromDatabase() {
     if (!toggleValue) {
       DateTime dateTime = DateTime.now();
-      int dd = int.parse(dateTime.day.toString().length == 1
+      int dd = int.parse(dateTime.day.toString()?.length == 1
           ? "0" + dateTime.day.toString()
           : dateTime.day.toString());
-      int mm = int.parse(dateTime.month.toString().length == 1
+      int mm = int.parse(dateTime.month.toString()?.length == 1
           ? "0" + dateTime.month.toString()
           : dateTime.month.toString());
       int yyyy = int.parse(dateTime.year.toString());

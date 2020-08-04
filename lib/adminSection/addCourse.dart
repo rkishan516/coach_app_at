@@ -261,9 +261,7 @@ class _AddCourseState extends State<AddCourse> {
                         padding: const EdgeInsets.only(
                             top: 16.0, bottom: 16.0, right: 2.0, left: 2.0),
                         child: TextField(
-                          onChanged: (value) {
-                            //TODO
-                          },
+                          onChanged: (value) {},
                           controller: _ddText,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -317,9 +315,7 @@ class _AddCourseState extends State<AddCourse> {
                         padding: const EdgeInsets.only(
                             top: 16.0, bottom: 16.0, right: 2.0, left: 2.0),
                         child: TextField(
-                          onChanged: (value) {
-                            //TODO
-                          },
+                          onChanged: (value) {},
                           controller: _yyText,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -468,7 +464,7 @@ class _AddCourseState extends State<AddCourse> {
                                       newValueSelected;
                                 });
                               },
-                              isExpanded: false,
+                              isExpanded: true,
                               hint: Text('Select Period'),
                               value: _currentFineDurationSelected,
                             ),
@@ -1185,6 +1181,7 @@ class _AddCourseState extends State<AddCourse> {
   List<TextEditingController> _listEditingControllerYYYY;
   List<TextEditingController> _listEditingControllerMoney;
   Map map;
+  bool editValue = false;
   final TextEditingController _maxInstallText = TextEditingController();
 
   Widget _createTextFields(int value) {
@@ -1202,7 +1199,7 @@ class _AddCourseState extends State<AddCourse> {
         }
         for (int i = 0; i < noOfTextFields; i++) {
           String pass = (i + 1).toString() + "Installment";
-          if (widget.isEdit) {
+          if (editValue) {
             if (widget.course.fees?.maxInstallment?.installment != null) {
               _listEditingControllerMoney[i] = TextEditingController()
                 ..text = widget.course.fees?.maxInstallment?.installment[pass]
@@ -1245,6 +1242,7 @@ class _AddCourseState extends State<AddCourse> {
             }
           }
         }
+        editValue = false;
       }
 
       return Form(
@@ -1316,11 +1314,10 @@ class _AddCourseState extends State<AddCourse> {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
-                                  onChanged: (value) {
-                                    //TODO
-                                  },
+                                  onChanged: (value) {},
                                   controller:
                                       _listEditingControllerMoney[index],
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(color: Color(0xffF36C24)),
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
@@ -1373,9 +1370,7 @@ class _AddCourseState extends State<AddCourse> {
                             child: Padding(
                               padding: const EdgeInsets.all(2.0),
                               child: TextFormField(
-                                onChanged: (value) {
-                                  //TODO
-                                },
+                                onChanged: (value) {},
                                 controller: _listEditingControllerDD[index],
                                 style: TextStyle(color: Color(0xffF36C24)),
                                 textAlign: TextAlign.center,
@@ -1436,9 +1431,7 @@ class _AddCourseState extends State<AddCourse> {
                             child: Padding(
                               padding: const EdgeInsets.all(2.0),
                               child: TextFormField(
-                                onChanged: (value) {
-                                  //TODO
-                                },
+                                onChanged: (value) {},
                                 controller: _listEditingControllerYYYY[index],
                                 style: TextStyle(color: Color(0xffF36C24)),
                                 textAlign: TextAlign.center,
@@ -1520,6 +1513,7 @@ class _AddCourseState extends State<AddCourse> {
     Timer(Duration(seconds: 0), () async {
       _pref = await SharedPreferences.getInstance();
     });
+    editValue = widget.isEdit;
     if (widget.isEdit) _loadFromDatabase();
     if (widget.isEdit)
       checkinstallment =

@@ -15,6 +15,7 @@ class _DueFeeReportState extends State<DueFeeReport> {
   Map<String, PaidInstallemnt> _coresspondingDueMap = {};
   List<StudentModel> list = [];
   _setstudentlist() {
+    list = [];
     if (widget._listStudentModel.length == 0) {
       return;
     }
@@ -32,7 +33,7 @@ class _DueFeeReportState extends State<DueFeeReport> {
         try {
           var index = element1.listInstallment?.firstWhere((element) {
             print(element.sequence);
-            if (element.status == "Due") {
+            if (element.status == "Due" || element.status == "Fine") {
               String duration = element1
                   .listInstallment[int.parse(
                           element.sequence.replaceAll("Installment", "")) -
@@ -93,8 +94,6 @@ class _DueFeeReportState extends State<DueFeeReport> {
 
     return Container(
       padding: EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12.0), color: Colors.orange),
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: ListView.builder(
@@ -107,11 +106,26 @@ class _DueFeeReportState extends State<DueFeeReport> {
                   " and Fine " +
                   _coresspondingDueMap[_studentList[index].uid].fine;
           return Card(
-            child: ListTile(
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => FullReport(_studentList[index]))),
-              title: Text(_studentList[index]?.name),
-              subtitle: Text(text),
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => FullReport(
+                    _studentList[index],
+                  ),
+                ),
+              ),
+              child: Container(
+                child: Column(
+                  children: [
+                    Text(
+                      _studentList[index]?.name,
+                    ),
+                    Text(
+                      text,
+                    ),
+                  ],
+                ),
+              ),
             ),
           );
         },
