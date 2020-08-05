@@ -285,24 +285,19 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
                     ),
                   if (widget.displaysum != "")
                     Row(
-                      children: [
-                        Expanded(
-                            flex: 2,
-                            child: Text(
-                              "Paid Installment",
-                              style: TextStyle(fontSize: 22.0),
-                            )),
-                        SizedBox(
-                          width: 35.0,
-                        ),
-                        Expanded(
-                            flex: 2,
-                            child: Text(
-                              widget.displaysum != "0.0"
-                                  ? paidsum.toString()
-                                  : widget.displaysum,
-                              style: TextStyle(fontSize: 20.0),
-                            ))
+                      children: <Widget>[
+                        SizedBox(width: SizeConfig.b * 8),
+                        Text("Paid Installment",
+                            style: TextStyle(fontSize: SizeConfig.b * 4.5)),
+                        SizedBox(width: SizeConfig.b * 3),
+                        Text(
+                            widget.displaysum != "0.0"
+                                ? paidsum.toString()
+                                : widget.displaysum,
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 243, 107, 40),
+                                fontWeight: FontWeight.w600,
+                                fontSize: SizeConfig.b * 4.5)),
                       ],
                     ),
                   if (widget.displaysum != "")
@@ -311,24 +306,19 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
                     ),
                   if (widget.displaysum != "")
                     Row(
-                      children: [
-                        Expanded(
-                            flex: 2,
-                            child: Text(
-                              "Paid Fine",
-                              style: TextStyle(fontSize: 22.0),
-                            )),
-                        SizedBox(
-                          width: 35.0,
-                        ),
-                        Expanded(
-                            flex: 2,
-                            child: Text(
-                              widget.displaysum != "0.0"
-                                  ? paidfine.toString()
-                                  : "0.0",
-                              style: TextStyle(fontSize: 20.0),
-                            ))
+                      children: <Widget>[
+                        SizedBox(width: SizeConfig.b * 8),
+                        Text("Paid Fine",
+                            style: TextStyle(fontSize: SizeConfig.b * 4.5)),
+                        SizedBox(width: SizeConfig.b * 16),
+                        Text(
+                            widget.displaysum != "0.0"
+                                ? paidfine.toString()
+                                : "0.0",
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 243, 107, 40),
+                                fontWeight: FontWeight.w600,
+                                fontSize: SizeConfig.b * 4.5)),
                       ],
                     ),
                   SizedBox(height: SizeConfig.v * 2),
