@@ -142,7 +142,7 @@ class _InstallMentListState extends State<InstallMentList> {
                                                   .value['MaxInstallment']
                                               ['MaxAllowedInstallment']);
                                       i++) {
-                                    installments[index] = false;
+                                    installments[i] = false;
                                   }
                                 }
                               },

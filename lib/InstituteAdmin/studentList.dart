@@ -4,7 +4,7 @@ import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
-import 'package:coach_app/Profile/StudentProfile.dart';
+import 'package:coach_app/Profile/StudentProfilePage.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -152,11 +152,12 @@ class _StudentListState extends State<StudentList> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => StudentProfile(
-                                              student: students[students.keys
-                                                  .toList()[index]],
-                                              keyS: students.keys
-                                                  .toList()[index]),
+                                          builder: (context) =>
+                                              StudentProfilePage(
+                                            student: students[
+                                                students.keys.toList()[index]],
+                                            keyS: students.keys.toList()[index],
+                                          ),
                                         ),
                                       );
                                     },

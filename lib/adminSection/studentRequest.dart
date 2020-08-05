@@ -3,7 +3,7 @@ import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
-import 'package:coach_app/Profile/StudentProfile.dart';
+import 'package:coach_app/Profile/StudentProfilePage.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -186,8 +186,8 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) =>
-                StudentProfile(student: widget.student, keyS: widget.keyS)));
+            builder: (context) => StudentProfilePage(
+                student: widget.student, keyS: widget.keyS)));
       },
       child: Card(
         elevation: 5.0,
@@ -389,8 +389,15 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                                             .installments[i] = true;
                                       }
                                     } else {
-                                      widget.student.requestedCourseFee
-                                          .installments[index] = false;
+                                      for (int i = index;
+                                          i <
+                                              widget.student.requestedCourseFee
+                                                  .installments.length;
+                                          i++) {
+                                        print(i);
+                                        widget.student.requestedCourseFee
+                                            .installments[i] = false;
+                                      }
                                     }
                                   },
                                 );

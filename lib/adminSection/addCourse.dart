@@ -539,6 +539,10 @@ class _AddCourseState extends State<AddCourse> {
   }
 
   _saveintodatabase() {
+    if (!toggleValue1 && !toggleValue2) {
+      Alert.instance.alert(context, 'Please select atleast one payment method');
+      return;
+    }
     if (_prevTotalText != '') {
       if (toggleValue1 && _totalText.text != _prevTotalText) {
         showErrorDialog(context);

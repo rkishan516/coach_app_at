@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'FullReport.dart';
@@ -19,28 +21,30 @@ class _PayementReportState extends State<PayementReport> {
   _setstudentlist() {
     List<StudentModel> list = [];
     widget._listStudentModel.forEach((element) {
-      if (element.lastpaidInstallment != null) {
+      if (element.lastpaidInstallment != null &&
+          element.lastpaidInstallment != "") {
         list.add(element);
 
         _coresspondingStatus[element.uid] = "Paid";
       } else {
         try {
-          var index = element.listInstallment.firstWhere(
-              (element) => element.fine != "" && element.status == "Fine");
+          var index = element.listInstallment.firstWhere((element) {
+            return element.status == "Due" || element.status == "Fine";
+          });
 
           list.add(element);
 
-          _coresspondingStatus[element.uid] = "Fine";
+          _coresspondingStatus[element.uid] = "Due";
 
           _coresspondingmap[element.uid] = index;
         } catch (e) {
           try {
-            var index = element.listInstallment
-                .firstWhere((element) => element.status == "Due");
+            var index = element.listInstallment.firstWhere(
+                (element) => element.fine != "" && element.status == "Fine");
 
             list.add(element);
 
-            _coresspondingStatus[element.uid] = "Due";
+            _coresspondingStatus[element.uid] = "Fine";
 
             _coresspondingmap[element.uid] = index;
 
@@ -70,46 +74,52 @@ class _PayementReportState extends State<PayementReport> {
               String subTitle = "";
 
               if (_coresspondingStatus[_studentList[index].uid] == "Paid") {
-                var indexof = _studentList[index].listInstallment.singleWhere(
-                    (element) =>
-                        element.sequence ==
-                        _studentList[index].lastpaidInstallment);
+                try {
+                  var indexof = _studentList[index].listInstallment.singleWhere(
+                      (element) =>
+                          element.sequence ==
+                          _studentList[index].lastpaidInstallment);
 
-                String lastpaidtime = _studentList[index]
-                    .listInstallment[
-                        _studentList[index].listInstallment.indexOf(indexof)]
-                    .paidTime
-                    .toString();
+                  String lastpaidtime = _studentList[index]
+                      .listInstallment[
+                          _studentList[index].listInstallment.indexOf(indexof)]
+                      .paidTime
+                      .toString();
 
-                subTitle = "Status: " +
-                    "Paid" +
-                    "\n" +
-                    "Last Paid: " +
-                    _studentList[index]
-                        .lastpaidInstallment
-                        .replaceAll("Installment", " Installment") +
-                    "\n" +
-                    "Paid Date: " +
-                    lastpaidtime.replaceAll(" ", "/");
+                  subTitle = "Status: " +
+                      "Paid" +
+                      "\n" +
+                      "Last Paid: " +
+                      _studentList[index]
+                          .lastpaidInstallment
+                          .replaceAll("Installment", " Installment") +
+                      "\n" +
+                      "Paid Date: " +
+                      lastpaidtime.replaceAll(" ", "/");
+                } catch (e) {
+                  print(e);
+                }
               } else if (_coresspondingStatus[_studentList[index].uid] ==
                   "Fine") {
                 subTitle = "Status: Fine" +
                     "\n" +
                     "Fine Amount: " +
-                    _coresspondingmap[_studentList[index].uid].fine +
+                    _coresspondingmap[_studentList[index].uid]?.fine +
                     "Type: " +
-                    _coresspondingmap[_studentList[index].phoneNo].sequence;
+                    _coresspondingmap[_studentList[index].phoneNo]?.sequence;
               } else {
                 subTitle = "Status: Due" +
                     "\n" +
                     "Due Amount: " +
-                    _coresspondingmap[_studentList[index].uid].amount +
+                    _coresspondingmap[_studentList[index].uid]?.amount +
                     "\n" +
                     "Due Date: " +
-                    _coresspondingmap[_studentList[index].uid].duration +
+                    _coresspondingmap[_studentList[index].uid]
+                        ?.duration
+                        ?.replaceAll(" ", "/") +
                     "\n" +
                     "Type: " +
-                    _coresspondingmap[_studentList[index].uid].sequence;
+                    _coresspondingmap[_studentList[index].uid]?.sequence;
               }
 
               return Card(

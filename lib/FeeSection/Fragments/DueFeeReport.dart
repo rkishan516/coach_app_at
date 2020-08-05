@@ -19,71 +19,88 @@ class _DueFeeReportState extends State<DueFeeReport> {
     if (widget._listStudentModel.length == 0) {
       return;
     }
-    if (widget._listStudentModel[0].isinstallmentAllowed) {
-      DateTime dateTime = DateTime.now();
-      int dd = int.parse(dateTime.day.toString().length == 1
-          ? "0" + dateTime.day.toString()
-          : dateTime.day.toString());
-      int mm = int.parse(dateTime.month.toString().length == 1
-          ? "0" + dateTime.month.toString()
-          : dateTime.month.toString());
-      int yyyy = int.parse(dateTime.year.toString());
+    widget._listStudentModel.forEach((studentmodel) {
+      if (studentmodel.isinstallmentAllowed) {
+        if (studentmodel.lastpaidInstallment != "") {
+          DateTime dateTime = DateTime.now();
+          int dd = int.parse(dateTime.day.toString().length == 1
+              ? "0" + dateTime.day.toString()
+              : dateTime.day.toString());
+          int mm = int.parse(dateTime.month.toString().length == 1
+              ? "0" + dateTime.month.toString()
+              : dateTime.month.toString());
+          int yyyy = int.parse(dateTime.year.toString());
 
-      widget._listStudentModel.forEach((element1) {
-        try {
-          var index = element1.listInstallment?.firstWhere((element) {
-            print(element.sequence);
-            if (element.status == "Due" || element.status == "Fine") {
-              String duration = element1
-                  .listInstallment[int.parse(
-                          element.sequence.replaceAll("Installment", "")) -
-                      2]
-                  ?.duration;
-              print(duration);
-              int enddd = int.parse(duration.split(" ")[0]);
-              int endmm = int.parse(duration.split(" ")[1]);
-              int endyy = int.parse(duration.split(" ")[2]);
-              if (dd >= enddd && mm >= endmm && yyyy >= endyy)
-                return true;
-              else
-                return false;
-            } else
-              return false;
+          widget._listStudentModel.forEach((element1) {
+            try {
+              var index = element1.listInstallment?.firstWhere((element) {
+                print(element.sequence);
+                if (element.status == "Due" || element.status == "Fine") {
+                  String duration = element1
+                      .listInstallment[int.parse(
+                              element.sequence.replaceAll("Installment", "")) -
+                          2]
+                      ?.duration;
+                  print(duration);
+                  int enddd = int.parse(duration.split(" ")[0]);
+                  int endmm = int.parse(duration.split(" ")[1]);
+                  int endyy = int.parse(duration.split(" ")[2]);
+                  if (dd >= enddd && mm >= endmm && yyyy >= endyy)
+                    return true;
+                  else
+                    return false;
+                } else
+                  return false;
+              });
+              if (index != null) list.add(element1);
+              _coresspondingmap[element1.uid] = index;
+            } catch (e) {
+              print(e);
+            }
           });
-          if (index != null) list.add(element1);
-          _coresspondingmap[element1.uid] = index;
+          setState(() {
+            _studentList = list;
+          });
+        } else {
+          try {
+            var index = studentmodel.listInstallment?.firstWhere((element) =>
+                element.status == "Due" || element.status == "Fine");
+            if (index != null) list.add(studentmodel);
+            _coresspondingmap[studentmodel.uid] = index;
+          } catch (e) {
+            print(e);
+          }
+
+          setState(() {
+            _studentList = list;
+          });
+        }
+      } else {
+        try {
+          widget._listStudentModel.forEach((element) {
+            double sum = 0.0;
+            double fine = 0.0;
+            element.listInstallment.forEach((childelement) {
+              if (childelement.status == "Due") {
+                sum += double.parse(childelement.amount);
+              } else if (childelement.status == "Fine") {
+                fine += double.parse(childelement.fine);
+              }
+            });
+            if (sum != 0.0) {
+              list.add(element);
+              _coresspondingDueMap[element.uid] = PaidInstallemnt(
+                  sum.toStringAsFixed(2), fine.toStringAsFixed(2));
+            }
+          });
         } catch (e) {
           print(e);
         }
-      });
-      setState(() {
-        _studentList = list;
-      });
-    } else {
-      try {
-        widget._listStudentModel.forEach((element) {
-          double sum = 0.0;
-          double fine = 0.0;
-          element.listInstallment.forEach((childelement) {
-            if (childelement.status == "Due") {
-              sum += double.parse(childelement.amount);
-            } else if (childelement.status == "Fine") {
-              fine += double.parse(childelement.fine);
-            }
-          });
-          if (sum != 0.0) {
-            list.add(element);
-            _coresspondingDueMap[element.uid] = PaidInstallemnt(
-                sum.toStringAsFixed(2), fine.toStringAsFixed(2));
-          }
+        setState(() {
+          _studentList = list;
         });
-      } catch (e) {
-        print(e);
       }
-      setState(() {
-        _studentList = list;
-      });
-    }
+    });
   }
 
   @override

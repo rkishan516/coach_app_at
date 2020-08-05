@@ -115,14 +115,14 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                   ListTile(
                     title: Text('All Courses'.tr()),
                     leading: Icon(Icons.book),
-                    onTap: () => Navigator.of(context).pushAndRemoveUntil(
-                        CupertinoPageRoute(
-                          builder: (context) => AllCoursePage(
-                            ref: FirebaseDatabase.instance.reference().child(
-                                '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}'),
-                          ),
+                    onTap: () => Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => AllCoursePage(
+                          ref: FirebaseDatabase.instance.reference().child(
+                              '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}'),
                         ),
-                        (route) => false),
+                      ),
+                    ),
                   ),
                 if (FireBaseAuth.instance.previlagelevel == 1)
                   ListTile(
@@ -138,13 +138,13 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                   ListTile(
                     title: Text('Fee Section'),
                     leading: Icon(Icons.attach_money),
-                    onTap: () => Navigator.of(context).pushAndRemoveUntil(
-                        CupertinoPageRoute(
-                          builder: (context) => CoursePage(
-                            isFromDrawer: true,
-                          ),
+                    onTap: () => Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => CoursePage(
+                          isFromDrawer: true,
                         ),
-                        (route) => false),
+                      ),
+                    ),
                   ),
                 ListTile(
                   title: Text('Admin Corner'.tr()),

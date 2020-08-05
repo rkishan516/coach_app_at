@@ -14,15 +14,19 @@ class _PaidReportState extends State<PaidReport> {
   List<StudentModel> _studentList = [];
   _setstudentlist() {
     List<StudentModel> list = [];
-    widget._listStudentModel.forEach((element) {
-      if (element.lastpaidInstallment != null &&
-          element.lastpaidInstallment != "OneTime") {
-        list.add(element);
-      }
-    });
-    setState(() {
-      _studentList = list;
-    });
+    try {
+      widget._listStudentModel.forEach((element) {
+        if (element.lastpaidInstallment != null &&
+            element.lastpaidInstallment != "OneTime") {
+          list.add(element);
+        }
+      });
+      setState(() {
+        _studentList = list;
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -36,18 +40,31 @@ class _PaidReportState extends State<PaidReport> {
       child: ListView.builder(
         itemCount: _studentList.length,
         itemBuilder: (context, index) {
-          var indexof = _studentList[index].listInstallment.singleWhere(
-              (element) =>
-                  element.sequence == _studentList[index].lastpaidInstallment);
-          String lastpaidtime = _studentList[index]
-              .listInstallment[
-                  _studentList[index].listInstallment.indexOf(indexof)]
-              .paidTime
-              .toString();
-          String amount = _studentList[index]
-              .listInstallment[
-                  _studentList[index].listInstallment.indexOf(indexof)]
-              .amount;
+          var indexof;
+
+          String lastpaidtime = "";
+          String amount = "";
+          try {
+            indexof = _studentList[index].listInstallment.singleWhere(
+                (element) =>
+                    element.sequence ==
+                    _studentList[index].lastpaidInstallment);
+
+            if (indexof != null) {
+              lastpaidtime = _studentList[index]
+                  .listInstallment[
+                      _studentList[index].listInstallment.indexOf(indexof)]
+                  .paidTime
+                  .toString();
+              amount = _studentList[index]
+                  .listInstallment[
+                      _studentList[index].listInstallment.indexOf(indexof)]
+                  .amount;
+            }
+          } catch (e) {
+            print(e);
+            return null;
+          }
 
           return Card(
             elevation: 20,

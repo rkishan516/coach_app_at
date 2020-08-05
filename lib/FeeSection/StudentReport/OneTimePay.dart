@@ -105,16 +105,29 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
               FireBaseAuth.instance.user.email);
         }
       },
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.0),
-            color: Color(0xffF36C24)),
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 15),
-        alignment: Alignment.center,
-        child: Text(
-          !toggleValue ? "Pay Now" : "Paid",
-          style: TextStyle(color: Colors.white),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 50.0),
+        child: Container(
+          alignment: Alignment.center,
+          width: SizeConfig.b * 50,
+          height: SizeConfig.v * 6,
+          decoration: BoxDecoration(
+            color: Color.fromARGB(255, 243, 107, 40),
+            borderRadius: BorderRadius.all(
+              Radius.circular(
+                SizeConfig.b * 3,
+              ),
+            ),
+          ),
+          child: Text(
+            !toggleValue ? "Pay Now" : "Paid",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: SizeConfig.b * 5,
+            ),
+          ),
         ),
       ),
     );
@@ -227,6 +240,7 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     double addfine = fine != "" ? double.parse(fine) : 0.0;
     double addTotalFees = totalfees != 0.0 ? totalfees : 0.0;
     String discountfeesadded = "";
@@ -246,36 +260,29 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
           padding: EdgeInsets.all(12.0),
           children: [
             Container(
-                padding: EdgeInsets.all(20.0),
-                width: MediaQuery.of(context).size.width * 0.8,
-                height: MediaQuery.of(context).size.height * 0.75,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.0),
-                  color: Color(0xffF36C24),
-                ),
-                child: Column(children: [
+              padding: EdgeInsets.all(20.0),
+              width: MediaQuery.of(context).size.width * 0.8,
+              height: MediaQuery.of(context).size.height * 0.75,
+              child: Column(
+                children: [
+                  SizedBox(height: SizeConfig.v * 10),
                   Row(
-                    children: [
-                      Expanded(
-                          flex: 2,
-                          child: Text(
-                            "Total Fees",
-                            style: TextStyle(fontSize: 22.0),
-                          )),
-                      SizedBox(
-                        width: 35.0,
-                      ),
-                      Expanded(
-                          flex: 2,
-                          child: Text(
-                            totalfees.toString(),
-                            style: TextStyle(fontSize: 20.0),
-                          ))
+                    children: <Widget>[
+                      SizedBox(width: SizeConfig.b * 8),
+                      Text("Total Fees:     ",
+                          style: TextStyle(fontSize: SizeConfig.b * 4.5)),
+                      SizedBox(width: SizeConfig.b * 8),
+                      Text(totalfees.toString(),
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 243, 107, 40),
+                              fontWeight: FontWeight.w600,
+                              fontSize: SizeConfig.b * 4.5)),
                     ],
                   ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
+                  if (widget.displaysum != "")
+                    SizedBox(
+                      height: 15.0,
+                    ),
                   if (widget.displaysum != "")
                     Row(
                       children: [
@@ -298,9 +305,10 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
                             ))
                       ],
                     ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
+                  if (widget.displaysum != "")
+                    SizedBox(
+                      height: 15.0,
+                    ),
                   if (widget.displaysum != "")
                     Row(
                       children: [
@@ -323,128 +331,101 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
                             ))
                       ],
                     ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
+                  SizedBox(height: SizeConfig.v * 2),
                   Row(
-                    children: [
-                      Expanded(
-                          flex: 2,
-                          child: Text(
-                            "Discount",
-                            style: TextStyle(fontSize: 22.0),
-                          )),
-                      SizedBox(
-                        width: 35.0,
-                      ),
-                      Expanded(
-                          flex: 2,
-                          child: Text(
-                            discount,
-                            style: TextStyle(fontSize: 20.0),
-                          ))
+                    children: <Widget>[
+                      SizedBox(width: SizeConfig.b * 8),
+                      Text("Discount:     ",
+                          style: TextStyle(fontSize: SizeConfig.b * 4.5)),
+                      SizedBox(width: SizeConfig.b * 11),
+                      Text(discount == '' ? "0%" : discount,
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 243, 107, 40),
+                              fontWeight: FontWeight.w600,
+                              fontSize: SizeConfig.b * 4.5)),
                     ],
                   ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
+                  SizedBox(height: SizeConfig.v * 2),
                   Row(
-                    children: [
-                      Expanded(
-                          flex: 2,
-                          child: Text(
-                            "Fine",
-                            style: TextStyle(fontSize: 22.0),
-                          )),
-                      SizedBox(
-                        width: 35.0,
-                      ),
-                      Expanded(
-                          flex: 2,
-                          child: Text(
-                            fine == "" ? "0.0" : fine,
-                            style: TextStyle(fontSize: 20.0),
-                          ))
+                    children: <Widget>[
+                      SizedBox(width: SizeConfig.b * 8),
+                      Text("Fine:  ",
+                          style: TextStyle(fontSize: SizeConfig.b * 4.5)),
+                      SizedBox(width: SizeConfig.b * 22.5),
+                      Text(fine == "" ? "0.0" : fine,
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 243, 107, 40),
+                              fontWeight: FontWeight.w600,
+                              fontSize: SizeConfig.b * 4.5)),
                     ],
                   ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
+                  SizedBox(height: SizeConfig.v * 2),
                   Row(
-                    children: [
-                      Expanded(
-                          flex: 2,
-                          child: Text(
-                            "End Date",
-                            style: TextStyle(fontSize: 22.0),
-                          )),
-                      SizedBox(
-                        width: 35.0,
-                      ),
-                      Expanded(
-                          flex: 2,
-                          child: Text(
-                            duration?.replaceAll(" ", "/"),
-                            style: TextStyle(fontSize: 20.0),
-                          ))
+                    children: <Widget>[
+                      SizedBox(width: SizeConfig.b * 8),
+                      Text("End Date:    ",
+                          style: TextStyle(fontSize: SizeConfig.b * 4.5)),
+                      SizedBox(width: SizeConfig.b * 11.5),
+                      Text(duration?.replaceAll(" ", "/"),
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 243, 107, 40),
+                              fontWeight: FontWeight.w600,
+                              fontSize: SizeConfig.b * 4.5)),
                     ],
                   ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
-                  toggleValue
-                      ? Row(
-                          children: [
-                            Expanded(
-                                flex: 2,
-                                child: Text(
-                                  "Payment Date",
-                                  style: TextStyle(fontSize: 22.0),
-                                )),
-                            SizedBox(
-                              width: 35.0,
-                            ),
-                            Expanded(
-                                flex: 2,
-                                child: Text(
-                                  paymentDate?.replaceAll(" ", "/"),
-                                  style: TextStyle(fontSize: 20.0),
-                                ))
-                          ],
-                        )
-                      : SizedBox(
-                          height: 15.0,
-                        ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
+                  if (toggleValue) SizedBox(height: SizeConfig.v * 2),
+                  if (toggleValue)
+                    Row(
+                      children: <Widget>[
+                        SizedBox(width: SizeConfig.b * 8),
+                        Text("Payment Date:   ",
+                            style: TextStyle(fontSize: SizeConfig.b * 4.5)),
+                        SizedBox(width: SizeConfig.b * 2.4),
+                        Text(paymentDate?.replaceAll(" ", "/"),
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 243, 107, 40),
+                                fontWeight: FontWeight.w600,
+                                fontSize: SizeConfig.b * 4.5)),
+                      ],
+                    ),
+                  SizedBox(height: SizeConfig.v * 2),
                   Row(
-                    children: [
-                      Expanded(
-                          flex: 2,
-                          child: Text(
-                            toggleValue ? "Amount Paid" : "Payable Amount",
-                            style: TextStyle(fontSize: 22.0),
-                          )),
-                      SizedBox(
-                        width: 35.0,
-                      ),
-                      Expanded(
-                          flex: 2,
-                          child: Text(
-                            discountfeesadded.contains("-")
-                                ? "0.0"
-                                : discountfeesadded,
-                            style: TextStyle(fontSize: 20.0),
-                          ))
+                    children: <Widget>[
+                      SizedBox(width: SizeConfig.b * 8),
+                      Text(toggleValue ? "Amount Paid" : "Payable Amount",
+                          style: TextStyle(fontSize: SizeConfig.b * 4.5)),
+                      SizedBox(width: SizeConfig.b * 4.5),
+                      Text(
+                          discountfeesadded.contains("-")
+                              ? "0.0"
+                              : discountfeesadded,
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 243, 107, 40),
+                              fontWeight: FontWeight.w600,
+                              fontSize: SizeConfig.b * 4.5)),
                     ],
-                  )
-                ])),
-            SizedBox(
-              height: 15.0,
+                  ),
+                  _payButton(),
+                ],
+              ),
             ),
-            _payButton(),
           ],
         ));
+  }
+}
+
+class SizeConfig {
+  static MediaQueryData _mediaQueryData;
+  static double screenWidth;
+  static double screenHeight;
+  static double b;
+  static double v;
+
+  void init(BuildContext context) {
+    _mediaQueryData = MediaQuery.of(context);
+    screenWidth = _mediaQueryData.size.width;
+    screenHeight = _mediaQueryData.size.height;
+    b = screenWidth / 100;
+    v = screenHeight / 100;
   }
 }

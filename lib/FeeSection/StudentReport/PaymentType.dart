@@ -124,9 +124,6 @@ class _PaymentTypeState extends State<PaymentType> {
     _showInstallmenttype = _installmentsnapshot.value ?? false;
     _showOneTimetype = _onetimesnapshot.value ?? false;
 
-    print(_showOneTimetype);
-    print(_showInstallmenttype);
-
     setState(() {
       toggleValue1 = !_showInstallmenttype;
       toggleValue2 = !_showOneTimetype;
@@ -419,6 +416,10 @@ class _PaymentTypeState extends State<PaymentType> {
     setState(() {
       toggleValue2 = !toggleValue2;
       if (toggleValue2) {
+        // Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        //   return HomePage();
+        // }));
+        // return;
         Navigator.of(context)
             .push(
           MaterialPageRoute(
@@ -438,5 +439,168 @@ class _PaymentTypeState extends State<PaymentType> {
         });
       } else {}
     });
+  }
+}
+
+class SizeConfig {
+  static MediaQueryData _mediaQueryData;
+  static double screenWidth;
+  static double screenHeight;
+  static double b;
+  static double v;
+
+  void init(BuildContext context) {
+    _mediaQueryData = MediaQuery.of(context);
+    screenWidth = _mediaQueryData.size.width;
+    screenHeight = _mediaQueryData.size.height;
+    b = screenWidth / 100;
+    v = screenHeight / 100;
+  }
+}
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "GURUCOOL",
+          textScaleFactor: 1.3,
+        ),
+        backgroundColor: Color.fromARGB(255, 243, 106, 38),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            Container(
+              alignment: Alignment.centerLeft,
+              height: SizeConfig.v * 8, //10 for example
+              width: SizeConfig.b * 100, //10 for example
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 243, 107, 40),
+              ),
+              child: Padding(
+                  padding: EdgeInsets.fromLTRB(SizeConfig.b * 8, 0, 0, 0),
+                  child: Text(
+                    "Full Payment",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: SizeConfig.b * 6,
+                    ),
+                  )),
+            ),
+            SizedBox(height: SizeConfig.v * 10),
+            Row(
+              children: <Widget>[
+                SizedBox(width: SizeConfig.b * 8),
+                Text("Total Fees:     ",
+                    style: TextStyle(fontSize: SizeConfig.b * 4.5)),
+                SizedBox(width: SizeConfig.b * 8),
+                Text("1500.00",
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 243, 107, 40),
+                        fontWeight: FontWeight.w600,
+                        fontSize: SizeConfig.b * 4.5)),
+              ],
+            ),
+            SizedBox(height: SizeConfig.v * 2),
+            Row(
+              children: <Widget>[
+                SizedBox(width: SizeConfig.b * 8),
+                Text("Discount:     ",
+                    style: TextStyle(fontSize: SizeConfig.b * 4.5)),
+                SizedBox(width: SizeConfig.b * 11),
+                Text("1500.00 ",
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 243, 107, 40),
+                        fontWeight: FontWeight.w600,
+                        fontSize: SizeConfig.b * 4.5)),
+              ],
+            ),
+            SizedBox(height: SizeConfig.v * 2),
+            Row(
+              children: <Widget>[
+                SizedBox(width: SizeConfig.b * 8),
+                Text("Fine:   ",
+                    style: TextStyle(fontSize: SizeConfig.b * 4.5)),
+                SizedBox(width: SizeConfig.b * 22.5),
+                Text("1500.0",
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 243, 107, 40),
+                        fontWeight: FontWeight.w600,
+                        fontSize: SizeConfig.b * 4.5)),
+              ],
+            ),
+            SizedBox(height: SizeConfig.v * 2),
+            Row(
+              children: <Widget>[
+                SizedBox(width: SizeConfig.b * 8),
+                Text("End Date:    ",
+                    style: TextStyle(fontSize: SizeConfig.b * 4.5)),
+                SizedBox(width: SizeConfig.b * 11.5),
+                Text("20/11/2020",
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 243, 107, 40),
+                        fontWeight: FontWeight.w600,
+                        fontSize: SizeConfig.b * 4.5)),
+              ],
+            ),
+            SizedBox(height: SizeConfig.v * 2),
+            Row(
+              children: <Widget>[
+                SizedBox(width: SizeConfig.b * 8),
+                Text("Payment Date:   ",
+                    style: TextStyle(fontSize: SizeConfig.b * 4.5)),
+                SizedBox(width: SizeConfig.b * 2.4),
+                Text("15/11/2020",
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 243, 107, 40),
+                        fontWeight: FontWeight.w600,
+                        fontSize: SizeConfig.b * 4.5)),
+              ],
+            ),
+            SizedBox(height: SizeConfig.v * 2),
+            Row(
+              children: <Widget>[
+                SizedBox(width: SizeConfig.b * 8),
+                Text("Amount Paid:   ",
+                    style: TextStyle(fontSize: SizeConfig.b * 4.5)),
+                SizedBox(width: SizeConfig.b * 4.5),
+                Text("1500.00",
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 243, 107, 40),
+                        fontWeight: FontWeight.w600,
+                        fontSize: SizeConfig.b * 4.5)),
+              ],
+            ),
+            SizedBox(height: SizeConfig.v * 10),
+            Container(
+              alignment: Alignment.center,
+              width: SizeConfig.b * 50,
+              height: SizeConfig.v * 6,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 243, 107, 40),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(
+                    SizeConfig.b * 3,
+                  ),
+                ),
+              ),
+              child: Text(
+                "Paid",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: SizeConfig.b * 5,
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

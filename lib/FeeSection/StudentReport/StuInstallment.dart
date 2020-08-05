@@ -52,9 +52,11 @@ class _StuInstallmentState extends State<StuInstallment> {
 
         //discount check
         if (discount != null) {
-          minusValue = double.parse(
-              ((fees * (double.parse(discount) / 100)) / installments.length)
-                  .toStringAsFixed(2));
+          if (discount != "none") {
+            minusValue = double.parse(
+                ((fees * (double.parse(discount) / 100)) / installments.length)
+                    .toStringAsFixed(2));
+          }
         }
 
         //finecheck
@@ -284,205 +286,239 @@ class _StuInstallmentState extends State<StuInstallment> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Installments"),
-        ),
-        body: ListView(
-          padding: EdgeInsets.all(12.0),
-          children: [
+      appBar: AppBar(
+        title: Text("Installments"),
+        elevation: 0,
+      ),
+      body: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          SizedBox(height: SizeConfig.v * 5),
+          Row(
+            children: <Widget>[
+              SizedBox(width: SizeConfig.b * 5),
+              Text("No. of Installments:",
+                  style: TextStyle(fontSize: SizeConfig.b * 4.2)),
+              SizedBox(width: SizeConfig.b * 8),
+              Text("$noofInstallments",
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 243, 107, 40),
+                      fontWeight: FontWeight.w600,
+                      fontSize: SizeConfig.b * 4.2)),
+            ],
+          ),
+          SizedBox(height: SizeConfig.v * 2),
+          Row(
+            children: <Widget>[
+              SizedBox(width: SizeConfig.b * 5),
+              Text("Total Fees:",
+                  style: TextStyle(fontSize: SizeConfig.b * 4.2)),
+              SizedBox(width: SizeConfig.b * 24),
+              Text("$totalfees",
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 243, 107, 40),
+                      fontWeight: FontWeight.w600,
+                      fontSize: SizeConfig.b * 4.2)),
+            ],
+          ),
+          if (discount != null && discount != "none")
+            SizedBox(height: SizeConfig.v * 2),
+          if (discount != null && discount != "none")
             Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    "No of Intsallmnets",
-                    style: TextStyle(fontSize: 18.0),
-                  ),
-                ),
-                SizedBox(
-                  width: 20.0,
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    "$noofInstallments",
-                    style: TextStyle(fontSize: 18.0),
-                  ),
-                ),
+              children: <Widget>[
+                SizedBox(width: SizeConfig.b * 5),
+                Text("Discount:",
+                    style: TextStyle(fontSize: SizeConfig.b * 4.2)),
+                SizedBox(width: SizeConfig.b * 24),
+                Text(
+                    "$discount" +
+                        "%\n" +
+                        "Fees After Discount: " +
+                        (totalfees * (1 - (double.parse(discount) / 100)))
+                            .toString(),
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 243, 107, 40),
+                        fontWeight: FontWeight.w600,
+                        fontSize: SizeConfig.b * 4.2)),
               ],
             ),
-            SizedBox(
-              height: 10.0,
-            ),
-            Card(
-              child: ListTile(
-                title: Text("Total fees"),
-                subtitle: Text("$totalfees"),
-                trailing: Icon(
-                  Icons.arrow_forward_ios,
-                  color: Color(0xffF36C24),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            discount != null
-                ? Card(
-                    child: ListTile(
-                      title: Text("Discount"),
-                      subtitle: Text("$discount" +
-                          "%\n" +
-                          "Fees After Discount: " +
-                          (totalfees * (1 - (double.parse(discount) / 100)))
-                              .toString()),
-                      trailing: Icon(
-                        Icons.arrow_forward_ios,
-                        color: Color(0xffF36C24),
+          SizedBox(
+            height: 10.0,
+          ),
+          Container(
+            padding: EdgeInsets.all(3.0),
+            // color: Color(0xffF36C24),
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.65,
+            child: ListView.builder(
+              itemCount: _listInstallment.length,
+              itemBuilder: (context, index) {
+                String amountstr = _listInstallment[index].fine != ""
+                    ? "+ ${_listInstallment[index].fine}"
+                    : "";
+                String buttonStatus = _listInstallment[index].status == "Due"
+                    ? "Pay Now"
+                    : _listInstallment[index].status == "Fine"
+                        ? "Pay Now"
+                        : "Paid";
+                String prevbuttonStatus = "";
+                return Column(
+                  children: <Widget>[
+                    SizedBox(height: SizeConfig.v * 4),
+                    Container(
+                      width: SizeConfig.b * 88,
+                      height: SizeConfig.v * 13,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 243, 107, 40),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(
+                            SizeConfig.b * 4,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          SizedBox(width: SizeConfig.b * 4),
+                          Text((index + 1).toString(),
+                              style: TextStyle(
+                                  fontSize: SizeConfig.b * 12,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w300)),
+                          SizedBox(width: SizeConfig.b * 4.5),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text("${_listInstallment[index].amount}",
+                                  style: TextStyle(
+                                      fontSize: SizeConfig.b * 4.5,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400)),
+                              SizedBox(height: SizeConfig.v * 0.2),
+                              Text(
+                                  "End Time : ${_listInstallment[index].duration.replaceAll(" ", "/")}",
+                                  style: TextStyle(
+                                      fontSize: SizeConfig.b * 4,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400)),
+                              SizedBox(height: SizeConfig.v * 0.2),
+                              Text("Status : ${_listInstallment[index].status}",
+                                  style: TextStyle(
+                                      fontSize: SizeConfig.b * 4,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400))
+                            ],
+                          ),
+                          SizedBox(width: SizeConfig.b * 6),
+                          RaisedButton(
+                            elevation: 10,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                side: BorderSide(color: Colors.white)),
+                            onPressed: () async {
+                              if (buttonStatus == "Pay Now") {
+                                if (index != 0)
+                                  prevbuttonStatus = _listInstallment[index - 1]
+                                              .status ==
+                                          "Due"
+                                      ? "Pay Now"
+                                      : _listInstallment[index - 1].status ==
+                                              "Fine"
+                                          ? "Pay Now"
+                                          : "Paid";
+
+                                if (prevbuttonStatus != "Pay Now") {
+                                  DateTime dateTime = DateTime.now();
+                                  String dd =
+                                      dateTime.day.toString().length == 1
+                                          ? "0" + dateTime.day.toString()
+                                          : dateTime.day.toString();
+                                  String mm =
+                                      dateTime.month.toString().length == 1
+                                          ? "0" + dateTime.month.toString()
+                                          : dateTime.month.toString();
+                                  String yyyy = dateTime.year.toString();
+                                  String date = dd + " " + mm + " " + yyyy;
+                                  void _handlePaymentSuccess(
+                                      PaymentSuccessResponse response) async {
+                                    print('Payment Successful');
+                                    await FirebaseDatabase.instance
+                                        .reference()
+                                        .reference()
+                                        .child(
+                                            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees/Installments")
+                                        .update(
+                                      {
+                                        _listInstallment[index].sequence: {
+                                          "Amount":
+                                              _listInstallment[index].amount,
+                                          "Duration":
+                                              _listInstallment[index].duration,
+                                          "Status": "Paid",
+                                          "PaidTime": date,
+                                          "Fine": _listInstallment[index].fine
+                                        },
+                                        "AllowedThrough": "Installments",
+                                        "LastPaidInstallment":
+                                            _listInstallment[index].sequence
+                                      },
+                                    );
+                                    _updateList(
+                                        _listInstallment[index].sequence);
+                                    // Do something when payment succeeds
+                                  }
+
+                                  void _handlePaymentError(
+                                      PaymentFailureResponse response) {
+                                    print('Payment Failed');
+                                    // Do something when payment fails
+                                  }
+
+                                  void _handleExternalWallet(
+                                      ExternalWalletResponse response) {
+                                    print('Payment External Wallet');
+                                    // Do something when an external wallet was selected
+                                  }
+
+                                  RazorPayPayment _razorPay = RazorPayPayment(
+                                    _handlePaymentSuccess,
+                                    _handlePaymentError,
+                                    _handleExternalWallet,
+                                  );
+                                  double payment = double.parse(
+                                          _listInstallment[index]?.amount) +
+                                      double.parse(
+                                          _listInstallment[index]?.fine == ''
+                                              ? '0'
+                                              : _listInstallment[index]?.fine);
+                                  _razorPay.checkoutPayment(
+                                    (payment * 100).toInt(),
+                                    FireBaseAuth.instance.user.displayName,
+                                    'You are purchaing the course ${widget.courseName}.',
+                                    FireBaseAuth.instance.user.phoneNumber,
+                                    FireBaseAuth.instance.user.email,
+                                  );
+                                }
+                              }
+                            },
+                            color: Colors.white,
+                            textColor: Color.fromARGB(255, 243, 107, 40),
+                            child: Text(buttonStatus,
+                                style: TextStyle(fontSize: SizeConfig.b * 3.5)),
+                          ),
+                        ],
                       ),
                     ),
-                  )
-                : SizedBox(
-                    width: 5.0,
-                  ),
-            SizedBox(
-              height: 10.0,
+                  ],
+                );
+              },
             ),
-            Container(
-              padding: EdgeInsets.all(3.0),
-              color: Color(0xffF36C24),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.65,
-              child: ListView.builder(
-                  itemCount: _listInstallment.length,
-                  itemBuilder: (context, index) {
-                    String amountstr = _listInstallment[index].fine != ""
-                        ? "+ ${_listInstallment[index].fine}"
-                        : "";
-                    String buttonStatus =
-                        _listInstallment[index].status == "Due"
-                            ? "Pay Now"
-                            : _listInstallment[index].status == "Fine"
-                                ? "Pay Now"
-                                : "Paid";
-                    String prevbuttonStatus = "";
-                    return Card(
-                      child: ListTile(
-                        leading: Text(
-                          (index + 1).toString(),
-                          style: TextStyle(fontSize: 18.0),
-                        ),
-                        title: Text(_listInstallment[index].amount + amountstr),
-                        subtitle: Text("End Time:\n" +
-                            _listInstallment[index]
-                                .duration
-                                .replaceAll(" ", "/") +
-                            "\n" +
-                            "Status: " +
-                            _listInstallment[index].status),
-                        trailing: RaisedButton(
-                          onPressed: () async {
-                            if (buttonStatus == "Pay Now") {
-                              if (index != 0)
-                                prevbuttonStatus =
-                                    _listInstallment[index - 1].status == "Due"
-                                        ? "Pay Now"
-                                        : _listInstallment[index - 1].status ==
-                                                "Fine"
-                                            ? "Pay Now"
-                                            : "Paid";
-
-                              if (prevbuttonStatus != "Pay Now") {
-                                DateTime dateTime = DateTime.now();
-                                String dd = dateTime.day.toString().length == 1
-                                    ? "0" + dateTime.day.toString()
-                                    : dateTime.day.toString();
-                                String mm =
-                                    dateTime.month.toString().length == 1
-                                        ? "0" + dateTime.month.toString()
-                                        : dateTime.month.toString();
-                                String yyyy = dateTime.year.toString();
-                                String date = dd + " " + mm + " " + yyyy;
-                                // String upi;
-                                // var value = await FirebaseDatabase.instance
-                                //     .reference()
-                                //     .child(
-                                //         '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/')
-                                //     .child('upiId')
-                                //     .once();
-                                // upi = value.value;
-
-                                void _handlePaymentSuccess(
-                                    PaymentSuccessResponse response) async {
-                                  print('Payment Successful');
-                                  await FirebaseDatabase.instance
-                                      .reference()
-                                      .reference()
-                                      .child(
-                                          "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees/Installments")
-                                      .update(
-                                    {
-                                      _listInstallment[index].sequence: {
-                                        "Amount":
-                                            _listInstallment[index].amount,
-                                        "Duration":
-                                            _listInstallment[index].duration,
-                                        "Status": "Paid",
-                                        "PaidTime": date,
-                                        "Fine": _listInstallment[index].fine
-                                      },
-                                      "AllowedThrough": "Installments",
-                                      "LastPaidInstallment":
-                                          _listInstallment[index].sequence
-                                    },
-                                  );
-                                  _updateList(_listInstallment[index].sequence);
-                                  // Do something when payment succeeds
-                                }
-
-                                void _handlePaymentError(
-                                    PaymentFailureResponse response) {
-                                  print('Payment Failed');
-                                  // Do something when payment fails
-                                }
-
-                                void _handleExternalWallet(
-                                    ExternalWalletResponse response) {
-                                  print('Payment External Wallet');
-                                  // Do something when an external wallet was selected
-                                }
-
-                                RazorPayPayment _razorPay = RazorPayPayment(
-                                  _handlePaymentSuccess,
-                                  _handlePaymentError,
-                                  _handleExternalWallet,
-                                );
-                                double payment = double.parse(
-                                        _listInstallment[index]?.amount) +
-                                    double.parse(
-                                        _listInstallment[index]?.fine == ''
-                                            ? '0'
-                                            : _listInstallment[index]?.fine);
-                                _razorPay.checkoutPayment(
-                                  (payment * 100).toInt(),
-                                  FireBaseAuth.instance.user.displayName,
-                                  'You are purchaing the course ${widget.courseName}.',
-                                  FireBaseAuth.instance.user.phoneNumber,
-                                  FireBaseAuth.instance.user.email,
-                                );
-                              }
-                            }
-                          },
-                          color: Color(0xffF36C24),
-                          child: Text(buttonStatus),
-                        ),
-                      ),
-                    );
-                  }),
-            )
-          ],
-        ));
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -501,4 +537,20 @@ class NoofInstallment {
         duration = snapshot.value["Duration"],
         fine = snapshot.value["Fine"],
         status = snapshot.value["Status"];
+}
+
+class SizeConfig {
+  static MediaQueryData _mediaQueryData;
+  static double screenWidth;
+  static double screenHeight;
+  static double b;
+  static double v;
+
+  void init(BuildContext context) {
+    _mediaQueryData = MediaQuery.of(context);
+    screenWidth = _mediaQueryData.size.width;
+    screenHeight = _mediaQueryData.size.height;
+    b = screenWidth / 100;
+    v = screenHeight / 100;
+  }
 }

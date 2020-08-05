@@ -171,7 +171,7 @@ class _FeeUpdateState extends State<FeeUpdate> {
                                         int.parse(fees.maxInstallment
                                             .maxAllowedInstallment);
                                     i++) {
-                                  installments[index] = false;
+                                  installments[i] = false;
                                 }
                               }
                             },
