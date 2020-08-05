@@ -8,6 +8,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SizeConfig {
   static MediaQueryData _mediaQueryData;
@@ -122,7 +123,15 @@ class StudentProfilePage extends StatelessWidget {
                                           SizeConfig.v * 2.04),
                                     ),
                                     color: Color.fromARGB(255, 243, 106, 38),
-                                    onPressed: () => {},
+                                    onPressed: () async {
+                                      String url =
+                                          'tel:${student?.phoneNo ?? ""}';
+                                      if (await canLaunch(url)) {
+                                        await launch(url);
+                                      } else {
+                                        throw 'Could not launch $url';
+                                      }
+                                    },
                                   )
                                 ])),
                           ],

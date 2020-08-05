@@ -46,6 +46,7 @@ class _FeeUpdateState extends State<FeeUpdate> {
       String studentUid,
       String date) async {
     var keys = _listInstallment.keys.toList()..sort();
+    String lastPaid = "";
 
     for (int i = 0; i < _listInstallment.length; i++) {
       if (i < paidInstallment.length ? !paidInstallment[i] : false) {
@@ -61,9 +62,12 @@ class _FeeUpdateState extends State<FeeUpdate> {
             "Status": "Due",
             "PaidTime": "",
             "Fine": ""
-          }
+          },
+          "AllowedThrough": "Installments",
+          "LastPaidInstallment": lastPaid,
         });
       } else {
+        lastPaid = keys[i];
         FirebaseDatabase.instance
             .reference()
             .child(

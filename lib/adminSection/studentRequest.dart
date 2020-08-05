@@ -142,6 +142,7 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
       String studentUid,
       String date) async {
     var keys = _listInstallment.keys.toList()..sort();
+    String lastPaid = "";
 
     for (int i = 0; i < _listInstallment.length; i++) {
       if (i < paidInstallment.length ? !paidInstallment[i] : false) {
@@ -149,17 +150,22 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
             .reference()
             .child(
                 "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/Installments")
-            .update({
-          keys[i]: {
-            "Amount":
-                (double.parse(_listInstallment[keys[i]].amount)).toString(),
-            "Duration": _listInstallment[keys[i]].duration,
-            "Status": "Due",
-            "PaidTime": "",
-            "Fine": ""
-          }
-        });
+            .update(
+          {
+            keys[i]: {
+              "Amount":
+                  (double.parse(_listInstallment[keys[i]].amount)).toString(),
+              "Duration": _listInstallment[keys[i]].duration,
+              "Status": "Due",
+              "PaidTime": "",
+              "Fine": ""
+            },
+            "AllowedThrough": "Installments",
+            "LastPaidInstallment": lastPaid,
+          },
+        );
       } else {
+        lastPaid = keys[i];
         FirebaseDatabase.instance
             .reference()
             .child(
