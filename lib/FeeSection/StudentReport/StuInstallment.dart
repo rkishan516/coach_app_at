@@ -39,7 +39,9 @@ class _StuInstallmentState extends State<StuInstallment> {
         : dateTime.month.toString());
     int yyyy = int.parse(dateTime.year.toString());
 
-    if (!toggleValue)
+    print(toggleValue);
+
+    if (!toggleValue) {
       dbref
           .reference()
           .child(
@@ -109,7 +111,7 @@ class _StuInstallmentState extends State<StuInstallment> {
                   int.parse(b.sequence.replaceAll("Installment", ""))));
         });
       });
-    else {
+    } else {
       DataSnapshot changesnapshot = await dbref
           .reference()
           .child(
@@ -132,7 +134,7 @@ class _StuInstallmentState extends State<StuInstallment> {
         int count = 0;
         double unpaidSum = 0.0;
         double minusSum = 0.0;
-        installments.forEach(
+        installments?.forEach(
           (key, value) {
             if (key != "AllowedThrough" && key != "LastPaidInstallment") {
               if (value["Status"].toString() != "Paid") {
@@ -145,9 +147,11 @@ class _StuInstallmentState extends State<StuInstallment> {
           },
         );
         if (discount != null && count != 0)
-          minusValue = double.parse(
-              ((fees * (double.parse(discount) / 100)) / count)
-                  .toStringAsFixed(2));
+          minusValue = double.parse(((fees *
+                      (double.parse(discount == "none" ? "0" : discount) /
+                          100)) /
+                  count)
+              .toStringAsFixed(2));
 
         if (count != 0) {
           int postivecount = 0;

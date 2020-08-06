@@ -114,7 +114,9 @@ List<NoInstallments> _createInstallmentmodel(
   });
   if (discount != null && count != 0)
     minusValue = double.parse(
-        ((fees * (double.parse(discount) / 100)) / count).toStringAsFixed(2));
+        ((fees * (double.parse(discount == "none" ? "0" : discount) / 100)) /
+                count)
+            .toStringAsFixed(2));
 
   if (count != 0) {
     int postivecount = 0;

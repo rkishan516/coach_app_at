@@ -216,7 +216,7 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
           fine = map["Fine"];
           paymentDate = map["PaidTime"];
           paidsum = double.parse(map["PaidInstallment"]);
-          paidfine = double.parse(map["paidFine"]);
+          paidfine = double.parse(map["paidFine"] ?? "0");
         });
       });
       dbref

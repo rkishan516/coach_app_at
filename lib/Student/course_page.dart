@@ -89,6 +89,7 @@ class _CoursePageState extends State<CoursePage> {
                                               .toString(),
                                           courseName:
                                               student.course[index].courseName,
+                                          isFromDrawer: true,
                                         ),
                                       ),
                                     );
