@@ -7,6 +7,7 @@ class Branch {
   String accountHolderName;
   String accountNo;
   String accountIFSC;
+  String accountId;
   Map<String, Admin> admin;
   List<Courses> courses;
 
@@ -18,7 +19,8 @@ class Branch {
       this.upiId,
       this.accountHolderName,
       this.accountNo,
-      this.accountIFSC});
+      this.accountIFSC,
+      this.accountId});
 
   Branch.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
@@ -27,6 +29,7 @@ class Branch {
     accountHolderName = json['accountHolderName'];
     accountNo = json['accountNo'];
     accountIFSC = json['accountIFSC'];
+    accountId = json["accountId"];
     if (json['courses'] != null) {
       courses = new List<Courses>();
       json['courses'].forEach((k, v) {
@@ -49,6 +52,7 @@ class Branch {
     data['accountHolderName'] = this.accountHolderName;
     data['accountNo'] = this.accountNo;
     data['accountIFSC'] = this.accountIFSC;
+    data["accountId"] = this.accountId;
     if (this.courses != null) {
       data['courses'] = this.courses.map((v) => v.toJson()).toList();
     }
@@ -614,12 +618,14 @@ class Course {
   String courseID;
   String courseName;
   String paymentToken;
+  String paymentType;
 
   Course({
     this.academicYear,
     this.courseID,
     this.courseName,
     this.paymentToken,
+    this.paymentType,
   });
 
   Course.fromJson(Map<dynamic, dynamic> json) {
@@ -627,6 +633,7 @@ class Course {
     courseID = json['courseID'];
     courseName = json['courseName'];
     paymentToken = json['paymentToken'];
+    paymentType = json['paymentType'];
   }
 
   Map<String, dynamic> toJson() {
@@ -635,6 +642,7 @@ class Course {
     data['courseID'] = this.courseID;
     data['courseName'] = this.courseName;
     data['paymentToken'] = this.paymentToken;
+    data['paymentType'] = this.paymentType;
     return data;
   }
 }

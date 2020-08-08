@@ -13,6 +13,7 @@ class StudentModel {
   String photoURL;
   String totalFees;
   String courseID;
+  String paymentType;
   bool isinstallmentAllowed;
   List<NoInstallments> listInstallment;
   Map map;
@@ -39,6 +40,9 @@ class StudentModel {
     acaedmicYear = value["course"][courseID]["Academic Year"];
     courseName = value["course"][courseID]["courseName"];
     discount = value["course"][courseID]["discount"];
+    paymentType = (value["course"][courseID]["paymentType"] == "Online")
+        ? "Online"
+        : "Offline";
     name = value["name"];
     phoneNo = value["phone No"];
     email = value["email"];

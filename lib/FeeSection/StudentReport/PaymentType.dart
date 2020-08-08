@@ -26,20 +26,26 @@ class _PaymentTypeState extends State<PaymentType> {
   bool _allowonetime = false;
   final dbref = FirebaseDatabase.instance;
   _loadFromDatabase() async {
+    //Checking IsMaxAllowed
     DataSnapshot _installmentsnapshot = await dbref
         .reference()
         .child(
             "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/fees/MaxInstallment/IsMaxAllowed")
         .once();
+    //Checking IsOneTimeAllowed
     DataSnapshot _onetimesnapshot = await dbref
         .reference()
         .child(
             "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/fees/OneTime/IsOneTimeAllowed")
         .once();
+
+    //If Installments are off
     if (_installmentsnapshot.value != null) {
       if (!_installmentsnapshot.value) {
         print(">>>>>>>>");
         _allowonetime = true;
+
+        //Previous payment collection
         DataSnapshot _onetimesnapshot = await dbref
             .reference()
             .child(
@@ -63,28 +69,25 @@ class _PaymentTypeState extends State<PaymentType> {
           if (fine != 0.0) {
             _displaySum =
                 sum.toStringAsFixed(2) + " + " + fine.toStringAsFixed(2);
-            print(">>>>>>>>>>>");
-            print(_displaySum);
           } else {
             _displaySum = sum.toStringAsFixed(2);
-            print(">>>>>>>>>>>");
-            print(_displaySum);
           }
         }
       }
     }
 
-    dbref
+    //Navigate through last payment method
+    DataSnapshot dataSnapshot = await dbref
         .reference()
         .child(
             "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees/Installments/AllowedThrough")
-        .once()
-        .then((snapshot) {
-      if (snapshot.value == "Installments") {
-        setState(() {
-          toggleValue1 = true;
-          toggleValue2 = false;
-        });
+        .once();
+    if (dataSnapshot.value == "Installments") {
+      setState(() {
+        toggleValue1 = true;
+        toggleValue2 = false;
+      });
+      if (_installmentsnapshot.value != null) {
         if (toggleValue1 && _installmentsnapshot.value) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
@@ -95,14 +98,17 @@ class _PaymentTypeState extends State<PaymentType> {
               ),
             ),
           );
+          return;
         }
-      } else if (snapshot.value == "OneTime") {
-        setState(() {
-          toggleValue2 = true;
-          toggleValue1 = false;
-        });
+      }
+    } else if (dataSnapshot.value == "OneTime") {
+      setState(() {
+        toggleValue2 = true;
+        toggleValue1 = false;
+      });
+      if (_onetimesnapshot.value != null) {
         if (toggleValue2 && _onetimesnapshot.value)
-          Navigator.of(context).push(
+          Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => OneTimeInstallment(
                 toggleValue: toggleValue2,
@@ -115,13 +121,13 @@ class _PaymentTypeState extends State<PaymentType> {
             ),
           );
         return;
-      } else {
-        setState(() {
-          toggleValue1 = false;
-          toggleValue2 = false;
-        });
       }
-    });
+    } else {
+      setState(() {
+        toggleValue1 = false;
+        toggleValue2 = false;
+      });
+    }
 
     _showInstallmenttype = _installmentsnapshot.value ?? false;
     _showOneTimetype = _onetimesnapshot.value ?? false;
@@ -179,90 +185,6 @@ class _PaymentTypeState extends State<PaymentType> {
                     if (!toggleValue1 && !toggleValue2) toggleButton1(false);
                   },
                 )
-              // if (_showInstallmenttype)
-              //   Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-              //     children: [
-              //       Expanded(
-              //         flex: 2,
-              //         child: Text(
-              //           'Pay in Installments',
-              //           style: TextStyle(
-              //               fontSize: 20.0, fontWeight: FontWeight.w400),
-              //         ),
-              //       ),
-              //       SizedBox(
-              //         width: 10.0,
-              //       ),
-              //       Expanded(
-              //         flex: 1,
-              //         child: GestureDetector(
-              //           onLongPress: () {
-              //             if (toggleValue1)
-              //               Navigator.of(context).push(
-              //                 MaterialPageRoute(
-              //                   builder: (coontext) => StuInstallment(
-              //                     toggleValue1,
-              //                     courseId: widget.courseId,
-              //                     courseName: widget.courseName,
-              //                   ),
-              //                 ),
-              //               );
-              //           },
-              //           child: AnimatedContainer(
-              //             duration: Duration(milliseconds: 1000),
-              //             height: 40.0,
-              //             width: 100.0,
-              //             decoration: BoxDecoration(
-              //               borderRadius: BorderRadius.circular(20.0),
-              //               color: toggleValue1
-              //                   ? Colors.greenAccent[100]
-              //                   : Colors.redAccent[100].withOpacity(0.5),
-              //             ),
-              //             child: Stack(
-              //               children: [
-              //                 AnimatedPositioned(
-              //                   duration: Duration(milliseconds: 1000),
-              //                   curve: Curves.easeIn,
-              //                   left: toggleValue1 ? 60.0 : 0.0,
-              //                   right: toggleValue1 ? 0.0 : 60.0,
-              //                   child: InkWell(
-              //                     onTap: () {
-              //                       if (!toggleValue1 && !toggleValue2)
-              //                         toggleButton1();
-              //                     },
-              //                     child: AnimatedSwitcher(
-              //                       duration: Duration(microseconds: 1000),
-              //                       transitionBuilder: (Widget child,
-              //                           Animation<double> animation) {
-              //                         return RotationTransition(
-              //                           child: child,
-              //                           turns: animation,
-              //                         );
-              //                       },
-              //                       child: toggleValue1
-              //                           ? Icon(
-              //                               Icons.check_circle,
-              //                               color: Colors.green,
-              //                               size: 35.0,
-              //                               key: UniqueKey(),
-              //                             )
-              //                           : Icon(
-              //                               Icons.remove_circle_outline,
-              //                               color: Colors.red,
-              //                               size: 35.0,
-              //                               key: UniqueKey(),
-              //                             ),
-              //                     ),
-              //                   ),
-              //                 )
-              //               ],
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   )
               else
                 _displaySum != "" && !toggleValue2
                     ? Container(
@@ -271,7 +193,7 @@ class _PaymentTypeState extends State<PaymentType> {
                         width: MediaQuery.of(context).size.width * 0.9,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.0),
-                          color: Colors.orange,
+                          color: Color(0xffF36C24),
                         ),
                         child: Text(
                           "Amount paid through installments is $_displaySum , Pay rest amount in OneTime as Pay through installments is disabled by the administration",
@@ -298,93 +220,6 @@ class _PaymentTypeState extends State<PaymentType> {
                         TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400),
                   ),
                 ),
-              // if (_showOneTimetype)
-              //   Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-              //     children: [
-              //       Expanded(
-              //         flex: 2,
-              //         child: Text(
-              //           'Pay One Time',
-              //           style: TextStyle(
-              //               fontSize: 20.0, fontWeight: FontWeight.w400),
-              //         ),
-              //       ),
-              //       SizedBox(
-              //         width: 10.0,
-              //       ),
-              //       Expanded(
-              //         flex: 1,
-              //         child: GestureDetector(
-              //           onLongPress: () {
-              //             if (toggleValue2)
-              //               Navigator.of(context).push(
-              //                 MaterialPageRoute(
-              //                   builder: (context) => OneTimeInstallment(
-              //                     toggleValue: toggleValue2,
-              //                     courseName: widget.courseName,
-              //                     courseId: widget.courseId,
-              //                     displaysum: _displaySum,
-              //                     paidfine: fine,
-              //                     paidsum: sum,
-              //                   ),
-              //                 ),
-              //               );
-              //           },
-              //           child: AnimatedContainer(
-              //             duration: Duration(milliseconds: 1000),
-              //             height: 40.0,
-              //             width: 100.0,
-              //             decoration: BoxDecoration(
-              //               borderRadius: BorderRadius.circular(20.0),
-              //               color: toggleValue2
-              //                   ? Colors.greenAccent[100]
-              //                   : Colors.redAccent[100].withOpacity(0.5),
-              //             ),
-              //             child: Stack(
-              //               children: [
-              //                 AnimatedPositioned(
-              //                   duration: Duration(milliseconds: 1000),
-              //                   curve: Curves.easeIn,
-              //                   left: toggleValue2 ? 60.0 : 0.0,
-              //                   right: toggleValue2 ? 0.0 : 60.0,
-              //                   child: InkWell(
-              //                     onTap: () {
-              //                       if (!toggleValue1 && !toggleValue2 ||
-              //                           _allowonetime) toggleButton2();
-              //                     },
-              //                     child: AnimatedSwitcher(
-              //                       duration: Duration(microseconds: 1000),
-              //                       transitionBuilder: (Widget child,
-              //                           Animation<double> animation) {
-              //                         return RotationTransition(
-              //                           child: child,
-              //                           turns: animation,
-              //                         );
-              //                       },
-              //                       child: toggleValue2
-              //                           ? Icon(
-              //                               Icons.check_circle,
-              //                               color: Colors.green,
-              //                               size: 35.0,
-              //                               key: UniqueKey(),
-              //                             )
-              //                           : Icon(
-              //                               Icons.remove_circle_outline,
-              //                               color: Colors.red,
-              //                               size: 35.0,
-              //                               key: UniqueKey(),
-              //                             ),
-              //                     ),
-              //                   ),
-              //                 )
-              //               ],
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
             ],
           ),
         ),
@@ -400,14 +235,13 @@ class _PaymentTypeState extends State<PaymentType> {
             .push(
           MaterialPageRoute(
             builder: (context) => StuInstallment(
-              !fromLFD ? toggleValue1 : !toggleValue1,
+              !fromLFD ? !toggleValue1 : toggleValue1,
               courseId: widget.courseId,
               courseName: widget.courseName,
             ),
           ),
         )
             .then((value) {
-          Navigator.of(context).pop();
           Navigator.of(context).pop();
           return;
         });

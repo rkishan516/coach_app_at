@@ -181,7 +181,7 @@ class _CalenderState extends State<Calender> {
           TableCalendar(
               events: _events,
               calendarStyle: CalendarStyle(
-                  todayColor: Colors.orange,
+                  todayColor: Color(0xffF36C24),
                   todayStyle: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18.0,
@@ -189,7 +189,7 @@ class _CalenderState extends State<Calender> {
               headerStyle: HeaderStyle(
                   centerHeaderTitle: true,
                   formatButtonDecoration: BoxDecoration(
-                    color: Colors.orange,
+                    color: Color(0xffF36C24),
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   formatButtonTextStyle: TextStyle(color: Colors.white),

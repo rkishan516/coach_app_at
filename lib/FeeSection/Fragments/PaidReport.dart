@@ -90,7 +90,9 @@ class _PaidReportState extends State<PaidReport> {
                     Text(
                       (index + 1).toString() + ". " + _studentList[index]?.name,
                       style: TextStyle(
-                        color: Color(0xffF36C24),
+                        color: _studentList[index]?.paymentType == "Online"
+                            ? Colors.green
+                            : Color(0xffF36C24),
                         fontSize: 16,
                       ),
                     ),

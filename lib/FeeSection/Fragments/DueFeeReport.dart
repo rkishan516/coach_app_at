@@ -31,33 +31,31 @@ class _DueFeeReportState extends State<DueFeeReport> {
               : dateTime.month.toString());
           int yyyy = int.parse(dateTime.year.toString());
 
-          widget._listStudentModel.forEach((element1) {
-            try {
-              var index = element1.listInstallment?.firstWhere((element) {
-                print(element.sequence);
-                if (element.status == "Due" || element.status == "Fine") {
-                  String duration = element1
-                      .listInstallment[int.parse(
-                              element.sequence.replaceAll("Installment", "")) -
-                          2]
-                      ?.duration;
-                  print(duration);
-                  int enddd = int.parse(duration.split(" ")[0]);
-                  int endmm = int.parse(duration.split(" ")[1]);
-                  int endyy = int.parse(duration.split(" ")[2]);
-                  if (dd >= enddd && mm >= endmm && yyyy >= endyy)
-                    return true;
-                  else
-                    return false;
-                } else
+          try {
+            var index = studentmodel.listInstallment?.firstWhere((element) {
+              print(element.sequence);
+              if (element.status == "Due" || element.status == "Fine") {
+                String duration = studentmodel
+                    .listInstallment[int.parse(
+                            element.sequence.replaceAll("Installment", "")) -
+                        2]
+                    ?.duration;
+                print(duration);
+                int enddd = int.parse(duration.split(" ")[0]);
+                int endmm = int.parse(duration.split(" ")[1]);
+                int endyy = int.parse(duration.split(" ")[2]);
+                if (dd >= enddd && mm >= endmm && yyyy >= endyy)
+                  return true;
+                else
                   return false;
-              });
-              if (index != null) list.add(element1);
-              _coresspondingmap[element1.uid] = index;
-            } catch (e) {
-              print(e);
-            }
-          });
+              } else
+                return false;
+            });
+            if (index != null) list.add(studentmodel);
+            _coresspondingmap[studentmodel.uid] = index;
+          } catch (e) {
+            print(e);
+          }
           setState(() {
             _studentList = list;
           });
@@ -77,22 +75,20 @@ class _DueFeeReportState extends State<DueFeeReport> {
         }
       } else {
         try {
-          widget._listStudentModel.forEach((element) {
-            double sum = 0.0;
-            double fine = 0.0;
-            element.listInstallment.forEach((childelement) {
-              if (childelement.status == "Due") {
-                sum += double.parse(childelement.amount);
-              } else if (childelement.status == "Fine") {
-                fine += double.parse(childelement.fine);
-              }
-            });
-            if (sum != 0.0) {
-              list.add(element);
-              _coresspondingDueMap[element.uid] = PaidInstallemnt(
-                  sum.toStringAsFixed(2), fine.toStringAsFixed(2));
+          double sum = 0.0;
+          double fine = 0.0;
+          studentmodel.listInstallment.forEach((childelement) {
+            if (childelement.status == "Due") {
+              sum += double.parse(childelement.amount);
+            } else if (childelement.status == "Fine") {
+              fine += double.parse(childelement.fine);
             }
           });
+          if (sum != 0.0) {
+            list.add(studentmodel);
+            _coresspondingDueMap[studentmodel.uid] = PaidInstallemnt(
+                sum.toStringAsFixed(2), fine.toStringAsFixed(2));
+          }
         } catch (e) {
           print(e);
         }
@@ -155,7 +151,9 @@ class _DueFeeReportState extends State<DueFeeReport> {
                     Text(
                       (index + 1).toString() + ". " + _studentList[index]?.name,
                       style: TextStyle(
-                        color: Color(0xffF36C24),
+                        color: _studentList[index]?.paymentType == "Online"
+                            ? Colors.green
+                            : Color(0xffF36C24),
                         fontSize: 16,
                       ),
                     ),

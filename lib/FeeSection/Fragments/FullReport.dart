@@ -80,7 +80,7 @@ class _FullReportState extends State<FullReport> {
           children: [
             ListTile(
               leading: CircleAvatar(
-                backgroundColor: Colors.orange,
+                backgroundColor: Color(0xffF36C24),
                 child: Image.network(_studentModel.photoURL),
               ),
               title: Text(
@@ -102,7 +102,7 @@ class _FullReportState extends State<FullReport> {
                   flex: 1,
                   child: Text(
                     "Contact No : ",
-                    style: TextStyle(fontSize: 18.0),
+                    style: TextStyle(fontSize: 14.0),
                   ),
                 ),
                 SizedBox(
@@ -113,7 +113,7 @@ class _FullReportState extends State<FullReport> {
                   child: Text(
                     _studentModel.phoneNo,
                     style: TextStyle(
-                      fontSize: 16.0,
+                      fontSize: 12.0,
                       color: Color(
                         0xffF36C24,
                       ),
@@ -131,7 +131,7 @@ class _FullReportState extends State<FullReport> {
                   flex: 1,
                   child: Text(
                     "Address : ",
-                    style: TextStyle(fontSize: 18.0),
+                    style: TextStyle(fontSize: 14.0),
                   ),
                 ),
                 SizedBox(
@@ -142,7 +142,7 @@ class _FullReportState extends State<FullReport> {
                   child: Text(
                     _studentModel.address,
                     style: TextStyle(
-                      fontSize: 16.0,
+                      fontSize: 12.0,
                       color: Color(
                         0xffF36C24,
                       ),
@@ -160,7 +160,7 @@ class _FullReportState extends State<FullReport> {
                   flex: 1,
                   child: Text(
                     "Course : ",
-                    style: TextStyle(fontSize: 18.0),
+                    style: TextStyle(fontSize: 14.0),
                   ),
                 ),
                 SizedBox(
@@ -171,7 +171,7 @@ class _FullReportState extends State<FullReport> {
                     child: Text(
                       _studentModel.courseName,
                       style: TextStyle(
-                        fontSize: 16.0,
+                        fontSize: 12.0,
                         color: Color(
                           0xffF36C24,
                         ),
@@ -187,24 +187,51 @@ class _FullReportState extends State<FullReport> {
                 Expanded(
                   flex: 1,
                   child: Text(
-                    "Acaedmic Session : ",
-                    style: TextStyle(fontSize: 18.0),
+                    "Payment Mode : ",
+                    style: TextStyle(fontSize: 14.0),
                   ),
                 ),
                 SizedBox(
                   width: 20.0,
                 ),
                 Expanded(
-                    flex: 2,
-                    child: Text(
-                      _studentModel.acaedmicYear,
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Color(
-                          0xffF36C24,
-                        ),
+                  flex: 2,
+                  child: Text(
+                    _studentModel.paymentType,
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: Color(
+                        0xffF36C24,
                       ),
-                    ))
+                    ),
+                  ),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 15.0,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    "Acaedmic Session : ",
+                    style: TextStyle(fontSize: 14.0),
+                  ),
+                ),
+                Expanded(
+                  flex: 5,
+                  child: Text(
+                    _studentModel.acaedmicYear,
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: Color(
+                        0xffF36C24,
+                      ),
+                    ),
+                  ),
+                )
               ],
             ),
             SizedBox(
@@ -216,7 +243,7 @@ class _FullReportState extends State<FullReport> {
                   flex: 1,
                   child: Text(
                     "Payment Type : ",
-                    style: TextStyle(fontSize: 18.0),
+                    style: TextStyle(fontSize: 14.0),
                   ),
                 ),
                 SizedBox(
@@ -227,7 +254,7 @@ class _FullReportState extends State<FullReport> {
                   child: Text(
                     _studentModel.allowedthrough,
                     style: TextStyle(
-                      fontSize: 16.0,
+                      fontSize: 12.0,
                       color: Color(
                         0xffF36C24,
                       ),
@@ -245,7 +272,7 @@ class _FullReportState extends State<FullReport> {
                   flex: 1,
                   child: Text(
                     "Total Fees : ",
-                    style: TextStyle(fontSize: 18.0),
+                    style: TextStyle(fontSize: 14.0),
                   ),
                 ),
                 SizedBox(
@@ -256,7 +283,7 @@ class _FullReportState extends State<FullReport> {
                   child: Text(
                     _studentModel.totalFees,
                     style: TextStyle(
-                      fontSize: 16.0,
+                      fontSize: 12.0,
                       color: Color(
                         0xffF36C24,
                       ),
@@ -274,7 +301,7 @@ class _FullReportState extends State<FullReport> {
                     flex: 1,
                     child: Text(
                       "Last Paid : ",
-                      style: TextStyle(fontSize: 18.0),
+                      style: TextStyle(fontSize: 14.0),
                     )),
                 SizedBox(
                   width: 20.0,
@@ -284,7 +311,7 @@ class _FullReportState extends State<FullReport> {
                   child: Text(
                     _studentModel.lastpaidInstallment,
                     style: TextStyle(
-                      fontSize: 16.0,
+                      fontSize: 12.0,
                       color: Color(
                         0xffF36C24,
                       ),
@@ -303,7 +330,7 @@ class _FullReportState extends State<FullReport> {
                           flex: 1,
                           child: Text(
                             "Discount",
-                            style: TextStyle(fontSize: 18.0),
+                            style: TextStyle(fontSize: 14.0),
                           )),
                       SizedBox(
                         width: 20.0,
@@ -313,7 +340,7 @@ class _FullReportState extends State<FullReport> {
                         child: Text(
                           _studentModel.discount + "%",
                           style: TextStyle(
-                            fontSize: 16.0,
+                            fontSize: 12.0,
                             color: Color(
                               0xffF36C24,
                             ),
@@ -338,7 +365,7 @@ class _FullReportState extends State<FullReport> {
                       flex: 1,
                       child: Text(
                         "Paid Installment",
-                        style: TextStyle(fontSize: 18.0),
+                        style: TextStyle(fontSize: 14.0),
                       )),
                   SizedBox(
                     width: 20.0,
@@ -348,7 +375,7 @@ class _FullReportState extends State<FullReport> {
                     child: Text(
                       _paidInstallment,
                       style: TextStyle(
-                        fontSize: 16.0,
+                        fontSize: 12.0,
                         color: Color(
                           0xffF36C24,
                         ),
@@ -366,7 +393,7 @@ class _FullReportState extends State<FullReport> {
                     flex: 1,
                     child: Text(
                       "Amount paid : ",
-                      style: TextStyle(fontSize: 18.0),
+                      style: TextStyle(fontSize: 14.0),
                     )),
                 SizedBox(
                   width: 20.0,
@@ -376,7 +403,7 @@ class _FullReportState extends State<FullReport> {
                   child: Text(
                     amountPaidstr,
                     style: TextStyle(
-                      fontSize: 16.0,
+                      fontSize: 12.0,
                       color: Color(
                         0xffF36C24,
                       ),

@@ -68,14 +68,14 @@ class LanguageDialog extends StatelessWidget {
                     child: Text('हिन्दी'),
                   ),
                   FlatButton(
-                    color: Colors.deepOrange,
+                    color: Color(0xffF36C24),
                     onPressed: () {
                       EasyLocalization.of(context).locale = Locale('en');
                       showDialog(
                           context: context,
                           builder: (context) => SuccessDialog(
                               success: 'To See effect, Restart the App'));
-                              Timer(Duration(seconds: 2), () {
+                      Timer(Duration(seconds: 2), () {
                         Navigator.of(context).pop();
                         if (Navigator.of(context).canPop()) {
                           Navigator.of(context).pop();

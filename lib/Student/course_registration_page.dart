@@ -199,7 +199,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                       stream: widget.ref
                                           .parent()
                                           .parent()
-                                          .child("accountNo")
+                                          .child("accountId")
                                           .onValue,
                                       builder: (context, snapshot) {
                                         if (!snapshot.hasData) {
@@ -290,6 +290,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                                           .toString(),
                                                   courseID: widget.courseID,
                                                   courseName: widget.name,
+                                                  paymentType: "Online",
                                                   paymentToken:
                                                       "It's a free course for student"
                                                           .tr(),
@@ -317,7 +318,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                                   'status': 'Registered'
                                                 });
                                                 await Future.delayed(
-                                                    Duration(seconds: 5));
+                                                    Duration(seconds: 1));
                                                 WelcomeNavigation
                                                     .signInWithGoogleAndGetPage(
                                                         context);
@@ -343,7 +344,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                                             warning:
                                                                 'Registering'
                                                                     .tr()));
-                                                await widget.ref
+                                                widget.ref
                                                     .parent()
                                                     .parent()
                                                     .child(
@@ -355,16 +356,14 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                                       .parent()
                                                       .parent()
                                                       .child(
-                                                        '/students/${FireBaseAuth.instance.user.uid}/',
+                                                        '/students/${FireBaseAuth.instance.user.uid}/status',
                                                       )
-                                                      .update({
-                                                    'status': 'Registered'
-                                                  });
-                                                } catch (e) {
+                                                      .set('Registered');
+                                                } catch (e) {} finally {
                                                   Navigator.of(context).pop();
                                                 }
                                                 await Future.delayed(
-                                                    Duration(seconds: 5));
+                                                    Duration(seconds: 1));
                                                 WelcomeNavigation
                                                     .signInWithGoogleAndGetPage(
                                                         context);

@@ -103,7 +103,9 @@ class _PayementReportState extends State<OneTimeReport> {
                               _studentList[index]?.name ??
                           "",
                       style: TextStyle(
-                        color: Color(0xffF36C24),
+                        color: _studentList[index]?.paymentType == "Online"
+                            ? Colors.green
+                            : Color(0xffF36C24),
                         fontSize: 16,
                       ),
                     ),

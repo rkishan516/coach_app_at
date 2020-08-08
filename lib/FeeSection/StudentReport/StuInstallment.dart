@@ -471,6 +471,7 @@ class _StuInstallmentState extends State<StuInstallment> {
                                     );
                                     _updateList(
                                         _listInstallment[index].sequence);
+                                    Navigator.of(context).pop();
                                     // Do something when payment succeeds
                                   }
 

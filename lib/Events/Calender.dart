@@ -209,7 +209,7 @@ class _CalenderState extends State<Calender> {
                       margin: EdgeInsets.all(4.0),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                          color: Colors.deepOrange, shape: BoxShape.circle),
+                          color: Color(0xffF36C24), shape: BoxShape.circle),
                       child: Text(
                         date.day.toString(),
                         style: TextStyle(color: Colors.white),

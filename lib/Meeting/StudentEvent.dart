@@ -262,7 +262,7 @@ class _StudentEventState extends State<StudentEvent> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
-                color: Colors.orange,
+                color: Color(0xffF36C24),
                 elevation: 2.0,
                 child: ListTile(
                     leading: IconButton(

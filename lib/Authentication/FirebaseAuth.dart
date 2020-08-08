@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_loading/flare_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -86,6 +88,39 @@ class FireBaseAuth {
     if (previlagelevel == 34) {
       branchList = JsonCodec().decode(JsonCodec().decode(branchid)).cast<int>();
     }
+    updateToken();
+  }
+
+  updateToken() {
+    FirebaseMessaging().getToken().then((token) {
+      final dbref = FirebaseDatabase.instance
+          .reference()
+          .child('institute/${FireBaseAuth.instance.instituteid}/');
+      if (previlagelevel == 1) {
+        dbref
+            .child(
+                'branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/tokenid')
+            .set(token.toString());
+      } else if (previlagelevel == 2) {
+        dbref
+            .child(
+                'branches/${FireBaseAuth.instance.branchid}/teachers/${FireBaseAuth.instance.user.uid}/tokenid')
+            .set(token.toString());
+      } else if (previlagelevel == 3) {
+        dbref
+            .child(
+                'branches/${FireBaseAuth.instance.branchid}/admin/${FireBaseAuth.instance.user.uid}/tokenid')
+            .set(token.toString());
+      } else if (previlagelevel == 4) {
+        dbref
+            .child('admin/${FireBaseAuth.instance.user.uid}/tokenid')
+            .set(token.toString());
+      } else if (previlagelevel == 34) {
+        dbref
+            .child("midAdmin/${FireBaseAuth.instance.user.uid}/tokenid")
+            .set(token.toString());
+      }
+    });
   }
 
   Future<void> signoutWithGoogle() async {

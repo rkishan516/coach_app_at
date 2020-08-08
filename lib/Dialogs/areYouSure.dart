@@ -36,8 +36,8 @@ class AreYouSure extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(text == null ? 
-              'Are You Sure ?'.tr() : text,
+            Text(
+              text == null ? 'Are You Sure ?'.tr() : text,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16.0,
@@ -56,11 +56,14 @@ class AreYouSure extends StatelessWidget {
                     child: Text('No'.tr()),
                   ),
                   FlatButton(
-                    color: Colors.deepOrange,
+                    color: Color(0xffF36C24),
                     onPressed: () {
                       Navigator.of(context).pop('Yes');
                     },
-                    child: Text('Yes'.tr(),style: TextStyle(color: Colors.white),),
+                    child: Text(
+                      'Yes'.tr(),
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),

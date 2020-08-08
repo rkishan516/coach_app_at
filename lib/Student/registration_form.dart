@@ -51,7 +51,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         leading: IconButton(
             icon: Icon(
               Icons.arrow_back,
-              color: Colors.deepOrange,
+              color: Color(0xffF36C24),
             ),
             onPressed: () {
               FireBaseAuth.instance.signoutWithGoogle();
@@ -64,7 +64,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           style: GoogleFonts.portLligatSans(
             fontSize: 30,
             fontWeight: FontWeight.w700,
-            color: Colors.deepOrange,
+            color: Color(0xffF36C24),
           ),
         ),
       ),
@@ -84,7 +84,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.white, Colors.deepOrange])),
+                colors: [Colors.white, Color(0xffF36C24)])),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ListView(
