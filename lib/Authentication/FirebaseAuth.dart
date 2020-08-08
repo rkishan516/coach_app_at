@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:coach_app/Events/FirebaseMessaging.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -92,6 +93,7 @@ class FireBaseAuth {
   }
 
   updateToken() {
+    FirebaseMessagingService().sendNotification();// initializing messaging handlers
     FirebaseMessaging().getToken().then((token) {
       final dbref = FirebaseDatabase.instance
           .reference()

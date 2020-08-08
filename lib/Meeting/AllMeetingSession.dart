@@ -1,19 +1,19 @@
 import 'dart:async';
 
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Events/FirebaseMessaging.dart';
+import 'package:coach_app/Events/videoConferencing.dart';
+import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'Events.dart';
-import 'FireBaseMessaging.dart';
-import 'videoConferencing.dart';
 
-class StudentEvent extends StatefulWidget {
+class AllMeetingSession extends StatefulWidget {
   @override
-  _StudentEventState createState() => _StudentEventState();
+  _AllMeetingSessionState createState() => _AllMeetingSessionState();
 }
 
-class _StudentEventState extends State<StudentEvent> {
+class _AllMeetingSessionState extends State<AllMeetingSession> {
   List<GeneralEventsModal> _allEvent;
   Query _query;
   int previlagelevel = FireBaseAuth.instance.previlagelevel;
@@ -168,6 +168,9 @@ class _StudentEventState extends State<StudentEvent> {
         else
           return false;
       }
+      else {
+        return false;
+      }
     }
     return true;
   }
@@ -177,17 +180,7 @@ class _StudentEventState extends State<StudentEvent> {
     bool isallowedtoadd = await checkentry(event);
     if (event.snapshot.key != null && isallowedtoadd) {
       setState(() {
-        _allEvent.add(GeneralEventsModal(
-            event.snapshot.key,
-            event.snapshot.value['title'],
-            event.snapshot.value['description'],
-            event.snapshot.value['time'],
-            event.snapshot.value['eventkey'],
-            event.snapshot.value['isStarted'],
-            event.snapshot.value['hostuid'],
-            event.snapshot.value['type'],
-            event.snapshot.value['hostprevilage'],
-            event.snapshot.value['hostname']));
+        _allEvent.add(GeneralEventsModal.fromJson(event.snapshot.key,event.snapshot.value));
       });
     }
   }
@@ -195,7 +188,7 @@ class _StudentEventState extends State<StudentEvent> {
   onEventRemoved(Event event) {
     print(_allEvent);
     _allEvent.forEach((element) {
-      if (element.eventkey == event.snapshot.value['eventkey']) {
+      if (element.eventKey == event.snapshot.value['eventKey']) {
         var index = _allEvent.indexOf(element);
         print(_allEvent[index]);
         setState(() {
@@ -208,23 +201,13 @@ class _StudentEventState extends State<StudentEvent> {
   onEventChanged(Event event) {
     print(_allEvent);
     _allEvent.forEach((element) async {
-      if (element.eventkey == event.snapshot.value['eventkey']) {
+      if (element.eventKey == event.snapshot.value['eventKey']) {
         var index = _allEvent.indexOf(element);
         bool isallowedtoadd = await checkentry(event);
 
         if (isallowedtoadd)
           setState(() {
-            _allEvent[index] = GeneralEventsModal(
-                event.snapshot.key,
-                event.snapshot.value['title'],
-                event.snapshot.value['description'],
-                event.snapshot.value['time'],
-                event.snapshot.value['eventkey'],
-                event.snapshot.value['isStarted'],
-                event.snapshot.value['hostuid'],
-                event.snapshot.value['type'],
-                event.snapshot.value['hostprevilage'],
-                event.snapshot.value['hostname']);
+            _allEvent[index] = GeneralEventsModal.fromJson(event.snapshot.key,event.snapshot.value);
           });
         else
           setState(() {
@@ -265,6 +248,7 @@ class _StudentEventState extends State<StudentEvent> {
                 color: Color(0xffF36C24),
                 elevation: 2.0,
                 child: ListTile(
+                  
                     leading: IconButton(
                       icon: Icon(
                         Icons.video_call,
@@ -273,22 +257,7 @@ class _StudentEventState extends State<StudentEvent> {
                           ? Colors.blue
                           : Colors.white,
                       onPressed: () {
-                        if (_allEvent[index].isStarted == 1) {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return VideoConferencing(
-                              passVariable: _allEvent[index].meetingkey,
-                              room: _allEvent[index].title,
-                              subject: _allEvent[index].description,
-                              hostprevilagelevel:
-                                  _allEvent[index].hostPrevilage,
-                              hostuid: _allEvent[index].hostuid,
-                              eventkey: _allEvent[index].eventkey,
-                              privilegelevel:
-                                  FireBaseAuth.instance.previlagelevel,
-                            );
-                          }));
-                        }
+                       
                       },
                     ),
                     title: Text(
@@ -313,7 +282,24 @@ class _StudentEventState extends State<StudentEvent> {
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
-                    onTap: () {}));
+                    onTap: () {
+                         if (_allEvent[index].isStarted == 1) {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return VideoConferencing(
+                              passVariable: _allEvent[index].meetingkey,
+                              room: _allEvent[index].title,
+                              subject: _allEvent[index].description,
+                              hostprevilagelevel:
+                                  _allEvent[index].hostPrevilage,
+                              hostuid: _allEvent[index].hostuid,
+                              eventkey: _allEvent[index].eventKey,
+                              privilegelevel:
+                                  FireBaseAuth.instance.previlagelevel,
+                            );
+                          }));
+                        }
+                    }));
           },
         ));
   }

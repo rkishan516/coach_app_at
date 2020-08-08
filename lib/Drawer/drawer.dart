@@ -8,8 +8,8 @@ import 'package:coach_app/Drawer/my_institute.dart';
 import 'package:coach_app/Drawer/privacyNPolicies.dart';
 import 'package:coach_app/FeeSection/CouponSection/CouponList.dart';
 import 'package:coach_app/FeeSection/FeeReportPages/DueFeeReport.dart';
-import 'package:coach_app/Meeting/Calender.dart';
-import 'package:coach_app/Meeting/StudentEvent.dart';
+import 'package:coach_app/Events/Calender.dart';
+import 'package:coach_app/Meeting/AllMeetingSession.dart';
 import 'package:coach_app/Plugins/AppIcons.dart';
 import 'package:coach_app/Profile/next.dart';
 import 'package:coach_app/Profile/subAdminProfile.dart';
@@ -211,7 +211,7 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                     onTap: () {
                       Navigator.of(context).push(
                         CupertinoPageRoute(
-                          builder: (context) => StudentEvent(),
+                          builder: (context) => AllMeetingSession(),
                         ),
                       );
                     },
@@ -227,7 +227,7 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                         onTap: () {
                           Navigator.of(context).push(
                             CupertinoPageRoute(
-                              builder: (context) => Calender(),
+                              builder: (context) => Calender(fromCourse: false,),
                             ),
                           );
                         },

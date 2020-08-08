@@ -1,3 +1,4 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class Branch {
@@ -794,9 +795,10 @@ class Section {
 }
 
 class EventsModal {
+  String meetingkey;
   String title;
   String description;
-  String eventkey;
+  String eventKey;
   String time;
   String courseid;
   String teacheruid;
@@ -806,27 +808,29 @@ class EventsModal {
       {this.title,
       this.description,
       this.time,
-      this.eventkey,
+      this.eventKey,
       this.isStarted,
       this.courseid,
       this.teacheruid,
       this.subject});
 
-  EventsModal.fromJson(Map<dynamic, dynamic> json) {
+  EventsModal.fromJson(String key, Map<dynamic, dynamic> json) {
+    meetingkey = key;
     title = json['title'];
     description = json['description'];
-    eventkey = json['eventKey'];
+    eventKey = json['eventKey'];
     time = json['time'];
     isStarted = json['isStarted'];
     courseid = json['courseid'];
     subject = json['subject'];
+    teacheruid = json['teacheruid'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['title'] = this.title;
     data['description'] = this.description;
-    data['eventkey'] = this.eventkey;
+    data['eventKey'] = this.eventKey;
     data['time'] = this.time;
     data['teacheruid'] = this.teacheruid;
     data['isStarted'] = this.isStarted;
@@ -835,4 +839,43 @@ class EventsModal {
 
     return data;
   }
+}
+
+class GeneralEventsModal {
+  String meetingkey;
+  String title;
+  String description;
+  String eventKey;
+  String time;
+  String hostuid;
+  String type;
+  int isStarted;
+  int hostPrevilage;
+  String hostname;
+
+  GeneralEventsModal(
+      this.meetingkey,
+      this.title,
+      this.description,
+      this.time,
+      this.eventKey, 
+      this.isStarted,
+      this.hostuid,
+      this.type,
+      this.hostPrevilage,
+      this.hostname);
+
+   GeneralEventsModal.fromJson(String key, Map<dynamic, dynamic> json) {
+    meetingkey = key; 
+    title = json['title'];
+    description = json['description'];
+    eventKey = json['eventKey'];
+    time = json['time'];
+    isStarted = json['isStarted'];
+    hostuid = json['hostuid'];
+    type = json['type'];
+    hostPrevilage= json['hostprevilage'];
+    hostname = json['hostname'];
+  }   
+  
 }

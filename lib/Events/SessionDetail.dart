@@ -1,3 +1,5 @@
+import 'package:coach_app/Meeting/Fragmnets/SelectCandidate.dart';
+import 'package:coach_app/Meeting/Fragmnets/TwoStepSelectCandidate.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -11,13 +13,16 @@ class SessionDetail extends StatefulWidget {
   final bool isedit;
   final String courseId;
   final String subjectName;
+  final bool fromcourse;
+
   SessionDetail({
     this.passVaraible,
     this.eventkey,
     this.isedit,
+    this.fromcourse, 
     @required this.courseId,
     @required this.subjectName,
-  });
+  }); 
   @override
   _SessionDetailState createState() => _SessionDetailState();
 }
@@ -26,12 +31,39 @@ class _SessionDetailState extends State<SessionDetail> {
   final titleText = TextEditingController();
   final descriptionText = TextEditingController();
   final dbRef = FirebaseDatabase.instance;
+  int previlagelevel = FireBaseAuth.instance.previlagelevel;
   SharedPreferences _pref;
   String previousDescriptionText = "";
   TimeOfDay _time = TimeOfDay.now();
   TimeOfDay _picked;
   String testtime = "hh:mm";
+  var _finallist = ["None"];
+  var _currentItemSelected = "None";
+  var _adminlist = [
+    "None",
+    "SubAdmins",
+    "MidAdmins",
+    "SubAdmins within a MidAdmin",
+    "Authorities of a branch"
+  ];
+  var _subadminlist = [
+    "None",
+    "Teachers",
+    "Teachers of a course",
+    "Teachers of a subject",
+    "All students"
+  ];
+  var _midadminlist = [
+    "None",
+    "Other MidAdmins",
+    "SubAdmins",
+    "Authorities of a branch"
+  ];
+  String _leftUids = "", _firstselecteduids = "";
+  var _previoustypeSelected = "";
+  
   _loaddatafromdatabase() async {
+    if(widget.fromcourse){
     dbRef
         .reference()
         .child(
@@ -43,9 +75,34 @@ class _SessionDetailState extends State<SessionDetail> {
         titleText.text = value.value['title'];
         descriptionText.text = value.value['description'];
         testtime = value.value['time'];
+        _time = TimeOfDay(
+            hour: int.parse(value.value['time'].toString().split(":")[0]),
+            minute: int.parse(value.value['time'].toString().split(":")[1]));
         previousDescriptionText = value.value['description'];
       });
     });
+    }
+    else {
+      dbRef
+        .reference()
+        .child('institute/${FireBaseAuth.instance.instituteid}/events')
+        .child(widget.passVaraible)
+        .once()
+        .then((DataSnapshot value) {
+      setState(() {
+        titleText.text = value.value['title'];
+        descriptionText.text = value.value['description'];
+        _time = TimeOfDay(
+            hour: int.parse(value.value['time'].toString().split(":")[0]),
+            minute: int.parse(value.value['time'].toString().split(":")[1]));
+        previousDescriptionText = value.value['description'];
+        _currentItemSelected = value.value['type'];
+        _previoustypeSelected = _currentItemSelected;
+        _leftUids = value.value["leftUids"];
+        _firstselecteduids = value.value["firstselecteduids"];
+      });
+    });
+    }
   }
 
   _saveintodatabase() async {
@@ -53,7 +110,7 @@ class _SessionDetailState extends State<SessionDetail> {
     if (widget.isedit && descriptionText.text != previousDescriptionText) {
       _pref.remove(previousDescriptionText);
     }
-
+    if(widget.fromcourse){
     dbRef
         .reference()
         .child(
@@ -64,21 +121,50 @@ class _SessionDetailState extends State<SessionDetail> {
           description: descriptionText.text,
           time: _time.hour.toString() + ":" + _time.minute.toString(),
           isStarted: 0,
-          eventkey: widget.eventkey,
+          eventKey: widget.eventkey,
           courseid: widget.courseId,
           subject: widget.subjectName,
           teacheruid: FireBaseAuth.instance.user.uid,
         ).toJson());
+    }
+    else{
+      dbRef
+        .reference()
+        .child('institute/${FireBaseAuth.instance.instituteid}/events')
+        .child(widget.passVaraible)
+        .update({
+      'title': titleText.text,
+      'description': descriptionText.text,
+      'time': _time.hour.toString() + ":" + _time.minute.toString(),
+      'eventKey': widget.eventkey,
+      'isStarted': 0,
+      'hostprevilage': previlagelevel,
+      'hostuid': FireBaseAuth.instance.user.uid,
+      'hostname': FireBaseAuth.instance.user.displayName,
+      "firstselecteduids": _firstselecteduids,
+      "leftUids": _leftUids,
+      "type": _currentItemSelected
+    });
+    }    
     Navigator.of(context).pop();
   }
 
   _delfromdatabase() async {
+    if(widget.fromcourse){
     dbRef
         .reference()
         .child(
             'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events')
         .child(widget.passVaraible)
         .remove();
+    }
+    else{
+      dbRef
+        .reference()
+        .child('institute/${FireBaseAuth.instance.instituteid}/events')
+        .child(widget.passVaraible)
+        .remove();
+    }
     _pref.remove(previousDescriptionText);
     Navigator.of(context).pop();
   }
@@ -98,11 +184,80 @@ class _SessionDetailState extends State<SessionDetail> {
   _sharedprefinit() async {
     _pref = await SharedPreferences.getInstance();
   }
+Widget _dropDownMenu() {
+    return Center(
+      child: DropdownButton<String>(
+        items: _finallist.map((String dropDownStringitem) {
+          return DropdownMenuItem<String>(
+            value: dropDownStringitem,
+            child: Text(dropDownStringitem),
+          );
+        }).toList(),
+        onChanged: (String newValueSelected) {
+          setState(() {
+            this._currentItemSelected = newValueSelected;
+          });
+          if (_previoustypeSelected != _currentItemSelected) {
+            _leftUids = "";
+            _firstselecteduids = "";
+          }
+          if (newValueSelected != "None" && newValueSelected == "SubAdmins" ||
+              newValueSelected == "MidAdmins" ||
+              newValueSelected == "Teachers" ||
+              newValueSelected == "All students" ||
+              newValueSelected == "Other MidAdmins")
+            Navigator.of(context)
+                .push(MaterialPageRoute(
+                    builder: (context) => SelectCandidate(
+                          type: _currentItemSelected,
+                          leftuids: _leftUids,
+                        )))
+                .then((value) {
+              if (value != null) _leftUids = value;
+            });
+          else {
+            if (newValueSelected != "None")
+              Navigator.of(context)
+                  .push(MaterialPageRoute(
+                      builder: (context) => TwoStepSelectCandidate(
+                            type: _currentItemSelected,
+                            leftuids: _leftUids,
+                            firstselecteduids: _firstselecteduids,
+                          )))
+                  .then((value) {
+                if (value != null) {
+                  _firstselecteduids = value.firstSelecteduids;
+                  _leftUids = value.leftuids;
+                  print("---==========---------======");
+                  print(_firstselecteduids);
+                  print(_leftUids);
+                  print("---==========---------======");
+                }
+              });
+          }
+        },
+        isExpanded: true,
+        hint: Text('Select Candidate'),
+        value: _currentItemSelected,
+      ),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
     _sharedprefinit();
+
+    if(!widget.fromcourse){
+
+    if (previlagelevel == 4)
+      _finallist = _adminlist;
+    else if (previlagelevel == 34)
+      _finallist = _midadminlist;
+    else if (previlagelevel == 3) _finallist = _subadminlist;
+    
+    }
+
     if (widget.isedit) _loaddatafromdatabase();
   }
 
@@ -177,6 +332,24 @@ class _SessionDetailState extends State<SessionDetail> {
                       },
                     ),
                   ),
+                  if(!widget.fromcourse)
+                  Container(
+                    padding: EdgeInsets.all(12.0),
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            "Select Meeting Candidates",
+                            style: TextStyle(fontSize: 16.0),
+                          ),
+                        ),
+                        Expanded(flex: 1, child: _dropDownMenu())
+                      ],
+                    ),
+                  ),
                   Divider(
                     height: 48.0,
                     thickness: 2.0,
@@ -229,7 +402,7 @@ class _SessionDetailState extends State<SessionDetail> {
                           padding: EdgeInsets.symmetric(vertical: 10),
                           alignment: Alignment.center,
                           child: Text(
-                            "Save".tr(),
+                           widget.isedit ? "Update".tr() : "Save".tr(),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,

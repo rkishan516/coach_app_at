@@ -54,7 +54,7 @@ class _StudentEventState extends State<StudentEvent> {
       setState(() {
         if (event.snapshot.key != null &&
             event.snapshot.value['courseid'] == widget.courseId) {
-          _allEvent.add(EventsModal.fromJson(event.snapshot.value));
+          _allEvent.add(EventsModal.fromJson(event.snapshot.key, event.snapshot.value));
         }
       });
     });
@@ -62,10 +62,10 @@ class _StudentEventState extends State<StudentEvent> {
     //Setting Listener for data change
     _onDataChangedSubscription = _query.onChildChanged.listen((Event event) {
       _allEvent.forEach((element) {
-        if (element.eventkey == event.snapshot.value['eventkey']) {
+        if (element.eventKey == event.snapshot.value['eventKey']) {
           var index = _allEvent.indexOf(element);
           setState(() {
-            _allEvent[index] = EventsModal.fromJson(event.snapshot.value);
+            _allEvent[index] = EventsModal.fromJson(event.snapshot.key,event.snapshot.value);
           });
         }
       });
@@ -74,7 +74,7 @@ class _StudentEventState extends State<StudentEvent> {
     //Setting Listener for data removal
     _onDataRemovedSubscription = _query.onChildRemoved.listen((Event event) {
       _allEvent.forEach((element) {
-        if (element.eventkey == event.snapshot.value['eventkey']) {
+        if (element.eventKey == event.snapshot.value['eventKey']) {
           var index = _allEvent.indexOf(element);
           setState(() {
             _allEvent.removeAt(index);
@@ -165,7 +165,7 @@ class _StudentEventState extends State<StudentEvent> {
                             MaterialPageRoute(
                               builder: (context) => VideoConferencing(
                                 room: _allEvent[index].title,
-                                eventkey: _allEvent[index].eventkey,
+                                eventkey: _allEvent[index].eventKey,
                                 subject: _allEvent[index].description,
                               ),
                             ),

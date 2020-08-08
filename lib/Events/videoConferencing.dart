@@ -12,11 +12,19 @@ class VideoConferencing extends StatefulWidget {
   final String passVariable;
   final String room, eventkey;
   final String subject;
+  final int privilegelevel;
+  final int hostprevilagelevel;
+  final String hostuid;
+  final bool fromcourse;
   VideoConferencing({
     this.passVariable,
     this.room,
     this.eventkey,
     this.subject,
+    this.privilegelevel,
+    this.hostuid,
+    this.hostprevilagelevel,
+    this.fromcourse
   });
   @override
   _VideoConferencingState createState() {
@@ -29,8 +37,7 @@ class _VideoConferencingState extends State<VideoConferencing> {
   void initState() {
     super.initState();
     Timer(Duration(seconds: 0), () async {
-      _makeupdate();
-      await _launchURL();
+      await _joinMeeting();
       Navigator.of(context).pop();
     });
   }
@@ -43,6 +50,7 @@ class _VideoConferencingState extends State<VideoConferencing> {
   }
 
   _makeupdate() async {
+    if(widget.fromcourse){
     if (FireBaseAuth.instance.previlagelevel >= 2) {
       FirebaseDatabase.instance
           .reference()
@@ -53,8 +61,22 @@ class _VideoConferencingState extends State<VideoConferencing> {
       });
     }
   }
+  
+  else{
+    FirebaseDatabase.instance.reference()
+          .child(
+              'institute/${FireBaseAuth.instance.instituteid}/events/${widget.passVariable}')
+          .update({
+        'isStarted': 1,
+      });
+  }
+  }
 
   _launchURL() async {
+    bool _ishost = false;
+    if (widget.hostuid == FireBaseAuth.instance.user.uid) _ishost = true;
+    //"https://coachapp-5a4c.firebaseapp.com?previlagelevel="
+    //"https://guru-cool-test.web.app?previlagelevel="
     var midurl = "https://coachapp-5a4c.firebaseapp.com?previlagelevel=" +
         FireBaseAuth.instance.previlagelevel.toString() +
         "&photourl=" +
@@ -67,7 +89,11 @@ class _VideoConferencingState extends State<VideoConferencing> {
         "&eventkey=" +
         widget.eventkey.toString() +
         "&email=" +
-        FireBaseAuth.instance.user.email;
+        FireBaseAuth.instance.user.email+
+        "&hostPrevilage=" +
+        widget.hostprevilagelevel.toString() +
+        "&ishost=" +
+        _ishost.toString();
 
     var url = 'googlechrome://navigate?url=$midurl';
     if (await canLaunch(url)) {
@@ -78,5 +104,10 @@ class _VideoConferencingState extends State<VideoConferencing> {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+   _joinMeeting() async {
+    _makeupdate();
+    _launchURL();
   }
 }

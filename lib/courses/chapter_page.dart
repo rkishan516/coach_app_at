@@ -216,6 +216,7 @@ class _ChapterPageState extends State<ChapterPage>
                             builder: (context) => Calender(
                               courseId: widget.courseId,
                               subjectName: widget.title,
+                              fromCourse: true,
                             ),
                           ),
                         );
