@@ -165,6 +165,9 @@ class _FeeUpdateState extends State<FeeUpdate> {
                         (fees.maxInstallment?.isMaxAllowed ?? false))
                     ? (val) {
                         setState(() {
+                          if (paidOneTime == true) {
+                            return;
+                          }
                           paidOneTime = !paidOneTime;
                         });
                       }
@@ -178,6 +181,9 @@ class _FeeUpdateState extends State<FeeUpdate> {
                         (fees.maxInstallment?.isMaxAllowed ?? false))
                     ? (val) {
                         setState(() {
+                          if (paidOneTime == true) {
+                            return;
+                          }
                           paidOneTime = !paidOneTime;
                         });
                       }

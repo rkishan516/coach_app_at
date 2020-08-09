@@ -213,8 +213,14 @@ List<NoInstallments> _createInstallmentmodel(
     }
   });
 
-  _listInstallment.sort((a, b) =>
-      int.parse(a.sequence.replaceAll("Installment", ""))
-          .compareTo(int.parse(b.sequence.replaceAll("Installment", ""))));
+  _listInstallment.sort((a, b) {
+    return int.parse(a.sequence?.replaceAll("Installment", "") == "OneTime"
+            ? "0"
+            : a.sequence?.replaceAll("Installment", ""))
+        .compareTo(int.parse(
+            b.sequence?.replaceAll("Installment", "") == "OneTime"
+                ? "0"
+                : b.sequence?.replaceAll("Installment", "")));
+  });
   return _listInstallment;
 }
