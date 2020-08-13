@@ -66,7 +66,7 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
     String hostuid = event.snapshot.value['hostuid'];
     String firstselecteduids = event.snapshot.value['firstselecteduids'];
     int hostprevilage = event.snapshot.value['hostprevilage'];
-    String leftuids = event.snapshot.value['leftUids'];
+    String leftuids = event.snapshot.value['leftUids'] ?? "";
     String type = event.snapshot.value['type'];
     if (hostprevilage == 4) {
       if (type == "SubAdmins" &&
@@ -167,8 +167,7 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
           return true;
         else
           return false;
-      }
-      else {
+      } else {
         return false;
       }
     }
@@ -180,7 +179,8 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
     bool isallowedtoadd = await checkentry(event);
     if (event.snapshot.key != null && isallowedtoadd) {
       setState(() {
-        _allEvent.add(GeneralEventsModal.fromJson(event.snapshot.key,event.snapshot.value));
+        _allEvent.add(GeneralEventsModal.fromJson(
+            event.snapshot.key, event.snapshot.value));
       });
     }
   }
@@ -207,7 +207,8 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
 
         if (isallowedtoadd)
           setState(() {
-            _allEvent[index] = GeneralEventsModal.fromJson(event.snapshot.key,event.snapshot.value);
+            _allEvent[index] = GeneralEventsModal.fromJson(
+                event.snapshot.key, event.snapshot.value);
           });
         else
           setState(() {
@@ -248,7 +249,6 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
                 color: Color(0xffF36C24),
                 elevation: 2.0,
                 child: ListTile(
-                  
                     leading: IconButton(
                       icon: Icon(
                         Icons.video_call,
@@ -256,9 +256,7 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
                       color: _allEvent[index].isStarted == 1
                           ? Colors.blue
                           : Colors.white,
-                      onPressed: () {
-                       
-                      },
+                      onPressed: () {},
                     ),
                     title: Text(
                       _allEvent[index].title +
@@ -283,22 +281,22 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
                           color: Colors.white),
                     ),
                     onTap: () {
-                         if (_allEvent[index].isStarted == 1) {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return VideoConferencing(
-                              passVariable: _allEvent[index].meetingkey,
-                              room: _allEvent[index].title,
-                              subject: _allEvent[index].description,
-                              hostprevilagelevel:
-                                  _allEvent[index].hostPrevilage,
-                              hostuid: _allEvent[index].hostuid,
-                              eventkey: _allEvent[index].eventKey,
-                              privilegelevel:
-                                  FireBaseAuth.instance.previlagelevel,
-                            );
-                          }));
-                        }
+                      if (_allEvent[index].isStarted == 1) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return VideoConferencing(
+                            passVariable: _allEvent[index].meetingkey,
+                            room: _allEvent[index].title,
+                            subject: _allEvent[index].description,
+                            hostprevilagelevel: _allEvent[index].hostPrevilage,
+                            hostuid: _allEvent[index].hostuid,
+                            eventkey: _allEvent[index].eventKey,
+                            privilegelevel:
+                                FireBaseAuth.instance.previlagelevel,
+                            fromcourse: false,
+                          );
+                        }));
+                      }
                     }));
           },
         ));

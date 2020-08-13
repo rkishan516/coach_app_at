@@ -1,4 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
@@ -8,7 +9,9 @@ import 'package:coach_app/QuizResponse/quiz_display.dart';
 import 'package:coach_app/YT_player/pdf_player.dart';
 import 'package:coach_app/YT_player/quiz_player.dart';
 import 'package:coach_app/YT_player/yt_player.dart';
+import 'package:coach_app/YoutubeAPI/youtubeApi.dart';
 import 'package:coach_app/courses/FormGeneration/form_generator.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -263,6 +266,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
       TextEditingController();
   TextEditingController linkTextEditingController = TextEditingController();
   String type;
+  var file;
   @override
   void initState() {
     type = widget.type;
@@ -397,6 +401,20 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                       ],
                     ),
                   ),
+                if (type == "Youtube Video")
+                  RaisedButton(
+                    color: Color(0xffF36C24),
+                    onPressed: () async {
+                      file = await FilePicker.getFile();
+                    },
+                    elevation: 0,
+                    child: Text(
+                      "Select Video",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Row(
@@ -428,9 +446,20 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                             ..title = titleTextEditingController.text
                             ..description =
                                 descriptionTextEditingController.text;
+
                           Navigator.of(context).pop();
                           if (type == 'Youtube Video') {
-                            content.ylink = linkTextEditingController.text;
+                            if (linkTextEditingController.text == '') {
+                              if (file == null) {
+                                Alert.instance.alert(context,
+                                    'Either fill link or select video');
+                                return;
+                              }
+                              content.ylink = await YoutubeUpload().uploadVideo(
+                                  file, content.title, content.description);
+                            } else {
+                              content.ylink = linkTextEditingController.text;
+                            }
                           } else if (type == 'PDF') {
                             content.link = linkTextEditingController.text;
                           } else {

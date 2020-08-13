@@ -1,4 +1,3 @@
-import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class Branch {
@@ -858,15 +857,15 @@ class GeneralEventsModal {
       this.title,
       this.description,
       this.time,
-      this.eventKey, 
+      this.eventKey,
       this.isStarted,
       this.hostuid,
       this.type,
       this.hostPrevilage,
       this.hostname);
 
-   GeneralEventsModal.fromJson(String key, Map<dynamic, dynamic> json) {
-    meetingkey = key; 
+  GeneralEventsModal.fromJson(String key, Map<dynamic, dynamic> json) {
+    meetingkey = key;
     title = json['title'];
     description = json['description'];
     eventKey = json['eventKey'];
@@ -874,8 +873,7 @@ class GeneralEventsModal {
     isStarted = json['isStarted'];
     hostuid = json['hostuid'];
     type = json['type'];
-    hostPrevilage= json['hostprevilage'];
+    hostPrevilage = json['hostprevilage'];
     hostname = json['hostname'];
-  }   
-  
+  }
 }
