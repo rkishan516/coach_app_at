@@ -11,7 +11,7 @@ import 'package:coach_app/FeeSection/FeeReportPages/DueFeeReport.dart';
 import 'package:coach_app/Events/Calender.dart';
 import 'package:coach_app/Meeting/AllMeetingSession.dart';
 import 'package:coach_app/Plugins/AppIcons.dart';
-import 'package:coach_app/Profile/next.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
 import 'package:coach_app/Profile/subAdminProfile.dart';
 import 'package:coach_app/Student/all_course_view.dart';
 import 'package:coach_app/Student/course_page.dart';
@@ -227,7 +227,9 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                         onTap: () {
                           Navigator.of(context).push(
                             CupertinoPageRoute(
-                              builder: (context) => Calender(fromCourse: false,),
+                              builder: (context) => Calender(
+                                fromCourse: false,
+                              ),
                             ),
                           );
                         },

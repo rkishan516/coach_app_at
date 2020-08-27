@@ -2,6 +2,7 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/InstituteAdmin/studentList.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/TimeTableSection/TimeTablePage.dart';
 import 'package:coach_app/courses/chapter_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,7 +29,7 @@ class _SubjectPageState extends State<SubjectPage>
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     super.initState();
   }
 
@@ -50,6 +51,10 @@ class _SubjectPageState extends State<SubjectPage>
               ),
               Tab(
                 child: Text('Students',
+                    style: TextStyle(color: Color(0xffF36C24))),
+              ),
+              Tab(
+                child: Text('Time Table',
                     style: TextStyle(color: Color(0xffF36C24))),
               ),
             ],
@@ -136,7 +141,10 @@ class _SubjectPageState extends State<SubjectPage>
                 ),
                 StudentList(
                   courseId: widget.course.id,
-                )
+                ),
+                TimeTablePage(
+                  courseId: widget.course.id,
+                ),
               ],
             ),
           ),

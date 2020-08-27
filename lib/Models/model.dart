@@ -1,12 +1,12 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 
 class Branch {
   String name;
   String address;
   String upiId;
-  String accountHolderName;
-  String accountNo;
-  String accountIFSC;
+  AccountDetails accountDetails;
   String accountId;
   Map<String, Admin> admin;
   List<Courses> courses;
@@ -17,19 +17,17 @@ class Branch {
       this.address,
       this.admin,
       this.upiId,
-      this.accountHolderName,
-      this.accountNo,
-      this.accountIFSC,
+      this.accountDetails,
       this.accountId});
 
   Branch.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
     address = json['address'];
     upiId = json['upiId'];
-    accountHolderName = json['accountHolderName'];
-    accountNo = json['accountNo'];
-    accountIFSC = json['accountIFSC'];
     accountId = json["accountId"];
+    if (json['AccountDetails'] != null) {
+      accountDetails = AccountDetails.fromJson(json['AccountDetails']);
+    }
     if (json['courses'] != null) {
       courses = new List<Courses>();
       json['courses'].forEach((k, v) {
@@ -49,10 +47,8 @@ class Branch {
     data['name'] = this.name;
     data['address'] = this.address;
     data['upiId'] = this.upiId;
-    data['accountHolderName'] = this.accountHolderName;
-    data['accountNo'] = this.accountNo;
-    data['accountIFSC'] = this.accountIFSC;
     data["accountId"] = this.accountId;
+    data['AccountDetails'] = this.accountDetails.toJson();
     if (this.courses != null) {
       data['courses'] = this.courses.map((v) => v.toJson()).toList();
     }
@@ -60,6 +56,31 @@ class Branch {
       data['admin'] =
           this.admin.map((key, value) => MapEntry(key, value.toJson()));
     }
+    return data;
+  }
+}
+
+class AccountDetails {
+  String accountHolderName;
+  String accountNo;
+  String accountIFSC;
+
+  AccountDetails({
+    this.accountHolderName,
+    this.accountNo,
+    this.accountIFSC,
+  });
+
+  AccountDetails.fromJson(Map<dynamic, dynamic> json) {
+    accountHolderName = json['accountHolderName'];
+    accountNo = json['accountNo'];
+    accountIFSC = json['accountIFSC'];
+  }
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['accountHolderName'] = this.accountHolderName;
+    data['accountNo'] = this.accountNo;
+    data['accountIFSC'] = this.accountIFSC;
     return data;
   }
 }
@@ -130,17 +151,18 @@ class Courses {
   String medium;
   Map<String, Subjects> subjects;
   Fees fees;
+  TimeTable timeTable;
 
-  Courses({
-    this.id,
-    this.name,
-    this.description,
-    this.price,
-    this.date,
-    this.medium,
-    this.subjects,
-    this.fees,
-  });
+  Courses(
+      {this.id,
+      this.name,
+      this.description,
+      this.price,
+      this.date,
+      this.medium,
+      this.subjects,
+      this.fees,
+      this.timeTable});
 
   Courses.fromJson(Map<dynamic, dynamic> json) {
     id = json['id'];
@@ -158,6 +180,9 @@ class Courses {
     if (json['fees'] != null) {
       fees = Fees.fromJson(json['fees']);
     }
+    if (json['TimeTable'] != null) {
+      timeTable = TimeTable.fromJson(json['TimeTable']);
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -172,6 +197,139 @@ class Courses {
       data['subjects'] = this.subjects.map((k, v) => MapEntry(k, v.toJson()));
     }
     data['fees'] = this.fees.toJson();
+    return data;
+  }
+}
+
+class TimeTable {
+  List<TimeTableClass> monday;
+  List<TimeTableClass> tuesday;
+  List<TimeTableClass> wednesday;
+  List<TimeTableClass> thursday;
+  List<TimeTableClass> friday;
+  List<TimeTableClass> saturday;
+
+  TimeTable({
+    this.monday,
+    this.tuesday,
+    this.wednesday,
+    this.thursday,
+    this.friday,
+    this.saturday,
+  });
+
+  TimeTable.fromJson(Map<dynamic, dynamic> json) {
+    monday = List<TimeTableClass>();
+    tuesday = List<TimeTableClass>();
+    wednesday = List<TimeTableClass>();
+    thursday = List<TimeTableClass>();
+    friday = List<TimeTableClass>();
+    saturday = List<TimeTableClass>();
+
+    if (json['monday'] != null) {
+      json['monday'].forEach((v) {
+        monday.add(TimeTableClass.fromJson(v));
+      });
+    }
+    if (json['tuesday'] != null) {
+      json['tuesday'].forEach((v) {
+        tuesday.add(TimeTableClass.fromJson(v));
+      });
+    }
+    if (json['wednesday'] != null) {
+      json['wednesday'].forEach((v) {
+        wednesday.add(TimeTableClass.fromJson(v));
+      });
+    }
+    if (json['thursday'] != null) {
+      json['thursday'].forEach((v) {
+        thursday.add(TimeTableClass.fromJson(v));
+      });
+    }
+    if (json['friday'] != null) {
+      json['friday'].forEach((v) {
+        friday.add(TimeTableClass.fromJson(v));
+      });
+    }
+    if (json['saturday'] != null) {
+      json['saturday'].forEach((v) {
+        saturday.add(TimeTableClass.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.monday != null) {
+      data['monday'] = this.monday.map((v) => v.toJson()).toList();
+    }
+    if (this.tuesday != null) {
+      data['tuesday'] = this.tuesday.map((v) => v.toJson()).toList();
+    }
+    if (this.wednesday != null) {
+      data['wednesday'] = this.wednesday.map((v) => v.toJson()).toList();
+    }
+    if (this.thursday != null) {
+      data['thursday'] = this.thursday.map((v) => v.toJson()).toList();
+    }
+    if (this.friday != null) {
+      data['friday'] = this.friday.map((v) => v.toJson()).toList();
+    }
+    if (this.saturday != null) {
+      data['saturday'] = this.saturday.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+TimeOfDay stringToTod(String val) {
+  List<String> hs =
+      val.replaceAll("TimeOfDay(", "").replaceAll(")", "").split(":");
+  if (hs.length != 2) {
+    return TimeOfDay.now();
+  }
+  return TimeOfDay(hour: int.parse(hs[0]), minute: int.parse(hs[1]));
+}
+
+class TimeTableClass {
+  TimeOfDay startTime;
+  TimeOfDay endTime;
+  String subjectName;
+  String subjectKey;
+  String teacherName;
+  String teacherKey;
+  String classType;
+  TimeTableClass(
+      {this.subjectKey,
+      this.subjectName,
+      this.classType,
+      this.teacherKey,
+      this.teacherName,
+      this.startTime,
+      this.endTime});
+  TimeTableClass.fromJson(Map<dynamic, dynamic> json) {
+    subjectName = json['subjectName'];
+    subjectKey = json['subjectKey'];
+    teacherName = json['teacherName'];
+    teacherKey = json['teacherKey'];
+    classType = json['classType'];
+    if (json['startTime'] != null) {
+      startTime = stringToTod(json['startTime']);
+    }
+    if (json['endTime'] != null) {
+      endTime = stringToTod(json['endTime']);
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['subjectName'] = subjectName;
+    data['subjectKey'] = subjectKey;
+    data['teacherName'] = teacherName;
+    data['teacherKey'] = teacherKey;
+    data['classType'] = classType;
+    data['startTime'] = startTime.toString();
+    data['endTime'] = endTime.toString();
     return data;
   }
 }
@@ -241,7 +399,7 @@ class MaxInstallment {
     data['MaxAllowedInstallment'] = this.maxAllowedInstallment;
     data['IsMaxAllowed'] = this.isMaxAllowed;
     data['Installments'] =
-        this.installment.map((k, v) => MapEntry(k, v.toJson()));
+        this.installment?.map((k, v) => MapEntry(k, v.toJson()));
     return data;
   }
 }
@@ -506,7 +664,8 @@ class TCourses {
 
   TCourses.fromJson(Map<dynamic, dynamic> json) {
     id = json['id'];
-    subjects = json['subjects']?.cast<String>();
+    if (json['subjects'] != null)
+      subjects = List<String>.from(json['subjects']?.cast<String>());
   }
 
   Map<String, dynamic> toJson() {

@@ -15,17 +15,21 @@ class RazorPayPayment {
   }
 
   checkoutPayment(int amount, String name, String description, String phoneNo,
-      String email) {
+      String email, String accountId) {
     try {
       _razorPay.open(
         {
-          'key': 'rzp_test_DKloPhodH3Kmnh',
+          'key': 'rzp_live_o6P0wBVTzxae9a',
           'amount': amount,
+          "account": accountId,
           'name': name,
           'description': description,
           'prefill': {
             'contact': phoneNo,
             'email': email,
+          },
+          "note": {
+            "name": name,
           }
         },
       );

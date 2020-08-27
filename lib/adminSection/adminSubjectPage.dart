@@ -7,6 +7,7 @@ import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/InstituteAdmin/studentList.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/TimeTableSection/TimeTablePage.dart';
 import 'package:coach_app/adminSection/teacherRegister.dart';
 import 'package:coach_app/courses/chapter_page.dart';
 import 'package:coach_app/courses/subject_page.dart';
@@ -25,10 +26,20 @@ class AdminSubjectPage extends StatefulWidget {
 class _AdminSubjectPageState extends State<AdminSubjectPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+  bool showFAB = true;
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      setState(() {
+        if (_tabController.index == 0) {
+          showFAB = true;
+        } else {
+          showFAB = false;
+        }
+      });
+    });
     super.initState();
   }
 
@@ -44,17 +55,25 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
             controller: _tabController,
             tabs: [
               Tab(
-                child: Text('Subjects',style: TextStyle(color: Color(0xffF36C24)),),
+                child: Text(
+                  'Subjects',
+                  style: TextStyle(color: Color(0xffF36C24)),
+                ),
               ),
               Tab(
-                child: Text('Students',style: TextStyle(color: Color(0xffF36C24))),
+                child: Text('Students',
+                    style: TextStyle(color: Color(0xffF36C24))),
+              ),
+              Tab(
+                child: Text('Time Table',
+                    style: TextStyle(color: Color(0xffF36C24))),
               ),
             ],
           ),
           Container(
             padding: EdgeInsets.symmetric(
                 vertical: MediaQuery.of(context).size.height / 20),
-            height: MediaQuery.of(context).size.height-128,
+            height: MediaQuery.of(context).size.height - 128,
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               boxShadow: <BoxShadow>[
@@ -177,17 +196,24 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                     ),
                   ],
                 ),
-                StudentList(courseId: widget.courseId,)
+                StudentList(
+                  courseId: widget.courseId,
+                ),
+                TimeTablePage(
+                  courseId: widget.courseId,
+                ),
               ],
             ),
           ),
         ],
       ),
-      floatingActionButton: SlideButtonR(
-          text: 'Add Subject'.tr(),
-          onTap: () => addSubject(context, widget.courseId),
-          width: 150,
-          height: 50),
+      floatingActionButton: (!showFAB)
+          ? null
+          : SlideButtonR(
+              text: 'Add Subject'.tr(),
+              onTap: () => addSubject(context, widget.courseId),
+              width: 150,
+              height: 50),
     );
   }
 }
@@ -197,7 +223,7 @@ addSubject(BuildContext context, String courseId,
   TextEditingController nameTextEditingController = TextEditingController()
     ..text = name;
   List selectedTeacher = List();
-  List<Map<String, dynamic>> teachers;
+  List<Map<String, dynamic>> teachers, initialTeachers;
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -291,11 +317,17 @@ addSubject(BuildContext context, String courseId,
                               );
                             } else {
                               teachers = List<Map<String, dynamic>>();
+                              initialTeachers = List<Map<String, dynamic>>();
                               snapshot.data.snapshot.value.forEach(
                                 (k, v) {
                                   Teacher teacher = Teacher.fromJson(v);
                                   if (mentors.contains(teacher.email)) {
                                     selectedTeacher.add(teacher);
+                                    initialTeachers.add({
+                                      "key": k,
+                                      "display": teacher?.email,
+                                      "value": teacher
+                                    });
                                   }
                                   teachers.add({
                                     "key": k,
@@ -418,10 +450,44 @@ addSubject(BuildContext context, String courseId,
 
                                 ref.child(lengthC.toString()).update(
                                     {"id": courseId, "subjects": subjects + d});
+                                initialTeachers?.removeWhere((element) =>
+                                    element["key"] == teachers[i]['key']);
                               }
                             }
                           },
                         );
+
+                        initialTeachers.forEach((element) {
+                          if (key != null) {
+                            Teacher teacher = element['value'];
+                            for (int i = 0;
+                                i < teacher?.courses?.length ?? 0;
+                                i++) {
+                              if (teacher.courses[i].id == courseId) {
+                                for (int j = 0;
+                                    j < teacher.courses[i]?.subjects?.length ??
+                                        0;
+                                    j++) {
+                                  if (teacher.courses[i]?.subjects[j] == key) {
+                                    teacher.courses[i]?.subjects?.removeAt(j);
+                                    break;
+                                  }
+                                }
+                                if ((teacher.courses[i]?.subjects?.length ??
+                                        0) ==
+                                    0) {
+                                  teacher.courses?.removeAt(i);
+                                }
+                                break;
+                              }
+                            }
+                            DatabaseReference ref = FirebaseDatabase.instance
+                                .reference()
+                                .child(
+                                    "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${element['key']}/");
+                            ref.update(teacher.toJson());
+                          }
+                        });
 
                         Navigator.of(context).pop();
                       },

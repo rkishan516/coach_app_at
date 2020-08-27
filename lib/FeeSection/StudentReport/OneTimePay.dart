@@ -48,14 +48,14 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
               : dateTime.month.toString();
           String yyyy = dateTime.year.toString();
           String date = dd + " " + mm + " " + yyyy;
-          // String upi;
-          // var value = await FirebaseDatabase.instance
-          //     .reference()
-          //     .child(
-          //         '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/')
-          //     .child('upiId')
-          //     .once();
-          // upi = value.value;
+          String accountId;
+          var value = await FirebaseDatabase.instance
+              .reference()
+              .child(
+                  '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/')
+              .child('accountId')
+              .once();
+          accountId = value.value;
 
           void _handlePaymentSuccess(PaymentSuccessResponse response) async {
             print('Payment Successful');
@@ -102,7 +102,8 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
               FireBaseAuth.instance.user.displayName,
               'You are purchaing the course ${widget.courseName}.',
               FireBaseAuth.instance.user.phoneNumber,
-              FireBaseAuth.instance.user.email);
+              FireBaseAuth.instance.user.email,
+              accountId);
         }
       },
       child: Padding(
