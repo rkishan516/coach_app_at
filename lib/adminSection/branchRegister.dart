@@ -42,11 +42,11 @@ class _BranchRegisterState extends State<BranchRegister> {
     upiTextEditingController = TextEditingController()
       ..text = widget.institute?.upiId ?? '';
     accoundHolderNameTextEditingController = TextEditingController()
-      ..text = widget.institute?.accountHolderName ?? '';
+      ..text = widget.institute?.accountDetails?.accountHolderName ?? '';
     accountNoTextEditingController = TextEditingController()
-      ..text = widget.institute?.accountNo ?? '';
+      ..text = widget.institute?.accountDetails?.accountNo ?? '';
     accountIFSCTextEditingController = TextEditingController()
-      ..text = widget.institute?.accountIFSC ?? '';
+      ..text = widget.institute?.accountDetails?.accountIFSC ?? '';
     if (widget.institute?.name == null &&
         widget.institute?.address == null &&
         widget.institute?.admin == null &&
@@ -270,6 +270,7 @@ class _BranchRegisterState extends State<BranchRegister> {
                       }
                       if (!upiTextEditingController.text.contains('@')) {
                         Alert.instance.alert(context, 'Wrong UPI ID'.tr());
+                        return;
                       }
                       DatabaseReference ref = FirebaseDatabase.instance
                           .reference()
@@ -277,21 +278,25 @@ class _BranchRegisterState extends State<BranchRegister> {
                               'institute/${FireBaseAuth.instance.instituteid}/branches/${branchCodeTextEditingController.text}');
                       if (widget.branchCode != null) {
                         Branch branch = Branch(
-                          name: nameTextEditingController.text,
-                          address: addressTextEditingController.text,
-                          upiId: upiTextEditingController.text,
-                          accountHolderName:
-                              accoundHolderNameTextEditingController.text == ''
-                                  ? null
-                                  : accoundHolderNameTextEditingController.text,
-                          accountNo: accountNoTextEditingController.text == ''
-                              ? null
-                              : accountNoTextEditingController.text,
-                          accountIFSC:
-                              accountIFSCTextEditingController.text == ''
-                                  ? null
-                                  : accountIFSCTextEditingController.text,
-                        );
+                            name: nameTextEditingController.text,
+                            address: addressTextEditingController.text,
+                            upiId: upiTextEditingController.text,
+                            accountDetails: AccountDetails(
+                              accountHolderName:
+                                  accoundHolderNameTextEditingController.text ==
+                                          ''
+                                      ? null
+                                      : accoundHolderNameTextEditingController
+                                          .text,
+                              accountNo:
+                                  accountNoTextEditingController.text == ''
+                                      ? null
+                                      : accountNoTextEditingController.text,
+                              accountIFSC:
+                                  accountIFSCTextEditingController.text == ''
+                                      ? null
+                                      : accountIFSCTextEditingController.text,
+                            ));
                         ref.update(branch.toJson());
                         Navigator.of(context).pop();
                         return;
@@ -322,29 +327,32 @@ class _BranchRegisterState extends State<BranchRegister> {
                           });
                         } else {
                           ref.update(Branch(
-                            name: nameTextEditingController.text,
-                            address: addressTextEditingController.text,
-                            admin: {
-                              "${adminEmailTextEditingController.text.hashCode}":
-                                  Admin(
-                                email: adminEmailTextEditingController.text,
-                              )
-                            },
-                            upiId: upiTextEditingController.text,
-                            accountHolderName:
-                                accoundHolderNameTextEditingController.text ==
-                                        ''
-                                    ? null
-                                    : accoundHolderNameTextEditingController
-                                        .text,
-                            accountNo: accountNoTextEditingController.text == ''
-                                ? null
-                                : accountNoTextEditingController.text,
-                            accountIFSC:
-                                accountIFSCTextEditingController.text == ''
-                                    ? null
-                                    : accountIFSCTextEditingController.text,
-                          ).toJson());
+                              name: nameTextEditingController.text,
+                              address: addressTextEditingController.text,
+                              admin: {
+                                "${adminEmailTextEditingController.text.hashCode}":
+                                    Admin(
+                                  email: adminEmailTextEditingController.text,
+                                )
+                              },
+                              upiId: upiTextEditingController.text,
+                              accountDetails: AccountDetails(
+                                accountHolderName:
+                                    accoundHolderNameTextEditingController
+                                                .text ==
+                                            ''
+                                        ? null
+                                        : accoundHolderNameTextEditingController
+                                            .text,
+                                accountNo:
+                                    accountNoTextEditingController.text == ''
+                                        ? null
+                                        : accountNoTextEditingController.text,
+                                accountIFSC:
+                                    accountIFSCTextEditingController.text == ''
+                                        ? null
+                                        : accountIFSCTextEditingController.text,
+                              )).toJson());
                           if (FireBaseAuth.instance.previlagelevel == 34) {
                             FireBaseAuth.instance.branchList.add(int.parse(
                                 branchCodeTextEditingController.text));

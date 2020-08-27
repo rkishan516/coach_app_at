@@ -87,8 +87,9 @@ class _StudentListState extends State<StudentList> {
                           }
                         } else {
                           Student sstudent = Student.fromJson(student);
-                          if (sstudent.name
-                                  .contains(searchTextEditingController.text) &&
+                          if (sstudent.name.toLowerCase().contains(
+                                  searchTextEditingController.text
+                                      .toLowerCase()) &&
                               sstudent.course?.firstWhere((element) =>
                                       element.courseID == widget.courseId) !=
                                   null) {
@@ -105,8 +106,8 @@ class _StudentListState extends State<StudentList> {
                           }
                         } else {
                           Student sstudent = Student.fromJson(student);
-                          if (sstudent.name
-                              .contains(searchTextEditingController.text)) {
+                          if (sstudent.name.toLowerCase().contains(
+                              searchTextEditingController.text.toLowerCase())) {
                             if (sstudent.status == 'Registered') {
                               students[k] = sstudent;
                             }

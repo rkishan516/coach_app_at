@@ -39,7 +39,8 @@ class _BranchListState extends State<BranchList> {
           List<int> districtWise = List<int>();
           if (snapshot.data.snapshot.value != null) {
             snapshot.data.snapshot.value['midAdmin']?.forEach((k, v) {
-              if (searchTextEditingController.text == v['district']) {
+              if (searchTextEditingController.text.toLowerCase() ==
+                  v['district']?.toLowerCase()) {
                 districtWise = JsonCodec().decode(v['branches']).cast<int>();
               }
             });
@@ -166,7 +167,9 @@ class _BranchListState extends State<BranchList> {
                     ),
                   ),
                   Center(
-                    child: Text(searchTextEditingController.text == '' ? 'Total Institute: ${institutes.length}' : 'Institutes found : ${institutes.length}'),
+                    child: Text(searchTextEditingController.text == ''
+                        ? 'Total Institute: ${institutes.length}'
+                        : 'Institutes found : ${institutes.length}'),
                   ),
                   Expanded(
                     flex: 12,

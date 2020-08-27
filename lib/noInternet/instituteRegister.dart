@@ -410,35 +410,39 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                               "logo": "/instituteLogo/${reference.key}",
                               "branches": {
                                 branch1CodeTextEditingController.text: Branch(
-                                  name: branch1NameTextEditingController.text,
-                                  address:
-                                      branch1addressTextEditingController.text,
-                                  admin: {
-                                    "${branch1AdminTextEditingController.text.hashCode}":
-                                        Admin(
-                                      email: branch1AdminTextEditingController
-                                          .text,
-                                    )
-                                  },
-                                  upiId:
-                                      branch1UpiIdTextEditiingController.text,
-                                  accountHolderName:
-                                      accoundHolderNameTextEditingController
+                                    name: branch1NameTextEditingController.text,
+                                    address: branch1addressTextEditingController
+                                        .text,
+                                    admin: {
+                                      "${branch1AdminTextEditingController.text.hashCode}":
+                                          Admin(
+                                        email: branch1AdminTextEditingController
+                                            .text,
+                                      )
+                                    },
+                                    upiId:
+                                        branch1UpiIdTextEditiingController.text,
+                                    accountDetails: AccountDetails(
+                                      accountHolderName:
+                                          accoundHolderNameTextEditingController
+                                                      .text ==
+                                                  ''
+                                              ? null
+                                              : accoundHolderNameTextEditingController
+                                                  .text,
+                                      accountNo: accountNoTextEditingController
                                                   .text ==
                                               ''
                                           ? null
-                                          : accoundHolderNameTextEditingController
-                                              .text,
-                                  accountNo:
-                                      accountNoTextEditingController.text == ''
-                                          ? null
                                           : accountNoTextEditingController.text,
-                                  accountIFSC: accountIFSCTextEditingController
-                                              .text ==
-                                          ''
-                                      ? null
-                                      : accountIFSCTextEditingController.text,
-                                ).toJson()
+                                      accountIFSC:
+                                          accountIFSCTextEditingController
+                                                      .text ==
+                                                  ''
+                                              ? null
+                                              : accountIFSCTextEditingController
+                                                  .text,
+                                    )).toJson()
                               }
                             });
                             showDialog(

@@ -79,8 +79,8 @@ class _TeachersListState extends State<TeachersList> {
                           teachers[k] = Teacher.fromJson(teacher);
                         } else {
                           Teacher sTeacher = Teacher.fromJson(teacher);
-                          if (sTeacher.name
-                              .contains(searchTextEditingController.text)) {
+                          if (sTeacher.name.toLowerCase().contains(
+                              searchTextEditingController.text.toLowerCase())) {
                             teachers[k] = sTeacher;
                           }
                         }
@@ -96,8 +96,9 @@ class _TeachersListState extends State<TeachersList> {
                           }
                         } else {
                           Teacher sTeacher = Teacher.fromJson(teacher);
-                          if (sTeacher.name
-                                  .contains(searchTextEditingController.text) &&
+                          if (sTeacher.name.toLowerCase().contains(
+                                  searchTextEditingController.text
+                                      .toLowerCase()) &&
                               (sTeacher?.courses
                                       ?.firstWhere((element) =>
                                           element.id == widget.courseId)

@@ -180,7 +180,7 @@ class MidAdminProfile extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    " ${midAdmin.branches.replaceAll('[', '').replaceAll(']', '').split(',')[index]}",
+                                    "${midAdmin.branches.replaceAll('[', '').replaceAll(']', '').split(',')[index].trim()}",
                                     style: TextStyle(
                                       fontSize: SizeConfig.b * 3.5,
                                       color: Colors.black,
@@ -191,14 +191,15 @@ class MidAdminProfile extends StatelessWidget {
                                         .parent()
                                         .parent()
                                         .child(
-                                            "branches/${midAdmin.branches.replaceAll('[', '').replaceAll(']', '').split(',')[index]}/name")
+                                            "branches/${midAdmin.branches.replaceAll('[', '').replaceAll(']', '').split(',')[index].trim()}/name")
                                         .onValue,
                                     builder: (context, snapshot) {
                                       if (!snapshot.hasData) {
                                         return Container();
                                       }
                                       return Text(
-                                        " ${snapshot.data.snapshot.value}",
+                                        snapshot.data.snapshot.value.length < 15 ?
+                                        "${snapshot.data.snapshot.value}" : "${snapshot.data.snapshot.value.replaceAll(',','\nt')}",
                                         style: TextStyle(
                                           fontSize: SizeConfig.b * 3.5,
                                           color: Colors.white,

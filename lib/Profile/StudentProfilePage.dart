@@ -171,15 +171,19 @@ class StudentProfilePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      onLongPress: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => FeeUpdate(
-                              courseID: student.course[index].courseID,
-                              keyS: keyS,
-                              ref: FirebaseDatabase.instance.reference().child(
-                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${student.course[index].courseID}')),
-                        ),
-                      ),
+                      onLongPress: () {
+                        if (FireBaseAuth.instance.previlagelevel >= 3) {
+                          return Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => FeeUpdate(
+                                  courseID: student.course[index].courseID,
+                                  keyS: keyS,
+                                  ref: FirebaseDatabase.instance.reference().child(
+                                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${student.course[index].courseID}')),
+                            ),
+                          );
+                        }
+                      },
                       child: Padding(
                         padding: new EdgeInsets.only(
                             top: 5.0, left: 20.0, right: 20.0, bottom: 5.0),
@@ -248,16 +252,18 @@ class StudentProfilePage extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Container(
-                                    width: SizeConfig.b * 52.3,
-                                    child: ToggleButton(
-                                      studentUid: keyS,
-                                      courseId: student.course[index].courseID,
+                                if (FireBaseAuth.instance.previlagelevel >= 3)
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Container(
+                                      width: SizeConfig.b * 52.3,
+                                      child: ToggleButton(
+                                        studentUid: keyS,
+                                        courseId:
+                                            student.course[index].courseID,
+                                      ),
                                     ),
                                   ),
-                                ),
                               ],
                             ),
                           ),

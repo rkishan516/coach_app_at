@@ -251,6 +251,17 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                             return;
                           }
                           if (widget.isEdit == true) {
+                            if (widget.teacher.courses == null) {
+                              widget.teacher.courses = List<TCourses>();
+                            }
+                            widget.teacher.courses.add(
+                              TCourses(
+                                id: widget.courseId,
+                                subjects: [
+                                  widget.subjectId,
+                                ],
+                              ),
+                            );
                             FirebaseDatabase.instance
                                 .reference()
                                 .child(
@@ -269,14 +280,7 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                                         .replaceAll(' ', '')
                                         .replaceAll('-', ''),
                                   ),
-                                  courses: [
-                                    TCourses(
-                                      id: widget.courseId,
-                                      subjects: [
-                                        widget.subjectId,
-                                      ],
-                                    ),
-                                  ],
+                                  courses: widget.teacher.courses,
                                 ).toJson());
                           } else {
                             if (emailTextEditingController.text !=

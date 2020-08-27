@@ -34,6 +34,7 @@ class _ChapterPageState extends State<ChapterPage>
   TabController _tabController;
   bool isAdmin;
   List _list;
+  bool showFAB = true;
   SharedPreferences _pref;
   _sharedprefinit() async {
     _pref = await SharedPreferences.getInstance();
@@ -52,7 +53,19 @@ class _ChapterPageState extends State<ChapterPage>
   void initState() {
     isAdmin = FireBaseAuth.instance.previlagelevel != 2;
     _tabController = TabController(length: isAdmin ? 2 : 1, vsync: this);
+
     _sharedprefinit();
+
+    _tabController.addListener(() {
+      setState(() {
+        if (_tabController.index == 0) {
+          showFAB = true;
+        } else {
+          showFAB = false;
+        }
+      });
+    });
+
     super.initState();
   }
 
@@ -82,7 +95,7 @@ class _ChapterPageState extends State<ChapterPage>
           Container(
             padding: EdgeInsets.symmetric(
                 vertical: MediaQuery.of(context).size.height / 20),
-            height: MediaQuery.of(context).size.height-194,
+            height: MediaQuery.of(context).size.height - 194,
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               boxShadow: <BoxShadow>[
@@ -240,58 +253,62 @@ class _ChapterPageState extends State<ChapterPage>
           ),
         ],
       ),
-      bottomNavigationBar: StreamBuilder<Event>(
-          stream: widget.reference
-              .parent()
-              .parent()
-              .parent()
-              .parent()
-              .parent()
-              .parent()
-              .child('/paid')
-              .onValue,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    SlideButton(
-                      text: 'Live Session'.tr(),
-                      onTap: () {
-                        if (snapshot.data.snapshot.value != 'Trial' &&
-                            snapshot.data.snapshot.value != 'Paid') {
-                          Alert.instance.alert(context,
-                              "Your Institue doesn't have premium access".tr());
-                          return null;
-                        }
-                        return Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (context) => Calender(
-                              courseId: widget.courseId,
-                              subjectName: widget.title,
-                              fromCourse: true,
-                            ),
-                          ),
-                        );
-                      },
-                      width: 150,
-                      height: 50,
-                      icon: Icon(Icons.add_to_queue),
+      bottomNavigationBar: (!showFAB)
+          ? null
+          : StreamBuilder<Event>(
+              stream: widget.reference
+                  .parent()
+                  .parent()
+                  .parent()
+                  .parent()
+                  .parent()
+                  .parent()
+                  .child('/paid')
+                  .onValue,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        SlideButton(
+                          text: 'Live Session'.tr(),
+                          onTap: () {
+                            if (snapshot.data.snapshot.value != 'Trial' &&
+                                snapshot.data.snapshot.value != 'Paid') {
+                              Alert.instance.alert(
+                                  context,
+                                  "Your Institue doesn't have premium access"
+                                      .tr());
+                              return null;
+                            }
+                            return Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (context) => Calender(
+                                  courseId: widget.courseId,
+                                  subjectName: widget.title,
+                                  fromCourse: true,
+                                ),
+                              ),
+                            );
+                          },
+                          width: 150,
+                          height: 50,
+                          icon: Icon(Icons.add_to_queue),
+                        ),
+                        SlideButtonR(
+                            text: 'Add Chapter'.tr(),
+                            onTap: () => addChapter(context, widget.reference),
+                            width: 150,
+                            height: 50),
+                      ],
                     ),
-                    SlideButtonR(
-                        text: 'Add Chapter'.tr(),
-                        onTap: () => addChapter(context, widget.reference),
-                        width: 150,
-                        height: 50),
-                  ],
-                ),
-              );
-            } else {
-              return Container();
-            }
-          }),
+                  );
+                } else {
+                  return Container();
+                }
+              }),
     );
   }
 }

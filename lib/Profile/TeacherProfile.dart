@@ -1,3 +1,4 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
@@ -180,9 +181,10 @@ class TeacherProfilePage extends StatelessWidget {
                                             shrinkWrap: true,
                                             controller: ScrollController(),
                                             itemCount: teacher
-                                                .courses[courseIndex]
-                                                .subjects
-                                                .length,
+                                                    .courses[courseIndex]
+                                                    .subjects
+                                                    ?.length ??
+                                                0,
                                             itemBuilder: (context, index) {
                                               return Row(
                                                 children: <Widget>[
@@ -294,50 +296,52 @@ class TeacherProfilePage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: SizeConfig.v * 0.4),
-                  Container(
-                      //width:275,
-                      height: SizeConfig.v * 8.5, //10 for example
-                      width: SizeConfig.b * 70,
-                      child: Column(
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                "Contact no. : ${teacher?.phoneNo ?? "Not Given"}",
-                                style: TextStyle(fontSize: SizeConfig.b * 4.55),
-                              )
-                            ],
-                          ),
-                          SizedBox(height: SizeConfig.v * 1.21),
-                          if (teacher.phoneNo != null)
-                            Container(
-                                width: SizeConfig.b * 37.7,
-                                alignment: AlignmentDirectional.center,
-                                height: SizeConfig.v * 4.25,
-                                child: RaisedButton(
-                                  child: Icon(
-                                    Icons.call,
-                                    color: Colors.white,
-                                    size: SizeConfig.v * 4.2,
-                                  ),
-                                  elevation: 10,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        SizeConfig.v * 2.04),
-                                  ),
-                                  color: Color.fromARGB(255, 243, 106, 38),
-                                  onPressed: () async {
-                                    String url = 'tel:${teacher.phoneNo}';
-                                    if (await canLaunch(url)) {
-                                      await launch(url);
-                                    } else {
-                                      throw 'Could not launch $url';
-                                    }
-                                  },
-                                ))
-                        ],
-                      ))
+                  if (FireBaseAuth.instance.previlagelevel != 2)
+                    Container(
+                        //width:275,
+                        height: SizeConfig.v * 8.5, //10 for example
+                        width: SizeConfig.b * 70,
+                        child: Column(
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  "Contact no. : ${teacher?.phoneNo ?? "Not Given"}",
+                                  style:
+                                      TextStyle(fontSize: SizeConfig.b * 4.55),
+                                )
+                              ],
+                            ),
+                            SizedBox(height: SizeConfig.v * 1.21),
+                            if (teacher.phoneNo != null)
+                              Container(
+                                  width: SizeConfig.b * 37.7,
+                                  alignment: AlignmentDirectional.center,
+                                  height: SizeConfig.v * 4.25,
+                                  child: RaisedButton(
+                                    child: Icon(
+                                      Icons.call,
+                                      color: Colors.white,
+                                      size: SizeConfig.v * 4.2,
+                                    ),
+                                    elevation: 10,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          SizeConfig.v * 2.04),
+                                    ),
+                                    color: Color.fromARGB(255, 243, 106, 38),
+                                    onPressed: () async {
+                                      String url = 'tel:${teacher.phoneNo}';
+                                      if (await canLaunch(url)) {
+                                        await launch(url);
+                                      } else {
+                                        throw 'Could not launch $url';
+                                      }
+                                    },
+                                  ))
+                          ],
+                        ))
                 ],
               ),
             );
