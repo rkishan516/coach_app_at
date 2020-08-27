@@ -769,7 +769,6 @@ class Messages {
 class Section {
   String name;
   Map<String, Content> content;
-
   Section({this.name, this.content});
 
   Section.fromJson(Map<dynamic, dynamic> json) {
@@ -780,6 +779,9 @@ class Section {
         content[k] = Content.fromJson(v);
       });
     }
+    print('.......................///');
+      print(content);
+      
   }
 
   Map<String, dynamic> toJson() {

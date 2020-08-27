@@ -1,6 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
+import 'package:coach_app/Drawer/CountDot.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
@@ -8,8 +9,12 @@ import 'package:coach_app/adminCorner/publicContentPage.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NoticeBoard extends StatefulWidget {
+  final int totalNotice;
+  final totalPublicContent;
+  NoticeBoard({@required this.totalNotice, this.totalPublicContent});
   @override
   _NoticeBoardState createState() => _NoticeBoardState();
 }
@@ -25,6 +30,7 @@ class _NoticeBoardState extends State<NoticeBoard>
   int previlagelevel = FireBaseAuth.instance.previlagelevel;
   TabController _controller;
   int items = 2;
+  SharedPreferences _pref;
 
   _buildMessage(Messages message, bool isMe) {
     final GestureDetector msg = GestureDetector(
@@ -158,6 +164,9 @@ class _NoticeBoardState extends State<NoticeBoard>
       _allMessages.removeAt(index);
     });
   }
+ _sharedprefinit() async {
+    _pref = await SharedPreferences.getInstance();
+  }
 
   @override
   void initState() {
@@ -169,6 +178,7 @@ class _NoticeBoardState extends State<NoticeBoard>
     _query.onChildAdded.listen((Event event) => setState(
         () => _allMessages.add(Messages.fromSnapshot(event.snapshot))));
     _query.onChildRemoved.listen(onEventRemoved);
+    _sharedprefinit();
   }
 
   @override
@@ -183,8 +193,22 @@ class _NoticeBoardState extends State<NoticeBoard>
         bottom: TabBar(
           controller: _controller,
           tabs: [
-            Tab(child: Text("Notices")),
-            Tab(child: Text('Public Content'))
+            Tab(child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Notices"),
+                SizedBox(width: 8.0,),
+                CountDot(count: widget.totalNotice)
+              ],
+            )),
+            Tab(child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Public Content'),
+                SizedBox(width: 8.0,),
+                CountDot(count: widget.totalPublicContent)
+              ],
+            ))
           ],
         ),
       ),
@@ -278,9 +302,26 @@ class _NoticeBoardState extends State<NoticeBoard>
                         snapshot.data.snapshot.value.forEach((k, v) {
                           sections[k] = Section.fromJson(v);
                         });
+                        List<bool> _showCountDot = List(sections?.length);
+                        for(int i=0;i<_showCountDot.length;i++)
+                        {
+                          _showCountDot[i] = false;
+                        }
+
                         return ListView.builder(
                           itemCount: sections?.length,
                           itemBuilder: (BuildContext context, int index) {
+                            int _totalContent = sections[sections.keys.toList()[index]]?.content?.length??0;
+                            int _duptotalContent= _totalContent;
+                            int _prevtotalContent = _pref.getInt("${sections[sections.keys.toList()[index]].name}")??0;
+                            if(_prevtotalContent<_totalContent){
+                              _showCountDot[index] = true;
+                              
+                              _totalContent  =_totalContent - _prevtotalContent;
+                            }
+                            else{
+                               _pref.setInt("${sections[sections.keys.toList()[index]].name}", _duptotalContent);
+                            }
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Card(
@@ -291,14 +332,31 @@ class _NoticeBoardState extends State<NoticeBoard>
                                     '${sections[sections.keys.toList()[index]].name}',
                                     style: TextStyle(color: Color(0xffF36C24)),
                                   ),
-                                  trailing: Icon(
-                                    Icons.chevron_right,
-                                    color: Color(0xffF36C24),
+                                  trailing: Container(
+                                    height: 40,
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
+                                        CountDot(count: _totalContent ),
+                                        SizedBox(width: 10.0,),
+                                        Icon(
+                                          Icons.chevron_right,
+                                          color: Color(0xffF36C24),
+                                        ),
+                                      ],
+                                    ),
                                   ),
+                                   
                                   onTap: () {
+
+                                    _pref.setInt("${sections[sections.keys.toList()[index]].name}", _duptotalContent);
+
                                     Navigator.of(context).push(
                                         MaterialPageRoute(builder: (context) {
                                       return PublicContentPage(
+        
                                           title: sections[
                                                   sections.keys.toList()[index]]
                                               .name,
@@ -306,7 +364,11 @@ class _NoticeBoardState extends State<NoticeBoard>
                                               .reference()
                                               .child(
                                                   'institute/${FireBaseAuth.instance.instituteid}/publicContent/${sections.keys.toList()[index]}'));
-                                    }));
+                                    })).then((value) {
+                                      setState(() {
+                                        _showCountDot[index] = false;
+                                      });
+                                    });
                                   },
                                   onLongPress: () => addSection(
                                     name:

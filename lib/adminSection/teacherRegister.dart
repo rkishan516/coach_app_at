@@ -299,6 +299,7 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                                 .update(Teacher(
                                   name: nameTextEditingController.text,
                                   email: emailTextEditingController.text,
+                                  phoneNo: phoneTextEditingController.text,
                                   qualification:
                                       qualificationTextEditingController.text,
                                   experience: int.parse(

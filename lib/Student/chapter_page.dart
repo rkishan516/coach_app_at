@@ -1,3 +1,5 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Drawer/CountDot.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
@@ -6,6 +8,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChapterPage extends StatefulWidget {
   final DatabaseReference reference;
@@ -20,6 +23,27 @@ class ChapterPage extends StatefulWidget {
 
 class _ChapterPageState extends State<ChapterPage> {
   int length;
+  SharedPreferences _pref;
+  List _list;
+  _sharedprefinit() async {
+    _pref = await SharedPreferences.getInstance();
+    _list = _pref.getKeys().where((element) => element.startsWith("StudentChapter")).toList();
+  }
+  _searchForKey(String keyname, bool _isLast){
+   _list?.remove(keyname);
+   if(_isLast){
+     _list.forEach((element) { 
+       _pref?.remove(element);
+     });
+   }
+  }
+
+  @override
+  void initState() {
+    _sharedprefinit();
+    super.initState();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,9 +89,27 @@ class _ChapterPageState extends State<ChapterPage> {
                               .compareTo(subjects.chapters[b].name));
                       }
                       length = subjects.chapters?.length ?? 0;
+                      List<bool> _showCountDot = List(length);
+                        for(int i=0;i<_showCountDot.length;i++)
+                        {
+                          _showCountDot[i] = false;
+                        }
                       return ListView.builder(
                         itemCount: length,
                         itemBuilder: (BuildContext context, int index) {
+                          String _key = "StudentChapter"+subjects.chapters[keys.toList()[index]].name;
+                          bool _islast = false;
+                          if(index==length-1)
+                          _islast= true;
+                            _searchForKey(_key, _islast);
+                          int _totalContent = subjects.chapters[keys.toList()[index]].content?.length??0;
+                            int _prevtotalContent = _pref?.getInt("${subjects.chapters[keys.toList()[index]].name}")??_totalContent;
+                            if(_prevtotalContent<_totalContent){
+                              _showCountDot[index] = true;
+                            }
+                            else{
+                               _pref?.setInt("${subjects.chapters[keys.toList()[index]].name}", _totalContent);
+                            }
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Card(
@@ -78,11 +120,26 @@ class _ChapterPageState extends State<ChapterPage> {
                                   '${subjects.chapters[keys.toList()[index]].name}',
                                   style: TextStyle(color: Colors.blue),
                                 ),
-                                trailing: Icon(
-                                  Icons.chevron_right,
-                                  color: Colors.blue,
-                                ),
-                                onTap: () => Navigator.of(context).push(
+                                trailing: Container(
+                                    height: 40,
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
+                                        CountDot(count: _totalContent -_prevtotalContent ),
+                                        SizedBox(width: 10.0,),
+                                        Icon(
+                                          Icons.chevron_right,
+                                          color: Color(0xffF36C24),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                onTap: () {
+                                  _pref?.setInt("${subjects.chapters[keys.toList()[index]].name}", _totalContent);
+
+                                  return Navigator.of(context).push(
                                   CupertinoPageRoute(
                                     builder: (context) => ContentPage(
                                       title: subjects
@@ -93,7 +150,8 @@ class _ChapterPageState extends State<ChapterPage> {
                                           'chapters/${keys.toList()[index]}'),
                                     ),
                                   ),
-                                ),
+                                );
+                                }
                               ),
                             ),
                           );

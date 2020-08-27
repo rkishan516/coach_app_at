@@ -1,6 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
+import 'package:coach_app/Drawer/CountDot.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Events/Calender.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
@@ -12,6 +13,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChapterPage extends StatefulWidget {
   final DatabaseReference reference;
@@ -31,10 +33,26 @@ class _ChapterPageState extends State<ChapterPage>
   int length;
   TabController _tabController;
   bool isAdmin;
+  List _list;
+  SharedPreferences _pref;
+  _sharedprefinit() async {
+    _pref = await SharedPreferences.getInstance();
+    _list = _pref.getKeys().where((element) => element.startsWith("TeachersChapter")).toList();
+  }
+  _searchForKey(String keyname, bool _isLast){
+   _list?.remove(keyname);
+   if(_isLast){
+     _list.forEach((element) { 
+       _pref?.remove(element);
+     });
+   }
+  }
+
   @override
   void initState() {
     isAdmin = FireBaseAuth.instance.previlagelevel != 2;
     _tabController = TabController(length: isAdmin ? 2 : 1, vsync: this);
+    _sharedprefinit();
     super.initState();
   }
 
@@ -104,9 +122,27 @@ class _ChapterPageState extends State<ChapterPage>
                                     .compareTo(subjects.chapters[b].name));
                             }
                             var length = subjects.chapters?.length ?? 0;
+                            List<bool> _showCountDot = List(length);
+                            for(int i=0;i<_showCountDot.length;i++)
+                            {
+                              _showCountDot[i] = false;
+                            }
                             return ListView.builder(
                               itemCount: length,
                               itemBuilder: (BuildContext context, int index) {
+                                String _key = "TeachersChapter"+subjects.chapters[keys.toList()[index]].name;
+                                 bool _islast = false;
+                                if(index==length-1)
+                               _islast= true;
+                            _searchForKey(_key, _islast);
+                                int _totalContent = subjects.chapters[keys.toList()[index]]?.content?.length??0;
+                                int _prevtotalContent = _pref?.getInt(_key)??_totalContent;
+                                if(_prevtotalContent<_totalContent){
+                                  _showCountDot[index] = true;
+                                  } 
+                            else{
+                               _pref?.setInt(_key, _totalContent);
+                            }
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Card(
@@ -119,11 +155,25 @@ class _ChapterPageState extends State<ChapterPage>
                                         style:
                                             TextStyle(color: Color(0xffF36C24)),
                                       ),
-                                      trailing: Icon(
-                                        Icons.chevron_right,
-                                        color: Color(0xffF36C24),
-                                      ),
-                                      onTap: () => Navigator.of(context).push(
+                                      trailing: Container(
+                                    height: 40,
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
+                                        CountDot(count: _totalContent-_prevtotalContent ),
+                                        SizedBox(width: 10.0,),
+                                        Icon(
+                                          Icons.chevron_right,
+                                          color: Color(0xffF36C24),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                      onTap: (){ 
+                                        _pref?.setInt(_key, _totalContent);
+                                        return Navigator.of(context).push(
                                         CupertinoPageRoute(
                                           builder: (context) => ContentPage(
                                             title: subjects
@@ -131,9 +181,14 @@ class _ChapterPageState extends State<ChapterPage>
                                                 .name,
                                             reference: widget.reference.child(
                                                 'chapters/${keys.toList()[index]}'),
-                                          ),
+                                          )
                                         ),
-                                      ),
+                                      ).then((value) {
+                                      setState(() {
+                                        _showCountDot[index] = false;
+                                      });
+                                    });
+                                      },
                                       onLongPress: () => addChapter(
                                           context, widget.reference,
                                           key: keys.toList()[index],

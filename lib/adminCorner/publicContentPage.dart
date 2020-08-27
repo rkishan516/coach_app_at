@@ -11,7 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-
+ 
 class PublicContentPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;

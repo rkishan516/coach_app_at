@@ -1,4 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Drawer/CountDot.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
@@ -7,6 +8,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CoursePage extends StatefulWidget {
   final Teacher teacher;
@@ -16,6 +18,29 @@ class CoursePage extends StatefulWidget {
 }
 
 class _CoursePageState extends State<CoursePage> {
+  
+  SharedPreferences _pref;
+  List _list;
+  _sharedprefinit() async {
+    _pref = await SharedPreferences.getInstance();
+     _list = _pref
+        .getKeys()
+        .where((element) => element.startsWith("TeachersCourse"))
+        .toList();
+  }
+  _searchForKey(String keyname, bool _isLast) {
+    _list?.remove(keyname);
+    if (_isLast) {
+      _list?.forEach((element) {
+        _pref.remove(element);
+      });
+    }
+  }
+  @override
+  void initState() {
+    _sharedprefinit();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,9 +90,28 @@ class _CoursePageState extends State<CoursePage> {
                         }
                       }
                     });
+                    List<bool> _showCountDot = List(courses?.length ?? 0);
+                        for(int i=0;i<_showCountDot.length;i++)
+                        {
+                          _showCountDot[i] = false; 
+                        }
                     return ListView.builder(
                       itemCount: courses?.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
+                         String _key = "TeachersCourse" +
+                                      courses[index].name;
+                                  bool _islast = false;
+                                  if (index == courses?.length  - 1)
+                                    _islast = true;
+                                  _searchForKey(_key, _islast);
+                         int _totalContent = courses[index].subjects?.length??0;
+                            int _prevtotalContent = _pref?.getInt(_key)??_totalContent;
+                            if(_prevtotalContent<_totalContent){
+                              _showCountDot[index] = true;
+                            }
+                            else{
+                               _pref?.setInt(_key, _totalContent);
+                            }
                         TCourses tcourse = widget.teacher?.courses?.firstWhere(
                             (element) => element.id == courses[index].id);
                         return Padding(
@@ -80,18 +124,38 @@ class _CoursePageState extends State<CoursePage> {
                                 '${courses[index].name}',
                                 style: TextStyle(color: Colors.blue),
                               ),
-                              trailing: Icon(
-                                Icons.chevron_right,
-                                color: Colors.blue,
-                              ),
-                              onTap: () => Navigator.of(context).push(
+                              trailing: Container(
+                                    height: 40,
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
+                                        CountDot(count: _totalContent - _prevtotalContent ),
+                                        SizedBox(width: 10.0,),
+                                        Icon(
+                                          Icons.chevron_right,
+                                          color: Color(0xffF36C24),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                              onTap: () {
+                                 _pref?.setInt(_key,_totalContent);
+
+                                return Navigator.of(context).push(
                                 CupertinoPageRoute(
                                   builder: (context) => SubjectPage(
                                     tCourse: tcourse,
                                     course: courses[index],
                                   ),
                                 ),
-                              ),
+                              ).then((value) {
+                                      setState(() {
+                                        _showCountDot[index] = false;
+                                      });
+                                    });
+                              }
                             ),
                           ),
                         );

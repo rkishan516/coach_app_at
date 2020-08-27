@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Dialogs/languageDialog.dart';
 import 'package:coach_app/Dialogs/replaceSubAdmin.dart';
+import 'package:coach_app/Drawer/CountDot.dart';
 import 'package:coach_app/Drawer/my_institute.dart';
 import 'package:coach_app/Drawer/privacyNPolicies.dart';
 import 'package:coach_app/FeeSection/CouponSection/CouponList.dart';
@@ -28,6 +31,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 getDrawer(BuildContext context) {
   FirebaseUser user = FireBaseAuth.instance.user;
@@ -48,6 +52,69 @@ class GuruCoolDrawer extends StatefulWidget {
 
 class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
   bool isExpandedSS = false, isExpandedFS = false;
+  final dbref = FirebaseDatabase.instance;
+  SharedPreferences _pref;
+  StreamSubscription<Event> _onStudentRequestSubscription;
+  StreamSubscription<Event> _onNoticeSubscription;
+  StreamSubscription<Event> _onPublicContentSubscription;
+
+  int _totalStudentReq = 0, _totalNotice = 0, _totalPublicContent = 0;
+  _loadFromDatabase() async{
+  if(FireBaseAuth.instance.previlagelevel>=3)  
+  _onStudentRequestSubscription = dbref.reference().child('institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students').orderByChild('status').equalTo('Existing Student').onValue.listen(_onStudentRequest);
+  
+  if(FireBaseAuth.instance.previlagelevel!=4){
+  _onNoticeSubscription = dbref.reference().child('institute/${FireBaseAuth.instance.instituteid}/notices').onValue.listen(_onNotice);
+  _onPublicContentSubscription = dbref.reference().child('institute/${FireBaseAuth.instance.instituteid}/publicContent').onValue.listen(_onPublicContent);
+   }
+
+   }
+
+_onStudentRequest(Event event) {
+   Map map= event.snapshot.value;
+    setState(() {
+      _totalStudentReq= map.length;
+    });
+  }
+_onNotice(Event event) {
+   Map map= event.snapshot.value; 
+   if(map!=null){
+   int _prevtotalnotice = _pref.getInt("TotalNotice")==null? 0:_pref.getInt("TotalNotice");
+   if(_prevtotalnotice<map.length)
+    setState(() {
+      _totalNotice= map.length-_prevtotalnotice;
+      _pref.setInt("TotalNotice",map.length);
+    });
+   }
+  }
+_onPublicContent(Event event) {
+   Map map= event.snapshot.value;
+   if(map!=null){
+   int _prevtotalPublicContent = _pref.getInt("TotalPublicContent")==null? 0:_pref.getInt("TotalPublicContent");
+   if(_prevtotalPublicContent<map.length)
+    setState(() {
+      _totalPublicContent= map.length- _prevtotalPublicContent;
+      _pref.setInt("TotalPublicContent", map.length);
+    });
+   }
+  }  
+_sharedprefinit() async {
+    _pref = await SharedPreferences.getInstance();
+  }
+  @override
+  void initState() {
+    super.initState();
+    _sharedprefinit();
+    _loadFromDatabase();
+    
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    _onStudentRequestSubscription?.cancel();
+    _onNoticeSubscription?.cancel();
+    _onPublicContentSubscription?.cancel();
+  }
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -150,7 +217,8 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                   title: Text('Admin Corner'.tr()),
                   leading: Icon(Icons.notifications_active),
                   onTap: () => Navigator.of(context).push(
-                      CupertinoPageRoute(builder: (context) => NoticeBoard())),
+                      CupertinoPageRoute(builder: (context) => NoticeBoard(totalNotice: _totalNotice, totalPublicContent: _totalPublicContent,))),
+                  trailing:  CountDot(count: _totalNotice + _totalPublicContent),    
                 ),
                 if (FireBaseAuth.instance.previlagelevel == 4)
                   ListTile(
@@ -238,6 +306,7 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
                         onTap: () => Navigator.of(context).push(
                             CupertinoPageRoute(
                                 builder: (context) => StudentsRequests())),
+                        trailing:  CountDot(count: _totalStudentReq,) 
                       ),
                       if (FireBaseAuth.instance.previlagelevel >= 3)
                         ExpansionTile(

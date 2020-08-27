@@ -1,4 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Drawer/CountDot.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Events/StudentEvent.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
@@ -9,6 +10,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SubjectPage extends StatefulWidget {
   final String courseID;
@@ -18,6 +20,30 @@ class SubjectPage extends StatefulWidget {
 }
 
 class _SubjectPageState extends State<SubjectPage> {
+  
+   SharedPreferences _pref;
+   List _list;
+  _sharedprefinit() async {
+    _pref = await SharedPreferences.getInstance();
+    _list = _pref.getKeys().where((element) => element.startsWith("StudentSubject")).toList();
+
+  }
+  _searchForKey(String keyname, bool _isLast){
+
+   _list?.remove(keyname);
+   if(_isLast){
+     _list?.forEach((element) { 
+       _pref.remove(element);
+     });
+   }
+  }
+
+  @override
+  void initState() {
+    _sharedprefinit();
+    super.initState();
+  }
+ 
   @override
   Widget build(BuildContext context) {
     int length = 0;
@@ -68,9 +94,29 @@ class _SubjectPageState extends State<SubjectPage> {
                             .compareTo(courses.subjects[b].name));
                     }
                     length = courses.subjects?.length ?? 0;
+
+                    List<bool> _showCountDot = List(length);
+                        for(int i=0;i<_showCountDot.length;i++)
+                        {
+                          _showCountDot[i] = false;
+                        }
                     return ListView.builder(
                       itemCount: length,
                       itemBuilder: (BuildContext context, int index) {
+                        
+                        String _key = "StudentSubject"+courses.subjects[keys.toList()[index]].name;
+                        bool _islast = false;
+                          if(index==length-1) 
+                          _islast= true;
+                          _searchForKey(_key, _islast);
+                        int _totalContent = courses.subjects[keys.toList()[index]].chapters?.length??0;
+                            int _prevtotalContent = _pref?.getInt(_key)??_totalContent;
+                            if(_prevtotalContent<_totalContent){
+                              _showCountDot[index] = true;
+                            }
+                            else{
+                               _pref?.setInt(_key, _totalContent);
+                            }
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
@@ -81,11 +127,25 @@ class _SubjectPageState extends State<SubjectPage> {
                                 '${courses.subjects[keys.toList()[index]].name}',
                                 style: TextStyle(color: Colors.blue),
                               ),
-                              trailing: Icon(
-                                Icons.chevron_right,
-                                color: Colors.blue,
-                              ),
+                              trailing: Container(
+                                    height: 40,
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
+                                        CountDot(count: _totalContent -_prevtotalContent ),
+                                        SizedBox(width: 10.0,),
+                                        Icon(
+                                          Icons.chevron_right,
+                                          color: Color(0xffF36C24),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                               onTap: () {
+                                _pref?.setInt(_key, _totalContent);
+
                                 return Navigator.of(context).push(
                                   CupertinoPageRoute(
                                     builder: (context) => ChapterPage(
@@ -99,7 +159,11 @@ class _SubjectPageState extends State<SubjectPage> {
                                               'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${keys.toList()[index]}'),
                                     ),
                                   ),
-                                );
+                                ).then((value) {
+                                      setState(() {
+                                        _showCountDot[index] = false;
+                                      });
+                               });
                               },
                             ),
                           ),
