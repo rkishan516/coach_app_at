@@ -93,7 +93,8 @@ class FireBaseAuth {
   }
 
   updateToken() {
-    FirebaseMessagingService().sendNotification();// initializing messaging handlers
+    FirebaseMessagingService()
+        .sendNotification(); // initializing messaging handlers
     FirebaseMessaging().getToken().then((token) {
       final dbref = FirebaseDatabase.instance
           .reference()

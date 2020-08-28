@@ -30,27 +30,28 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
   TabController _tabController;
   SharedPreferences _pref;
   List _list;
-  bool showFAB= true;
+  bool showFAB = true;
 
-   _sharedprefinit() async {
+  _sharedprefinit() async {
     _pref = await SharedPreferences.getInstance();
-    _list = _pref.getKeys().where((element) => element.startsWith("AdminSubject")).toList();
-
-  }
-   _searchForKey(String keyname, bool _isLast){
-
-   _list?.remove(keyname);
-   if(_isLast){
-     _list?.forEach((element) { 
-       _pref.remove(element);
-     });
-   }
+    _list = _pref
+        .getKeys()
+        .where((element) => element.startsWith("AdminSubject"))
+        .toList();
   }
 
+  _searchForKey(String keyname, bool _isLast) {
+    _list?.remove(keyname);
+    if (_isLast) {
+      _list?.forEach((element) {
+        _pref.remove(element);
+      });
+    }
+  }
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _sharedprefinit();
     super.initState();
   }
@@ -131,24 +132,27 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
 
                             length = courses.subjects?.length ?? 0;
                             List<bool> _showCountDot = List(length);
-                            for(int i=0;i<_showCountDot.length;i++)
-                            {
+                            for (int i = 0; i < _showCountDot.length; i++) {
                               _showCountDot[i] = false;
                             }
                             return ListView.builder(
                               itemCount: length,
                               itemBuilder: (BuildContext context, int index) {
-                                 String _key = "AdminSubject"+courses.subjects[keys.toList()[index]].name;
-                                  bool _islast = false;
-                                  if(index==length-1)
-                                  _islast= true;
-                                  _searchForKey(_key, _islast);
-                                int _totalContent = courses.subjects[keys.toList()[index]].chapters?.length??0;
-                                int _prevtotalContent = _pref?.getInt(_key)??_totalContent;
-                                if(_prevtotalContent<_totalContent){
+                                String _key = "AdminSubject" +
+                                    courses.subjects[keys.toList()[index]].name;
+                                bool _islast = false;
+                                if (index == length - 1) _islast = true;
+                                _searchForKey(_key, _islast);
+                                int _totalContent = courses
+                                        .subjects[keys.toList()[index]]
+                                        .chapters
+                                        ?.length ??
+                                    0;
+                                int _prevtotalContent =
+                                    _pref?.getInt(_key) ?? _totalContent;
+                                if (_prevtotalContent < _totalContent) {
                                   _showCountDot[index] = true;
-                                }
-                                else{
+                                } else {
                                   _pref?.setInt(_key, _totalContent);
                                 }
                                 return Padding(
@@ -164,24 +168,33 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                               color: Color(0xffF36C24)),
                                         ),
                                         trailing: Container(
-                                    height: 40,
-                                    width: 80,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
-                                        CountDot(count: _totalContent -_prevtotalContent ),
-                                        SizedBox(width: 10.0,),
-                                        Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xffF36C24),
+                                          height: 40,
+                                          width: 80,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              if (FireBaseAuth.instance
+                                                          .previlagelevel !=
+                                                      4 &&
+                                                  _showCountDot[index])
+                                                CountDot(
+                                                    count: _totalContent -
+                                                        _prevtotalContent),
+                                              SizedBox(
+                                                width: 10.0,
+                                              ),
+                                              Icon(
+                                                Icons.chevron_right,
+                                                color: Color(0xffF36C24),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
                                         onTap: () {
                                           _pref?.setInt(_key, _totalContent);
-                                          return Navigator.of(context).push(
+                                          return Navigator.of(context)
+                                              .push(
                                             CupertinoPageRoute(
                                               builder: (context) => ChapterPage(
                                                 courseId: widget.courseId,
@@ -196,10 +209,11 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                                         'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${keys.toList()[index]}'),
                                               ),
                                             ),
-                                          ).then((value) {
-                                                  setState(() {
-                                                    _showCountDot[index] = false;
-                                                  });
+                                          )
+                                              .then((value) {
+                                            setState(() {
+                                              _showCountDot[index] = false;
+                                            });
                                           });
                                         },
                                         onLongPress: () => addSubject(
