@@ -93,8 +93,10 @@ class FireBaseAuth {
   }
 
   updateToken() {
+
     FirebaseMessagingService().sendNotification();// initializing messaging handlers
     FirebaseMessagingService().flutterlocalnotificationplugin.cancelAll();
+    
     FirebaseMessaging().getToken().then((token) {
       final dbref = FirebaseDatabase.instance
           .reference()

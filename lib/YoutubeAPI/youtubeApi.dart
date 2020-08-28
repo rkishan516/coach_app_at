@@ -15,8 +15,8 @@ class YoutubeUpload {
     var scopes = [YoutubeApi.YoutubeScope];
     if (credentials == null) {
       var clientID = ClientId(
-          '367080368956-nt26f3rhss4kovv6ks2v9kl5ibs5l65j.apps.googleusercontent.com',
-          'y4d4F7XkkcgwvNpu-OWgmn6f');
+          '571534499090-khpqrmd88kq9lihi7810uf53omkhlpjv.apps.googleusercontent.com',
+          '');
       var autoRefreshingAuthClient =
           await clientViaUserConsent(clientID, scopes, (url) {
         launch(url);
