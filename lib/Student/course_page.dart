@@ -144,7 +144,8 @@ class _CoursePageState extends State<CoursePage> {
                                       _pref?.getInt(_key) ?? _totalContent;
                                   if (_prevtotalContent < _totalContent) {
                                     _showCountDot[index] = true;
-                                  } else {
+                                  }
+                                   else {
                                     _pref?.setInt(_key, _totalContent);
                                   }
                                   return Padding(

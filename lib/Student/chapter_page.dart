@@ -119,6 +119,9 @@ class _ChapterPageState extends State<ChapterPage> {
                             if(_prevtotalContent<_totalContent){
                               _showCountDot[index] = true;
                             }
+                            else if(_prevtotalContent==_totalContent){
+                                    print("equal");
+                                   }
                             else{
                                widget.pref?.setInt(_key, _totalContent);
                             }

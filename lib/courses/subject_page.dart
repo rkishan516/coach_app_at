@@ -128,10 +128,20 @@ class _SubjectPageState extends State<SubjectPage>
                         itemBuilder: (BuildContext context, int index) {
                           String _key = "TeachersSubject"+ widget.course.subjects[widget.tCourse.subjects[index]]?.name.toString();
                         bool _islast = false;
+                        int _contentlength =0;
+                        int _totalContent = 0;
                           if(index==(widget.tCourse.subjects?.length ?? 0) -1) 
                           _islast= true;
                           String newKey =_searchForKey(_key, _islast);
-                          int _totalContent =widget.course.subjects[widget.tCourse.subjects[index]]?.chapters?.length??0;
+                          if(widget.course.subjects[widget.tCourse.subjects[index]]?.chapters!=null){
+                          widget.course.subjects[widget.tCourse.subjects[index]]?.chapters?.forEach((key, value) {
+                                   
+                                  int _indvContent = value?.content?.length??0;
+                                  _contentlength += _indvContent;
+                          });
+                          _totalContent = (widget.course.subjects[widget.tCourse.subjects[index]]?.chapters?.length??0)+ _contentlength;
+                        
+                          }
                             
                             int _prevtotalContent = widget.pref?.getInt(_key)??_totalContent;
                             if(_prevtotalContent<_totalContent){

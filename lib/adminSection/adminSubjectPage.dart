@@ -147,14 +147,27 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                               itemBuilder: (BuildContext context, int index) {
                                  String _key = "AdminSubject"+courses.subjects[keys.toList()[index]].name;
                                   bool _islast = false;
+                                  int _contentlength =0;
+                                  int _totalContent = 0;
                                   if(index==length-1)
                                   _islast= true;
                                  String newKey =_searchForKey(_key, _islast);
-                                int _totalContent = courses.subjects[keys.toList()[index]].chapters?.length??0;
+                                if(courses.subjects[keys.toList()[index]].chapters!=null){
+                                 courses.subjects[keys.toList()[index]].chapters.forEach((key, value) {
+                                   
+                                  int _indvContent = value?.content?.length??0;
+                                  _contentlength += _indvContent;
+                                  });
+                                  _totalContent = (courses.subjects[keys.toList()[index]].chapters?.length??0)+ _contentlength;
+                                
+                                  }
                                 int _prevtotalContent = widget.pref?.getInt(_key)??_totalContent;
                                 if(_prevtotalContent<_totalContent){
                                   _showCountDot[index] = true;
                                 }
+                                else if(_prevtotalContent==_totalContent){
+                                    print("equal");
+                                   }
                                 else{
                                   widget.pref?.setInt(_key, _totalContent);
                                 }

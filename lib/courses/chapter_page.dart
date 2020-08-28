@@ -162,9 +162,12 @@ class _ChapterPageState extends State<ChapterPage>
                                 if(_prevtotalContent<_totalContent){
                                   _showCountDot[index] = true;
                                   } 
-                            else{
-                               widget.pref?.setInt(_key, _totalContent);
-                            }
+                                else if(_prevtotalContent==_totalContent){
+                                    print("equal");
+                                   }  
+                                else{
+                                  widget.pref?.setInt(_key, _totalContent);
+                                }
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Card(

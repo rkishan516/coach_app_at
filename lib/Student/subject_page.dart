@@ -130,11 +130,11 @@ class _SubjectPageState extends State<SubjectPage>
                               itemCount: length,
                               itemBuilder: (BuildContext context, int index) {
                                
-                                String _key = "StudentSubject"+courses.subjects[keys.toList()[index]].name;
+                        String _key = "StudentSubject"+courses.subjects[keys.toList()[index]].name;
                         bool _islast = false;
                         int _contentlength =0;
                         int _totalContent = 0;
-                          if(index==length-1) 
+                          if(index==length-1)  
                           _islast= true;
                           String newKey =_searchForKey(_key, _islast);
                         
@@ -150,6 +150,9 @@ class _SubjectPageState extends State<SubjectPage>
                             int _prevtotalContent =widget.pref?.getInt(_key)??_totalContent;
                             if(_prevtotalContent<_totalContent){
                               _showCountDot[index] = true;
+                            }
+                            else if(_prevtotalContent==_totalContent){
+                              print("equal");
                             }
                             else{
                                widget.pref?.setInt(_key, _totalContent);
@@ -198,6 +201,9 @@ class _SubjectPageState extends State<SubjectPage>
                                     ),
                                   ),
                                       onTap: () {
+                                        print("------------------------->>>>>>>>>>>");
+                                        print(_key);
+                                        print("------------------------->>>>>>>>>>>");
                                          widget.pref?.setInt(_key, _totalContent);
                                         return Navigator.of(context).push(
                                           CupertinoPageRoute(
