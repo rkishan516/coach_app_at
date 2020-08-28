@@ -22,7 +22,11 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
   List _list;
 
   _sharedprefinit() async {
+    print("----------------------");
     _pref = await SharedPreferences.getInstance();
+    print(_pref);
+    
+    print("----------------------");
     _list = _pref
         .getKeys()
         .where((element) => element.startsWith("AdminCourse"))
@@ -143,7 +147,9 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                return  Navigator.of(context).push(
                                 CupertinoPageRoute(
                                   builder: (context) => AdminSubjectPage(
-                                      courseId: courses[index].id),
+                                      courseId: courses[index].id,
+                                      pref: _pref,),
+                                      
                                 ),
                               ).then((value) {
                                       setState(() {

@@ -1,5 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/CountDot.dart';
+import 'package:coach_app/Drawer/NewBannerShow.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Events/StudentEvent.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
@@ -15,7 +16,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SubjectPage extends StatefulWidget {
   final String courseID;
-  SubjectPage({@required this.courseID});
+  SharedPreferences pref;
+  SubjectPage({@required this.courseID, @required this.pref});
   @override
   _SubjectPageState createState() => _SubjectPageState();
 }
@@ -23,21 +25,22 @@ class SubjectPage extends StatefulWidget {
 class _SubjectPageState extends State<SubjectPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-  SharedPreferences _pref;
    List _list;
-  _sharedprefinit() async {
-    _pref = await SharedPreferences.getInstance();
-    _list = _pref.getKeys().where((element) => element.startsWith("StudentSubject")).toList();
-
+  _sharedprefinit(){
+    _list = widget.pref.getKeys().where((element) => element.startsWith("StudentSubject")).toList();
   }
-  _searchForKey(String keyname, bool _isLast){
-
-   _list?.remove(keyname);
+ String  _searchForKey(String keyname, bool _isLast){
+   
+   bool result=_list?.remove(keyname); 
    if(_isLast){
      _list?.forEach((element) { 
-       _pref.remove(element);
+       widget.pref.remove(element);
      });
    }
+   if(!result){
+     return keyname;
+   }
+   return "done";
   }
 
   @override
@@ -122,21 +125,34 @@ class _SubjectPageState extends State<SubjectPage>
                         {
                           _showCountDot[i] = false;
                         }
+                        _sharedprefinit();
                             return ListView.builder(
                               itemCount: length,
                               itemBuilder: (BuildContext context, int index) {
+                               
                                 String _key = "StudentSubject"+courses.subjects[keys.toList()[index]].name;
                         bool _islast = false;
+                        int _contentlength =0;
+                        int _totalContent = 0;
                           if(index==length-1) 
                           _islast= true;
-                          _searchForKey(_key, _islast);
-                        int _totalContent = courses.subjects[keys.toList()[index]].chapters?.length??0;
-                            int _prevtotalContent = _pref?.getInt(_key)??_totalContent;
+                          String newKey =_searchForKey(_key, _islast);
+                        
+                          if(courses.subjects[keys.toList()[index]].chapters!=null){
+                          courses.subjects[keys.toList()[index]].chapters.forEach((key, value) {
+                                   
+                                  int _indvContent = value?.content?.length??0;
+                                  _contentlength += _indvContent;
+                          });
+                          _totalContent = (courses.subjects[keys.toList()[index]].chapters?.length??0)+ _contentlength;
+                        
+                          }
+                            int _prevtotalContent =widget.pref?.getInt(_key)??_totalContent;
                             if(_prevtotalContent<_totalContent){
                               _showCountDot[index] = true;
                             }
                             else{
-                               _pref?.setInt(_key, _totalContent);
+                               widget.pref?.setInt(_key, _totalContent);
                             }
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -149,14 +165,30 @@ class _SubjectPageState extends State<SubjectPage>
                                         '${courses.subjects[keys.toList()[index]].name}',
                                         style: TextStyle(color: Colors.blue),
                                       ),
-                                      trailing:Container(
+                                      trailing: _key!= newKey? 
+                                      Container(
                                     height: 40,
                                     width: 80,
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
-                                        CountDot(count: _totalContent -_prevtotalContent ),
+                                        CountDot(count:_totalContent - _prevtotalContent <= 0? 0:_totalContent - _prevtotalContent ),
+                                        SizedBox(width: 10.0,),
+                                        Icon(
+                                          Icons.chevron_right,
+                                          color: Color(0xffF36C24),
+                                        ),
+                                      ],
+                                    ),
+                                  ):
+                                     Container(
+                                    height: 40,
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        NewBannerShow(),
                                         SizedBox(width: 10.0,),
                                         Icon(
                                           Icons.chevron_right,
@@ -166,7 +198,7 @@ class _SubjectPageState extends State<SubjectPage>
                                     ),
                                   ),
                                       onTap: () {
-                                         _pref?.setInt(_key, _totalContent);
+                                         widget.pref?.setInt(_key, _totalContent);
                                         return Navigator.of(context).push(
                                           CupertinoPageRoute(
                                             builder: (context) => ChapterPage(
@@ -179,9 +211,11 @@ class _SubjectPageState extends State<SubjectPage>
                                                   .reference()
                                                   .child(
                                                       'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${keys.toList()[index]}'),
+                                                  pref: widget.pref
                                             ),
                                           ),
                                         ).then((value) {
+                                    
                                       setState(() {
                                         _showCountDot[index] = false;
                                       });

@@ -131,7 +131,7 @@ class _CoursePageState extends State<CoursePage> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
-                                        CountDot(count: _totalContent - _prevtotalContent ),
+                                        CountDot(count: _totalContent - _prevtotalContent<=0?0:_totalContent - _prevtotalContent ),
                                         SizedBox(width: 10.0,),
                                         Icon(
                                           Icons.chevron_right,
@@ -148,6 +148,7 @@ class _CoursePageState extends State<CoursePage> {
                                   builder: (context) => SubjectPage(
                                     tCourse: tcourse,
                                     course: courses[index],
+                                    pref: _pref,
                                   ),
                                 ),
                               ).then((value) {

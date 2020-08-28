@@ -20,7 +20,7 @@ class CoursePage extends StatefulWidget {
 
 class _CoursePageState extends State<CoursePage> {
   SharedPreferences _pref;
-  int _subjectlength;
+  int _subjectlength =0;
   List _list;
   _sharedprefinit() async {
     _pref = await SharedPreferences.getInstance();
@@ -98,7 +98,7 @@ class _CoursePageState extends State<CoursePage> {
                       return ListView.builder(
                         itemCount: student.course.length,
                         itemBuilder: (BuildContext context, int index) {
-                      
+                       
                           return StreamBuilder(
                               stream: FirebaseDatabase.instance
                                   .reference()
@@ -107,15 +107,39 @@ class _CoursePageState extends State<CoursePage> {
                                   .onValue,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
+                                  
                                   Map map= snapshot.data.snapshot.value;
-                                  _subjectlength = map.length;
+                                  _subjectlength = map?.length??0;
+                                  
+                                  int _totallength= 0, _chapterlength=0,  _contentlength= 0;
+                                  if(map!=null){
+                                  map?.forEach((key1, value) { 
+                                   
+                                  
+                                   Map _chaptermap= value["chapters"];
+                                   if(_chaptermap!=null){
+                                     _chapterlength =_chapterlength + _chaptermap.length;
+                                     _chaptermap.forEach((key2, value2) {
+                                      
+                                       Map _contentmap = value2["content"];
+                                       if(_contentmap!=null){
+                                         _contentlength =_contentlength + _contentmap.length;
+                                       }
+                                       
+                                      });
+                                   }
+                              
+                                  });
+                                  }
+                                  _totallength = _subjectlength+ _contentlength + _chapterlength;
+                                  
                                   String _key = "StudentCourse" +
                                       student.course[index].courseName;
                                   bool _islast = false;
                                   if (index == student.course.length - 1)
                                     _islast = true;
                                   _searchForKey(_key, _islast);
-                                  int _totalContent = _subjectlength ?? 0;
+                                  int _totalContent = _totallength ?? 0;
                                   int _prevtotalContent =
                                       _pref?.getInt(_key) ?? _totalContent;
                                   if (_prevtotalContent < _totalContent) {
@@ -146,8 +170,7 @@ class _CoursePageState extends State<CoursePage> {
                                                       4 &&
                                                   _showCountDot[index])
                                                 CountDot(
-                                                    count: _totalContent -
-                                                        _prevtotalContent),
+                                                    count: _totalContent - _prevtotalContent <= 0? 0:_totalContent - _prevtotalContent ),
                                               SizedBox(
                                                 width: 10.0,
                                               ),
@@ -188,6 +211,7 @@ class _CoursePageState extends State<CoursePage> {
                                                 courseID: student
                                                     .course[index].courseID
                                                     .toString(),
+                                                pref: _pref,    
                                               ),
                                             ),
                                           ) .then((value) {

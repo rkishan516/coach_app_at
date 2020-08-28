@@ -2,6 +2,7 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/CountDot.dart';
+import 'package:coach_app/Drawer/NewBannerShow.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Events/Calender.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
@@ -19,10 +20,12 @@ class ChapterPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;
   final String courseId;
+  SharedPreferences pref;
   ChapterPage({
     @required this.title,
     @required this.reference,
     @required this.courseId,
+    @required this.pref
   });
   @override
   _ChapterPageState createState() => _ChapterPageState();
@@ -35,22 +38,27 @@ class _ChapterPageState extends State<ChapterPage>
   bool isAdmin;
   List _list;
   bool showFAB = true;
-  SharedPreferences _pref;
-  _sharedprefinit() async {
-    _pref = await SharedPreferences.getInstance();
-    _list = _pref.getKeys().where((element) => element.startsWith("TeachersChapter")).toList();
+  _sharedprefinit()  {
+    _list =  widget.pref.getKeys().where((element) => element.startsWith("TeachersChapter")).toList();
   }
-  _searchForKey(String keyname, bool _isLast){
-   _list?.remove(keyname);
+  String  _searchForKey(String keyname, bool _isLast){
+   bool result = false;
+   if(_list!=[])
+   result=_list?.remove(keyname); 
    if(_isLast){
-     _list.forEach((element) { 
-       _pref?.remove(element);
+     _list?.forEach((element) { 
+       widget.pref.remove(element);
      });
    }
+   if(!result){
+     return keyname;
+   }
+   return "done";
   }
 
   @override
   void initState() {
+    print(">>>>>>>>>>>>>");
     isAdmin = FireBaseAuth.instance.previlagelevel != 2;
     _tabController = TabController(length: isAdmin ? 2 : 1, vsync: this);
 
@@ -140,6 +148,7 @@ class _ChapterPageState extends State<ChapterPage>
                             {
                               _showCountDot[i] = false;
                             }
+                            _sharedprefinit();
                             return ListView.builder(
                               itemCount: length,
                               itemBuilder: (BuildContext context, int index) {
@@ -147,14 +156,14 @@ class _ChapterPageState extends State<ChapterPage>
                                  bool _islast = false;
                                 if(index==length-1)
                                _islast= true;
-                            _searchForKey(_key, _islast);
+                               String newKey = _searchForKey(_key, _islast);
                                 int _totalContent = subjects.chapters[keys.toList()[index]]?.content?.length??0;
-                                int _prevtotalContent = _pref?.getInt(_key)??_totalContent;
+                                int _prevtotalContent = widget.pref?.getInt(_key)??_totalContent;
                                 if(_prevtotalContent<_totalContent){
                                   _showCountDot[index] = true;
                                   } 
                             else{
-                               _pref?.setInt(_key, _totalContent);
+                               widget.pref?.setInt(_key, _totalContent);
                             }
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -168,14 +177,30 @@ class _ChapterPageState extends State<ChapterPage>
                                         style:
                                             TextStyle(color: Color(0xffF36C24)),
                                       ),
-                                      trailing: Container(
+                                      trailing: _key!= newKey? 
+                                      Container(
                                     height: 40,
                                     width: 80,
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
-                                        CountDot(count: _totalContent-_prevtotalContent ),
+                                        CountDot(count: _totalContent - _prevtotalContent <= 0? 0:_totalContent - _prevtotalContent ),
+                                        SizedBox(width: 10.0,),
+                                        Icon(
+                                          Icons.chevron_right,
+                                          color: Color(0xffF36C24),
+                                        ),
+                                      ],
+                                    ),
+                                  ):
+                                     Container(
+                                    height: 40,
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        NewBannerShow(),
                                         SizedBox(width: 10.0,),
                                         Icon(
                                           Icons.chevron_right,
@@ -185,7 +210,7 @@ class _ChapterPageState extends State<ChapterPage>
                                     ),
                                   ),
                                       onTap: (){ 
-                                        _pref?.setInt(_key, _totalContent);
+                                        widget.pref?.setInt(_key, _totalContent);
                                         return Navigator.of(context).push(
                                         CupertinoPageRoute(
                                           builder: (context) => ContentPage(

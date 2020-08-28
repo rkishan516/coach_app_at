@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Models/random_string.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -57,11 +58,14 @@ class FirebaseMessagingService {
     flutterlocalnotificationplugin.initialize(initializationSettings);
  
     var android = AndroidNotificationDetails(
-        'channelId', 'channelName', 'channelDescription');
+        title+randomNumeric(4).toString(), title+randomNumeric(4).toString(), body);
     var iOS = IOSNotificationDetails();
     var platform = NotificationDetails(android, iOS);
+    int notification_id= int.parse(randomNumeric(4));
     new Future.delayed(Duration.zero, () {
-      flutterlocalnotificationplugin.show(0, title, body, platform);
+      flutterlocalnotificationplugin.show(notification_id, title, body, platform);
+      
+      
     });
     //await flutterlocalnotificationplugin.show(0, title, body, platform);
   }

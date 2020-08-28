@@ -72,9 +72,11 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
 
 _onStudentRequest(Event event) {
    Map map= event.snapshot.value;
+   if(map!=null){
     setState(() {
-      _totalStudentReq= map.length;
+      _totalStudentReq= map?.length;
     });
+   }
   }
 _onNotice(Event event) {
    Map map= event.snapshot.value; 

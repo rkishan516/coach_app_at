@@ -1,5 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/CountDot.dart';
+import 'package:coach_app/Drawer/NewBannerShow.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
@@ -13,9 +14,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ChapterPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;
+  SharedPreferences pref;
   ChapterPage({
     @required this.title,
     @required this.reference,
+    @required this.pref
   });
   @override
   _ChapterPageState createState() => _ChapterPageState();
@@ -23,20 +26,26 @@ class ChapterPage extends StatefulWidget {
 
 class _ChapterPageState extends State<ChapterPage> {
   int length;
-  SharedPreferences _pref;
   List _list;
-  _sharedprefinit() async {
-    _pref = await SharedPreferences.getInstance();
-    _list = _pref.getKeys().where((element) => element.startsWith("StudentChapter")).toList();
+  _sharedprefinit(){
+    _list = widget.pref.getKeys().where((element) => element.startsWith("StudentChapter")).toList();
+    
   }
-  _searchForKey(String keyname, bool _isLast){
-   _list?.remove(keyname);
+  String  _searchForKey(String keyname, bool _isLast){
+   bool result = false;
+   if(_list!=[])
+   result=_list?.remove(keyname); 
    if(_isLast){
-     _list.forEach((element) { 
-       _pref?.remove(element);
+     _list?.forEach((element) { 
+       widget.pref.remove(element);
      });
    }
+   if(!result){
+     return keyname;
+   }
+   return "done";
   }
+
 
   @override
   void initState() {
@@ -94,6 +103,8 @@ class _ChapterPageState extends State<ChapterPage> {
                         {
                           _showCountDot[i] = false;
                         }
+                        
+                        _sharedprefinit();
                       return ListView.builder(
                         itemCount: length,
                         itemBuilder: (BuildContext context, int index) {
@@ -101,14 +112,15 @@ class _ChapterPageState extends State<ChapterPage> {
                           bool _islast = false;
                           if(index==length-1)
                           _islast= true;
-                            _searchForKey(_key, _islast);
+                          String newKey =_searchForKey(_key, _islast);
+                          print(newKey);
                           int _totalContent = subjects.chapters[keys.toList()[index]].content?.length??0;
-                            int _prevtotalContent = _pref?.getInt("${subjects.chapters[keys.toList()[index]].name}")??_totalContent;
+                            int _prevtotalContent = widget.pref?.getInt(_key)??_totalContent;
                             if(_prevtotalContent<_totalContent){
                               _showCountDot[index] = true;
                             }
                             else{
-                               _pref?.setInt("${subjects.chapters[keys.toList()[index]].name}", _totalContent);
+                               widget.pref?.setInt(_key, _totalContent);
                             }
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -120,14 +132,30 @@ class _ChapterPageState extends State<ChapterPage> {
                                   '${subjects.chapters[keys.toList()[index]].name}',
                                   style: TextStyle(color: Colors.blue),
                                 ),
-                                trailing: Container(
+                                trailing: _key!= newKey? 
+                                      Container(
                                     height: 40,
                                     width: 80,
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
-                                        CountDot(count: _totalContent -_prevtotalContent ),
+                                        CountDot(count: _totalContent - _prevtotalContent <= 0? 0:_totalContent - _prevtotalContent ),
+                                        SizedBox(width: 10.0,),
+                                        Icon(
+                                          Icons.chevron_right,
+                                          color: Color(0xffF36C24),
+                                        ),
+                                      ],
+                                    ),
+                                  ):
+                                     Container(
+                                    height: 40,
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        NewBannerShow(),
                                         SizedBox(width: 10.0,),
                                         Icon(
                                           Icons.chevron_right,
@@ -137,7 +165,7 @@ class _ChapterPageState extends State<ChapterPage> {
                                     ),
                                   ),
                                 onTap: () {
-                                  _pref?.setInt("${subjects.chapters[keys.toList()[index]].name}", _totalContent);
+                                  widget.pref?.setInt(_key, _totalContent);
 
                                   return Navigator.of(context).push(
                                   CupertinoPageRoute(
@@ -150,7 +178,12 @@ class _ChapterPageState extends State<ChapterPage> {
                                           'chapters/${keys.toList()[index]}'),
                                     ),
                                   ),
-                                );
+                                ).then((value) {
+                                  
+                                      setState(() {
+                                        _showCountDot[index] = false;
+                                      });
+                               });
                                 }
                               ),
                             ),

@@ -1,5 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/CountDot.dart';
+import 'package:coach_app/Drawer/NewBannerShow.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/InstituteAdmin/studentList.dart';
 import 'package:coach_app/Models/model.dart';
@@ -20,7 +21,8 @@ extension StringExtension on String {
 class SubjectPage extends StatefulWidget {
   final TCourses tCourse;
   final Courses course;
-  SubjectPage({@required this.tCourse, @required this.course});
+  SharedPreferences pref;
+  SubjectPage({@required this.tCourse, @required this.course, @required this.pref});
   @override
   _SubjectPageState createState() => _SubjectPageState();
 }
@@ -28,28 +30,31 @@ class SubjectPage extends StatefulWidget {
 class _SubjectPageState extends State<SubjectPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-  SharedPreferences _pref;
+  
   List<bool> _showCountDot;
    List _list;
-  _sharedprefinit() async {
-    _pref = await SharedPreferences.getInstance();
-    _list = _pref.getKeys().where((element) => element.startsWith("TeachersSubject")).toList();
+  _sharedprefinit() {
+    _list = widget.pref.getKeys().where((element) => element.startsWith("TeachersSubject")).toList();
 
   }
 
-  _searchForKey(String keyname, bool _isLast){
-
-   _list?.remove(keyname);
+  String  _searchForKey(String keyname, bool _isLast){
+   
+   bool result=_list?.remove(keyname); 
    if(_isLast){
      _list?.forEach((element) { 
-       _pref.remove(element);
+       widget.pref.remove(element);
      });
    }
+   if(!result){
+     return keyname;
+   }
+   return "done";
   }
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length:3, vsync: this);
     _sharedprefinit();
     _showCountDot = List(widget.tCourse.subjects?.length ?? 0);
     for(int i=0;i<_showCountDot.length;i++)
@@ -62,6 +67,8 @@ class _SubjectPageState extends State<SubjectPage>
 
   @override
   Widget build(BuildContext context) {
+    
+   _sharedprefinit();
     return Scaffold(
       drawer: getDrawer(context),
       appBar: getAppBar(context),
@@ -123,17 +130,17 @@ class _SubjectPageState extends State<SubjectPage>
                         bool _islast = false;
                           if(index==(widget.tCourse.subjects?.length ?? 0) -1) 
                           _islast= true;
-                          _searchForKey(_key, _islast);
+                          String newKey =_searchForKey(_key, _islast);
                           int _totalContent =widget.course.subjects[widget.tCourse.subjects[index]]?.chapters?.length??0;
                             
-                            int _prevtotalContent = _pref?.getInt(_key)??_totalContent;
+                            int _prevtotalContent = widget.pref?.getInt(_key)??_totalContent;
                             if(_prevtotalContent<_totalContent){
                               _showCountDot[index] = true;
                               
                               _totalContent  =_totalContent - _prevtotalContent;
                             }
                             else{
-                               _pref?.setInt(_key, _totalContent);
+                               widget.pref?.setInt(_key, _totalContent);
                             }
 
                           if (widget.course.subjects == null) {
@@ -154,14 +161,30 @@ class _SubjectPageState extends State<SubjectPage>
                                     '${widget.course.subjects[widget.tCourse.subjects[index]]?.name}',
                                     style: TextStyle(color: Colors.blue),
                                   ),
-                                  trailing: Container(
+                                  trailing:  _key!= newKey? 
+                                      Container(
                                     height: 40,
                                     width: 80,
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
-                                        CountDot(count: _totalContent- _prevtotalContent),
+                                        CountDot(count:_totalContent - _prevtotalContent <= 0? 0:_totalContent - _prevtotalContent ),
+                                        SizedBox(width: 10.0,),
+                                        Icon(
+                                          Icons.chevron_right,
+                                          color: Color(0xffF36C24),
+                                        ),
+                                      ],
+                                    ),
+                                  ):
+                                     Container(
+                                    height: 40,
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        NewBannerShow(),
                                         SizedBox(width: 10.0,),
                                         Icon(
                                           Icons.chevron_right,
@@ -171,7 +194,7 @@ class _SubjectPageState extends State<SubjectPage>
                                     ),
                                   ),
                                   onTap: () {
-                                    _pref?.setInt(_key, _totalContent);
+                                    widget.pref?.setInt(_key, _totalContent);
                                     
                                     return  Navigator.of(context).push(
                                       CupertinoPageRoute(
@@ -186,6 +209,8 @@ class _SubjectPageState extends State<SubjectPage>
                                               .reference()
                                               .child(
                                                   'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.tCourse.id}/subjects/${widget.tCourse.subjects[index]}'),
+                                        pref: widget.pref,
+                                    
                                         ),
                                       ),
                                     ).then((value) {
