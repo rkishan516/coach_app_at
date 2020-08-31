@@ -91,22 +91,22 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                         Map map = courses[index].subjects;
                         int _totallength = 0, _contentlength = 0;
                         if (map != null) {
-                          map?.forEach((key1, value) {
-                            String subjectname = value["name"].toString();
+                          courses[index].subjects?.forEach((key1, value) {
+                            String subjectname = value.name.toString();
 
-                            Map _chaptermap = value["chapters"];
-                            if (_chaptermap != null) {
-                              _chaptermap.forEach((key2, value2) {
-                                String chaptername = value2["name"].toString();
+                          
+                            if (value.chapters!= null) {
+                              value.chapters.forEach((key2, value2) {
+                                String chaptername = value2.name.toString();
 
-                                Map _contentmap = value2["content"];
+                              
 
-                                if (_contentmap != null) {
+                                if (value2.content != null) {
                                   _contentlength =
-                                      _contentlength + _contentmap.length;
-                                  _contentmap.forEach((key3, value3) {
+                                      _contentlength + value2.content.length;
+                                  value2.content.forEach((key3, value3) {
                                     String contentname =
-                                        value3["title"].toString();
+                                        value2.content.toString();
                                     String key = courses[index].name +
                                         "__" +
                                         subjectname +
