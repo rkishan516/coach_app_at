@@ -18,16 +18,16 @@ class CoursePage extends StatefulWidget {
 }
 
 class _CoursePageState extends State<CoursePage> {
-  
   SharedPreferences _pref;
   List _list;
   _sharedprefinit() async {
     _pref = await SharedPreferences.getInstance();
-     _list = _pref
+    _list = _pref
         .getKeys()
         .where((element) => element.startsWith("TeachersCourse"))
         .toList();
   }
+
   _searchForKey(String keyname, bool _isLast) {
     _list?.remove(keyname);
     if (_isLast) {
@@ -36,11 +36,13 @@ class _CoursePageState extends State<CoursePage> {
       });
     }
   }
+
   @override
   void initState() {
     _sharedprefinit();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,27 +93,25 @@ class _CoursePageState extends State<CoursePage> {
                       }
                     });
                     List<bool> _showCountDot = List(courses?.length ?? 0);
-                        for(int i=0;i<_showCountDot.length;i++)
-                        {
-                          _showCountDot[i] = false; 
-                        }
+                    for (int i = 0; i < _showCountDot.length; i++) {
+                      _showCountDot[i] = false;
+                    }
                     return ListView.builder(
                       itemCount: courses?.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
-                         String _key = "TeachersCourse" +
-                                      courses[index].name;
-                                  bool _islast = false;
-                                  if (index == courses?.length  - 1)
-                                    _islast = true;
-                                  _searchForKey(_key, _islast);
-                         int _totalContent = courses[index].subjects?.length??0;
-                            int _prevtotalContent = _pref?.getInt(_key)??_totalContent;
-                            if(_prevtotalContent<_totalContent){
-                              _showCountDot[index] = true;
-                            }
-                            else{
-                               _pref?.setInt(_key, _totalContent);
-                            }
+                        String _key = "TeachersCourse" + courses[index].name;
+                        bool _islast = false;
+                        if (index == courses?.length - 1) _islast = true;
+                        _searchForKey(_key, _islast);
+                        int _totalContent =
+                            courses[index].subjects?.length ?? 0;
+                        int _prevtotalContent =
+                            _pref?.getInt(_key) ?? _totalContent;
+                        if (_prevtotalContent < _totalContent) {
+                          _showCountDot[index] = true;
+                        } else {
+                          _pref?.setInt(_key, _totalContent);
+                        }
                         TCourses tcourse = widget.teacher?.courses?.firstWhere(
                             (element) => element.id == courses[index].id);
                         return Padding(
@@ -120,44 +120,56 @@ class _CoursePageState extends State<CoursePage> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)),
                             child: ListTile(
-                              title: Text(
-                                '${courses[index].name}',
-                                style: TextStyle(color: Colors.blue),
-                              ),
-                              trailing: Container(
-                                    height: 40,
-                                    width: 80,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
-                                        CountDot(count: _totalContent - _prevtotalContent<=0?0:_totalContent - _prevtotalContent ),
-                                        SizedBox(width: 10.0,),
-                                        Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xffF36C24),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                              onTap: () {
-                                 _pref?.setInt(_key,_totalContent);
-
-                                return Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) => SubjectPage(
-                                    tCourse: tcourse,
-                                    course: courses[index],
-                                    pref: _pref,
+                                title: Text(
+                                  '${courses[index].name}',
+                                  style: TextStyle(color: Colors.blue),
+                                ),
+                                trailing: Container(
+                                  height: 40,
+                                  width: 80,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      if (FireBaseAuth
+                                                  .instance.previlagelevel !=
+                                              4 &&
+                                          _showCountDot[index])
+                                        CountDot(
+                                            count: _totalContent -
+                                                        _prevtotalContent <=
+                                                    0
+                                                ? 0
+                                                : _totalContent -
+                                                    _prevtotalContent),
+                                      SizedBox(
+                                        width: 10.0,
+                                      ),
+                                      Icon(
+                                        Icons.chevron_right,
+                                        color: Color(0xffF36C24),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ).then((value) {
-                                      setState(() {
-                                        _showCountDot[index] = false;
-                                      });
+                                onTap: () {
+                                  _pref?.setInt(_key, _totalContent);
+
+                                  return Navigator.of(context)
+                                      .push(
+                                    CupertinoPageRoute(
+                                      builder: (context) => SubjectPage(
+                                        tCourse: tcourse,
+                                        course: courses[index],
+                                        pref: _pref,
+                                      ),
+                                    ),
+                                  )
+                                      .then((value) {
+                                    setState(() {
+                                      _showCountDot[index] = false;
                                     });
-                              }
-                            ),
+                                  });
+                                }),
                           ),
                         );
                       },

@@ -401,25 +401,25 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                       ],
                     ),
                   ),
-                if (type == "Youtube Video")
-                  RaisedButton(
-                    color: Color(0xffF36C24),
-                    onPressed: () async {
-                      file = await FilePicker.getFile();
-                    },
-                    elevation: 0,
-                    child: Text(
-                      "Select Video",
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
+                      if (type == "Youtube Video" && widget.keyC == null)
+                        RaisedButton(
+                          color: Colors.white,
+                          onPressed: () async {
+                            file = await FilePicker.getFile();
+                          },
+                          elevation: 1,
+                          child: Text(
+                            "Select Video",
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
                       (widget.keyC == null)
                           ? Container()
                           : FlatButton(
@@ -439,7 +439,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                                 'Remove'.tr(),
                               ),
                             ),
-                      FlatButton(
+                      RaisedButton(
                         onPressed: () async {
                           Content content = Content()
                             ..kind = type
@@ -496,11 +496,11 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                                 .update(content.toJson());
                           }
                         },
-                        color: Colors.white,
+                        color: Color(0xffF36C24),
                         child: Text(
                           'Add Content'.tr(),
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                           ),
                         ),
                       ),

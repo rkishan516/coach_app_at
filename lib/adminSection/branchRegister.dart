@@ -272,6 +272,33 @@ class _BranchRegisterState extends State<BranchRegister> {
                         Alert.instance.alert(context, 'Wrong UPI ID'.tr());
                         return;
                       }
+                      if (accountNoTextEditingController.text != '' ||
+                          accountIFSCTextEditingController.text != '' ||
+                          accoundHolderNameTextEditingController.text != '') {
+                        if ([
+                          accountNoTextEditingController.text,
+                          accountIFSCTextEditingController.text,
+                          accoundHolderNameTextEditingController.text
+                        ].contains('')) {
+                          Alert.instance.alert(
+                              context, 'Please fill all account details');
+                          return;
+                        } else if (!RegExp(r'^[0-9]{14}$')
+                            .hasMatch(accountNoTextEditingController.text)) {
+                          print(accountNoTextEditingController.text);
+                          print(!RegExp(r'^[0-9]{14}$')
+                              .hasMatch(accountNoTextEditingController.text));
+                          Alert.instance.alert(
+                              context, 'Please fill correct account number');
+                          return;
+                        } else if (!RegExp(r'^[A-Z]{4}0[A-Z0-9]{6}$').hasMatch(
+                            accountIFSCTextEditingController.text
+                                .toUpperCase())) {
+                          Alert.instance
+                              .alert(context, 'Please fill correct IFSC Code');
+                          return;
+                        }
+                      }
                       DatabaseReference ref = FirebaseDatabase.instance
                           .reference()
                           .child(
