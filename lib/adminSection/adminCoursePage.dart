@@ -19,28 +19,10 @@ class AdminCoursePage extends StatefulWidget {
 
 class _AdminCoursePageState extends State<AdminCoursePage> {
   SharedPreferences _pref;
-  List _list;
-
+ List _list;
   _sharedprefinit() async {
-    print("----------------------");
     _pref = await SharedPreferences.getInstance();
-    print(_pref);
-    
-    print("----------------------");
-    _list = _pref
-        .getKeys()
-        .where((element) => element.startsWith("AdminCourse"))
-        .toList();
   }
-  _searchForKey(String keyname, bool _isLast) {
-    _list?.remove(keyname);
-    if (_isLast) {
-      _list?.forEach((element) {
-        _pref.remove(element);
-      });
-    }
-  }
-
   @override
   void initState() {
     _sharedprefinit();
@@ -100,21 +82,70 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                     return ListView.builder(
                       itemCount: courses?.length,
                       itemBuilder: (BuildContext context, int index) {
-                            String _key = "AdminCourse" +
-                                      courses[index].name;
-                            bool _islast = false;
-                            if (index == courses?.length - 1)
-                               _islast = true;
-                            _searchForKey(_key, _islast);
-                                  
-                            int _totalContent = courses[index].subjects?.length??0;
-                            int _prevtotalContent = _pref?.getInt(_key)??_totalContent;
-                            if(_prevtotalContent<_totalContent){
-                              _showCountDot[index] = true;
+                          _list = _pref
+                            .getKeys()
+                            .where((element) =>
+                                element.startsWith('${courses[index].name}'))
+                            .toList();
+                        int prevtotallength = _list.length;
+                        Map map = courses[index].subjects;
+                        int _totallength = 0, _contentlength = 0;
+                        if (map != null) {
+                          map?.forEach((key1, value) {
+                            String subjectname = value["name"].toString();
+
+                            Map _chaptermap = value["chapters"];
+                            if (_chaptermap != null) {
+                              _chaptermap.forEach((key2, value2) {
+                                String chaptername = value2["name"].toString();
+
+                                Map _contentmap = value2["content"];
+
+                                if (_contentmap != null) {
+                                  _contentlength =
+                                      _contentlength + _contentmap.length;
+                                  _contentmap.forEach((key3, value3) {
+                                    String contentname =
+                                        value3["title"].toString();
+                                    String key = courses[index].name +
+                                        "__" +
+                                        subjectname +
+                                        "__" +
+                                        chaptername +
+                                        "__" +
+                                        contentname;
+
+                                    if (prevtotallength == 0) {
+                                      _pref.setInt(key, 1);
+                                    } else {
+                                      _list.remove(key);
+                                    }
+                                  });
+                                }
+                              });
                             }
-                            else{
-                               _pref?.setInt(_key, _totalContent);
-                            }
+                          });
+
+                          if (_list.length != 0) {
+                            _list?.forEach((element) {
+                              _pref.remove(element);
+                            });
+                             _list = _pref
+                              .getKeys()
+                              .where((element) =>
+                                  element.startsWith('${courses[index].name}'))
+                              .toList();
+                          prevtotallength = _list.length;
+                          }
+                         
+                        }
+                        _totallength = _contentlength;
+
+                        int _totalContent = _totallength ?? 0;
+                        int _prevtotalContent = prevtotallength == 0? _totalContent: prevtotallength;
+                        if (_prevtotalContent <= _totalContent) {
+                          _showCountDot[index] = true;
+                        } else {}
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
@@ -131,8 +162,8 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
-                                        CountDot(count: _totalContent -_prevtotalContent ),
+                                        if(_showCountDot[index])
+                                        CountDot(count:  _totalContent -_prevtotalContent <=0? 0 :1 ),
                                         SizedBox(width: 10.0,),
                                         Icon(
                                           Icons.chevron_right,
@@ -142,18 +173,19 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                     ),
                                   ),
                               onTap: () {
-                                _pref?.setInt(_key, _totalContent);
 
                                return  Navigator.of(context).push(
                                 CupertinoPageRoute(
                                   builder: (context) => AdminSubjectPage(
                                       courseId: courses[index].id,
-                                      pref: _pref,),
+                                      pref: _pref,
+                                      passKey:'${courses[index].name}',
+                                      ),
                                       
                                 ),
                               ).then((value) {
                                       setState(() {
-                                        _showCountDot[index] = false;
+                                      
                                       });
                                });
                               },

@@ -21,8 +21,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminSubjectPage extends StatefulWidget {
   final String courseId;
-  SharedPreferences pref;
-  AdminSubjectPage({@required this.courseId, @required this.pref});
+  final SharedPreferences pref;
+  final passKey;
+  AdminSubjectPage({@required this.courseId, @required this.pref, @required this.passKey});
   @override
   _AdminSubjectPageState createState() => _AdminSubjectPageState();
 }
@@ -33,29 +34,9 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
   List _list;
   bool showFAB= true;
 
-   _sharedprefinit() {
-    _list =widget.pref.getKeys().where((element) => element.startsWith("AdminSubject")).toList();
-
-  }
-  String  _searchForKey(String keyname, bool _isLast){
-
-   bool result=_list?.remove(keyname)??true; 
-   if(_isLast){
-     _list?.forEach((element) { 
-       widget.pref.remove(element);
-     });
-   }
-   if(!result){
-     return keyname;
-   }
-   return "done";
-  }
-
-
 
   @override
   void initState() {
-     _sharedprefinit();
     _tabController = TabController(length: 3, vsync: this);
    
     super.initState();
@@ -141,36 +122,32 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                             {
                               _showCountDot[i] = false;
                             }
-                            _sharedprefinit();
+                            
                             return ListView.builder(
                               itemCount: length,
                               itemBuilder: (BuildContext context, int index) {
-                                 String _key = "AdminSubject"+courses.subjects[keys.toList()[index]].name;
-                                  bool _islast = false;
-                                  int _contentlength =0;
-                                  int _totalContent = 0;
-                                  if(index==length-1)
-                                  _islast= true;
-                                 String newKey =_searchForKey(_key, _islast);
-                                if(courses.subjects[keys.toList()[index]].chapters!=null){
-                                 courses.subjects[keys.toList()[index]].chapters.forEach((key, value) {
+                                int _contentlength =0;
+                        int _totalContent = 0;
+                        
+                          if(courses.subjects[keys.toList()[index]].chapters!=null){
+                          courses.subjects[keys.toList()[index]].chapters.forEach((key, value) {
                                    
                                   int _indvContent = value?.content?.length??0;
                                   _contentlength += _indvContent;
-                                  });
-                                  _totalContent = (courses.subjects[keys.toList()[index]].chapters?.length??0)+ _contentlength;
-                                
-                                  }
-                                int _prevtotalContent = widget.pref?.getInt(_key)??_totalContent;
-                                if(_prevtotalContent<_totalContent){
-                                  _showCountDot[index] = true;
-                                }
-                                else if(_prevtotalContent==_totalContent){
-                                    print("equal");
-                                   }
-                                else{
-                                  widget.pref?.setInt(_key, _totalContent);
-                                }
+                          });
+                          _totalContent =  _contentlength;
+                        
+                          } String searchkey= widget.passKey +"__"+ '${courses.subjects[keys.toList()[index]].name}';
+                            _list = widget.pref.getKeys().where((element) => element.startsWith(searchkey)).toList();
+                            int _prevtotalContent = _list.length??_totalContent;
+                            if(_prevtotalContent<=_totalContent){
+                             
+                              _showCountDot[index] = true;
+                            }
+                            
+                            else{
+                              
+                            }
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Card(
@@ -183,30 +160,14 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                           style: TextStyle(
                                               color: Color(0xffF36C24)),
                                         ),
-                                        trailing:_key!= newKey? 
-                                      Container(
+                                        trailing:Container(
                                     height: 40,
                                     width: 80,
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
-                                        CountDot(count:_totalContent - _prevtotalContent <= 0? 0:_totalContent - _prevtotalContent ),
-                                        SizedBox(width: 10.0,),
-                                        Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xffF36C24),
-                                        ),
-                                      ],
-                                    ),
-                                  ):
-                                     Container(
-                                    height: 40,
-                                    width: 80,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        NewBannerShow(),
+                                        if(_showCountDot[index])
+                                        CountDot(count:_totalContent - _prevtotalContent <= 0? 0: 1 ),
                                         SizedBox(width: 10.0,),
                                         Icon(
                                           Icons.chevron_right,
@@ -216,7 +177,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                     ),
                                   ),
                                         onTap: () {
-                                          widget.pref?.setInt(_key, _totalContent);
+                                          
                                           return Navigator.of(context).push(
                                             CupertinoPageRoute(
                                               builder: (context) => ChapterPage(
@@ -231,11 +192,13 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                                     .child(
                                                         'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${keys.toList()[index]}'),
                                                 pref: widget.pref,
+                                                passKey : searchkey
+                                        
                                               ),
                                             ),
                                           ).then((value) {
                                                   setState(() {
-                                                    _showCountDot[index] = false;
+                                              
                                                   });
                                           });
                                         },

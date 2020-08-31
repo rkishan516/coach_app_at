@@ -14,11 +14,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ChapterPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;
-  SharedPreferences pref;
+  final SharedPreferences pref;
+  final String passKey;
   ChapterPage({
     @required this.title,
     @required this.reference,
-    @required this.pref
+    @required this.pref,
+    @required this.passKey
   });
   @override
   _ChapterPageState createState() => _ChapterPageState();
@@ -27,29 +29,10 @@ class ChapterPage extends StatefulWidget {
 class _ChapterPageState extends State<ChapterPage> {
   int length;
   List _list;
-  _sharedprefinit(){
-    _list = widget.pref.getKeys().where((element) => element.startsWith("StudentChapter")).toList();
-    
-  }
-  String  _searchForKey(String keyname, bool _isLast){
-   bool result = false;
-   if(_list!=[])
-   result=_list?.remove(keyname); 
-   if(_isLast){
-     _list?.forEach((element) { 
-       widget.pref.remove(element);
-     });
-   }
-   if(!result){
-     return keyname;
-   }
-   return "done";
-  }
-
 
   @override
   void initState() {
-    _sharedprefinit();
+   
     super.initState();
   }
   
@@ -104,27 +87,19 @@ class _ChapterPageState extends State<ChapterPage> {
                           _showCountDot[i] = false;
                         }
                         
-                        _sharedprefinit();
+                  
                       return ListView.builder(
                         itemCount: length,
                         itemBuilder: (BuildContext context, int index) {
-                          String _key = "StudentChapter"+subjects.chapters[keys.toList()[index]].name;
-                          bool _islast = false;
-                          if(index==length-1)
-                          _islast= true;
-                          String newKey =_searchForKey(_key, _islast);
-                          print(newKey);
+                          String searchkey=widget.passKey +"__"+ '${subjects.chapters[keys.toList()[index]].name}';
+                          _list = widget.pref.getKeys().where((element) => element.startsWith(searchkey)).toList();
+                       
                           int _totalContent = subjects.chapters[keys.toList()[index]].content?.length??0;
-                            int _prevtotalContent = widget.pref?.getInt(_key)??_totalContent;
-                            if(_prevtotalContent<_totalContent){
+                          int _prevtotalContent = _list.length??_totalContent;
+                            if(_prevtotalContent<=_totalContent){
                               _showCountDot[index] = true;
                             }
-                            else if(_prevtotalContent==_totalContent){
-                                    print("equal");
-                                   }
-                            else{
-                               widget.pref?.setInt(_key, _totalContent);
-                            }
+                            
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Card(
@@ -135,30 +110,15 @@ class _ChapterPageState extends State<ChapterPage> {
                                   '${subjects.chapters[keys.toList()[index]].name}',
                                   style: TextStyle(color: Colors.blue),
                                 ),
-                                trailing: _key!= newKey? 
+                                trailing:
                                       Container(
                                     height: 40,
                                     width: 80,
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
-                                        CountDot(count: _totalContent - _prevtotalContent <= 0? 0:_totalContent - _prevtotalContent ),
-                                        SizedBox(width: 10.0,),
-                                        Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xffF36C24),
-                                        ),
-                                      ],
-                                    ),
-                                  ):
-                                     Container(
-                                    height: 40,
-                                    width: 80,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        NewBannerShow(),
+                                        if(_showCountDot[index])
+                                        CountDot(count: _totalContent - _prevtotalContent <= 0? 0: 1 ),
                                         SizedBox(width: 10.0,),
                                         Icon(
                                           Icons.chevron_right,
@@ -168,8 +128,7 @@ class _ChapterPageState extends State<ChapterPage> {
                                     ),
                                   ),
                                 onTap: () {
-                                  widget.pref?.setInt(_key, _totalContent);
-
+                                  
                                   return Navigator.of(context).push(
                                   CupertinoPageRoute(
                                     builder: (context) => ContentPage(
@@ -178,13 +137,15 @@ class _ChapterPageState extends State<ChapterPage> {
                                               .toList()[index]]
                                           .name,
                                       reference: widget.reference.child(
-                                          'chapters/${keys.toList()[index]}'),
+                                          'chapters/${keys.toList()[index]}',),
+                                      pref: widget.pref, 
+                                      passKey: searchkey
                                     ),
                                   ),
                                 ).then((value) {
                                   
                                       setState(() {
-                                        _showCountDot[index] = false;
+                        
                                       });
                                });
                                 }

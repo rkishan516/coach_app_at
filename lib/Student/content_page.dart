@@ -1,5 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
+import 'package:coach_app/Drawer/CountDot.dart';
+import 'package:coach_app/Drawer/NewBannerShow.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
@@ -10,17 +12,26 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ContentPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;
-  ContentPage({@required this.title, @required this.reference});
+  final SharedPreferences  pref;
+  final String passKey;
+  ContentPage({@required this.title, @required this.reference, @required this.pref, @required this.passKey});
   @override
   _ContentPageState createState() => _ContentPageState();
 }
 
 class _ContentPageState extends State<ContentPage> {
   int length;
+  List<bool> _showCountDot;
+  @override
+  void initState() {
+    
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,9 +68,20 @@ class _ContentPageState extends State<ContentPage> {
                             .compareTo(chapter.content[b].title.toLowerCase()));
                     }
                     length = chapter.content?.length ?? 0;
+                     _showCountDot = List(length);
+                      for (int i = 0; i < _showCountDot.length; i++) {
+                        _showCountDot[i] = false;
+                      }
+                    
                     return ListView.builder(
                       itemCount: length,
                       itemBuilder: (BuildContext context, int index) {
+                        String checkkey = widget.passKey+"__"+'${chapter.content[keys.toList()[index]].title}';
+                        
+                        if(widget.pref.getInt(checkkey)!=1){
+                         _showCountDot[index] = true;
+                         widget.pref.setInt(checkkey,1);
+                        }
                         bool isEnabled = true;
                         if (chapter
                                 .content[keys.toList()[index]]
@@ -113,10 +135,22 @@ class _ContentPageState extends State<ContentPage> {
                                 '${chapter.content[keys.toList()[index]].title}',
                                 style: TextStyle(color: Colors.blue),
                               ),
-                              trailing: Icon(
-                                Icons.chevron_right,
-                                color: Colors.blue,
-                              ),
+                              trailing: Container(
+                                    height: 40,
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        if(_showCountDot[index])
+                                       NewBannerShow(),
+                                        SizedBox(width: 10.0,),
+                                        Icon(
+                                          Icons.chevron_right,
+                                          color: Color(0xffF36C24),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                               onTap: () {
                                 if (chapter
                                         .content[keys
