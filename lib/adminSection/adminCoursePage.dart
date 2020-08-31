@@ -20,25 +20,8 @@ class AdminCoursePage extends StatefulWidget {
 class _AdminCoursePageState extends State<AdminCoursePage> {
   SharedPreferences _pref;
   List _list;
-
   _sharedprefinit() async {
-    print("----------------------");
     _pref = await SharedPreferences.getInstance();
-    print(_pref);
-    
-    print("----------------------");
-    _list = _pref
-        .getKeys()
-        .where((element) => element.startsWith("AdminCourse"))
-        .toList();
-  }
-  _searchForKey(String keyname, bool _isLast) {
-    _list?.remove(keyname);
-    if (_isLast) {
-      _list?.forEach((element) {
-        _pref.remove(element);
-      });
-    }
   }
 
   @override
@@ -46,7 +29,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
     _sharedprefinit();
     super.initState();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,28 +76,69 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                     courses.sort((a, b) => a.date.compareTo(b.date));
 
                     List<bool> _showCountDot = List(courses?.length);
-                        for(int i=0;i<_showCountDot.length;i++)
-                        {
-                          _showCountDot[i] = false;
-                        }
+                    for (int i = 0; i < _showCountDot.length; i++) {
+                      _showCountDot[i] = false;
+                    }
                     return ListView.builder(
                       itemCount: courses?.length,
                       itemBuilder: (BuildContext context, int index) {
-                            String _key = "AdminCourse" +
-                                      courses[index].name;
-                            bool _islast = false;
-                            if (index == courses?.length - 1)
-                               _islast = true;
-                            _searchForKey(_key, _islast);
-                                  
-                            int _totalContent = courses[index].subjects?.length??0;
-                            int _prevtotalContent = _pref?.getInt(_key)??_totalContent;
-                            if(_prevtotalContent<_totalContent){
-                              _showCountDot[index] = true;
-                            }
-                            else{
-                               _pref?.setInt(_key, _totalContent);
-                            }
+                        _list = _pref
+                            .getKeys()
+                            .where((element) =>
+                                element.startsWith('${courses[index].name}'))
+                            .toList();
+                        int prevtotallength = _list.length;
+
+                        int _totallength = 0, _contentlength = 0;
+                        courses[index].subjects?.forEach((key1, value) {
+                          String subjectname = value.name;
+
+                          value.chapters?.forEach((key2, value2) {
+                            String chaptername = value2.name;
+
+                            _contentlength = _contentlength ??
+                                0 + value2.content?.length ??
+                                0;
+                            value2.content?.forEach((key3, value3) {
+                              String contentname = value3.title.toString();
+                              String key = courses[index].name +
+                                  "__" +
+                                  subjectname +
+                                  "__" +
+                                  chaptername +
+                                  "__" +
+                                  contentname;
+
+                              if (prevtotallength == 0) {
+                                _pref.setInt(key, 1);
+                              } else {
+                                _list.remove(key);
+                              }
+                            });
+                          });
+                        });
+
+                        if (_list?.length != 0) {
+                          _list?.forEach((element) {
+                            _pref.remove(element);
+                          });
+                          _list = _pref
+                              .getKeys()
+                              .where((element) =>
+                                  element.startsWith('${courses[index].name}'))
+                              .toList();
+                          prevtotallength = _list.length;
+                        }
+
+                        _totallength = _contentlength;
+
+                        int _totalContent = _totallength ?? 0;
+                        int _prevtotalContent = prevtotallength == 0
+                            ? _totalContent
+                            : prevtotallength;
+                        if (_prevtotalContent <= _totalContent) {
+                          _showCountDot[index] = true;
+                        } else {}
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
@@ -126,36 +150,43 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                 style: TextStyle(color: Color(0xffF36C24)),
                               ),
                               trailing: Container(
-                                    height: 40,
-                                    width: 80,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
-                                        CountDot(count: _totalContent -_prevtotalContent ),
-                                        SizedBox(width: 10.0,),
-                                        Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xffF36C24),
-                                        ),
-                                      ],
+                                height: 40,
+                                width: 80,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    if (_showCountDot[index])
+                                      CountDot(
+                                          count: _totalContent -
+                                                      _prevtotalContent <=
+                                                  0
+                                              ? 0
+                                              : _totalContent -
+                                                  _prevtotalContent),
+                                    SizedBox(
+                                      width: 10.0,
+                                    ),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      color: Color(0xffF36C24),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              onTap: () {
+                                return Navigator.of(context)
+                                    .push(
+                                  CupertinoPageRoute(
+                                    builder: (context) => AdminSubjectPage(
+                                      courseId: courses[index].id,
+                                      pref: _pref,
+                                      passKey: '${courses[index].name}',
                                     ),
                                   ),
-                              onTap: () {
-                                _pref?.setInt(_key, _totalContent);
-
-                               return  Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) => AdminSubjectPage(
-                                      courseId: courses[index].id,
-                                      pref: _pref,),
-                                      
-                                ),
-                              ).then((value) {
-                                      setState(() {
-                                        _showCountDot[index] = false;
-                                      });
-                               });
+                                )
+                                    .then((value) {
+                                  setState(() {});
+                                });
                               },
                               onLongPress: () => Navigator.of(context).push(
                                 MaterialPageRoute(

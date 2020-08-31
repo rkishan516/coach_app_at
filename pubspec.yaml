@@ -58,6 +58,7 @@ dependencies:
   googleapis_auth:
   http:
   file_picker:
+  # speech_recognition:
   flutter_secure_storage:
   linked_scroll_controller:
 

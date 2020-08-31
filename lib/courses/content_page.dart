@@ -1,6 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
+import 'package:coach_app/Drawer/NewBannerShow.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
@@ -16,17 +17,22 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ContentPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;
-  ContentPage({@required this.title, @required this.reference});
+  final String passKey;
+  final SharedPreferences pref;
+  ContentPage({@required this.title, @required this.reference,  @required this.passKey,  @required this.pref});
   @override
   _ContentPageState createState() => _ContentPageState();
 }
 
 class _ContentPageState extends State<ContentPage> {
   int length;
+  
+  List<bool> _showCountDot;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,9 +70,18 @@ class _ContentPageState extends State<ContentPage> {
                             .compareTo(chapter.content[b].title.toLowerCase()));
                     }
                     length = chapter.content?.length ?? 0;
+                    _showCountDot = List(length);
+                      for (int i = 0; i < length; i++) {
+                        _showCountDot[i] = false;
+                      }
                     return ListView.builder(
                       itemCount: length,
                       itemBuilder: (BuildContext context, int index) {
+                        String checkkey = widget.passKey+"__"+'${chapter.content[keys.toList()[index]].title}';
+                        if(widget.pref.getInt(checkkey)!=1){
+                         _showCountDot[index] = true;
+                         widget.pref.setInt(checkkey,1);
+                        }
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
@@ -95,10 +110,22 @@ class _ContentPageState extends State<ContentPage> {
                                 '${chapter.content[keys.toList()[index]].time ?? 'Before 19 July'}',
                                 style: TextStyle(color: Color(0xffF36C24)),
                               ),
-                              trailing: Icon(
-                                Icons.chevron_right,
-                                color: Color(0xffF36C24),
-                              ),
+                              trailing: Container(
+                                    height: 40,
+                                    width: 80,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        if(_showCountDot[index])
+                                       NewBannerShow(),
+                                        SizedBox(width: 10.0,),
+                                        Icon(
+                                          Icons.chevron_right,
+                                          color: Color(0xffF36C24),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                               onTap: () {
                                 if (chapter
                                         .content[keys.toList()[index]].kind ==

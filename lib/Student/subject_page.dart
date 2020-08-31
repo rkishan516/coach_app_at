@@ -16,8 +16,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SubjectPage extends StatefulWidget {
   final String courseID;
-  SharedPreferences pref;
-  SubjectPage({@required this.courseID, @required this.pref});
+  final SharedPreferences pref;
+  final String passKey;
+  SubjectPage(
+      {@required this.courseID, @required this.pref, @required this.passKey});
   @override
   _SubjectPageState createState() => _SubjectPageState();
 }
@@ -25,27 +27,10 @@ class SubjectPage extends StatefulWidget {
 class _SubjectPageState extends State<SubjectPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-   List _list;
-  _sharedprefinit(){
-    _list = widget.pref.getKeys().where((element) => element.startsWith("StudentSubject")).toList();
-  }
- String  _searchForKey(String keyname, bool _isLast){
-   
-   bool result=_list?.remove(keyname); 
-   if(_isLast){
-     _list?.forEach((element) { 
-       widget.pref.remove(element);
-     });
-   }
-   if(!result){
-     return keyname;
-   }
-   return "done";
-  }
+  List _list;
 
   @override
   void initState() {
-     _sharedprefinit();
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
   }
@@ -121,42 +106,41 @@ class _SubjectPageState extends State<SubjectPage>
                             }
                             length = courses.subjects?.length ?? 0;
                             List<bool> _showCountDot = List(length);
-                        for(int i=0;i<_showCountDot.length;i++)
-                        {
-                          _showCountDot[i] = false;
-                        }
-                        _sharedprefinit();
+                            for (int i = 0; i < _showCountDot.length; i++) {
+                              _showCountDot[i] = false;
+                            }
+
                             return ListView.builder(
                               itemCount: length,
                               itemBuilder: (BuildContext context, int index) {
-                               
-                        String _key = "StudentSubject"+courses.subjects[keys.toList()[index]].name;
-                        bool _islast = false;
-                        int _contentlength =0;
-                        int _totalContent = 0;
-                          if(index==length-1)  
-                          _islast= true;
-                          String newKey =_searchForKey(_key, _islast);
-                        
-                          if(courses.subjects[keys.toList()[index]].chapters!=null){
-                          courses.subjects[keys.toList()[index]].chapters.forEach((key, value) {
-                                   
-                                  int _indvContent = value?.content?.length??0;
-                                  _contentlength += _indvContent;
-                          });
-                          _totalContent = (courses.subjects[keys.toList()[index]].chapters?.length??0)+ _contentlength;
-                        
-                          }
-                            int _prevtotalContent =widget.pref?.getInt(_key)??_totalContent;
-                            if(_prevtotalContent<_totalContent){
-                              _showCountDot[index] = true;
-                            }
-                            else if(_prevtotalContent==_totalContent){
-                              print("equal");
-                            }
-                            else{
-                               widget.pref?.setInt(_key, _totalContent);
-                            }
+                                int _contentlength = 0;
+                                int _totalContent = 0;
+
+                                if (courses.subjects[keys.toList()[index]]
+                                        .chapters !=
+                                    null) {
+                                  courses
+                                      .subjects[keys.toList()[index]].chapters
+                                      .forEach((key, value) {
+                                    int _indvContent =
+                                        value?.content?.length ?? 0;
+                                    _contentlength += _indvContent;
+                                  });
+                                  _totalContent = _contentlength;
+                                }
+                                String searchkey = widget.passKey +
+                                    "__" +
+                                    '${courses.subjects[keys.toList()[index]].name}';
+                                _list = widget.pref
+                                    .getKeys()
+                                    .where((element) =>
+                                        element.startsWith(searchkey))
+                                    .toList();
+                                int _prevtotalContent =
+                                    _list.length ?? _totalContent;
+                                if (_prevtotalContent <= _totalContent) {
+                                  _showCountDot[index] = true;
+                                } else {}
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Card(
@@ -168,64 +152,52 @@ class _SubjectPageState extends State<SubjectPage>
                                         '${courses.subjects[keys.toList()[index]].name}',
                                         style: TextStyle(color: Colors.blue),
                                       ),
-                                      trailing: _key!= newKey? 
-                                      Container(
-                                    height: 40,
-                                    width: 80,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
-                                        CountDot(count:_totalContent - _prevtotalContent <= 0? 0:_totalContent - _prevtotalContent ),
-                                        SizedBox(width: 10.0,),
-                                        Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xffF36C24),
+                                      trailing: Container(
+                                        height: 40,
+                                        width: 80,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            if (_showCountDot[index])
+                                              CountDot(
+                                                  count: _totalContent -
+                                                              _prevtotalContent <=
+                                                          0
+                                                      ? 0
+                                                      : _totalContent -
+                                                          _prevtotalContent),
+                                            SizedBox(
+                                              width: 10.0,
+                                            ),
+                                            Icon(
+                                              Icons.chevron_right,
+                                              color: Color(0xffF36C24),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  ):
-                                     Container(
-                                    height: 40,
-                                    width: 80,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        NewBannerShow(),
-                                        SizedBox(width: 10.0,),
-                                        Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xffF36C24),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                      ),
                                       onTap: () {
-                                        print("------------------------->>>>>>>>>>>");
-                                        print(_key);
-                                        print("------------------------->>>>>>>>>>>");
-                                         widget.pref?.setInt(_key, _totalContent);
-                                        return Navigator.of(context).push(
+                                        return Navigator.of(context)
+                                            .push(
                                           CupertinoPageRoute(
                                             builder: (context) => ChapterPage(
-                                              title: courses
-                                                  .subjects[
-                                                      keys.toList()[index]]
-                                                  .name,
-                                              reference: FirebaseDatabase
-                                                  .instance
-                                                  .reference()
-                                                  .child(
-                                                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${keys.toList()[index]}'),
-                                                  pref: widget.pref
-                                            ),
+                                                title: courses
+                                                    .subjects[
+                                                        keys.toList()[index]]
+                                                    .name,
+                                                reference: FirebaseDatabase
+                                                    .instance
+                                                    .reference()
+                                                    .child(
+                                                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${keys.toList()[index]}'),
+                                                pref: widget.pref,
+                                                passKey: searchkey),
                                           ),
-                                        ).then((value) {
-                                    
-                                      setState(() {
-                                        _showCountDot[index] = false;
-                                      });
-                               });
+                                        )
+                                            .then((value) {
+                                          setState(() {});
+                                        });
                                       },
                                     ),
                                   ),

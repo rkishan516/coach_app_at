@@ -437,6 +437,15 @@ _sharedprefinit() async {
                         builder: (context) => LanguageDialog());
                   },
                 ),
+                // ListTile(
+                //   title: Text('GuruCool Assistant'.tr()),
+                //   leading: Icon(Icons.mic),
+                //   onTap: () {
+                //     showDialog(
+                //         context: context,
+                //         builder: (context) => LanguageDialog());
+                //   },
+                // ),
                 ListTile(
                   title: Text('Log Out'.tr()),
                   leading: Icon(Icons.exit_to_app),
