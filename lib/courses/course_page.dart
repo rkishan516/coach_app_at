@@ -86,31 +86,34 @@ class _CoursePageState extends State<CoursePage> {
                     return ListView.builder(
                       itemCount: courses?.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
-                        _list = _pref
+                       _list = _pref
                             .getKeys()
                             .where((element) =>
                                 element.startsWith('${courses[index].name}'))
                             .toList();
                         int prevtotallength = _list.length;
-                        Map map = courses[index].subjects;
-                        int _totallength = 0, _contentlength = 0;
-                        if (map != null) {
-                          map?.forEach((key1, value) {
-                            String subjectname = value["name"].toString();
+              
+                        Map<String, int> _correspondingsubject = Map();
+                        int _totallength = 0, _contentlength , count=0;
+                        if (courses[index].subjects != null) {
+                          courses[index].subjects?.forEach((key1, value) {
+                            _contentlength = 0;
+                            String subjectname = value.name.toString();
 
-                            Map _chaptermap = value["chapters"];
-                            if (_chaptermap != null) {
-                              _chaptermap.forEach((key2, value2) {
-                                String chaptername = value2["name"].toString();
+                          
+                            if (value.chapters!= null) {
+                              value.chapters.forEach((key2, value2) {
+                                String chaptername = value2.name.toString();
 
-                                Map _contentmap = value2["content"];
+                              
 
-                                if (_contentmap != null) {
+                                if (value2.content != null) {
                                   _contentlength =
-                                      _contentlength + _contentmap.length;
-                                  _contentmap.forEach((key3, value3) {
+                                      _contentlength + value2.content.length;
+                                  _correspondingsubject[subjectname] =_contentlength;    
+                                  value2.content.forEach((key3, value3) {
                                     String contentname =
-                                        value3["title"].toString();
+                                        value3.title.toString();
                                     String key = courses[index].name +
                                         "__" +
                                         subjectname +
@@ -134,22 +137,29 @@ class _CoursePageState extends State<CoursePage> {
                             _list?.forEach((element) {
                               _pref.remove(element);
                             });
-                            _list = _pref
-                              .getKeys()
-                              .where((element) =>
-                                  element.startsWith('${courses[index].name}'))
-                              .toList();
-                          prevtotallength = _list.length;
                           }
-                          
-                        }
-                        _totallength = _contentlength;
+                         
+                        
 
-                        int _totalContent = _totallength ?? 0;
-                        int _prevtotalContent = prevtotallength == 0? _totalContent: prevtotallength;
-                        if (_prevtotalContent <= _totalContent) {
-                          _showCountDot[index] = true;
-                        } else {}
+                        if(prevtotallength!=0){
+                                    courses[index].subjects?.forEach((key, value) { 
+                                      _totallength = _correspondingsubject[value.name.toString()];
+
+                                      int _totalContent = _totallength ?? 0;
+                                      String searchKey = courses[index].name+"__"+ value.name.toString();
+                                       _list = _pref.getKeys().where((element) => element.startsWith(searchKey)).toList();
+
+                                      int _prevtotalContent = _list.length== 0
+                                      ? 0
+                                      : _list.length;
+                                      
+                                      if (_prevtotalContent < _totalContent) {
+                                      count++;
+                                      }
+                                    });
+                                  
+                                  } 
+                        }
                         TCourses tcourse = widget.teacher?.courses?.firstWhere(
                             (element) => element.id == courses[index].id);
                         return Padding(
@@ -170,7 +180,7 @@ class _CoursePageState extends State<CoursePage> {
                                     children: [
                                       if (_showCountDot[index])
                                         CountDot(
-                                            count: _totalContent -_prevtotalContent <=0? 0 :1),
+                                            count: count),
                                       SizedBox(
                                         width: 10.0,
                                       ),
@@ -180,17 +190,16 @@ class _CoursePageState extends State<CoursePage> {
                                       ),
                                     ],
                                   ),
-                                ), 
+                                ),
                                 onTap: () {
                                   return Navigator.of(context)
-                                      .push( 
+                                      .push(
                                     CupertinoPageRoute(
                                       builder: (context) => SubjectPage(
-                                        tCourse: tcourse,
-                                        course: courses[index],
-                                        pref: _pref,
-                                        passKey:'${courses[index].name}'
-                                      ),
+                                          tCourse: tcourse,
+                                          course: courses[index],
+                                          pref: _pref,
+                                          passKey: '${courses[index].name}'),
                                     ),
                                   )
                                       .then((value) {
@@ -199,7 +208,6 @@ class _CoursePageState extends State<CoursePage> {
                                 }),
                           ),
                         );
-
                       },
                     );
                   } else {

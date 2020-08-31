@@ -22,13 +22,12 @@ class ChapterPage extends StatefulWidget {
   final String courseId;
   final String passKey;
   final SharedPreferences pref;
-  ChapterPage({
-    @required this.title,
-    @required this.reference,
-    @required this.courseId,
-    @required this.pref,
-    @required this.passKey
-  });
+  ChapterPage(
+      {@required this.title,
+      @required this.reference,
+      @required this.courseId,
+      @required this.pref,
+      @required this.passKey});
   @override
   _ChapterPageState createState() => _ChapterPageState();
 }
@@ -40,11 +39,10 @@ class _ChapterPageState extends State<ChapterPage>
   bool isAdmin;
   List _list;
   bool showFAB = true;
-  
 
   @override
   void initState() {
-    print(">>>>>>>>>>>>>");
+  
     isAdmin = FireBaseAuth.instance.previlagelevel != 2;
     _tabController = TabController(length: isAdmin ? 2 : 1, vsync: this);
 
@@ -128,24 +126,33 @@ class _ChapterPageState extends State<ChapterPage>
                             }
                             var length = subjects.chapters?.length ?? 0;
                             List<bool> _showCountDot = List(length);
-                            for(int i=0;i<_showCountDot.length;i++)
-                            {
+                            for (int i = 0; i < _showCountDot.length; i++) {
                               _showCountDot[i] = false;
                             }
-                    
+  
                             return ListView.builder( 
                               itemCount: length,
                               itemBuilder: (BuildContext context, int index) {
-                            
-                                String searchkey=widget.passKey +"__"+ '${subjects.chapters[keys.toList()[index]].name}';
-                                _list = widget.pref.getKeys().where((element) => element.startsWith(searchkey)).toList();
-                            
-                                int _totalContent = subjects.chapters[keys.toList()[index]].content?.length??0;
-                                int _prevtotalContent = _list.length??_totalContent;
-                                  if(_prevtotalContent<=_totalContent){
-                                    _showCountDot[index] = true;
-                                  }
-                         
+                                String searchkey = widget.passKey +
+                                    "__" +
+                                    '${subjects.chapters[keys.toList()[index]].name}';
+                                _list = widget.pref
+                                    .getKeys() 
+                                    .where((element) =>
+                                        element.startsWith(searchkey))
+                                    .toList();
+
+                                int _totalContent = subjects
+                                        .chapters[keys.toList()[index]]
+                                        .content
+                                        ?.length ??
+                                    0;
+                                int _prevtotalContent =
+                                    _list.length ?? _totalContent;
+                                if (_prevtotalContent <= _totalContent) {
+                                  _showCountDot[index] = true;
+                                }
+
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Card(
@@ -159,40 +166,47 @@ class _ChapterPageState extends State<ChapterPage>
                                             TextStyle(color: Color(0xffF36C24)),
                                       ),
                                       trailing: Container(
-                                    height: 40,
-                                    width: 80,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        if(_showCountDot[index])
-                                        CountDot(count: _totalContent - _prevtotalContent <= 0? 0: 1 ),
-                                        SizedBox(width: 10.0,),
-                                        Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xffF36C24),
+                                        height: 40,
+                                        width: 80,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            if (_showCountDot[index])
+                                              CountDot(
+                                                  count: _totalContent -
+                                                              _prevtotalContent <=
+                                                          0
+                                                      ? 0
+                                                      : _totalContent -
+                                                          _prevtotalContent),
+                                            SizedBox(
+                                              width: 10.0,
+                                            ),
+                                            Icon(
+                                              Icons.chevron_right,
+                                              color: Color(0xffF36C24),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                      onTap: (){ 
-                                  
-                                        return Navigator.of(context).push(
-                                        CupertinoPageRoute(
-                                          builder: (context) => ContentPage(
-                                            title: subjects
-                                                .chapters[keys.toList()[index]]
-                                                .name,
-                                            reference: widget.reference.child(
-                                                'chapters/${keys.toList()[index]}'),
-                                            pref: widget.pref,    
-                                            passKey: searchkey  
-                                          )
-                                        ),
-                                      ).then((value) {
-                                      setState(() {
-                                    
-                                      });
-                                    });
+                                      ),
+                                      onTap: () {
+                                        return Navigator.of(context)
+                                            .push(
+                                          CupertinoPageRoute(
+                                              builder: (context) => ContentPage(
+                                                  title: subjects
+                                                      .chapters[
+                                                          keys.toList()[index]]
+                                                      .name,
+                                                  reference: widget.reference.child(
+                                                      'chapters/${keys.toList()[index]}'),
+                                                  pref: widget.pref,
+                                                  passKey: searchkey)),
+                                        )
+                                            .then((value) {
+                                          setState(() {});
+                                        });
                                       },
                                       onLongPress: () => addChapter(
                                           context, widget.reference,

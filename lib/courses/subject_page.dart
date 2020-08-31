@@ -23,7 +23,11 @@ class SubjectPage extends StatefulWidget {
   final Courses course;
   final SharedPreferences pref;
   final String passKey;
-  SubjectPage({@required this.tCourse, @required this.course, @required this.pref, @required this.passKey});
+  SubjectPage(
+      {@required this.tCourse,
+      @required this.course,
+      @required this.pref,
+      @required this.passKey});
   @override
   _SubjectPageState createState() => _SubjectPageState();
 }
@@ -31,25 +35,22 @@ class SubjectPage extends StatefulWidget {
 class _SubjectPageState extends State<SubjectPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-   
+
   List<bool> _showCountDot;
-   List _list;
-  
+  List _list;
+
   @override
   void initState() {
-    _tabController = TabController(length:3, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _showCountDot = List(widget.tCourse.subjects?.length ?? 0);
-    for(int i=0;i<_showCountDot.length;i++)
-    {
-       _showCountDot[i] = false;
+    for (int i = 0; i < _showCountDot.length; i++) {
+      _showCountDot[i] = false;
     }
     super.initState();
-    
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       drawer: getDrawer(context),
       appBar: getAppBar(context),
@@ -107,29 +108,42 @@ class _SubjectPageState extends State<SubjectPage>
                       child: ListView.builder(
                         itemCount: widget.tCourse.subjects?.length ?? 0,
                         itemBuilder: (BuildContext context, int index) {
-                        int _contentlength =0;
-                        int _totalContent = 0;
-                          
-                          if(widget.course.subjects[widget.tCourse.subjects[index]]?.chapters!=null){
-                          widget.course.subjects[widget.tCourse.subjects[index]]?.chapters?.forEach((key, value) {
-                                   
-                                  int _indvContent = value?.content?.length??0;
-                                  _contentlength += _indvContent;
-                          });
-                          _totalContent =  _contentlength;
-                        
-                          }  
-                          String searchkey = widget.passKey+"__" +'${widget.course.subjects[widget.tCourse.subjects[index]]?.name}';
-                            _list = widget.pref.getKeys().where((element) => element.startsWith(searchkey)).toList();
-                            int _prevtotalContent = _list.length??_totalContent;
-                            if(_prevtotalContent<=_totalContent){
-                             
-                              _showCountDot[index] = true;
-                            }
+                          int _contentlength = 0;
+                          int _totalContent = 0;
+                          int count=0;
+                          if (widget
+                                  .course
+                                  .subjects[widget.tCourse.subjects[index]]
+                                  ?.chapters !=
+                              null) { 
+                            widget 
+                                .course
+                                .subjects[widget.tCourse.subjects[index]]
+                                ?.chapters
+                                ?.forEach((key, value) {
+                              int _indvContent = value?.content?.length ?? 0;
+                              _contentlength = _indvContent;
                             
-                            else{
-                              
-                            }
+                            _totalContent = _contentlength;
+                            String searchkey = widget.passKey +
+                              "__" +
+                              '${widget.course.subjects[widget.tCourse.subjects[index]]?.name}'+"__" + value.name.toString() ;
+                          _list = widget.pref
+                              .getKeys()
+                              .where((element) => element.startsWith(searchkey))
+                              .toList();
+                          int _prevtotalContent = _list.length ?? _totalContent;
+                          print("00000000000000");
+                          print(_totalContent);
+                          print(_prevtotalContent);
+                          print("00000000000000");
+                          if (_prevtotalContent <_totalContent) {
+                            count++;
+                          } 
+                          
+                          });
+                        }
+                          
 
                           if (widget.course.subjects == null) {
                             return Container();
@@ -149,15 +163,19 @@ class _SubjectPageState extends State<SubjectPage>
                                     '${widget.course.subjects[widget.tCourse.subjects[index]]?.name}',
                                     style: TextStyle(color: Colors.blue),
                                   ),
-                                  trailing:  Container(
+                                  trailing: Container(
                                     height: 40,
                                     width: 80,
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                        if(_showCountDot[index])
-                                        CountDot(count:_totalContent - _prevtotalContent <= 0? 0: 1 ),
-                                        SizedBox(width: 10.0,),
+                                  
+                                          CountDot(
+                                              count: count),
+                                        SizedBox(
+                                          width: 10.0,
+                                        ),
                                         Icon(
                                           Icons.chevron_right,
                                           color: Color(0xffF36C24),
@@ -166,29 +184,26 @@ class _SubjectPageState extends State<SubjectPage>
                                     ),
                                   ),
                                   onTap: () {
-                            
-                                    
-                                    return  Navigator.of(context).push(
+                                    return Navigator.of(context)
+                                        .push(
                                       CupertinoPageRoute(
                                         builder: (context) => ChapterPage(
-                                          courseId: widget.course.id,
-                                          title: widget
-                                              .course
-                                              .subjects[widget
-                                                  .tCourse.subjects[index]]
-                                              .name,
-                                          reference: FirebaseDatabase.instance
-                                              .reference()
-                                              .child(
-                                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.tCourse.id}/subjects/${widget.tCourse.subjects[index]}'),
-                                        pref: widget.pref,
-                                        passKey : searchkey
-                                        ),
+                                            courseId: widget.course.id,
+                                            title: widget
+                                                .course
+                                                .subjects[widget
+                                                    .tCourse.subjects[index]]
+                                                .name,
+                                            reference: FirebaseDatabase.instance
+                                                .reference()
+                                                .child(
+                                                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.tCourse.id}/subjects/${widget.tCourse.subjects[index]}'),
+                                            pref: widget.pref,
+                                            passKey: widget.passKey +"__" + '${widget.course.subjects[widget.tCourse.subjects[index]]?.name}'),
                                       ),
-                                    ).then((value) {
-                                      setState(() {
-                              
-                                      });
+                                    )
+                                        .then((value) {
+                                      setState(() {});
                                     });
                                   },
                                 )),

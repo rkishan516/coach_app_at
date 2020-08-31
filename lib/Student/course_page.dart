@@ -25,7 +25,6 @@ class _CoursePageState extends State<CoursePage> {
     _pref = await SharedPreferences.getInstance();
   }
 
-
   @override
   void initState() {
     _sharedprefinit();
@@ -77,10 +76,7 @@ class _CoursePageState extends State<CoursePage> {
                           Student.fromJson(snapshot.data.snapshot.value);
                       student.course
                           .sort((a, b) => a.courseName.compareTo(b.courseName));
-                      List<bool> _showCountDot = List(student.course.length);
-                      for (int i = 0; i < _showCountDot.length; i++) {
-                        _showCountDot[i] = false;
-                      }
+                      
 
                       return ListView.builder(
                         itemCount: student.course.length,
@@ -93,71 +89,86 @@ class _CoursePageState extends State<CoursePage> {
                                   .onValue,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                  _list = _pref.getKeys().where((element) => element.startsWith('${student.course[index].courseName}')).toList();
-                                int prevtotallength = _list.length;
-                                
-                         
-                                  Map map= snapshot.data.snapshot.value;
-                                  
-                                  
-                                  int _totallength= 0, _contentlength= 0;
-                                  if(map!=null){
-                                  map?.forEach((key1, value) { 
-                                   
-                                   String subjectname= value["name"].toString();
+                                  _list = _pref
+                                      .getKeys()
+                                      .where((element) => element.startsWith(
+                                          '${student.course[index].courseName}'))
+                                      .toList();
+                                  int prevtotallength = _list.length;
 
-                                   Map _chaptermap= value["chapters"];
-                                   if(_chaptermap!=null){
-                                    
-                                     _chaptermap.forEach((key2, value2) {
+                                  Map map = snapshot.data.snapshot.value;
+                                  Map<String, int> _correspondingsubject = Map();
+                                  int _totallength = 0, _contentlength, count=0;
+                                  if (map != null) {
+                                    map?.forEach((key1, value) {
+                                      _contentlength = 0;
+                                      String subjectname =
+                                          value["name"].toString();
 
-                                       String chaptername = value2["name"].toString();
-                                        
-                                       Map _contentmap = value2["content"];
+                                      Map _chaptermap = value["chapters"];
+                                      if (_chaptermap != null) {
+                                        _chaptermap.forEach((key2, value2) {
+                                          String chaptername =
+                                              value2["name"].toString();
 
-                                       if(_contentmap!=null){
-                                         _contentlength =_contentlength + _contentmap.length;
-                                         _contentmap.forEach((key3, value3) { 
-                                           String contentname = value3["title"].toString();
-                                           String key = student.course[index].courseName+"__"+ subjectname +"__"+ chaptername+"__"+ contentname;
-                                         
-                                            if(prevtotallength==0){
-                                              
-                                             _pref.setInt(key,1);
-                                            }
-                                            else{
-                                             _list.remove(key);
-                                            }
-                                           
-                                         });
-                                       }
-                                       
-                                      });
-                                   }
-                              
-                                  });
-                                  if(_list.length !=0){
-                                    _list?.forEach((element) { 
-                                      _pref.remove(element);
+                                          Map _contentmap = value2["content"];
+
+                                          if (_contentmap != null) {
+                                            _contentlength =_contentlength+ _contentmap.length;
+                                            _correspondingsubject[subjectname] =_contentlength;
+                                            _contentmap.forEach((key3, value3) {
+                                              String contentname =
+                                                  value3["title"].toString();
+                                              String key = student.course[index]
+                                                      .courseName +
+                                                  "__" +
+                                                  subjectname +
+                                                  "__" +
+                                                  chaptername +
+                                                  "__" +
+                                                  contentname;
+
+                                              if (prevtotallength == 0) {
+                                                _pref.setInt(key, 1);
+                                              } else {
+                                                _list.remove(key);
+                                              }
+                                            });
+                                          }
+                                        });
+                                      }
                                     });
-                                  _list = _pref.getKeys().where((element) => element.startsWith('${student.course[index].courseName}')).toList();
-                                  prevtotallength = _list.length;
-                                  }
-                                 
-                                  }
-                                  _totallength =  _contentlength;
+                                    if (_list.length != 0) {
+                                      _list?.forEach((element) {
+                                        _pref.remove(element);
+                                      });
+                                    }
+                                    if(prevtotallength!=0){
+                                    map?.forEach((key, value) { 
+                                      _totallength = _correspondingsubject[value["name"].toString()];
+
+                                      int _totalContent = _totallength ?? 0;
+                                      String searchKey = student.course[index].courseName+"__"+ value["name"].toString();
+                                       _list = _pref.getKeys().where((element) => element.startsWith(searchKey)).toList();
+
+                                      int _prevtotalContent = _list.length== 0
+                                      ? _totalContent
+                                      : _list.length;
+                                      print("----------------");
+                                      
+                                      print(_totalContent);
+                                      
+                                      print(_prevtotalContent);
+                                      
+                                      print("----------------");
+                                      if (_prevtotalContent < _totalContent) {
+                                      count++;
+                                      }
+                                    });
                                   
+                                  } 
+                                  }
                                   
-                                
-                                  int _totalContent = _totallength ?? 0;
-                                  int _prevtotalContent =
-                                     prevtotallength == 0? _totalContent: prevtotallength ;
-                                  if (_prevtotalContent <= _totalContent) {
-                                    _showCountDot[index] = true;
-                                  }
-                                   else {
-                    
-                                  }
                                   return Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Card(
@@ -176,9 +187,9 @@ class _CoursePageState extends State<CoursePage> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              if (_showCountDot[index])
+                                          
                                                 CountDot(
-                                                    count: _totalContent - _prevtotalContent <= 0? 0: 1 ),
+                                                    count: count),
                                               SizedBox(
                                                 width: 10.0,
                                               ),
@@ -190,9 +201,7 @@ class _CoursePageState extends State<CoursePage> {
                                           ),
                                         ),
                                         onTap: () {
-                                      
                                           if (widget.isFromDrawer) {
-                                            
                                             return Navigator.of(context)
                                                 .push(
                                               CupertinoPageRoute(
@@ -208,26 +217,26 @@ class _CoursePageState extends State<CoursePage> {
                                               ),
                                             )
                                                 .then((value) {
-                                              setState(() {
-                                                
-                                              });
+                                              setState(() {});
                                             });
                                           }
-                                          return Navigator.of(context).push(
+                                          return Navigator.of(context)
+                                              .push(
                                             CupertinoPageRoute(
                                               builder: (context) => SubjectPage(
-                                                courseID: student
-                                                    .course[index].courseID
-                                                    .toString(),
-                                                pref: _pref, 
-                                                passKey:'${student.course[index].courseName}'  
-                                              ),
+                                                  courseID: student
+                                                      .course[index].courseID
+                                                      .toString(),
+                                                  pref: _pref,
+                                                  passKey:
+                                                      '${student.course[index].courseName}'),
                                             ),
-                                          ) .then((value) {
-                                              setState(() {
-                                                _showCountDot[index] = false;
-                                              });
+                                          )
+                                              .then((value) {
+                                            setState(() {
+                                              
                                             });
+                                          });
                                         },
                                       ),
                                     ),

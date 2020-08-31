@@ -177,7 +177,7 @@ class _ContentPageState extends State<ContentPage> {
                                 }
                               },
                               onLongPress: () => addContent(
-                                  context, widget.reference,
+                                  context, widget.reference, widget.pref,widget.passKey,
                                   key: keys.toList()[index],
                                   title: chapter
                                       .content[keys.toList()[index]].title,
@@ -233,14 +233,14 @@ class _ContentPageState extends State<ContentPage> {
       ),
       floatingActionButton: SlideButtonR(
         text: 'Add Content'.tr(),
-        onTap: () => addContent(context, widget.reference),
+        onTap: () => addContent(context, widget.reference, widget.pref, widget.passKey),
         width: 150,
         height: 50,
       ),
     );
   }
 
-  addContent(BuildContext context, DatabaseReference reference,
+  addContent(BuildContext context, DatabaseReference reference, SharedPreferences pref, String passKey,
       {String key,
       String title = '',
       String description = '',
@@ -259,6 +259,8 @@ class _ContentPageState extends State<ContentPage> {
         keyC: key,
         time: time,
         quizModel: quizModel,
+        pref: pref,
+        passKey: passKey,
       ),
     );
   }
@@ -273,6 +275,8 @@ class ContentUploadDialog extends StatefulWidget {
   final String type;
   final String time;
   final QuizModel quizModel;
+  final SharedPreferences pref;
+  final String passKey;
   ContentUploadDialog({
     @required this.title,
     @required this.description,
@@ -282,6 +286,8 @@ class ContentUploadDialog extends StatefulWidget {
     @required this.type,
     @required this.time,
     @required this.quizModel,
+    @required this.pref,
+    @required this.passKey
   });
   @override
   _ContentUploadDialogState createState() => _ContentUploadDialogState();
@@ -428,25 +434,25 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                       ],
                     ),
                   ),
-                if (type == "Youtube Video")
-                  RaisedButton(
-                    color: Color(0xffF36C24),
-                    onPressed: () async {
-                      file = await FilePicker.getFile();
-                    },
-                    elevation: 0,
-                    child: Text(
-                      "Select Video",
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
+                      if (type == "Youtube Video" && widget.keyC == null)
+                        RaisedButton(
+                          color: Colors.white,
+                          onPressed: () async {
+                            file = await FilePicker.getFile();
+                          },
+                          elevation: 1,
+                          child: Text(
+                            "Select Video",
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
                       (widget.keyC == null)
                           ? Container()
                           : FlatButton(
@@ -466,7 +472,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                                 'Remove'.tr(),
                               ),
                             ),
-                      FlatButton(
+                      RaisedButton(
                         onPressed: () async {
                           Content content = Content()
                             ..kind = type
@@ -517,17 +523,18 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                                 .child('content/')
                                 .push()
                                 .update(content.toJson());
+                            widget.pref.setInt( widget.passKey+ widget.title, 1);    
                           } else {
                             widget.reference
                                 .child('content/${widget.keyC}')
                                 .update(content.toJson());
                           }
                         },
-                        color: Colors.white,
+                        color: Color(0xffF36C24),
                         child: Text(
                           'Add Content'.tr(),
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                           ),
                         ),
                       ),

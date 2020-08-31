@@ -16,12 +16,11 @@ class ChapterPage extends StatefulWidget {
   final String title;
   final SharedPreferences pref;
   final String passKey;
-  ChapterPage({
-    @required this.title,
-    @required this.reference,
-    @required this.pref,
-    @required this.passKey
-  });
+  ChapterPage(
+      {@required this.title,
+      @required this.reference,
+      @required this.pref,
+      @required this.passKey});
   @override
   _ChapterPageState createState() => _ChapterPageState();
 }
@@ -32,10 +31,9 @@ class _ChapterPageState extends State<ChapterPage> {
 
   @override
   void initState() {
-   
     super.initState();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,44 +80,59 @@ class _ChapterPageState extends State<ChapterPage> {
                       }
                       length = subjects.chapters?.length ?? 0;
                       List<bool> _showCountDot = List(length);
-                        for(int i=0;i<_showCountDot.length;i++)
-                        {
-                          _showCountDot[i] = false;
-                        }
-                        
-                  
+                      for (int i = 0; i < _showCountDot.length; i++) {
+                        _showCountDot[i] = false;
+                      }
+
                       return ListView.builder(
                         itemCount: length,
                         itemBuilder: (BuildContext context, int index) {
-                          String searchkey=widget.passKey +"__"+ '${subjects.chapters[keys.toList()[index]].name}';
-                          _list = widget.pref.getKeys().where((element) => element.startsWith(searchkey)).toList();
-                       
-                          int _totalContent = subjects.chapters[keys.toList()[index]].content?.length??0;
-                          int _prevtotalContent = _list.length??_totalContent;
-                            if(_prevtotalContent<=_totalContent){
-                              _showCountDot[index] = true;
-                            }
-                            
+                          String searchkey = widget.passKey +
+                              "__" +
+                              '${subjects.chapters[keys.toList()[index]].name}';
+                          _list = widget.pref
+                              .getKeys()
+                              .where((element) => element.startsWith(searchkey))
+                              .toList();
+
+                          int _totalContent = subjects
+                                  .chapters[keys.toList()[index]]
+                                  .content
+                                  ?.length ??
+                              0;
+                          int _prevtotalContent = _list.length ?? _totalContent;
+                          if (_prevtotalContent <= _totalContent) {
+                            _showCountDot[index] = true;
+                          }
+
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Card(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                               child: ListTile(
-                                title: Text(
-                                  '${subjects.chapters[keys.toList()[index]].name}',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                                trailing:
-                                      Container(
+                                  title: Text(
+                                    '${subjects.chapters[keys.toList()[index]].name}',
+                                    style: TextStyle(color: Colors.blue),
+                                  ),
+                                  trailing: Container(
                                     height: 40,
                                     width: 80,
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                        if(_showCountDot[index])
-                                        CountDot(count: _totalContent - _prevtotalContent <= 0? 0: 1 ),
-                                        SizedBox(width: 10.0,),
+                                  
+                                          CountDot(
+                                              count: _totalContent -
+                                                          _prevtotalContent <=
+                                                      0
+                                                  ? 0
+                                                  : _totalContent -
+                                                      _prevtotalContent),
+                                        SizedBox(
+                                          width: 10.0,
+                                        ),
                                         Icon(
                                           Icons.chevron_right,
                                           color: Color(0xffF36C24),
@@ -127,29 +140,25 @@ class _ChapterPageState extends State<ChapterPage> {
                                       ],
                                     ),
                                   ),
-                                onTap: () {
-                                  
-                                  return Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) => ContentPage(
-                                      title: subjects
-                                          .chapters[keys
-                                              .toList()[index]]
-                                          .name,
-                                      reference: widget.reference.child(
-                                          'chapters/${keys.toList()[index]}',),
-                                      pref: widget.pref, 
-                                      passKey: searchkey
-                                    ),
-                                  ),
-                                ).then((value) {
-                                  
-                                      setState(() {
-                        
-                                      });
-                               });
-                                }
-                              ),
+                                  onTap: () {
+                                    return Navigator.of(context)
+                                        .push(
+                                      CupertinoPageRoute(
+                                        builder: (context) => ContentPage(
+                                            title: subjects
+                                                .chapters[keys.toList()[index]]
+                                                .name,
+                                            reference: widget.reference.child(
+                                              'chapters/${keys.toList()[index]}',
+                                            ),
+                                            pref: widget.pref,
+                                            passKey: searchkey),
+                                      ),
+                                    )
+                                        .then((value) {
+                                      setState(() {});
+                                    });
+                                  }),
                             ),
                           );
                         },

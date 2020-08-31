@@ -74,11 +74,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                     });
                     courses.sort((a, b) => a.date.compareTo(b.date));
 
-                    List<bool> _showCountDot = List(courses?.length);
-                        for(int i=0;i<_showCountDot.length;i++)
-                        {
-                          _showCountDot[i] = false;
-                        }
+                    
                     return ListView.builder(
                       itemCount: courses?.length,
                       itemBuilder: (BuildContext context, int index) {
@@ -88,25 +84,28 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                 element.startsWith('${courses[index].name}'))
                             .toList();
                         int prevtotallength = _list.length;
-                        Map map = courses[index].subjects;
-                        int _totallength = 0, _contentlength = 0;
-                        if (map != null) {
+              
+                        Map<String, int> _correspondingsubject = Map();
+                        int _totallength = 0, _contentlength , count=0;
+                        if (courses[index].subjects != null) {
                           courses[index].subjects?.forEach((key1, value) {
+                            _contentlength = 0;
                             String subjectname = value.name.toString();
 
                           
                             if (value.chapters!= null) {
                               value.chapters.forEach((key2, value2) {
                                 String chaptername = value2.name.toString();
-
+ 
                               
 
                                 if (value2.content != null) {
                                   _contentlength =
                                       _contentlength + value2.content.length;
+                                  _correspondingsubject[subjectname] =_contentlength;    
                                   value2.content.forEach((key3, value3) {
                                     String contentname =
-                                        value2.content.toString();
+                                        value3.title.toString();
                                     String key = courses[index].name +
                                         "__" +
                                         subjectname +
@@ -130,22 +129,35 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                             _list?.forEach((element) {
                               _pref.remove(element);
                             });
-                             _list = _pref
-                              .getKeys()
-                              .where((element) =>
-                                  element.startsWith('${courses[index].name}'))
-                              .toList();
-                          prevtotallength = _list.length;
                           }
                          
-                        }
-                        _totallength = _contentlength;
+                        
 
-                        int _totalContent = _totallength ?? 0;
-                        int _prevtotalContent = prevtotallength == 0? _totalContent: prevtotallength;
-                        if (_prevtotalContent <= _totalContent) {
-                          _showCountDot[index] = true;
-                        } else {}
+                        if(prevtotallength!=0){
+                                    courses[index].subjects?.forEach((key, value) { 
+                                      _totallength = _correspondingsubject[value.name.toString()];
+
+                                      int _totalContent = _totallength ?? 0;
+                                      String searchKey = courses[index].name+"__"+ value.name.toString();
+                                       _list = _pref.getKeys().where((element) => element.startsWith(searchKey)).toList();
+
+                                      int _prevtotalContent = _list.length== 0
+                                      ? 0
+                                      : _list.length;
+                                      print("----------------");
+                                      
+                                      print(_totalContent);
+                                      
+                                      print(_prevtotalContent);
+                                      
+                                      print("----------------");
+                                      if (_prevtotalContent < _totalContent) {
+                                      count++;
+                                      }
+                                    });
+                                  
+                                  } 
+                        }
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
@@ -162,8 +174,8 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        if(_showCountDot[index])
-                                        CountDot(count:  _totalContent -_prevtotalContent <=0? 0 :1 ),
+                                        
+                                        CountDot(count: count),
                                         SizedBox(width: 10.0,),
                                         Icon(
                                           Icons.chevron_right,
