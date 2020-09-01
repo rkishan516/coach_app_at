@@ -141,9 +141,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                       String searchKey = courses[index].name+"__"+ value.name.toString();
                                        _list = _pref.getKeys().where((element) => element.startsWith(searchKey)).toList();
 
-                                      int _prevtotalContent = _list.length== 0
-                                      ? 0
-                                      : _list.length;
+                                      int _prevtotalContent = _list.length;
                                       print("----------------");
                                       
                                       print(_totalContent);

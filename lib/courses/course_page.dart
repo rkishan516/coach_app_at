@@ -149,9 +149,7 @@ class _CoursePageState extends State<CoursePage> {
                                       String searchKey = courses[index].name+"__"+ value.name.toString();
                                        _list = _pref.getKeys().where((element) => element.startsWith(searchKey)).toList();
 
-                                      int _prevtotalContent = _list.length== 0
-                                      ? 0
-                                      : _list.length;
+                                      int _prevtotalContent =  _list.length;
                                       
                                       if (_prevtotalContent < _totalContent) {
                                       count++;
