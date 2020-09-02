@@ -31,9 +31,13 @@ class _NoticeBoardState extends State<NoticeBoard>
   TabController _controller;
   int items = 2;
   SharedPreferences _pref;
+  Map<String, String> _months = {"01":"Jan","02":"Feb","03":"Mar","04":"Apr","05":"May","06":"Jun","07":"Jul","08":"Aug","09":"Sep","10":"Oct","11":"Nov","12":"Dec","01":"Jan" };
 
   _buildMessage(Messages message, bool isMe) {
+    String splitDate= message.time.split(' ')[0];
+    String noticeDate= splitDate.split("-")[2]+" "+_months[ splitDate.split("-")[1]]+" "+splitDate.split("-")[0]; 
     final GestureDetector msg = GestureDetector(
+    
         onLongPress: () async {
           if (previlagelevel == 4) {
             String res = await showDialog(
@@ -48,41 +52,77 @@ class _NoticeBoardState extends State<NoticeBoard>
           }
         },
         child: Container(
-          margin: isMe
-              ? EdgeInsets.only(top: 8.0, bottom: 8.0, left: 80.0)
-              : EdgeInsets.only(top: 8.0, bottom: 8.0),
-          padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 15.0),
+        
+          margin: 
+               EdgeInsets.only(top: 15.0, bottom: 15.0, left: 20.0, right: 20.0),
+          
           width: MediaQuery.of(context).size.width * 0.75,
           decoration: BoxDecoration(
-            color: isMe ? Color.fromRGBO(237, 220, 173, 1) : Color(0xFFFFEFEE),
-            borderRadius: isMe
-                ? BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    bottomLeft: Radius.circular(30.0))
-                : BorderRadius.only(
-                    topRight: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0)),
+            color: Colors.white,
+            boxShadow: [new BoxShadow(
+            color: Colors.black,
+            blurRadius: 8.0,
+          ),]
+            
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: IntrinsicHeight(
+                      child: Row( 
+                
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2,
+                      child: Container(
+                      padding: EdgeInsets.only(top: 10.0, bottom: 10.0),  
+                      constraints: BoxConstraints.expand(),  
+                      width: 30.0,
+                      child: RotatedBox(
+                        quarterTurns: 3,
+                        child: Center(child: Text(noticeDate,
+                        style: TextStyle(
+                          color: Colors.white
+                        ),)),
+                      ),
+                      
+                      decoration: BoxDecoration(
+                      color:Color(0xffF36C24), 
+                      
+                      ),
+            
+                    ),
+                  ),
+                  Expanded(
+                    flex: 13,
+                      child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 15.0),
+                      width :MediaQuery.of(context).size.width * 0.6,
+                      child: Column(
+
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(message.textMsg,
+                  
                   style: TextStyle(
-                      color: Colors.blueGrey,
+                      color: Colors.grey,
                       fontSize: 16.0,
                       fontWeight: FontWeight.w600)),
-              SizedBox(height: 5.0),
+              SizedBox(height: 10.0),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Text(
-                  message.time.split(' ')[0],
+                  message.time.split(' ')[1].split(':')[0]+":"+message.time.split(' ')[1].split(':')[1]+" "+message.time.split(' ')[2],
                   style: TextStyle(
-                      color: Colors.blueGrey,
-                      fontSize: 8.0,
+                      color: Color(0xffF36C24),
+                      fontSize:12.0,
                       fontWeight: FontWeight.w600),
                 ),
               ),
             ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
           ),
         ));
     if (isMe) {
@@ -99,6 +139,7 @@ class _NoticeBoardState extends State<NoticeBoard>
     String time = DateTime.now().toString().split(' ')[0] +
         " " +
         DateFormat('jms').format(new DateTime.now());
+    
     await dbRef
         .reference()
         .child('institute/${FireBaseAuth.instance.instituteid}/notices')
@@ -116,34 +157,54 @@ class _NoticeBoardState extends State<NoticeBoard>
 
   _buildMessageComposer() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
-      height: 70.0,
-      color: Colors.white,
+      padding: EdgeInsets.only(left: 10.0, right: 10.0),
+      height: 50.0,
+      width: MediaQuery.of(context).size.width,
+      color:  Colors.grey.shade200,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Expanded(
-            child: TextField(
+                      child: TextField( 
+              
+              style: TextStyle(
+                fontSize: 18.0,
+                height: 1.5
+              ),
+              autofocus: true,
+              autocorrect: true,
               controller: _textController,
               keyboardType: TextInputType.multiline,
               maxLines: null,
               textCapitalization: TextCapitalization.sentences,
               onChanged: (value) {},
               decoration: InputDecoration.collapsed(
-                hintText: 'Send a message...'.tr(),
-              ),
+                hintText: '    Type a message...'.tr(),
+                
+                
+                fillColor: Colors.white,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  ),
+                ),
+                
+              ), 
             ),
           ),
           IconButton(
-            icon: Icon(Icons.send),
-            iconSize: 25.0,
-            color: Theme.of(context).primaryColor,
-            onPressed: () {
-              _createNotice();
-              setState(() {
-                _textController.text = "";
-              });
-            },
-          ),
+              icon: Icon(Icons.send),
+              iconSize: 35.0, alignment: Alignment.topRight,
+              color: Theme.of(context).primaryColor,
+              onPressed: () {
+                _createNotice();
+                setState(() {
+                  _textController.text = "";
+                });
+              },
+            ),
         ],
       ),
     );
@@ -220,9 +281,9 @@ class _NoticeBoardState extends State<NoticeBoard>
             child: Column(
               children: <Widget>[
                 Expanded(
-                  child: Container(
+                  child: Container( 
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.grey.shade200,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(
                           30.0,
