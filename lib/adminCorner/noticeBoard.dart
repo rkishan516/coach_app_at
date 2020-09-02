@@ -169,7 +169,7 @@ class _NoticeBoardState extends State<NoticeBoard>
               
               style: TextStyle(
                 fontSize: 18.0,
-                height: 1.5
+                
               ),
               autofocus: true,
               autocorrect: true,
@@ -178,14 +178,15 @@ class _NoticeBoardState extends State<NoticeBoard>
               maxLines: null,
               textCapitalization: TextCapitalization.sentences,
               onChanged: (value) {},
-              decoration: InputDecoration.collapsed(
-                hintText: '    Type a message...'.tr(),
+              decoration: InputDecoration(
+                hintText: 'Type a message...'.tr(),
                 
                 
                 fillColor: Colors.white,
                 filled: true,
+                contentPadding: new EdgeInsets.symmetric(vertical: 6.0, horizontal: 15.0),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderRadius: BorderRadius.all(Radius.circular(22.0)),
                   borderSide: BorderSide(
                     color: Colors.white,
                   ),
