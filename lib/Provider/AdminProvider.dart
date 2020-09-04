@@ -10,6 +10,7 @@ class AdminProvider extends ChangeNotifier {
         .child('institute/${FireBaseAuth.instance.instituteid}/branches')
         .onValue
         .listen((event) {
+      branch = Map<String, Branch>();
       event.snapshot.value?.forEach((k, v) {
         setBranch(k, Branch.fromJson(v));
       });
