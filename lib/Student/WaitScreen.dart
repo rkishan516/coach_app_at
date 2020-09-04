@@ -1,5 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -35,13 +36,24 @@ class WaitScreen extends StatelessWidget {
                   Center(
                     child: Text(
                       'You will get admission in your digital institute as soon as administrator permits you',
-                      style: TextStyle(color: Colors.white, fontSize: 18),textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   RaisedButton(
                     onPressed: () {
+                      if (FireBaseAuth.instance.instituteid != null &&
+                          FireBaseAuth.instance.branchid != null)
+                        FirebaseDatabase.instance
+                            .reference()
+                            .child(
+                                'instiute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/status')
+                            .set("New Student");
                       FireBaseAuth.instance.signoutWithGoogle();
-                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => WelcomePage()), (route) => false);
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => WelcomePage()),
+                          (route) => false);
                     },
                     child: Text(
                       'Withdraw Request',
