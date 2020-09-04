@@ -125,14 +125,10 @@ class _NoticeBoardState extends State<NoticeBoard>
               ),
           ),
         ));
-    if (isMe) {
+    
       return msg;
-    }
-    return Row(
-      children: <Widget>[
-        msg,
-      ],
-    );
+    
+      
   }
 
   _createNotice() async {
