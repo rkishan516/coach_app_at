@@ -136,25 +136,27 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                       .forEach((key, value) {
                                     int _indvContent =
                                         value?.content?.length ?? 0;
-                                    _contentlength = _indvContent; 
-                                  
-                                  _totalContent = _contentlength;
-                                
-                                String searchkey = widget.passKey +
-                                    "__" +
-                                    '${courses.subjects[keys.toList()[index]].name}'+"__" + value.name.toString() ;
-                                _list = widget.pref
-                                    .getKeys()
-                                    .where((element) =>
-                                        element.startsWith(searchkey))
-                                    .toList();
-                                int _prevtotalContent =
-                                    _list.length ?? _totalContent;
-                                if (_prevtotalContent < _totalContent) {
-                                  count++;
-                                } 
-                                });
-                              }
+                                    _contentlength = _indvContent;
+
+                                    _totalContent = _contentlength;
+
+                                    String searchkey = widget.passKey +
+                                        "__" +
+                                        '${courses.subjects[keys.toList()[index]].name}' +
+                                        "__" +
+                                        value.name.toString();
+                                    _list = widget.pref
+                                        .getKeys()
+                                        .where((element) =>
+                                            element.startsWith(searchkey))
+                                        .toList();
+                                    int _prevtotalContent =
+                                        _list.length ?? _totalContent;
+                                    if (_prevtotalContent < _totalContent) {
+                                      count++;
+                                    }
+                                  });
+                                }
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Card(
@@ -174,9 +176,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                          
-                                                CountDot(
-                                                    count: count),
+                                              CountDot(count: count),
                                               SizedBox(
                                                 width: 10.0,
                                               ),
@@ -203,7 +203,9 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                                       .child(
                                                           'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${keys.toList()[index]}'),
                                                   pref: widget.pref,
-                                                  passKey: widget.passKey +"__" + '${courses.subjects[keys.toList()[index]].name}'),
+                                                  passKey: widget.passKey +
+                                                      "__" +
+                                                      '${courses.subjects[keys.toList()[index]].name}'),
                                             ),
                                           )
                                               .then((value) {
@@ -348,7 +350,6 @@ addSubject(BuildContext context, String courseId,
                             .onValue,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            print(snapshot.data.snapshot.value);
                             if (snapshot.data.snapshot.value == null) {
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,

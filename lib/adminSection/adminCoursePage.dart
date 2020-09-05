@@ -19,16 +19,17 @@ class AdminCoursePage extends StatefulWidget {
 
 class _AdminCoursePageState extends State<AdminCoursePage> {
   SharedPreferences _pref;
- List _list;
+  List _list;
   _sharedprefinit() async {
     _pref = await SharedPreferences.getInstance();
   }
+
   @override
   void initState() {
     _sharedprefinit();
     super.initState();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,35 +75,32 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                     });
                     courses.sort((a, b) => a.date.compareTo(b.date));
 
-                    
                     return ListView.builder(
                       itemCount: courses?.length,
                       itemBuilder: (BuildContext context, int index) {
-                          _list = _pref
+                        _list = _pref
                             .getKeys()
                             .where((element) =>
                                 element.startsWith('${courses[index].name}'))
                             .toList();
                         int prevtotallength = _list.length;
-              
+
                         Map<String, int> _correspondingsubject = Map();
-                        int _totallength = 0, _contentlength , count=0;
+                        int _totallength = 0, _contentlength, count = 0;
                         if (courses[index].subjects != null) {
                           courses[index].subjects?.forEach((key1, value) {
                             _contentlength = 0;
                             String subjectname = value.name.toString();
 
-                          
-                            if (value.chapters!= null) {
+                            if (value.chapters != null) {
                               value.chapters.forEach((key2, value2) {
                                 String chaptername = value2.name.toString();
- 
-                              
 
                                 if (value2.content != null) {
                                   _contentlength =
                                       _contentlength + value2.content.length;
-                                  _correspondingsubject[subjectname] =_contentlength;    
+                                  _correspondingsubject[subjectname] =
+                                      _contentlength;
                                   value2.content.forEach((key3, value3) {
                                     String contentname =
                                         value3.title.toString();
@@ -130,31 +128,28 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                               _pref.remove(element);
                             });
                           }
-                         
-                        
 
-                        if(prevtotallength!=0){
-                                    courses[index].subjects?.forEach((key, value) { 
-                                      _totallength = _correspondingsubject[value.name.toString()];
+                          if (prevtotallength != 0) {
+                            courses[index].subjects?.forEach((key, value) {
+                              _totallength =
+                                  _correspondingsubject[value.name.toString()];
 
-                                      int _totalContent = _totallength ?? 0;
-                                      String searchKey = courses[index].name+"__"+ value.name.toString();
-                                       _list = _pref.getKeys().where((element) => element.startsWith(searchKey)).toList();
+                              int _totalContent = _totallength ?? 0;
+                              String searchKey = courses[index].name +
+                                  "__" +
+                                  value.name.toString();
+                              _list = _pref
+                                  .getKeys()
+                                  .where((element) =>
+                                      element.startsWith(searchKey))
+                                  .toList();
 
-                                      int _prevtotalContent = _list.length;
-                                      print("----------------");
-                                      
-                                      print(_totalContent);
-                                      
-                                      print(_prevtotalContent);
-                                      
-                                      print("----------------");
-                                      if (_prevtotalContent < _totalContent) {
-                                      count++;
-                                      }
-                                    });
-                                  
-                                  } 
+                              int _prevtotalContent = _list.length;
+                              if (_prevtotalContent < _totalContent) {
+                                count++;
+                              }
+                            });
+                          }
                         }
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -167,37 +162,36 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                 style: TextStyle(color: Color(0xffF36C24)),
                               ),
                               trailing: Container(
-                                    height: 40,
-                                    width: 80,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        
-                                        CountDot(count: count),
-                                        SizedBox(width: 10.0,),
-                                        Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xffF36C24),
-                                        ),
-                                      ],
+                                height: 40,
+                                width: 80,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CountDot(count: count),
+                                    SizedBox(
+                                      width: 10.0,
                                     ),
-                                  ),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      color: Color(0xffF36C24),
+                                    ),
+                                  ],
+                                ),
+                              ),
                               onTap: () {
-
-                               return  Navigator.of(context).push(
-                                CupertinoPageRoute(
-                                  builder: (context) => AdminSubjectPage(
+                                return Navigator.of(context)
+                                    .push(
+                                  CupertinoPageRoute(
+                                    builder: (context) => AdminSubjectPage(
                                       courseId: courses[index].id,
                                       pref: _pref,
-                                      passKey:'${courses[index].name}',
-                                      ),
-                                      
-                                ),
-                              ).then((value) {
-                                      setState(() {
-                                      
-                                      });
-                               });
+                                      passKey: '${courses[index].name}',
+                                    ),
+                                  ),
+                                )
+                                    .then((value) {
+                                  setState(() {});
+                                });
                               },
                               onLongPress: () => Navigator.of(context).push(
                                 MaterialPageRoute(

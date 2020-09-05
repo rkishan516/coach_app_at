@@ -206,7 +206,12 @@ class _TeachersListState extends State<TeachersList> {
       floatingActionButton: SlideButton(
         text: 'Add Teacher'.tr(),
         onTap: () => showDialog(
-            context: context, builder: (context) => TeacherRegister()),
+          context: context,
+          builder: (context) => TeacherRegister(
+            courseId: widget.courseId,
+            subjectId: widget.subjectId,
+          ),
+        ),
         width: 150,
         height: 50,
       ),

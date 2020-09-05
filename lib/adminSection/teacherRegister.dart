@@ -251,17 +251,6 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                             return;
                           }
                           if (widget.isEdit == true) {
-                            if (widget.teacher.courses == null) {
-                              widget.teacher.courses = List<TCourses>();
-                            }
-                            widget.teacher.courses.add(
-                              TCourses(
-                                id: widget.courseId,
-                                subjects: [
-                                  widget.subjectId,
-                                ],
-                              ),
-                            );
                             FirebaseDatabase.instance
                                 .reference()
                                 .child(
@@ -294,7 +283,6 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                                     "teacher_${FireBaseAuth.instance.instituteid}_${FireBaseAuth.instance.branchid}"
                               });
                             }
-
                             FirebaseDatabase.instance
                                 .reference()
                                 .child(
@@ -306,6 +294,14 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                                   phoneNo: phoneTextEditingController.text,
                                   qualification:
                                       qualificationTextEditingController.text,
+                                  courses: [
+                                    TCourses(
+                                      id: widget.courseId,
+                                      subjects: [
+                                        widget.subjectId,
+                                      ],
+                                    ),
+                                  ],
                                   experience: int.parse(
                                     experienceTextEditingController.text
                                         .replaceAll(',', '')
