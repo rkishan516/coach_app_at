@@ -3,6 +3,7 @@ import 'package:coach_app/Authentication/malfunctionedApk.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
+import 'package:coach_app/SpeechRouting/RouteMap.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:in_app_update/in_app_update.dart';
@@ -12,6 +13,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -68,11 +71,12 @@ class MyApp extends StatelessWidget {
     prefs = await SharedPreferences.getInstance();
     return prefs;
   }
-
+  
   @override
   Widget build(BuildContext context) {
     initializeDateFormatting();
     return MaterialApp(
+       routes: RouteMap().createroute(),
       title: 'Guru Cool',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

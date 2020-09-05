@@ -16,6 +16,7 @@ import 'package:coach_app/Meeting/AllMeetingSession.dart';
 import 'package:coach_app/Plugins/AppIcons.dart';
 import 'package:coach_app/Profile/TeacherProfile.dart';
 import 'package:coach_app/Profile/subAdminProfile.dart';
+import 'package:coach_app/SpeechRouting/BottomSheetCheck.dart';
 import 'package:coach_app/Student/all_course_view.dart';
 import 'package:coach_app/Student/course_page.dart';
 import 'package:coach_app/adminCorner/noticeBoard.dart';
@@ -47,10 +48,10 @@ class GuruCoolDrawer extends StatefulWidget {
   final FirebaseUser user;
 
   @override
-  _GuruCoolDrawerState createState() => _GuruCoolDrawerState();
+  GuruCoolDrawerState createState() => GuruCoolDrawerState();
 }
 
-class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
+class GuruCoolDrawerState extends State<GuruCoolDrawer> {
   bool isExpandedSS = false, isExpandedFS = false;
   final dbref = FirebaseDatabase.instance;
   SharedPreferences _pref;
@@ -58,7 +59,7 @@ class _GuruCoolDrawerState extends State<GuruCoolDrawer> {
   StreamSubscription<Event> _onNoticeSubscription;
   StreamSubscription<Event> _onPublicContentSubscription;
 
-  int _totalStudentReq = 0, _totalNotice = 0, _totalPublicContent = 0;
+  int _totalStudentReq = 0, totalNotice = 0, totalPublicContent = 0;
   _loadFromDatabase() async{
   if(FireBaseAuth.instance.previlagelevel>=3)  
   _onStudentRequestSubscription = dbref.reference().child('institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students').orderByChild('status').equalTo('Existing Student').onValue.listen(_onStudentRequest);
@@ -84,7 +85,7 @@ _onNotice(Event event) {
    int _prevtotalnotice = _pref.getInt("TotalNotice")==null? 0:_pref.getInt("TotalNotice");
    if(_prevtotalnotice<map.length)
     setState(() {
-      _totalNotice= map.length-_prevtotalnotice;
+      totalNotice= map.length-_prevtotalnotice;
       _pref.setInt("TotalNotice",map.length);
     });
    }
@@ -95,7 +96,8 @@ _onPublicContent(Event event) {
    int _prevtotalPublicContent = _pref.getInt("TotalPublicContent")==null? 0:_pref.getInt("TotalPublicContent");
    if(_prevtotalPublicContent<map.length)
     setState(() {
-      _totalPublicContent= map.length- _prevtotalPublicContent;
+      
+  totalPublicContent= map.length- _prevtotalPublicContent;
       _pref.setInt("TotalPublicContent", map.length);
     });
    }
@@ -219,8 +221,10 @@ _sharedprefinit() async {
                   title: Text('Admin Corner'.tr()),
                   leading: Icon(Icons.notifications_active),
                   onTap: () => Navigator.of(context).push(
-                      CupertinoPageRoute(builder: (context) => NoticeBoard(totalNotice: _totalNotice, totalPublicContent: _totalPublicContent,))),
-                  trailing:  CountDot(count: _totalNotice + _totalPublicContent),    
+                      CupertinoPageRoute(builder: (context) => NoticeBoard(totalNotice: totalNotice, totalPublicContent: 
+                  totalPublicContent,))),
+                  trailing:  CountDot(count: totalNotice + 
+              totalPublicContent),    
                 ),
                 if (FireBaseAuth.instance.previlagelevel == 4)
                   ListTile(
@@ -437,15 +441,14 @@ _sharedprefinit() async {
                         builder: (context) => LanguageDialog());
                   },
                 ),
-                // ListTile(
-                //   title: Text('GuruCool Assistant'.tr()),
-                //   leading: Icon(Icons.mic),
-                //   onTap: () {
-                //     showDialog(
-                //         context: context,
-                //         builder: (context) => LanguageDialog());
-                //   },
-                // ),
+                ListTile(
+                  title: Text('GuruCool Assistant'.tr()),
+                  leading: Icon(Icons.mic), 
+                  onTap: () {
+                  
+                    ShowBottomSheetCheck(context: context).showBottomSheet();
+                  },
+                ),
                 ListTile(
                   title: Text('Log Out'.tr()),
                   leading: Icon(Icons.exit_to_app),
