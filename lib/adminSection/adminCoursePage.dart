@@ -10,7 +10,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminCoursePage extends StatefulWidget {
   @override
@@ -18,17 +17,7 @@ class AdminCoursePage extends StatefulWidget {
 }
 
 class _AdminCoursePageState extends State<AdminCoursePage> {
-  SharedPreferences _pref;
   List _list;
-  _sharedprefinit() async {
-    _pref = await SharedPreferences.getInstance();
-  }
-
-  @override
-  void initState() {
-    _sharedprefinit();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +67,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                     return ListView.builder(
                       itemCount: courses?.length,
                       itemBuilder: (BuildContext context, int index) {
-                        _list = _pref
+                        _list = FireBaseAuth.instance.prefs
                             .getKeys()
                             .where((element) =>
                                 element.startsWith('${courses[index].name}'))
@@ -113,7 +102,8 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                         contentname;
 
                                     if (prevtotallength == 0) {
-                                      _pref.setInt(key, 1);
+                                      FireBaseAuth.instance.prefs
+                                          .setInt(key, 1);
                                     } else {
                                       _list.remove(key);
                                     }
@@ -125,7 +115,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
 
                           if (_list.length != 0) {
                             _list?.forEach((element) {
-                              _pref.remove(element);
+                              FireBaseAuth.instance.prefs.remove(element);
                             });
                           }
 
@@ -138,7 +128,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                               String searchKey = courses[index].name +
                                   "__" +
                                   value.name.toString();
-                              _list = _pref
+                              _list = FireBaseAuth.instance.prefs
                                   .getKeys()
                                   .where((element) =>
                                       element.startsWith(searchKey))
@@ -184,7 +174,6 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                   CupertinoPageRoute(
                                     builder: (context) => AdminSubjectPage(
                                       courseId: courses[index].id,
-                                      pref: _pref,
                                       passKey: '${courses[index].name}',
                                     ),
                                   ),

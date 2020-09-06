@@ -17,14 +17,11 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminSubjectPage extends StatefulWidget {
   final String courseId;
-  final SharedPreferences pref;
   final passKey;
-  AdminSubjectPage(
-      {@required this.courseId, @required this.pref, @required this.passKey});
+  AdminSubjectPage({@required this.courseId, @required this.passKey});
   @override
   _AdminSubjectPageState createState() => _AdminSubjectPageState();
 }
@@ -145,7 +142,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                         '${courses.subjects[keys.toList()[index]].name}' +
                                         "__" +
                                         value.name.toString();
-                                    _list = widget.pref
+                                    _list = FireBaseAuth.instance.prefs
                                         .getKeys()
                                         .where((element) =>
                                             element.startsWith(searchkey))
@@ -202,7 +199,6 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                                       .reference()
                                                       .child(
                                                           'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${keys.toList()[index]}'),
-                                                  pref: widget.pref,
                                                   passKey: widget.passKey +
                                                       "__" +
                                                       '${courses.subjects[keys.toList()[index]].name}'),

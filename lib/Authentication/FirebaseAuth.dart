@@ -21,6 +21,7 @@ class FireBaseAuth {
   );
   PackageInfo packageInfo;
   FirebaseUser user;
+  SharedPreferences prefs;
   var branchid, instituteid, previlagelevel, branchList;
 
   Future<List<String>> getAuthGCredentials() async {
@@ -43,36 +44,40 @@ class FireBaseAuth {
 
   Future<FirebaseUser> signInWithGoogle(BuildContext context) async {
     try {
-      var creds = await getAuthGCredentials();
-      final AuthCredential credential = GoogleAuthProvider.getCredential(
-        accessToken: creds[0],
-        idToken: creds[1],
-      );
-      final AuthResult authResult =
-          (await _auth.signInWithCredential(credential));
-      final FirebaseUser user = authResult.user;
+      FirebaseUser currUser = await FirebaseAuth.instance.currentUser();
+      if (currUser != null) {
+        this.user = currUser;
+      } else {
+        var creds = await getAuthGCredentials();
+        final AuthCredential credential = GoogleAuthProvider.getCredential(
+          accessToken: creds[0],
+          idToken: creds[1],
+        );
+        final AuthResult authResult =
+            (await _auth.signInWithCredential(credential));
+        this.user = authResult.user;
+        if (authResult.additionalUserInfo.isNewUser) {
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => FlareLoading(
+                name: 'assets/images/gurucool.flr',
+                onSuccess: (_) {
+                  Navigator.pop(context);
+                },
+                onError: (_, __) {},
+                startAnimation: 'animation',
+                until: () => Future.delayed(Duration(seconds: 10)),
+              ),
+            ),
+          );
+        }
+      }
+
       print("signed in " + user.email);
 
-      SharedPreferences prefs = await SharedPreferences.getInstance();
       if (user != null) {
         prefs.setBool('isLoggedIn', true);
       }
-      if (authResult.additionalUserInfo.isNewUser) {
-        await Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => FlareLoading(
-              name: 'assets/images/gurucool.flr',
-              onSuccess: (_) {
-                Navigator.pop(context);
-              },
-              onError: (_, __) {},
-              startAnimation: 'animation',
-              until: () => Future.delayed(Duration(seconds: 10)),
-            ),
-          ),
-        );
-      }
-      this.user = user;
       await updateClaims();
       return user;
     } catch (e) {
@@ -93,10 +98,10 @@ class FireBaseAuth {
   }
 
   updateToken() {
-
-    FirebaseMessagingService().sendNotification();// initializing messaging handlers
+    FirebaseMessagingService()
+        .sendNotification(); // initializing messaging handlers
     FirebaseMessagingService().flutterlocalnotificationplugin.cancelAll();
-    
+
     FirebaseMessaging().getToken().then((token) {
       final dbref = FirebaseDatabase.instance
           .reference()

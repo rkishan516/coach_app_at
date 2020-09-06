@@ -19,17 +19,7 @@ class CoursePage extends StatefulWidget {
 }
 
 class _CoursePageState extends State<CoursePage> {
-  SharedPreferences _pref;
   List _list;
-  _sharedprefinit() async {
-    _pref = await SharedPreferences.getInstance();
-  }
-
-  @override
-  void initState() {
-    _sharedprefinit();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +66,6 @@ class _CoursePageState extends State<CoursePage> {
                           Student.fromJson(snapshot.data.snapshot.value);
                       student.course
                           .sort((a, b) => a.courseName.compareTo(b.courseName));
-                      
 
                       return ListView.builder(
                         itemCount: student.course.length,
@@ -89,7 +78,7 @@ class _CoursePageState extends State<CoursePage> {
                                   .onValue,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                  _list = _pref
+                                  _list = FireBaseAuth.instance.prefs
                                       .getKeys()
                                       .where((element) => element.startsWith(
                                           '${student.course[index].courseName}'))
@@ -97,8 +86,11 @@ class _CoursePageState extends State<CoursePage> {
                                   int prevtotallength = _list.length;
 
                                   Map map = snapshot.data.snapshot.value;
-                                  Map<String, int> _correspondingsubject = Map();
-                                  int _totallength = 0, _contentlength, count=0;
+                                  Map<String, int> _correspondingsubject =
+                                      Map();
+                                  int _totallength = 0,
+                                      _contentlength,
+                                      count = 0;
                                   if (map != null) {
                                     map?.forEach((key1, value) {
                                       _contentlength = 0;
@@ -114,8 +106,10 @@ class _CoursePageState extends State<CoursePage> {
                                           Map _contentmap = value2["content"];
 
                                           if (_contentmap != null) {
-                                            _contentlength =_contentlength+ _contentmap.length;
-                                            _correspondingsubject[subjectname] =_contentlength;
+                                            _contentlength = _contentlength +
+                                                _contentmap.length;
+                                            _correspondingsubject[subjectname] =
+                                                _contentlength;
                                             _contentmap.forEach((key3, value3) {
                                               String contentname =
                                                   value3["title"].toString();
@@ -129,7 +123,8 @@ class _CoursePageState extends State<CoursePage> {
                                                   contentname;
 
                                               if (prevtotallength == 0) {
-                                                _pref.setInt(key, 1);
+                                                FireBaseAuth.instance.prefs
+                                                    .setInt(key, 1);
                                               } else {
                                                 _list.remove(key);
                                               }
@@ -140,33 +135,41 @@ class _CoursePageState extends State<CoursePage> {
                                     });
                                     if (_list.length != 0) {
                                       _list?.forEach((element) {
-                                        _pref.remove(element);
+                                        FireBaseAuth.instance.prefs
+                                            .remove(element);
                                       });
                                     }
-                                    if(prevtotallength!=0){
-                                    map?.forEach((key, value) { 
-                                      _totallength = _correspondingsubject[value["name"].toString()];
+                                    if (prevtotallength != 0) {
+                                      map?.forEach((key, value) {
+                                        _totallength = _correspondingsubject[
+                                            value["name"].toString()];
 
-                                      int _totalContent = _totallength ?? 0;
-                                      String searchKey = student.course[index].courseName+"__"+ value["name"].toString();
-                                       _list = _pref.getKeys().where((element) => element.startsWith(searchKey)).toList();
+                                        int _totalContent = _totallength ?? 0;
+                                        String searchKey =
+                                            student.course[index].courseName +
+                                                "__" +
+                                                value["name"].toString();
+                                        _list = FireBaseAuth.instance.prefs
+                                            .getKeys()
+                                            .where((element) =>
+                                                element.startsWith(searchKey))
+                                            .toList();
 
-                                      int _prevtotalContent =  _list.length;
-                                      print("----------------");
-                                      
-                                      print(_totalContent);
-                                      
-                                      print(_prevtotalContent);
-                                      
-                                      print("----------------");
-                                      if (_prevtotalContent < _totalContent) {
-                                      count++;
-                                      }
-                                    });
-                                  
-                                  } 
+                                        int _prevtotalContent = _list.length;
+                                        print("----------------");
+
+                                        print(_totalContent);
+
+                                        print(_prevtotalContent);
+
+                                        print("----------------");
+                                        if (_prevtotalContent < _totalContent) {
+                                          count++;
+                                        }
+                                      });
+                                    }
                                   }
-                                  
+
                                   return Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Card(
@@ -185,9 +188,7 @@ class _CoursePageState extends State<CoursePage> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                          
-                                                CountDot(
-                                                    count: count),
+                                              CountDot(count: count),
                                               SizedBox(
                                                 width: 10.0,
                                               ),
@@ -225,15 +226,12 @@ class _CoursePageState extends State<CoursePage> {
                                                   courseID: student
                                                       .course[index].courseID
                                                       .toString(),
-                                                  pref: _pref,
                                                   passKey:
                                                       '${student.course[index].courseName}'),
                                             ),
                                           )
                                               .then((value) {
-                                            setState(() {
-                                              
-                                            });
+                                            setState(() {});
                                           });
                                         },
                                       ),

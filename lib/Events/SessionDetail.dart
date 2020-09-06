@@ -3,7 +3,6 @@ import 'package:coach_app/Meeting/Fragmnets/TwoStepSelectCandidate.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../Authentication/FirebaseAuth.dart';
 
@@ -32,7 +31,6 @@ class _SessionDetailState extends State<SessionDetail> {
   final descriptionText = TextEditingController();
   final dbRef = FirebaseDatabase.instance;
   int previlagelevel = FireBaseAuth.instance.previlagelevel;
-  SharedPreferences _pref;
   String previousDescriptionText = "";
   TimeOfDay _time = TimeOfDay.now();
   TimeOfDay _picked;
@@ -104,9 +102,10 @@ class _SessionDetailState extends State<SessionDetail> {
   }
 
   _saveintodatabase() async {
-    _pref.setString(descriptionText.text, widget.passVaraible);
+    FireBaseAuth.instance.prefs
+        .setString(descriptionText.text, widget.passVaraible);
     if (widget.isedit && descriptionText.text != previousDescriptionText) {
-      _pref.remove(previousDescriptionText);
+      FireBaseAuth.instance.prefs.remove(previousDescriptionText);
     }
     if (widget.fromcourse) {
       dbRef
@@ -161,7 +160,7 @@ class _SessionDetailState extends State<SessionDetail> {
           .child(widget.passVaraible)
           .remove();
     }
-    _pref.remove(previousDescriptionText);
+    FireBaseAuth.instance.prefs.remove(previousDescriptionText);
     Navigator.of(context).pop();
   }
 
@@ -175,10 +174,6 @@ class _SessionDetailState extends State<SessionDetail> {
         },
       );
     }
-  }
-
-  _sharedprefinit() async {
-    _pref = await SharedPreferences.getInstance();
   }
 
   Widget _dropDownMenu() {
@@ -225,10 +220,6 @@ class _SessionDetailState extends State<SessionDetail> {
                 if (value != null) {
                   _firstselecteduids = value.firstSelecteduids;
                   _leftUids = value.leftuids;
-                  print("---==========---------======");
-                  print(_firstselecteduids);
-                  print(_leftUids);
-                  print("---==========---------======");
                 }
               });
           }
@@ -243,7 +234,6 @@ class _SessionDetailState extends State<SessionDetail> {
   @override
   void initState() {
     super.initState();
-    _sharedprefinit();
 
     if (!widget.fromcourse) {
       if (previlagelevel == 4)

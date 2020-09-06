@@ -9,7 +9,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:coach_app/courses/subject_page.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AddCourse extends StatefulWidget {
   final bool isEdit;
@@ -35,7 +34,6 @@ class _AddCourseState extends State<AddCourse> {
 
   final TextEditingController _ddText = TextEditingController();
   final TextEditingController _yyText = TextEditingController();
-  SharedPreferences _pref;
   var _mmperiod = [
     "MM",
     "01",
@@ -634,7 +632,8 @@ class _AddCourseState extends State<AddCourse> {
             'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList/')
         .update({course.id: course.name});
 
-    _pref.setString("${widget.course.id}", _totalText.text);
+    FireBaseAuth.instance.prefs
+        .setString("${widget.course.id}", _totalText.text);
     Navigator.of(context).pop();
   }
 
@@ -1513,9 +1512,6 @@ class _AddCourseState extends State<AddCourse> {
       _setFineText = TextEditingController()..text = "0";
     }
 
-    Timer(Duration(seconds: 0), () async {
-      _pref = await SharedPreferences.getInstance();
-    });
     editValue = widget.isEdit;
     if (widget.isEdit) _loadFromDatabase();
     if (widget.isEdit)

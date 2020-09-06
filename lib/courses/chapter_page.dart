@@ -2,7 +2,6 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/CountDot.dart';
-import 'package:coach_app/Drawer/NewBannerShow.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Events/Calender.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
@@ -14,19 +13,16 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ChapterPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;
   final String courseId;
   final String passKey;
-  final SharedPreferences pref;
   ChapterPage(
       {@required this.title,
       @required this.reference,
       @required this.courseId,
-      @required this.pref,
       @required this.passKey});
   @override
   _ChapterPageState createState() => _ChapterPageState();
@@ -42,7 +38,6 @@ class _ChapterPageState extends State<ChapterPage>
 
   @override
   void initState() {
-  
     isAdmin = FireBaseAuth.instance.previlagelevel != 2;
     _tabController = TabController(length: isAdmin ? 2 : 1, vsync: this);
 
@@ -129,15 +124,15 @@ class _ChapterPageState extends State<ChapterPage>
                             for (int i = 0; i < _showCountDot.length; i++) {
                               _showCountDot[i] = false;
                             }
-  
-                            return ListView.builder( 
+
+                            return ListView.builder(
                               itemCount: length,
                               itemBuilder: (BuildContext context, int index) {
                                 String searchkey = widget.passKey +
                                     "__" +
                                     '${subjects.chapters[keys.toList()[index]].name}';
-                                _list = widget.pref
-                                    .getKeys() 
+                                _list = FireBaseAuth.instance.prefs
+                                    .getKeys()
                                     .where((element) =>
                                         element.startsWith(searchkey))
                                     .toList();
@@ -201,7 +196,6 @@ class _ChapterPageState extends State<ChapterPage>
                                                       .name,
                                                   reference: widget.reference.child(
                                                       'chapters/${keys.toList()[index]}'),
-                                                  pref: widget.pref,
                                                   passKey: searchkey)),
                                         )
                                             .then((value) {

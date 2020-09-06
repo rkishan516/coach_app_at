@@ -4,7 +4,6 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ResponseCheck extends StatefulWidget {
   final DatabaseReference databaseReference;
@@ -26,7 +25,6 @@ class _ResponseCheckState extends State<ResponseCheck> {
   TextEditingController _scoreText = new TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
   PageController _pageController = PageController();
-  SharedPreferences _pref;
   int pageNumber = 0;
   bool saveScore = false;
   String key;
@@ -77,15 +75,10 @@ class _ResponseCheckState extends State<ResponseCheck> {
     _scaffoldkey.currentState.showSnackBar(snackBar);
   }
 
-  _sharedprefinit() async {
-    _pref = await SharedPreferences.getInstance();
-  }
-
   @override
   void initState() {
     super.initState();
     _loadDataFromDatabase();
-    _sharedprefinit();
     key = widget.databaseReference.path;
   }
 
@@ -116,96 +109,105 @@ class _ResponseCheckState extends State<ResponseCheck> {
         ],
       ),
       key: _scaffoldkey,
-      body: (_allStudentResponse.length > 0) ? PageView.builder(
-          onPageChanged: (number) {
-            setState(() {
-              saveScore = false;
-              pageNumber = number;
-            });
-          },
-          physics: new NeverScrollableScrollPhysics(),
-          controller: _pageController,
-          itemCount: _allStudentResponse.length,
-          itemBuilder: (context, position) {
-            String _name = _allStudentResponse.elementAt(position).name;
-            int _score = _allStudentResponse.elementAt(position).score;
-            return Column(
-              children: <Widget>[
-                Expanded(
-                  flex: 1,
-                  child: ListTile(
-                    title: Text(_name),
-                  ),
-                ),
-                Expanded(
-                  flex: 6,
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.7,
-                    child: ListView.builder(
-                        itemCount: _allStudentResponse
-                            .elementAt(position)
-                            .responses
-                            .length,
-                        itemBuilder: (context, index) {
-                          String key = _allStudentResponse
-                              .elementAt(position)
-                              .responses
-                              .keys
-                              .elementAt(index);
-                          return Card(
-                            child: ListTile(
-                              title: Text((index + 1).toString() + ". " + key),
-                              subtitle: Text(_allStudentResponse
-                                  .elementAt(position)
-                                  .responses[key]),
-                            ),
-                          );
-                        }),
-                  ),
-                ),
-                Divider(
-                  height: 20.0,
-                  thickness: 2.0,
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: _scoreText,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText:
-                          _score == -1 ? "Enter Score".tr() : _score.toString(),
+      body: (_allStudentResponse.length > 0)
+          ? PageView.builder(
+              onPageChanged: (number) {
+                setState(() {
+                  saveScore = false;
+                  pageNumber = number;
+                });
+              },
+              physics: new NeverScrollableScrollPhysics(),
+              controller: _pageController,
+              itemCount: _allStudentResponse.length,
+              itemBuilder: (context, position) {
+                String _name = _allStudentResponse.elementAt(position).name;
+                int _score = _allStudentResponse.elementAt(position).score;
+                return Column(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: ListTile(
+                        title: Text(_name),
+                      ),
                     ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    RaisedButton(
-                        color: Color(0xffF36C24),
-                        child: Text('Save Score'.tr()),
-                        onPressed: () {
-                          saveScore = true;
-                          _saveScore(
-                              _allStudentResponse.elementAt(position).uid);
-                        }),
-                    pageNumber + 1 == _allStudentResponse.length
-                        ? RaisedButton(
+                    Expanded(
+                      flex: 6,
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        child: ListView.builder(
+                            itemCount: _allStudentResponse
+                                .elementAt(position)
+                                .responses
+                                .length,
+                            itemBuilder: (context, index) {
+                              String key = _allStudentResponse
+                                  .elementAt(position)
+                                  .responses
+                                  .keys
+                                  .elementAt(index);
+                              return Card(
+                                child: ListTile(
+                                  title:
+                                      Text((index + 1).toString() + ". " + key),
+                                  subtitle: Text(_allStudentResponse
+                                      .elementAt(position)
+                                      .responses[key]),
+                                ),
+                              );
+                            }),
+                      ),
+                    ),
+                    Divider(
+                      height: 20.0,
+                      thickness: 2.0,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: _scoreText,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: _score == -1
+                              ? "Enter Score".tr()
+                              : _score.toString(),
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        RaisedButton(
                             color: Color(0xffF36C24),
-                            child: Text('Submit'.tr()),
+                            child: Text('Save Score'.tr()),
                             onPressed: () {
-                              saveScore
-                                  ? _submitcheck()
-                                  : _showsnackbar(context, "Save Score First".tr());
-                              _pref.remove(key);
-                            })
-                        : Container(),
+                              saveScore = true;
+                              _saveScore(
+                                  _allStudentResponse.elementAt(position).uid);
+                            }),
+                        pageNumber + 1 == _allStudentResponse.length
+                            ? RaisedButton(
+                                color: Color(0xffF36C24),
+                                child: Text('Submit'.tr()),
+                                onPressed: () {
+                                  saveScore
+                                      ? _submitcheck()
+                                      : _showsnackbar(
+                                          context, "Save Score First".tr());
+                                  FireBaseAuth.instance.prefs.remove(key);
+                                })
+                            : Container(),
+                      ],
+                    )
                   ],
-                )
-              ],
-            );
-          }) : Container(child: Center(child: Text('No Student has submitted the quiz'.tr()),),),
+                );
+              })
+          : Container(
+              child: Center(
+                child: Text('No Student has submitted the quiz'.tr()),
+              ),
+            ),
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/CountDot.dart';
-import 'package:coach_app/Drawer/NewBannerShow.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/InstituteAdmin/studentList.dart';
 import 'package:coach_app/Models/model.dart';
@@ -10,7 +9,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 extension StringExtension on String {
   String capitalize() {
@@ -21,13 +19,9 @@ extension StringExtension on String {
 class SubjectPage extends StatefulWidget {
   final TCourses tCourse;
   final Courses course;
-  final SharedPreferences pref;
   final String passKey;
   SubjectPage(
-      {@required this.tCourse,
-      @required this.course,
-      @required this.pref,
-      @required this.passKey});
+      {@required this.tCourse, @required this.course, @required this.passKey});
   @override
   _SubjectPageState createState() => _SubjectPageState();
 }
@@ -110,40 +104,38 @@ class _SubjectPageState extends State<SubjectPage>
                         itemBuilder: (BuildContext context, int index) {
                           int _contentlength = 0;
                           int _totalContent = 0;
-                          int count=0;
+                          int count = 0;
                           if (widget
                                   .course
                                   .subjects[widget.tCourse.subjects[index]]
                                   ?.chapters !=
-                              null) { 
-                            widget 
+                              null) {
+                            widget
                                 .course
                                 .subjects[widget.tCourse.subjects[index]]
                                 ?.chapters
                                 ?.forEach((key, value) {
                               int _indvContent = value?.content?.length ?? 0;
                               _contentlength = _indvContent;
-                            
-                            _totalContent = _contentlength;
-                            String searchkey = widget.passKey +
-                              "__" +
-                              '${widget.course.subjects[widget.tCourse.subjects[index]]?.name}'+"__" + value.name.toString() ;
-                          _list = widget.pref
-                              .getKeys()
-                              .where((element) => element.startsWith(searchkey))
-                              .toList();
-                          int _prevtotalContent = _list.length ?? _totalContent;
-                          print("00000000000000");
-                          print(_totalContent);
-                          print(_prevtotalContent);
-                          print("00000000000000");
-                          if (_prevtotalContent <_totalContent) {
-                            count++;
-                          } 
-                          
-                          });
-                        }
-                          
+
+                              _totalContent = _contentlength;
+                              String searchkey = widget.passKey +
+                                  "__" +
+                                  '${widget.course.subjects[widget.tCourse.subjects[index]]?.name}' +
+                                  "__" +
+                                  value.name.toString();
+                              _list = FireBaseAuth.instance.prefs
+                                  .getKeys()
+                                  .where((element) =>
+                                      element.startsWith(searchkey))
+                                  .toList();
+                              int _prevtotalContent =
+                                  _list.length ?? _totalContent;
+                              if (_prevtotalContent < _totalContent) {
+                                count++;
+                              }
+                            });
+                          }
 
                           if (widget.course.subjects == null) {
                             return Container();
@@ -170,9 +162,7 @@ class _SubjectPageState extends State<SubjectPage>
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                  
-                                          CountDot(
-                                              count: count),
+                                        CountDot(count: count),
                                         SizedBox(
                                           width: 10.0,
                                         ),
@@ -198,8 +188,9 @@ class _SubjectPageState extends State<SubjectPage>
                                                 .reference()
                                                 .child(
                                                     'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.tCourse.id}/subjects/${widget.tCourse.subjects[index]}'),
-                                            pref: widget.pref,
-                                            passKey: widget.passKey +"__" + '${widget.course.subjects[widget.tCourse.subjects[index]]?.name}'),
+                                            passKey: widget.passKey +
+                                                "__" +
+                                                '${widget.course.subjects[widget.tCourse.subjects[index]]?.name}'),
                                       ),
                                     )
                                         .then((value) {

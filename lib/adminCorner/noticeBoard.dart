@@ -9,7 +9,6 @@ import 'package:coach_app/adminCorner/publicContentPage.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NoticeBoard extends StatefulWidget {
   final int totalNotice;
@@ -30,14 +29,30 @@ class _NoticeBoardState extends State<NoticeBoard>
   int previlagelevel = FireBaseAuth.instance.previlagelevel;
   TabController _controller;
   int items = 2;
-  SharedPreferences _pref;
-  Map<String, String> _months = {"01":"Jan","02":"Feb","03":"Mar","04":"Apr","05":"May","06":"Jun","07":"Jul","08":"Aug","09":"Sep","10":"Oct","11":"Nov","12":"Dec","01":"Jan" };
+  Map<String, String> _months = {
+    "01": "Jan",
+    "02": "Feb",
+    "03": "Mar",
+    "04": "Apr",
+    "05": "May",
+    "06": "Jun",
+    "07": "Jul",
+    "08": "Aug",
+    "09": "Sep",
+    "10": "Oct",
+    "11": "Nov",
+    "12": "Dec",
+    "01": "Jan"
+  };
 
   _buildMessage(Messages message, bool isMe) {
-    String splitDate= message.time.split(' ')[0];
-    String noticeDate= splitDate.split("-")[2]+" "+_months[ splitDate.split("-")[1]]+" "+splitDate.split("-")[0]; 
+    String splitDate = message.time.split(' ')[0];
+    String noticeDate = splitDate.split("-")[2] +
+        " " +
+        _months[splitDate.split("-")[1]] +
+        " " +
+        splitDate.split("-")[0];
     final GestureDetector msg = GestureDetector(
-    
         onLongPress: () async {
           if (previlagelevel == 4) {
             String res = await showDialog(
@@ -52,90 +67,84 @@ class _NoticeBoardState extends State<NoticeBoard>
           }
         },
         child: Container(
-        
-          margin: 
-               EdgeInsets.only(top: 15.0, bottom: 15.0, left: 20.0, right: 20.0),
-          
+          margin:
+              EdgeInsets.only(top: 15.0, bottom: 15.0, left: 20.0, right: 20.0),
           width: MediaQuery.of(context).size.width * 0.75,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [new BoxShadow(
-            color: Colors.black,
-            blurRadius: 8.0,
-          ),]
-            
-          ),
+          decoration: BoxDecoration(color: Colors.white, boxShadow: [
+            new BoxShadow(
+              color: Colors.black,
+              blurRadius: 8.0,
+            ),
+          ]),
           child: IntrinsicHeight(
-                      child: Row( 
-                
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 2,
-                      child: Container(
-                      padding: EdgeInsets.only(top: 10.0, bottom: 10.0),  
-                      constraints: BoxConstraints.expand(),  
-                      width: 30.0,
-                      child: RotatedBox(
-                        quarterTurns: 3,
-                        child: Center(child: Text(noticeDate,
-                        style: TextStyle(
-                          color: Colors.white
-                        ),)),
-                      ),
-                      
-                      decoration: BoxDecoration(
-                      color:Color(0xffF36C24), 
-                      
-                      ),
-            
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                    constraints: BoxConstraints.expand(),
+                    width: 30.0,
+                    child: RotatedBox(
+                      quarterTurns: 3,
+                      child: Center(
+                          child: Text(
+                        noticeDate,
+                        style: TextStyle(color: Colors.white),
+                      )),
                     ),
-                  ),
-                  Expanded(
-                    flex: 13,
-                      child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 15.0),
-                      width :MediaQuery.of(context).size.width * 0.6,
-                      child: Column(
-
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(message.textMsg,
-                  
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w600)),
-              SizedBox(height: 10.0),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Text(
-                  message.time.split(' ')[1].split(':')[0]+":"+message.time.split(' ')[1].split(':')[1]+" "+message.time.split(' ')[2],
-                  style: TextStyle(
+                    decoration: BoxDecoration(
                       color: Color(0xffF36C24),
-                      fontSize:12.0,
-                      fontWeight: FontWeight.w600),
-                ),
-              ),
-            ],
-                      ),
                     ),
                   ),
-                ],
-              ),
+                ),
+                Expanded(
+                  flex: 13,
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 25.0, vertical: 15.0),
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(message.textMsg,
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600)),
+                        SizedBox(height: 10.0),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Text(
+                            message.time.split(' ')[1].split(':')[0] +
+                                ":" +
+                                message.time.split(' ')[1].split(':')[1] +
+                                " " +
+                                message.time.split(' ')[2],
+                            style: TextStyle(
+                                color: Color(0xffF36C24),
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ));
-    
-      return msg;
-    
-      
+
+    return msg;
   }
 
   _createNotice() async {
     String time = DateTime.now().toString().split(' ')[0] +
         " " +
         DateFormat('jms').format(new DateTime.now());
-    
+
     await dbRef
         .reference()
         .child('institute/${FireBaseAuth.instance.instituteid}/notices')
@@ -156,16 +165,14 @@ class _NoticeBoardState extends State<NoticeBoard>
       padding: EdgeInsets.only(left: 10.0, right: 10.0),
       height: 50.0,
       width: MediaQuery.of(context).size.width,
-      color:  Colors.grey.shade200,
+      color: Colors.grey.shade200,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Expanded(
-                      child: TextField( 
-              
+            child: TextField(
               style: TextStyle(
                 fontSize: 18.0,
-                
               ),
               autofocus: true,
               autocorrect: true,
@@ -176,32 +183,31 @@ class _NoticeBoardState extends State<NoticeBoard>
               onChanged: (value) {},
               decoration: InputDecoration(
                 hintText: 'Type a message...'.tr(),
-                
-                
                 fillColor: Colors.white,
                 filled: true,
-                contentPadding: new EdgeInsets.symmetric(vertical: 6.0, horizontal: 15.0),
+                contentPadding:
+                    new EdgeInsets.symmetric(vertical: 6.0, horizontal: 15.0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(22.0)),
                   borderSide: BorderSide(
                     color: Colors.white,
                   ),
                 ),
-                
-              ), 
+              ),
             ),
           ),
           IconButton(
-              icon: Icon(Icons.send),
-              iconSize: 35.0, alignment: Alignment.topRight,
-              color: Theme.of(context).primaryColor,
-              onPressed: () {
-                _createNotice();
-                setState(() {
-                  _textController.text = "";
-                });
-              },
-            ),
+            icon: Icon(Icons.send),
+            iconSize: 35.0,
+            alignment: Alignment.topRight,
+            color: Theme.of(context).primaryColor,
+            onPressed: () {
+              _createNotice();
+              setState(() {
+                _textController.text = "";
+              });
+            },
+          ),
         ],
       ),
     );
@@ -222,9 +228,6 @@ class _NoticeBoardState extends State<NoticeBoard>
       _allMessages.removeAt(index);
     });
   }
- _sharedprefinit() async {
-    _pref = await SharedPreferences.getInstance();
-  }
 
   @override
   void initState() {
@@ -236,7 +239,6 @@ class _NoticeBoardState extends State<NoticeBoard>
     _query.onChildAdded.listen((Event event) => setState(
         () => _allMessages.add(Messages.fromSnapshot(event.snapshot))));
     _query.onChildRemoved.listen(onEventRemoved);
-    _sharedprefinit();
   }
 
   @override
@@ -251,19 +253,25 @@ class _NoticeBoardState extends State<NoticeBoard>
         bottom: TabBar(
           controller: _controller,
           tabs: [
-            Tab(child: Row(
+            Tab(
+                child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text("Notices"),
-                SizedBox(width: 8.0,),
+                SizedBox(
+                  width: 8.0,
+                ),
                 CountDot(count: widget.totalNotice)
               ],
             )),
-            Tab(child: Row(
+            Tab(
+                child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('Public Content'),
-                SizedBox(width: 8.0,),
+                SizedBox(
+                  width: 8.0,
+                ),
                 CountDot(count: widget.totalPublicContent)
               ],
             ))
@@ -278,7 +286,7 @@ class _NoticeBoardState extends State<NoticeBoard>
             child: Column(
               children: <Widget>[
                 Expanded(
-                  child: Container( 
+                  child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey.shade200,
                       borderRadius: BorderRadius.only(
@@ -361,24 +369,31 @@ class _NoticeBoardState extends State<NoticeBoard>
                           sections[k] = Section.fromJson(v);
                         });
                         List<bool> _showCountDot = List(sections?.length);
-                        for(int i=0;i<_showCountDot.length;i++)
-                        {
+                        for (int i = 0; i < _showCountDot.length; i++) {
                           _showCountDot[i] = false;
                         }
 
                         return ListView.builder(
                           itemCount: sections?.length,
                           itemBuilder: (BuildContext context, int index) {
-                            int _totalContent = sections[sections.keys.toList()[index]]?.content?.length??0;
-                            int _duptotalContent= _totalContent;
-                            int _prevtotalContent = _pref.getInt("${sections[sections.keys.toList()[index]].name}")??0;
-                            if(_prevtotalContent<_totalContent){
+                            int _totalContent =
+                                sections[sections.keys.toList()[index]]
+                                        ?.content
+                                        ?.length ??
+                                    0;
+                            int _duptotalContent = _totalContent;
+                            int _prevtotalContent = FireBaseAuth.instance.prefs
+                                    .getInt(
+                                        "${sections[sections.keys.toList()[index]].name}") ??
+                                0;
+                            if (_prevtotalContent < _totalContent) {
                               _showCountDot[index] = true;
-                              
-                              _totalContent  =_totalContent - _prevtotalContent;
-                            }
-                            else{
-                               _pref.setInt("${sections[sections.keys.toList()[index]].name}", _duptotalContent);
+
+                              _totalContent = _totalContent - _prevtotalContent;
+                            } else {
+                              FireBaseAuth.instance.prefs.setInt(
+                                  "${sections[sections.keys.toList()[index]].name}",
+                                  _duptotalContent);
                             }
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -394,11 +409,17 @@ class _NoticeBoardState extends State<NoticeBoard>
                                     height: 40,
                                     width: 80,
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                        if(FireBaseAuth.instance.previlagelevel!=4  && _showCountDot[index])
-                                        CountDot(count: _totalContent ),
-                                        SizedBox(width: 10.0,),
+                                        if (FireBaseAuth
+                                                    .instance.previlagelevel !=
+                                                4 &&
+                                            _showCountDot[index])
+                                          CountDot(count: _totalContent),
+                                        SizedBox(
+                                          width: 10.0,
+                                        ),
                                         Icon(
                                           Icons.chevron_right,
                                           color: Color(0xffF36C24),
@@ -406,15 +427,14 @@ class _NoticeBoardState extends State<NoticeBoard>
                                       ],
                                     ),
                                   ),
-                                   
                                   onTap: () {
-
-                                    _pref.setInt("${sections[sections.keys.toList()[index]].name}", _duptotalContent);
+                                    FireBaseAuth.instance.prefs.setInt(
+                                        "${sections[sections.keys.toList()[index]].name}",
+                                        _duptotalContent);
 
                                     Navigator.of(context).push(
                                         MaterialPageRoute(builder: (context) {
                                       return PublicContentPage(
-        
                                           title: sections[
                                                   sections.keys.toList()[index]]
                                               .name,

@@ -10,7 +10,6 @@ import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CourseRegistrationPage extends StatefulWidget {
   final DatabaseReference ref;
@@ -235,21 +234,18 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                                 }),
                                             onPressed: () async {
                                               bool isPaid;
-                                              var value =
-                                                  await SharedPreferences
-                                                      .getInstance();
                                               if (FireBaseAuth
                                                       .instance.instituteid ==
                                                   null) {
                                                 FireBaseAuth
                                                         .instance.instituteid =
-                                                    value.get('insCode');
+                                                    FireBaseAuth.instance.prefs.get('insCode');
                                               }
                                               if (FireBaseAuth
                                                       .instance.branchid ==
                                                   null) {
                                                 FireBaseAuth.instance.branchid =
-                                                    value.get('branchCode');
+                                                    FireBaseAuth.instance.prefs.get('branchCode');
                                               }
 
                                               await Navigator.of(context).push(

@@ -12,14 +12,13 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ContentPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;
-  final SharedPreferences  pref;
   final String passKey;
-  ContentPage({@required this.title, @required this.reference, @required this.pref, @required this.passKey});
+  ContentPage(
+      {@required this.title, @required this.reference, @required this.passKey});
   @override
   _ContentPageState createState() => _ContentPageState();
 }
@@ -27,11 +26,6 @@ class ContentPage extends StatefulWidget {
 class _ContentPageState extends State<ContentPage> {
   int length;
   List<bool> _showCountDot;
-  @override
-  void initState() {
-    
-    super.initState();
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,38 +58,35 @@ class _ContentPageState extends State<ContentPage> {
                     var keys;
                     if (chapter.content != null) {
                       keys = chapter.content.keys.toList()
-                        ..sort((a, b) => chapter.content[a].title.toLowerCase()
+                        ..sort((a, b) => chapter.content[a].title
+                            .toLowerCase()
                             .compareTo(chapter.content[b].title.toLowerCase()));
                     }
                     length = chapter.content?.length ?? 0;
-                     _showCountDot = List(length);
-                      for (int i = 0; i < _showCountDot.length; i++) {
-                        _showCountDot[i] = false;
-                      }
-                    
+                    _showCountDot = List(length);
+                    for (int i = 0; i < _showCountDot.length; i++) {
+                      _showCountDot[i] = false;
+                    }
+
                     return ListView.builder(
                       itemCount: length,
                       itemBuilder: (BuildContext context, int index) {
-                        String checkkey = widget.passKey+"__"+'${chapter.content[keys.toList()[index]].title}';
-                        
-                        if(widget.pref.getInt(checkkey)!=1){
-                         _showCountDot[index] = true;
-                         widget.pref.setInt(checkkey,1);
+                        String checkkey = widget.passKey +
+                            "__" +
+                            '${chapter.content[keys.toList()[index]].title}';
+
+                        if (FireBaseAuth.instance.prefs.getInt(checkkey) != 1) {
+                          _showCountDot[index] = true;
+                          FireBaseAuth.instance.prefs.setInt(checkkey, 1);
                         }
                         bool isEnabled = true;
-                        if (chapter
-                                .content[keys.toList()[index]]
-                                .kind ==
+                        if (chapter.content[keys.toList()[index]].kind ==
                             'Quiz') {
                           isEnabled = false;
                           DateTime endTime = chapter
-                              .content[keys.toList()[index]]
-                              .quizModel
-                              .startTime
-                              .add(chapter
-                                  .content[keys.toList()[index]]
-                                  .quizModel
-                                  .testTime);
+                              .content[keys.toList()[index]].quizModel.startTime
+                              .add(chapter.content[keys.toList()[index]]
+                                  .quizModel.testTime);
                           if (DateTime.now().isAfter(chapter
                                   .content[keys.toList()[index]]
                                   .quizModel
@@ -114,15 +105,10 @@ class _ContentPageState extends State<ContentPage> {
                                 backgroundColor:
                                     isEnabled ? Color(0xffF36C24) : null,
                                 child: Icon(
-                                  chapter
-                                              .content[keys
-                                                  .toList()[index]]
-                                              .kind ==
+                                  chapter.content[keys.toList()[index]].kind ==
                                           'Youtube Video'
                                       ? Icons.videocam
-                                      : chapter
-                                                  .content[keys
-                                                      .toList()[index]]
+                                      : chapter.content[keys.toList()[index]]
                                                   .kind ==
                                               'PDF'
                                           ? Icons.library_books
@@ -136,26 +122,25 @@ class _ContentPageState extends State<ContentPage> {
                                 style: TextStyle(color: Colors.blue),
                               ),
                               trailing: Container(
-                                    height: 40,
-                                    width: 80,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        if(_showCountDot[index])
-                                       NewBannerShow(),
-                                        SizedBox(width: 10.0,),
-                                        Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xffF36C24),
-                                        ),
-                                      ],
+                                height: 40,
+                                width: 80,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    if (_showCountDot[index]) NewBannerShow(),
+                                    SizedBox(
+                                      width: 10.0,
                                     ),
-                                  ),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      color: Color(0xffF36C24),
+                                    ),
+                                  ],
+                                ),
+                              ),
                               onTap: () {
                                 if (chapter
-                                        .content[keys
-                                            .toList()[index]]
-                                        .kind ==
+                                        .content[keys.toList()[index]].kind ==
                                     'Youtube Video') {
                                   Navigator.of(context).push(
                                     CupertinoPageRoute(
@@ -163,39 +148,30 @@ class _ContentPageState extends State<ContentPage> {
                                           reference: widget.reference.child(
                                               'content/${keys.toList()[index]}'),
                                           link: chapter
-                                              .content[keys
-                                                  .toList()[index]]
+                                              .content[keys.toList()[index]]
                                               .ylink),
                                     ),
                                   );
                                 } else if (chapter
-                                        .content[keys
-                                            .toList()[index]]
-                                        .kind ==
+                                        .content[keys.toList()[index]].kind ==
                                     'PDF') {
                                   Navigator.of(context).push(
                                     CupertinoPageRoute(
                                       builder: (context) => PDFPlayer(
                                         link: chapter
-                                            .content[keys
-                                                .toList()[index]]
-                                            .link,
+                                            .content[keys.toList()[index]].link,
                                       ),
                                     ),
                                   );
                                 } else if (chapter
-                                        .content[keys
-                                            .toList()[index]]
-                                        .kind ==
+                                        .content[keys.toList()[index]].kind ==
                                     'Quiz') {
-                                  if (snapshot.data.snapshot.value['content'][
-                                              keys
-                                                  .toList()[index]]['quizModel']
-                                          ['result'] !=
+                                  if (snapshot.data.snapshot.value['content']
+                                              [keys.toList()[index]]
+                                          ['quizModel']['result'] !=
                                       null) {
-                                    if (snapshot.data.snapshot.value['content'][
-                                                    keys
-                                                        .toList()[index]]
+                                    if (snapshot.data.snapshot.value['content']
+                                                    [keys.toList()[index]]
                                                 ['quizModel']['result']
                                             [FireBaseAuth.instance.user.uid] !=
                                         null) {
@@ -207,18 +183,13 @@ class _ContentPageState extends State<ContentPage> {
                                     }
                                   }
                                   DateTime endTime = chapter
-                                      .content[
-                                          keys.toList()[index]]
+                                      .content[keys.toList()[index]]
                                       .quizModel
                                       .startTime
-                                      .add(chapter
-                                          .content[keys
-                                              .toList()[index]]
-                                          .quizModel
-                                          .testTime);
+                                      .add(chapter.content[keys.toList()[index]]
+                                          .quizModel.testTime);
                                   if (DateTime.now().isAfter(chapter
-                                          .content[keys
-                                              .toList()[index]]
+                                          .content[keys.toList()[index]]
                                           .quizModel
                                           .startTime) &&
                                       DateTime.now().isBefore(endTime)) {

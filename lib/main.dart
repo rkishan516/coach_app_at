@@ -20,6 +20,7 @@ void main() async {
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   FireBaseAuth.instance.packageInfo = packageInfo;
+  FireBaseAuth.instance.prefs = await SharedPreferences.getInstance();
   FirebaseDatabase.instance.setPersistenceEnabled(true);
 
   if (packageInfo.packageName != "com.VysionTech.gurucool") {
@@ -65,8 +66,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   SharedPreferences prefs;
   _getPrefs() async {
-    prefs = await SharedPreferences.getInstance();
-    return prefs;
+    prefs = FireBaseAuth.instance.prefs;
   }
 
   @override

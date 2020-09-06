@@ -1,8 +1,8 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/QuizResponse/ResponseCheck.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class QuizModalResponse extends StatefulWidget {
   final DatabaseReference databaseReference;
@@ -15,15 +15,13 @@ class QuizModalResponse extends StatefulWidget {
 
 class _QuizModalState extends State<QuizModalResponse> {
   TextEditingController _scoretextValue = TextEditingController();
-  SharedPreferences _pref;
   final dbref = FirebaseDatabase.instance;
   final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
   String key;
   bool isQuiz = false;
   _sharedprefinit() async {
-    _pref = await SharedPreferences.getInstance();
     setState(() {
-      _scoretextValue.text = _pref.getString(key);
+      _scoretextValue.text = FireBaseAuth.instance.prefs.getString(key);
     });
   }
 
@@ -92,14 +90,16 @@ class _QuizModalState extends State<QuizModalResponse> {
                       padding: EdgeInsets.all(8.0),
                       child: GestureDetector(
                         onTap: () {
-                          _pref.setString(key, _scoretextValue.text);
+                          FireBaseAuth.instance.prefs
+                              .setString(key, _scoretextValue.text);
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => ResponseCheck(
                                       databaseReference:
                                           widget.databaseReference,
-                                      totalMarks: _pref.getString(key))));
+                                      totalMarks: FireBaseAuth.instance.prefs
+                                          .getString(key))));
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -110,8 +110,7 @@ class _QuizModalState extends State<QuizModalResponse> {
                           alignment: Alignment.center,
                           child: Text(
                             "Save Score".tr(),
-                            style: TextStyle(
-                                color: Colors.white, fontSize: 16),
+                            style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ),
                       ),

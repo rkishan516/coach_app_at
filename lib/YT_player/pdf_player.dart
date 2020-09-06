@@ -2,7 +2,6 @@ import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-
 class PDFPlayer extends StatefulWidget {
   final String link;
   PDFPlayer({this.link});
