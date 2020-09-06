@@ -41,7 +41,8 @@ class _VideoConferencingState extends State<VideoConferencing> {
           "eventkey": widget.eventkey.toString(),
           "email": FireBaseAuth.instance.user.email,
           "hostPrevilage": widget.hostprevilagelevel.toString(),
-          "ishost": (widget.hostuid == FireBaseAuth.instance.user.uid).toString()
+          "ishost":
+              (widget.hostuid == FireBaseAuth.instance.user.uid).toString()
         },
         initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
@@ -102,7 +103,7 @@ class _VideoConferencingState extends State<VideoConferencing> {
         "&ishost=" +
         _ishost.toString();
 
-    var url = 'googlechrome://navigate?url=$midurl';
+    // var url = 'googlechrome://navigate?url=$midurl';
     return midurl;
     // if (await canLaunch(url)) {
     //   await launch(url, forceWebView: false,
