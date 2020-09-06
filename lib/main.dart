@@ -14,8 +14,6 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // SystemChrome.setEnabledSystemUIOverlays([]);
@@ -70,13 +68,14 @@ class MyApp extends StatelessWidget {
   SharedPreferences prefs;
   _getPrefs() async {
     prefs = FireBaseAuth.instance.prefs;
+    return prefs;
   }
-  
+
   @override
   Widget build(BuildContext context) {
     initializeDateFormatting();
     return MaterialApp(
-       routes: RouteMap().createroute(),
+      routes: RouteMap().createroute(),
       title: 'Guru Cool',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

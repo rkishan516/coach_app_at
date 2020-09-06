@@ -1,13 +1,8 @@
-import 'dart:async';
-
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Dialogs/uploadDialog.dart';
-import 'package:coach_app/YT_player/pdf_player.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class VideoConferencing extends StatefulWidget {
   final String passVariable;
@@ -36,8 +31,20 @@ class _VideoConferencingState extends State<VideoConferencing> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PDFPlayer(
-        link: _joinMeeting(),
+      body: InAppWebView(
+        initialUrl: _joinMeeting(),
+        initialOptions: InAppWebViewGroupOptions(
+          crossPlatform: InAppWebViewOptions(
+            mediaPlaybackRequiresUserGesture: false,
+            debuggingEnabled: true,
+          ),
+        ),
+        androidOnPermissionRequest: (InAppWebViewController controller,
+            String origin, List<String> resources) async {
+          return PermissionRequestResponse(
+              resources: resources,
+              action: PermissionRequestResponseAction.GRANT);
+        },
       ),
     );
   }
