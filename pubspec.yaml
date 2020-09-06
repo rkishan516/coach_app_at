@@ -60,6 +60,9 @@ dependencies:
   http:
   file_picker:
   speech_recognition:
+    git:
+        url: https://github.com/webeverde/speech_recognition.git
+        ref: master
   flutter_secure_storage:
   linked_scroll_controller:
   avatar_glow:
