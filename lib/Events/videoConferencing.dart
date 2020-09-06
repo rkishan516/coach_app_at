@@ -33,6 +33,16 @@ class _VideoConferencingState extends State<VideoConferencing> {
     return Scaffold(
       body: InAppWebView(
         initialUrl: _joinMeeting(),
+        initialHeaders: {
+          "previlagelevel": FireBaseAuth.instance.previlagelevel.toString(),
+          "photourl": FireBaseAuth.instance.user.photoUrl,
+          "title": 'GuruCoolSession' + widget.eventkey.toString(),
+          "displayName": FireBaseAuth.instance.user.displayName,
+          "eventkey": widget.eventkey.toString(),
+          "email": FireBaseAuth.instance.user.email,
+          "hostPrevilage": widget.hostprevilagelevel.toString(),
+          "ishost": (widget.hostuid == FireBaseAuth.instance.user.uid).toString()
+        },
         initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
             mediaPlaybackRequiresUserGesture: false,
@@ -95,16 +105,8 @@ class _VideoConferencingState extends State<VideoConferencing> {
     var url = 'googlechrome://navigate?url=$midurl';
     return midurl;
     // if (await canLaunch(url)) {
-    //   await launch(url, forceWebView: false, headers: {
-    //     "previlagelevel": FireBaseAuth.instance.previlagelevel.toString(),
-    //     "photourl": FireBaseAuth.instance.user.photoUrl,
-    //     "title": 'GuruCoolSession' + widget.eventkey.toString(),
-    //     "displayName": FireBaseAuth.instance.user.displayName,
-    //     "eventkey": widget.eventkey.toString(),
-    //     "email": FireBaseAuth.instance.user.email,
-    //     "hostPrevilage": widget.hostprevilagelevel.toString(),
-    //     "ishost": _ishost.toString()
-    //   });
+    //   await launch(url, forceWebView: false,
+    // );
     // } else {
     //   throw 'Could not launch $url';
     // }
