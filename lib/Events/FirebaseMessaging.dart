@@ -42,30 +42,33 @@ class FirebaseMessagingService {
     _firebaseMessaging.requestNotificationPermissions(
         const IosNotificationSettings(sound: true, badge: true, alert: true));
   }
+
   // TOP-LEVEL or STATIC function to handle background messages
-   static Future<dynamic> myBackgroundMessageHandler(
+  static Future<dynamic> myBackgroundMessageHandler(
       Map<String, dynamic> message) {
     print('AppPushs myBackgroundMessageHandler : $message');
     showNotification(message['data']['title'], message['data']['body']);
     return Future<void>.value();
   }
-   static showNotification(String title, String body) async {
+
+  static showNotification(String title, String body) async {
     FlutterLocalNotificationsPlugin flutterlocalnotificationplugin =
         new FlutterLocalNotificationsPlugin();
     var androidinit = AndroidInitializationSettings('@mipmap/launcher_icon');
     var ios = IOSInitializationSettings();
     var initializationSettings = InitializationSettings(androidinit, ios);
     flutterlocalnotificationplugin.initialize(initializationSettings);
- 
+
     var android = AndroidNotificationDetails(
-        title+randomNumeric(4).toString(), title+randomNumeric(4).toString(), body);
+        title + randomNumeric(4).toString(),
+        title + randomNumeric(4).toString(),
+        body);
     var iOS = IOSNotificationDetails();
     var platform = NotificationDetails(android, iOS);
-    int notification_id= int.parse(randomNumeric(4));
+    int notification_id = int.parse(randomNumeric(4));
     new Future.delayed(Duration.zero, () {
-      flutterlocalnotificationplugin.show(notification_id, title, body, platform);
-      
-      
+      flutterlocalnotificationplugin.show(
+          notification_id, title, body, platform);
     });
     //await flutterlocalnotificationplugin.show(0, title, body, platform);
   }
