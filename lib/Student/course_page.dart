@@ -156,13 +156,7 @@ class _CoursePageState extends State<CoursePage> {
                                             .toList();
 
                                         int _prevtotalContent = _list.length;
-                                        print("----------------");
 
-                                        print(_totalContent);
-
-                                        print(_prevtotalContent);
-
-                                        print("----------------");
                                         if (_prevtotalContent < _totalContent) {
                                           count++;
                                         }

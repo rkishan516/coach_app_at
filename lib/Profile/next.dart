@@ -40,7 +40,7 @@ class TeacherProfilePage extends StatelessWidget {
               return UploadDialog(warning: 'Fetching'.tr());
             }
             Teacher teacher = Teacher.fromJson(snapshot.data.snapshot.value);
-            print(teacher.phoneNo);
+
             return Center(
               child: Column(
                 children: <Widget>[

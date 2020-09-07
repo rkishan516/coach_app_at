@@ -54,12 +54,10 @@ class _InsideSheetState extends State<InsideSheet> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   void activateSpeechRecognizer() {
-    print('_MyAppState.activateSpeechRecognizer... ');
     _speech = new SpeechRecognition();
     _speech.setAvailabilityHandler(
         (bool result) => setState(() => _isAvailable = result));
     _speech.setCurrentLocaleHandler((String locale) {
-      print('_MyAppState.onCurrentLocale... $locale');
       setState(
           () => selectedLang = languages.firstWhere((l) => l.code == locale));
     });
@@ -140,9 +138,8 @@ class _InsideSheetState extends State<InsideSheet> {
                       onPressed: _isAvailable && !_isListening
                           ? () => _speech
                               .listen(locale: selectedLang.code)
-                              .then((result) => print(
-                                  '_MyAppState.start => result ${result}'))
-                              .catchError((err) => {print(err)})
+                              .then((result) => {})
+                              .catchError((err) => {})
                           : _isListening
                               ? () => _speech.stop().then((result) =>
                                   setState(() => _isListening = result))

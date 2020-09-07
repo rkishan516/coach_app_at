@@ -204,8 +204,6 @@ class _FeeUpdateState extends State<FeeUpdate> {
                           if (val == true) {
                             for (int i = 0; i <= index; i++) {
                               installments[i] = true;
-                              print(i + 1);
-                              print(installments[i]);
                             }
                           } else {
                             for (int i = index;

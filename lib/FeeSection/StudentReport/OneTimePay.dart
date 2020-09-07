@@ -58,7 +58,6 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
           accountId = value.value;
 
           void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-            print('Payment Successful');
             await dbref
                 .reference()
                 .child(
@@ -85,12 +84,10 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
           }
 
           void _handlePaymentError(PaymentFailureResponse response) {
-            print('Payment Failed');
             // Do something when payment fails
           }
 
           void _handleExternalWallet(ExternalWalletResponse response) {
-            print('Payment External Wallet');
             // Do something when an external wallet was selected
           }
 
@@ -162,7 +159,7 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
           final difference = DateTime(yyyy, mm, dd)
               .difference(DateTime(endyyyy, endmm, enddd))
               .inDays;
-          print("Difference is $difference");
+
           Map fineMap = map["SetFine"];
           int count = int.parse(fineMap["Duration"].toString().split(" ")[0]);
           String period = fineMap["Duration"].toString().split(" ")[1];

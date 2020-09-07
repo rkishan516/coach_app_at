@@ -35,10 +35,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
         .once()
         .then((DataSnapshot snapshot) {
       _hashMap = snapshot.value;
-      print(_hashMap);
       _hashMap?.forEach((key, value) {
-        print(key);
-        print(value['response']);
         _lMap = value['response'];
         map = _lMap.map((a, b) => MapEntry(a as String, b as String));
         setState(() {

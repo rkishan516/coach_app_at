@@ -113,7 +113,7 @@ class _SelectCandidateState extends State<SelectCandidate> {
       String _branches = FireBaseAuth.instance.branchList.toString();
       List<String> _branchlist =
           _branches.replaceAll("[", "").replaceAll("]", "").split(",");
-      print(_branchlist);
+
       _branchlist.forEach((element) async {
         DataSnapshot snapshot = await dbref
             .reference()

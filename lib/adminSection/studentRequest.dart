@@ -400,7 +400,6 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                                               widget.student.requestedCourseFee
                                                   .installments.length;
                                           i++) {
-                                        print(i);
                                         widget.student.requestedCourseFee
                                             .installments[i] = false;
                                       }

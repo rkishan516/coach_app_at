@@ -938,9 +938,6 @@ class Section {
         content[k] = Content.fromJson(v);
       });
     }
-    print('.......................///');
-      print(content);
-      
   }
 
   Map<String, dynamic> toJson() {

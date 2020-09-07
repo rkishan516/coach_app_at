@@ -33,14 +33,13 @@ class _DueFeeReportState extends State<DueFeeReport> {
 
           try {
             var index = studentmodel.listInstallment?.firstWhere((element) {
-              print(element.sequence);
               if (element.status == "Due" || element.status == "Fine") {
                 String duration = studentmodel
                     .listInstallment[int.parse(
                             element.sequence.replaceAll("Installment", "")) -
                         2]
                     ?.duration;
-                print(duration);
+
                 int enddd = int.parse(duration.split(" ")[0]);
                 int endmm = int.parse(duration.split(" ")[1]);
                 int endyy = int.parse(duration.split(" ")[2]);
@@ -53,9 +52,7 @@ class _DueFeeReportState extends State<DueFeeReport> {
             });
             if (index != null) list.add(studentmodel);
             _coresspondingmap[studentmodel.uid] = index;
-          } catch (e) {
-            print(e);
-          }
+          } catch (e) {}
           setState(() {
             _studentList = list;
           });
@@ -65,9 +62,7 @@ class _DueFeeReportState extends State<DueFeeReport> {
                 element.status == "Due" || element.status == "Fine");
             if (index != null) list.add(studentmodel);
             _coresspondingmap[studentmodel.uid] = index;
-          } catch (e) {
-            print(e);
-          }
+          } catch (e) {}
 
           setState(() {
             _studentList = list;
@@ -89,9 +84,7 @@ class _DueFeeReportState extends State<DueFeeReport> {
             _coresspondingDueMap[studentmodel.uid] = PaidInstallemnt(
                 sum.toStringAsFixed(2), fine.toStringAsFixed(2));
           }
-        } catch (e) {
-          print(e);
-        }
+        } catch (e) {}
         setState(() {
           _studentList = list;
         });

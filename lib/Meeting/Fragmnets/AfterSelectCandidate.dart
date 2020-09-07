@@ -25,7 +25,7 @@ class _SelectCandidateState extends State<AfterSelectCandidate> {
       String _branches = widget.searchVariable;
       List<String> _branchlist =
           _branches.replaceAll("[", "").replaceAll("]", "").split(",");
-      print(_branchlist);
+
       _branchlist.forEach((element) async {
         DataSnapshot snapshot = await dbref
             .reference()
@@ -79,7 +79,7 @@ class _SelectCandidateState extends State<AfterSelectCandidate> {
         });
       });
       Map map = widget.map[widget.searchVariable]["teachers"];
-      print(map);
+
       map?.forEach((key, value) {
         if (key.toString().length >= 25) {
           _list.add(TwoStepSelectedCandidateModel("", value["qualification"],
@@ -92,8 +92,6 @@ class _SelectCandidateState extends State<AfterSelectCandidate> {
       });
     } else if (widget.type == "Authorities of a branch" &&
         previlagelevel == 34) {
-      print(widget.searchVariable);
-      print(">>>>>>>>>>>....");
       DataSnapshot subadminsnapshot = await dbref
           .reference()
           .child(
@@ -122,14 +120,14 @@ class _SelectCandidateState extends State<AfterSelectCandidate> {
           _correspondingmap = _correspondingmap;
         });
       });
-      print(widget.searchVariable);
+
       DataSnapshot teachersnapshot = await dbref
           .reference()
           .child(
               'institute/${FireBaseAuth.instance.instituteid}/branches/${widget.searchVariable}/teachers')
           .once();
       Map map = teachersnapshot.value;
-      print(map);
+
       map?.forEach((key, value) {
         if (key.toString().length >= 25) {
           _list.add(TwoStepSelectedCandidateModel("", value["qualification"],
@@ -146,7 +144,6 @@ class _SelectCandidateState extends State<AfterSelectCandidate> {
         }
       });
     } else if (widget.type == "Teachers of a course") {
-      print("innnncourseafter${widget.searchVariable}");
       DataSnapshot snapshot = await dbref
           .reference()
           .child(
@@ -177,7 +174,6 @@ class _SelectCandidateState extends State<AfterSelectCandidate> {
         });
       });
     } else if (widget.type == "Teachers of a subject") {
-      print(widget.searchVariable);
       DataSnapshot snapshot = await dbref
           .reference()
           .child(
@@ -187,7 +183,6 @@ class _SelectCandidateState extends State<AfterSelectCandidate> {
       map?.forEach((key, value) {
         Map coursemap = value["mentor"];
         coursemap.forEach((mentor, mentorvalue) async {
-          print(mentorvalue);
           DataSnapshot teachersnapshot = await dbref
               .reference()
               .child(
@@ -197,8 +192,6 @@ class _SelectCandidateState extends State<AfterSelectCandidate> {
               .once();
           Map teachermap = teachersnapshot.value;
           teachermap.forEach((teacherkey, teachervalue) {
-            print(teacherkey);
-            print(teachervalue);
             if (teacherkey.toString().length >= 25) {
               _list.add(TwoStepSelectedCandidateModel("", teachervalue["name"],
                   value["name"], teachervalue["photoUrl"], teacherkey));

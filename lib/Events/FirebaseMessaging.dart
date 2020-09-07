@@ -22,20 +22,17 @@ class FirebaseMessagingService {
     _firebaseMessaging.requestNotificationPermissions();
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) {
-        print('AppPushs onMessage : $message');
         showNotification(message['data']['title'], message['data']['body']);
         return;
       },
       onBackgroundMessage: Platform.isIOS ? null : myBackgroundMessageHandler,
       onResume: (Map<String, dynamic> message) {
-        print('AppPushs onResume : $message');
         if (Platform.isIOS) {
           showNotification(message['data']['title'], message['data']['body']);
         }
         return;
       },
       onLaunch: (Map<String, dynamic> message) {
-        print('AppPushs onLaunch : $message');
         return;
       },
     );
@@ -46,7 +43,6 @@ class FirebaseMessagingService {
   // TOP-LEVEL or STATIC function to handle background messages
   static Future<dynamic> myBackgroundMessageHandler(
       Map<String, dynamic> message) {
-    print('AppPushs myBackgroundMessageHandler : $message');
     showNotification(message['data']['title'], message['data']['body']);
     return Future<void>.value();
   }
@@ -70,14 +66,10 @@ class FirebaseMessagingService {
       flutterlocalnotificationplugin.show(
           notification_id, title, body, platform);
     });
-    //await flutterlocalnotificationplugin.show(0, title, body, platform);
   }
 
   void storeTokenintoDatabase() async {
     _firebaseMessaging.getToken().then((token) {
-      print("/////////-----.........");
-      print("........$token.............");
-
       final dbref = FirebaseDatabase.instance
           .reference()
           .child('institute/${FireBaseAuth.instance.instituteid}/');

@@ -24,9 +24,7 @@ class _PaidReportState extends State<PaidReport> {
       setState(() {
         _studentList = list;
       });
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   @override
@@ -62,7 +60,6 @@ class _PaidReportState extends State<PaidReport> {
                   .amount;
             }
           } catch (e) {
-            print(e);
             return null;
           }
 

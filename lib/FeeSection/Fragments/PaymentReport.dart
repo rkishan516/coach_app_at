@@ -45,11 +45,7 @@ class _PayementReportState extends State<PayementReport> {
             _coresspondingStatus[element.uid] = "Fine";
 
             _coresspondingmap[element.uid] = index;
-
-            print(e);
-          } catch (e) {
-            print(e);
-          }
+          } catch (e) {}
         }
       }
     });
@@ -94,9 +90,7 @@ class _PayementReportState extends State<PayementReport> {
                       "\n" +
                       "Paid Date: " +
                       lastpaidtime.replaceAll(" ", "/");
-                } catch (e) {
-                  print(e);
-                }
+                } catch (e) {}
               } else if (_coresspondingStatus[_studentList[index].uid] ==
                   "Fine") {
                 subTitle = "Status: Fine" +

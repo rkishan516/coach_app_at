@@ -42,7 +42,6 @@ class _PaymentTypeState extends State<PaymentType> {
     //If Installments are off
     if (_installmentsnapshot.value != null) {
       if (!_installmentsnapshot.value) {
-        print(">>>>>>>>");
         _allowonetime = true;
 
         //Previous payment collection
