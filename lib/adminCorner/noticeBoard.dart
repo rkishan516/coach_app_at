@@ -41,8 +41,7 @@ class _NoticeBoardState extends State<NoticeBoard>
     "09": "Sep",
     "10": "Oct",
     "11": "Nov",
-    "12": "Dec",
-    "01": "Jan"
+    "12": "Dec"
   };
 
   _buildMessage(Messages message, bool isMe) {

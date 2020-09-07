@@ -61,10 +61,9 @@ class FirebaseMessagingService {
         body);
     var iOS = IOSNotificationDetails();
     var platform = NotificationDetails(android, iOS);
-    int notification_id = int.parse(randomNumeric(4));
     new Future.delayed(Duration.zero, () {
       flutterlocalnotificationplugin.show(
-          notification_id, title, body, platform);
+          int.parse(randomNumeric(4)), title, body, platform);
     });
   }
 
