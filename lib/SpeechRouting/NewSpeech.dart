@@ -1,10 +1,6 @@
 import 'dart:convert';
 
 import 'package:avatar_glow/avatar_glow.dart';
-import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Authentication/welcome_page.dart';
-import 'package:coach_app/Dialogs/areYouSure.dart';
-import 'package:coach_app/Dialogs/languageDialog.dart';
 import 'package:coach_app/SpeechRouting/RouteMap.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_recognition/speech_recognition.dart';

@@ -1,6 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/CountDot.dart';
-import 'package:coach_app/Drawer/NewBannerShow.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Events/StudentEvent.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
