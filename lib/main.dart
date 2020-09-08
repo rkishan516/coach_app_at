@@ -42,10 +42,10 @@ void main() async {
       InAppUpdate.startFlexibleUpdate().then((value) {
         InAppUpdate.completeFlexibleUpdate()
             .then((value) {})
-            .catchError((e) => {});
-      }).catchError((e) => {});
+            .catchError((e) => {print(e)});
+      }).catchError((e) => {print(e)});
     }
-  }).catchError((e) => {});
+  }).catchError((e) => {print(e)});
 
   runApp(
     EasyLocalization(

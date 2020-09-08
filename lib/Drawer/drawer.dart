@@ -34,18 +34,21 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-getDrawer(BuildContext context) {
+getDrawer(BuildContext context, {bool branchListPage = false}) {
   FirebaseUser user = FireBaseAuth.instance.user;
-  return GuruCoolDrawer(user: user);
+  return GuruCoolDrawer(
+    user: user,
+    branchListPage: branchListPage,
+  );
 }
 
 class GuruCoolDrawer extends StatefulWidget {
-  const GuruCoolDrawer({
-    Key key,
-    @required this.user,
-  }) : super(key: key);
+  const GuruCoolDrawer(
+      {Key key, @required this.user, @required this.branchListPage})
+      : super(key: key);
 
   final FirebaseUser user;
+  final bool branchListPage;
 
   @override
   GuruCoolDrawerState createState() => GuruCoolDrawerState();
@@ -60,58 +63,78 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
   StreamSubscription<Event> _onPublicContentSubscription;
 
   int _totalStudentReq = 0, totalNotice = 0, totalPublicContent = 0;
-  _loadFromDatabase() async{
-  if(FireBaseAuth.instance.previlagelevel>=3)  
-  _onStudentRequestSubscription = dbref.reference().child('institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students').orderByChild('status').equalTo('Existing Student').onValue.listen(_onStudentRequest);
-  
-  if(FireBaseAuth.instance.previlagelevel!=4){
-  _onNoticeSubscription = dbref.reference().child('institute/${FireBaseAuth.instance.instituteid}/notices').onValue.listen(_onNotice);
-  _onPublicContentSubscription = dbref.reference().child('institute/${FireBaseAuth.instance.instituteid}/publicContent').onValue.listen(_onPublicContent);
-   }
+  _loadFromDatabase() async {
+    if (FireBaseAuth.instance.previlagelevel >= 3)
+      _onStudentRequestSubscription = dbref
+          .reference()
+          .child(
+              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students')
+          .orderByChild('status')
+          .equalTo('Existing Student')
+          .onValue
+          .listen(_onStudentRequest);
 
-   }
+    if (FireBaseAuth.instance.previlagelevel != 4) {
+      _onNoticeSubscription = dbref
+          .reference()
+          .child('institute/${FireBaseAuth.instance.instituteid}/notices')
+          .onValue
+          .listen(_onNotice);
+      _onPublicContentSubscription = dbref
+          .reference()
+          .child('institute/${FireBaseAuth.instance.instituteid}/publicContent')
+          .onValue
+          .listen(_onPublicContent);
+    }
+  }
 
-_onStudentRequest(Event event) {
-   Map map= event.snapshot.value;
-   if(map!=null){
-    setState(() {
-      _totalStudentReq= map?.length;
-    });
-   }
+  _onStudentRequest(Event event) {
+    Map map = event.snapshot.value;
+    if (map != null) {
+      setState(() {
+        _totalStudentReq = map?.length;
+      });
+    }
   }
-_onNotice(Event event) {
-   Map map= event.snapshot.value; 
-   if(map!=null){
-   int _prevtotalnotice = _pref.getInt("TotalNotice")==null? 0:_pref.getInt("TotalNotice");
-   if(_prevtotalnotice<map.length)
-    setState(() {
-      totalNotice= map.length-_prevtotalnotice;
-      _pref.setInt("TotalNotice",map.length);
-    });
-   }
+
+  _onNotice(Event event) {
+    Map map = event.snapshot.value;
+    if (map != null) {
+      int _prevtotalnotice =
+          _pref.getInt("TotalNotice") == null ? 0 : _pref.getInt("TotalNotice");
+      if (_prevtotalnotice < map.length)
+        setState(() {
+          totalNotice = map.length - _prevtotalnotice;
+          _pref.setInt("TotalNotice", map.length);
+        });
+    }
   }
-_onPublicContent(Event event) {
-   Map map= event.snapshot.value;
-   if(map!=null){
-   int _prevtotalPublicContent = _pref.getInt("TotalPublicContent")==null? 0:_pref.getInt("TotalPublicContent");
-   if(_prevtotalPublicContent<map.length)
-    setState(() {
-      
-  totalPublicContent= map.length- _prevtotalPublicContent;
-      _pref.setInt("TotalPublicContent", map.length);
-    });
-   }
-  }  
-_sharedprefinit() async {
+
+  _onPublicContent(Event event) {
+    Map map = event.snapshot.value;
+    if (map != null) {
+      int _prevtotalPublicContent = _pref.getInt("TotalPublicContent") == null
+          ? 0
+          : _pref.getInt("TotalPublicContent");
+      if (_prevtotalPublicContent < map.length)
+        setState(() {
+          totalPublicContent = map.length - _prevtotalPublicContent;
+          _pref.setInt("TotalPublicContent", map.length);
+        });
+    }
+  }
+
+  _sharedprefinit() async {
     _pref = await SharedPreferences.getInstance();
   }
+
   @override
   void initState() {
     super.initState();
     _sharedprefinit();
     _loadFromDatabase();
-    
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -119,6 +142,7 @@ _sharedprefinit() async {
     _onNoticeSubscription?.cancel();
     _onPublicContentSubscription?.cancel();
   }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -220,13 +244,14 @@ _sharedprefinit() async {
                 ListTile(
                   title: Text('Admin Corner'.tr()),
                   leading: Icon(Icons.notifications_active),
-                  onTap: () => Navigator.of(context).push(
-                      CupertinoPageRoute(builder: (context) => NoticeBoard(totalNotice: totalNotice, totalPublicContent: 
-                  totalPublicContent,))),
-                  trailing:  CountDot(count: totalNotice + 
-              totalPublicContent),    
+                  onTap: () => Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (context) => NoticeBoard(
+                            totalNotice: totalNotice,
+                            totalPublicContent: totalPublicContent,
+                          ))),
+                  trailing: CountDot(count: totalNotice + totalPublicContent),
                 ),
-                if (FireBaseAuth.instance.previlagelevel == 4)
+                if (FireBaseAuth.instance.previlagelevel == 4 && !widget.branchListPage)
                   ListTile(
                     title: Text(
                       'All branches'.tr(),
@@ -239,7 +264,8 @@ _sharedprefinit() async {
                           (route) => false);
                     },
                   ),
-                if (FireBaseAuth.instance.previlagelevel >= 4)
+                if (FireBaseAuth.instance.previlagelevel >= 4 &&
+                    !widget.branchListPage)
                   ExpansionTile(
                     title: Text(
                       'SubAdmin Section',
@@ -308,15 +334,18 @@ _sharedprefinit() async {
                           );
                         },
                       ),
-                      ListTile(
-                        title: Text('Student Requests'.tr()),
-                        leading: Icon(Icons.verified_user),
-                        onTap: () => Navigator.of(context).push(
-                            CupertinoPageRoute(
-                                builder: (context) => StudentsRequests())),
-                        trailing:  CountDot(count: _totalStudentReq,) 
-                      ),
-                      if (FireBaseAuth.instance.previlagelevel >= 3)
+                      if (!widget.branchListPage)
+                        ListTile(
+                            title: Text('Student Requests'.tr()),
+                            leading: Icon(Icons.verified_user),
+                            onTap: () => Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                    builder: (context) => StudentsRequests())),
+                            trailing: CountDot(
+                              count: _totalStudentReq,
+                            )),
+                      if (FireBaseAuth.instance.previlagelevel >= 3 &&
+                          !widget.branchListPage)
                         ExpansionTile(
                           title: Text(
                             'Fee Section',
@@ -441,14 +470,13 @@ _sharedprefinit() async {
                         builder: (context) => LanguageDialog());
                   },
                 ),
-                ListTile(
-                  title: Text('GuruCool Assistant'.tr()),
-                  leading: Icon(Icons.mic), 
-                  onTap: () {
-                  
-                    ShowBottomSheetCheck(context: context).showBottomSheet();
-                  },
-                ),
+                // ListTile(
+                //   title: Text('GuruCool Assistant'.tr()),
+                //   leading: Icon(Icons.mic),
+                //   onTap: () {
+                //     ShowBottomSheetCheck(context: context).showBottomSheet();
+                //   },
+                // ),
                 ListTile(
                   title: Text('Log Out'.tr()),
                   leading: Icon(Icons.exit_to_app),

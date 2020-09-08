@@ -5,10 +5,12 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
+import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/InstituteAdmin/branchPage.dart';
 import 'package:coach_app/InstituteAdmin/midAdminList.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/adminCorner/noticeBoard.dart';
 import 'package:coach_app/adminSection/branchRegister.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -128,6 +130,7 @@ class _BranchListState extends State<BranchList> {
               elevation: 0.0,
               iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
             ),
+            drawer: getDrawer(context, branchListPage: true),
             body: Container(
               padding: EdgeInsets.symmetric(
                   vertical: MediaQuery.of(context).size.height / 20),
