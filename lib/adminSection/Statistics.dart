@@ -30,6 +30,47 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 spreadRadius: 2)
           ],
         ),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Container(),
+            ),
+            Divider(
+              color: Colors.black,
+              height: 2,
+              thickness: 2,
+            ),
+            Expanded(
+              flex: 3,
+              child: Container(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class StatisticsCapsule extends StatelessWidget {
+  final String text, count;
+  StatisticsCapsule({@required this.text, @required this.count});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Row(
+        children: [
+          Container(
+            child: Center(
+              child: Text(text),
+            ),
+          ),
+          Container(
+            child: Center(
+              child: Text(count),
+            ),
+          )
+        ],
       ),
     );
   }

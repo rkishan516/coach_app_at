@@ -17,10 +17,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
   TextEditingController nameTextEditingController,
       addressTextEditingController,
       phoneTextEditingController,
-      instituteCodeTextEditingController,
-      fatherNameTextEditingController;
+      instituteCodeTextEditingController;
   String status = 'New Student';
-  DateTime dob;
   GlobalKey<ScaffoldState> _scKey;
 
   @override
@@ -30,8 +28,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
     addressTextEditingController = TextEditingController();
     phoneTextEditingController = TextEditingController();
     instituteCodeTextEditingController = TextEditingController();
-    fatherNameTextEditingController = TextEditingController();
-    dob = DateTime.now();
     super.initState();
   }
 
@@ -109,25 +105,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     TextField(
-                      controller: fatherNameTextEditingController,
-                      decoration: InputDecoration(
-                        hintText: 'Father Name'.tr(),
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
                       controller: addressTextEditingController,
                       decoration: InputDecoration(
                         hintText: 'Address'.tr(),
@@ -180,33 +157,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Date of Birth'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Card(
-                      child: CalendarDatePicker(
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(1970),
-                        lastDate: DateTime.now(),
-                        onDateChanged: (v) {
-                          dob = v;
-                        },
-                        initialCalendarMode: DatePickerMode.year,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               RaisedButton(
                 color: Colors.white,
                 elevation: 0.0,
@@ -221,7 +171,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         phoneNo: phoneTextEditingController.text,
                         photoURL: FireBaseAuth.instance.user.photoUrl,
                         email: FireBaseAuth.instance.user.email,
-                        fatherName: fatherNameTextEditingController.text,
+                        // fatherName: fatherNameTextEditingController.text,
                         status: status);
                     var branchCode =
                         instituteCodeTextEditingController.text.substring(4);
