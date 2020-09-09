@@ -4,6 +4,7 @@ import 'package:coach_app/InstituteAdmin/branchList.dart';
 import 'package:coach_app/InstituteAdmin/branchPage.dart';
 import 'package:coach_app/InstituteAdmin/midAdminBranchList.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Provider/AdminProvider.dart';
 import 'package:coach_app/Student/WaitScreen.dart';
 import 'package:coach_app/Student/all_course_view.dart';
 import 'package:coach_app/Student/registration_form.dart';
@@ -11,6 +12,7 @@ import 'package:coach_app/courses/course_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:coach_app/Student/course_page.dart' as st_cp;
+import 'package:provider/provider.dart';
 
 class WelcomeNavigation {
   static signInWithGoogleAndGetPage(BuildContext context) {

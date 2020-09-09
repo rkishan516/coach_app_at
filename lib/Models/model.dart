@@ -8,6 +8,8 @@ class Branch {
   AccountDetails accountDetails;
   String accountId;
   Map<String, Admin> admin;
+  Map<String, Student> students;
+  Map<String, Teacher> teachers;
   List<Courses> courses;
 
   Branch(
@@ -37,6 +39,18 @@ class Branch {
       admin = Map<String, Admin>();
       json['admin'].forEach((k, v) {
         admin[k] = Admin.fromJson(v);
+      });
+    }
+    if (json['students'] != null) {
+      students = Map<String, Student>();
+      json['students'].forEach((k, v) {
+        students[k] = Student.fromJson(v);
+      });
+    }
+    if (json['teachers'] != null) {
+      teachers = Map<String, Teacher>();
+      json['teachers'].forEach((k, v) {
+        teachers[k] = Teacher.fromJson(v);
       });
     }
   }

@@ -1,9 +1,11 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Provider/AdminProvider.dart';
+import 'package:coach_app/Provider/MidAdminProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class StatisticsPage extends StatefulWidget {
-  final List<Branch> branches;
-  StatisticsPage({@required this.branches});
   @override
   _StatisticsPageState createState() => _StatisticsPageState();
 }
@@ -11,6 +13,18 @@ class StatisticsPage extends StatefulWidget {
 class _StatisticsPageState extends State<StatisticsPage> {
   @override
   Widget build(BuildContext context) {
+    Map<String, Branch> branches = (FireBaseAuth.instance.previlagelevel == 4)
+        ? Provider.of<AdminProvider>(context).branch
+        : (FireBaseAuth.instance.previlagelevel == 3)
+            ? Provider.of<MidAdminProvider>(context).branches
+            : Map<String, Branch>();
+    int teacherCount = 0, studentCount = 0, branchesCount = 0, coursesCount = 0;
+    branchesCount = branches?.length ?? 0;
+    branches?.forEach((key, value) {
+      coursesCount += value.courses?.length ?? 0;
+      studentCount += value.students?.length ?? 0;
+      teacherCount += value.teachers?.length ?? 0;
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -33,17 +47,186 @@ class _StatisticsPageState extends State<StatisticsPage> {
         child: Column(
           children: [
             Expanded(
-              flex: 1,
-              child: Container(),
+              flex: 2,
+              child: Container(
+                child: Column(
+                  children: [
+                    Expanded(flex: 2, child: Center(child: Text('Total'))),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        StatisticsCapsule(
+                            text: "Branches", count: branchesCount.toString()),
+                        StatisticsCapsule(
+                            text: "Courses", count: coursesCount.toString()),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        StatisticsCapsule(
+                            text: "Teachers", count: teacherCount.toString()),
+                        StatisticsCapsule(
+                            text: "Student", count: studentCount.toString()),
+                      ],
+                    ),
+                    Expanded(
+                      child: Container(),
+                    )
+                  ],
+                ),
+              ),
             ),
-            Divider(
-              color: Colors.black,
-              height: 2,
-              thickness: 2,
+            Padding(
+              padding: const EdgeInsets.only(left: 50.0, right: 50.0),
+              child: Divider(
+                color: Colors.black,
+                height: 1,
+                thickness: 1,
+              ),
             ),
             Expanded(
-              flex: 3,
-              child: Container(),
+              flex: 5,
+              child: Container(
+                child: Column(
+                  children: [
+                    Expanded(child: Center(child: Text('Overall Analysis'))),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+                      child: Card(
+                        margin: EdgeInsets.zero,
+                        child: Container(
+                          padding: EdgeInsets.only(top: 12, bottom: 12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(
+                                10,
+                              ),
+                              topLeft: Radius.circular(
+                                10,
+                              ),
+                            ),
+                            color: Color(0xffF36C24),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                'Branches',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                'Courses',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                'Teachers',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                'Students',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 12.0, right: 12.0, top: 0, bottom: 20),
+                      child: Card(
+                        margin: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(
+                              10,
+                            ),
+                            bottomLeft: Radius.circular(
+                              10,
+                            ),
+                          ),
+                        ),
+                        child: Container(
+                          height: 1.4 * MediaQuery.of(context).size.height / 3,
+                          child: ListView.builder(
+                              itemCount: branches?.length ?? 0,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  padding: EdgeInsets.only(top: 12, bottom: 12),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 8.0),
+                                          child: Center(
+                                            child: Text(
+                                              branches[branches.keys
+                                                      .toList()[index]]
+                                                  .name,
+                                              style: TextStyle(
+                                                fontSize: 6,
+                                                color: Color(0xffF36C24),
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Center(
+                                          child: Text(
+                                            branches[branches.keys
+                                                    .toList()[index]]
+                                                .courses
+                                                .length
+                                                .toString(),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Center(
+                                          child: Text(
+                                            branches[branches.keys
+                                                    .toList()[index]]
+                                                .teachers
+                                                .length
+                                                .toString(),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Center(
+                                          child: Text(
+                                            branches[branches.keys
+                                                    .toList()[index]]
+                                                .students
+                                                .length
+                                                .toString(),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -57,20 +240,53 @@ class StatisticsCapsule extends StatelessWidget {
   StatisticsCapsule({@required this.text, @required this.count});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        children: [
-          Container(
-            child: Center(
-              child: Text(text),
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(
+          10,
+        ),
+      ),
+      child: Container(
+        width: 1.2 * MediaQuery.of(context).size.width / 3,
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: EdgeInsets.all(12),
+                child: Center(
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      color: Color(
+                        0xffF36C24,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-          Container(
-            child: Center(
-              child: Text(count),
-            ),
-          )
-        ],
+            Expanded(
+              flex: 1,
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Color(0xffF36C24),
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(10),
+                        bottomRight: Radius.circular(10))),
+                padding: EdgeInsets.all(12),
+                child: Center(
+                  child: Text(
+                    count,
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

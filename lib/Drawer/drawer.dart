@@ -16,10 +16,13 @@ import 'package:coach_app/Meeting/AllMeetingSession.dart';
 import 'package:coach_app/Plugins/AppIcons.dart';
 import 'package:coach_app/Profile/TeacherProfile.dart';
 import 'package:coach_app/Profile/subAdminProfile.dart';
+import 'package:coach_app/Provider/AdminProvider.dart';
+import 'package:coach_app/Provider/MidAdminProvider.dart';
 import 'package:coach_app/SpeechRouting/BottomSheetCheck.dart';
 import 'package:coach_app/Student/all_course_view.dart';
 import 'package:coach_app/Student/course_page.dart';
 import 'package:coach_app/adminCorner/noticeBoard.dart';
+import 'package:coach_app/adminSection/Statistics.dart';
 import 'package:coach_app/adminSection/studentRequest.dart';
 import 'package:coach_app/InstituteAdmin/branchList.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
@@ -32,6 +35,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 getDrawer(BuildContext context, {bool branchListPage = false}) {
@@ -206,6 +210,24 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                     );
                   },
                 ),
+                if (widget.branchListPage)
+                  ListTile(
+                    title: Text('Statistics'),
+                    leading: Icon(MdiIcons.graph),
+                    onTap: () => Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => MultiProvider(providers: [
+                          if (FireBaseAuth.instance.previlagelevel == 4)
+                            ChangeNotifierProvider(
+                              create: (context) => AdminProvider(),
+                            ),
+                          ChangeNotifierProvider(
+                            create: (context) => MidAdminProvider(),
+                          )
+                        ], child: StatisticsPage()),
+                      ),
+                    ),
+                  ),
                 if (FireBaseAuth.instance.previlagelevel == 1)
                   ListTile(
                     title: Text('All Courses'.tr()),
@@ -251,7 +273,8 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                           ))),
                   trailing: CountDot(count: totalNotice + totalPublicContent),
                 ),
-                if (FireBaseAuth.instance.previlagelevel == 4 && !widget.branchListPage)
+                if (FireBaseAuth.instance.previlagelevel == 4 &&
+                    !widget.branchListPage)
                   ListTile(
                     title: Text(
                       'All branches'.tr(),
