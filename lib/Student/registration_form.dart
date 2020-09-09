@@ -99,25 +99,25 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: addressTextEditingController,
-                      decoration: InputDecoration(
-                        hintText: 'Address'.tr(),
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
-                  ],
-                ),
-              ),
+              // Container(
+              //   margin: EdgeInsets.symmetric(vertical: 10),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: <Widget>[
+              //       TextField(
+              //         controller: addressTextEditingController,
+              //         decoration: InputDecoration(
+              //           hintText: 'Address'.tr(),
+              //           hintStyle: TextStyle(
+              //               fontWeight: FontWeight.bold, fontSize: 15),
+              //           border: InputBorder.none,
+              //           fillColor: Color(0xfff3f3f4),
+              //           filled: true,
+              //         ),
+              //       )
+              //     ],
+              //   ),
+              // ),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
                 child: Column(
