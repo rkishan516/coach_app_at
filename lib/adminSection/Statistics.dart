@@ -15,7 +15,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
   Widget build(BuildContext context) {
     Map<String, Branch> branches = (FireBaseAuth.instance.previlagelevel == 4)
         ? Provider.of<AdminProvider>(context).branch
-        : (FireBaseAuth.instance.previlagelevel == 3)
+        : (FireBaseAuth.instance.previlagelevel == 34)
             ? Provider.of<MidAdminProvider>(context).branches
             : Map<String, Branch>();
     int teacherCount = 0, studentCount = 0, branchesCount = 0, coursesCount = 0;

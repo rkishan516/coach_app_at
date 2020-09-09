@@ -4,9 +4,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 
 class MidAdminProvider extends ChangeNotifier {
-  
   MidAdminProvider() {
-    List<Branch> brancehs = List<Branch>();
+    branches = Map<String, Branch>();
     for (int i = 0; i < FireBaseAuth.instance.branchList.length; i++) {
       FirebaseDatabase.instance
           .reference()
@@ -14,16 +13,16 @@ class MidAdminProvider extends ChangeNotifier {
               'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchList[i]}')
           .onValue
           .listen((event) {
-        branches.add(Branch.fromJson(event.snapshot.value));
+        setBranches(FireBaseAuth.instance.branchList[i].toString(),
+            Branch.fromJson(event.snapshot.value));
       });
     }
-    setBranches(brancehs);
   }
 
-  List<Branch> branches;
+  Map<String, Branch> branches;
 
-  setBranches(List<Branch> brancehs) {
-    this.branches = branches;
+  setBranches(String k, Branch branch) {
+    branches[k] = branch;
     notifyListeners();
   }
 }
