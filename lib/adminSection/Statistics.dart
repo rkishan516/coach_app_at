@@ -251,7 +251,7 @@ class StatisticsCapsule extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              flex: 2,
+              flex: 25,
               child: Container(
                 padding: EdgeInsets.all(12),
                 child: Center(
@@ -267,7 +267,7 @@ class StatisticsCapsule extends StatelessWidget {
               ),
             ),
             Expanded(
-              flex: 1,
+              flex: 19,
               child: Container(
                 decoration: BoxDecoration(
                     color: Color(0xffF36C24),
