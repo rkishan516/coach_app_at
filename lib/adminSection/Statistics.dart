@@ -65,9 +65,13 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         StatisticsCapsule(
-                            text: "Teachers", count: teacherCount.toString()),
+                          text: "Teachers",
+                          count: teacherCount.toString(),
+                        ),
                         StatisticsCapsule(
-                            text: "Student", count: studentCount.toString()),
+                          text: "Student",
+                          count: studentCount.toString(),
+                        ),
                       ],
                     ),
                     Expanded(
@@ -78,11 +82,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 50.0, right: 50.0),
+              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
               child: Divider(
-                color: Colors.black,
-                height: 1,
-                thickness: 1,
+                color: Colors.black54,
+                height: 0.75,
+                thickness: 0.75,
               ),
             ),
             Expanded(
@@ -187,10 +191,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                       Expanded(
                                         child: Center(
                                           child: Text(
-                                            branches[branches.keys
-                                                    .toList()[index]]
-                                                .courses
-                                                .length
+                                            (branches[branches.keys
+                                                            .toList()[index]]
+                                                        .courses
+                                                        ?.length ??
+                                                    0)
                                                 .toString(),
                                           ),
                                         ),
@@ -198,10 +203,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                       Expanded(
                                         child: Center(
                                           child: Text(
-                                            branches[branches.keys
-                                                    .toList()[index]]
-                                                .teachers
-                                                .length
+                                            (branches[branches.keys
+                                                            .toList()[index]]
+                                                        .teachers
+                                                        ?.length ??
+                                                    0)
                                                 .toString(),
                                           ),
                                         ),
@@ -209,10 +215,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                       Expanded(
                                         child: Center(
                                           child: Text(
-                                            branches[branches.keys
-                                                    .toList()[index]]
-                                                .students
-                                                .length
+                                            (branches[branches.keys
+                                                            .toList()[index]]
+                                                        .students
+                                                        ?.length ??
+                                                    0)
                                                 .toString(),
                                           ),
                                         ),

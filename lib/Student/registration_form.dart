@@ -162,7 +162,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 elevation: 0.0,
                 onPressed: () async {
                   if (nameTextEditingController.text != '' &&
-                      addressTextEditingController.text != '' &&
+                      // addressTextEditingController.text != '' &&
                       phoneTextEditingController.text != '' &&
                       instituteCodeTextEditingController.text != '') {
                     Student student = Student(
