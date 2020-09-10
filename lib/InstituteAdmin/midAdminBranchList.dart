@@ -45,7 +45,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
                   color: Colors.white,
                 ),
               );
-            }else{
+            } else {
               return Container();
             }
           },
@@ -104,6 +104,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: GridView.builder(
+            controller: ScrollController(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2, childAspectRatio: 0.8),
             itemCount: length,
@@ -205,12 +206,11 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
         ),
       ),
       floatingActionButton: SlideButtonR(
-                        text: 'Add branch'.tr(),
-                        onTap: () => showCupertinoDialog(
-                            context: context,
-                            builder: (context) => BranchRegister()),
-                        width: 150,
-                        height: 50),
+          text: 'Add branch'.tr(),
+          onTap: () => showCupertinoDialog(
+              context: context, builder: (context) => BranchRegister()),
+          width: 150,
+          height: 50),
     );
   }
 }
