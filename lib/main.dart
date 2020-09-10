@@ -25,7 +25,7 @@ void main() async {
   FireBaseAuth.instance.packageInfo = packageInfo;
   FirebaseDatabase.instance.setPersistenceEnabled(true);
 
-  if (packageInfo.packageName != "com.VysionTech.gurucool") {
+  if (packageInfo.packageName != "com.VysionTech.coach") {
     runApp(MaterialApp(
       title: 'Guru Cool',
       debugShowCheckedModeBanner: false,

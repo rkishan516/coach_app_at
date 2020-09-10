@@ -94,12 +94,16 @@ class _VideoConferencingState extends State<VideoConferencing> {
         widget.hostprevilagelevel.toString() +
         "&ishost=" +
         _ishost.toString();
+    Map<String, String> _map={"previlagelevel":FireBaseAuth.instance.previlagelevel.toString(), "photourl":FireBaseAuth.instance.user.photoUrl,
+      "title": 'GuruCoolSession' + widget.eventkey.toString(), "displayName":FireBaseAuth.instance.user.displayName, "eventkey":widget.eventkey.toString(),
+      "email":FireBaseAuth.instance.user.email, "hostPrevilage": widget.hostprevilagelevel.toString() , "ishost": _ishost.toString() };    
 
     var url = 'googlechrome://navigate?url=$midurl';
     if (await canLaunch(url)) {
       await launch(
         url,
         forceWebView: false,
+        headers: _map
       );
     } else {
       throw 'Could not launch $url';

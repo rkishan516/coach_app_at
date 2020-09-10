@@ -94,7 +94,8 @@ class _InsideSheetState extends State<InsideSheet> {
       
     });
     
-    _speech.setRecognitionCompleteHandler(() => setState((){
+    _speech.setRecognitionCompleteHandler((val) => setState((){
+      print("???????????$val??????????");
        _isListening = false;
          if(!_isListening){
       setState((){ 
