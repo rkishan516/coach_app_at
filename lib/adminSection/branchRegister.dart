@@ -285,9 +285,6 @@ class _BranchRegisterState extends State<BranchRegister> {
                           return;
                         } else if (!RegExp(r'^[0-9]{14}$')
                             .hasMatch(accountNoTextEditingController.text)) {
-                          print(accountNoTextEditingController.text);
-                          print(!RegExp(r'^[0-9]{14}$')
-                              .hasMatch(accountNoTextEditingController.text));
                           Alert.instance.alert(
                               context, 'Please fill correct account number');
                           return;

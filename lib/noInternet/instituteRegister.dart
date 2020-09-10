@@ -333,9 +333,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                       onPressed: () async {
                         try {
                           await getImage();
-                        } catch (e) {
-                          print(e);
-                        }
+                        } catch (e) {}
                       },
                       child: Text(
                         'Institute Logo'.tr(),

@@ -10,10 +10,9 @@ class PrivacyPolicy extends StatefulWidget {
 
 class _PrivacyPolicyState extends State<PrivacyPolicy> {
   final dbRef = FirebaseDatabase.instance;
-  Map<dynamic, dynamic> _hashMap = new Map<dynamic, dynamic>();
+  Map<dynamic, dynamic> _hashMap = Map<dynamic, dynamic>();
   List<PrivacyModal> _list = [];
-  String str = "privacy";
-  _loadFromDatabase() async {
+  _loadFromDatabase() {
     dbRef.reference().child('privacyPolicy').orderByKey().once().then((value) {
       _hashMap = value.value;
       _hashMap.forEach((key, value) {
@@ -46,8 +45,12 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
               _list[index].heading,
               style: TextStyle(fontSize: 14.0),
             ),
-            subtitle:
-                Text(_list[index].subtitile, style: TextStyle(fontSize: 12.0)),
+            subtitle: Text(
+              _list[index].subtitile,
+              style: TextStyle(
+                fontSize: 12.0,
+              ),
+            ),
           );
         },
       ),

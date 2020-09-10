@@ -9,7 +9,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:coach_app/courses/subject_page.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AddCourse extends StatefulWidget {
   final bool isEdit;
@@ -35,7 +34,6 @@ class _AddCourseState extends State<AddCourse> {
 
   final TextEditingController _ddText = TextEditingController();
   final TextEditingController _yyText = TextEditingController();
-  SharedPreferences _pref;
   var _mmperiod = [
     "MM",
     "01",
@@ -96,25 +94,28 @@ class _AddCourseState extends State<AddCourse> {
             Container(
               padding: EdgeInsets.only(left: 10.0, right: 10.0),
               margin: EdgeInsets.symmetric(vertical: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  TextField(
-                    controller: nameTextEditingController,
-                    decoration: InputDecoration(
-                      hintStyle:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                      hintText: 'Course Name'.tr(),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          10,
+              child: Form(
+                autovalidate: true,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TextField(
+                      controller: nameTextEditingController,
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                        hintText: 'Course Name'.tr(),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            10,
+                          ),
                         ),
+                        fillColor: Color(0xfff3f3f4),
+                        filled: true,
                       ),
-                      fillColor: Color(0xfff3f3f4),
-                      filled: true,
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
             Container(
@@ -634,7 +635,8 @@ class _AddCourseState extends State<AddCourse> {
             'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList/')
         .update({course.id: course.name});
 
-    _pref.setString("${widget.course.id}", _totalText.text);
+    FireBaseAuth.instance.prefs
+        .setString("${widget.course.id}", _totalText.text);
     Navigator.of(context).pop();
   }
 
@@ -1513,9 +1515,6 @@ class _AddCourseState extends State<AddCourse> {
       _setFineText = TextEditingController()..text = "0";
     }
 
-    Timer(Duration(seconds: 0), () async {
-      _pref = await SharedPreferences.getInstance();
-    });
     editValue = widget.isEdit;
     if (widget.isEdit) _loadFromDatabase();
     if (widget.isEdit)

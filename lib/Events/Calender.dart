@@ -7,7 +7,6 @@ import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Models/random_string.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:coach_app/Events/TableCalender/table_calendar.dart';
@@ -18,7 +17,7 @@ class Calender extends StatefulWidget {
   final String courseId;
   final String subjectName;
   final bool fromCourse;
-  Calender({ this.courseId,this.subjectName,@required this.fromCourse});
+  Calender({this.courseId, this.subjectName, @required this.fromCourse});
   @override
   _CalenderState createState() => _CalenderState();
 }
@@ -35,26 +34,23 @@ class _CalenderState extends State<Calender> {
       FirebaseMessagingService();
   Query _query;
   List<dynamic> _selectedEvents = [];
-  SharedPreferences _pref;
   final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
     _calendarController = CalendarController();
     _initializeevent();
-    _sharedprefinit();
-  }
-
-  _sharedprefinit() async {
-    _pref = await SharedPreferences.getInstance();
   }
 
   _initializeevent() {
-    if(widget.fromCourse)
-    _query = dbRef.reference().child(
-        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events');
+    if (widget.fromCourse)
+      _query = dbRef.reference().child(
+          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events');
     else
-    _query = dbRef.reference().child('institute/${FireBaseAuth.instance.instituteid}').child('events');
+      _query = dbRef
+          .reference()
+          .child('institute/${FireBaseAuth.instance.instituteid}')
+          .child('events');
 
     _onDataAddedSubscription = _query.onChildAdded.listen(onEventAdded);
     _onDataChangedSubscription = _query.onChildChanged.listen(onEventChanged);
@@ -68,28 +64,33 @@ class _CalenderState extends State<Calender> {
       if (event.snapshot.key != null) {
         String str = event.snapshot.key.substring(0, 10) + 'T12:00:00.000Z';
         DateTime _key = DateTime.parse(str);
-        
-        if(widget.fromCourse){
-        if (event.snapshot.value['teacheruid'] ==
-            "${FireBaseAuth.instance.user.uid}") {
-          if (_events[_key] == null) {
-            _events[_key] = [EventsModal.fromJson(event.snapshot.key, event.snapshot.value)];
-          } else {
-            _events[_key].add(EventsModal.fromJson(event.snapshot.key,event.snapshot.value));
-          }
-        }
-        }
 
-        else {
-          if (event.snapshot.value['hostuid'] == FireBaseAuth.instance.user.uid) {
-          if (_events[_key] == null) {
-            _events[_key] = [GeneralEventsModal.fromJson(event.snapshot.key,event.snapshot.value)];
-          } else {
-            _events[_key].add(GeneralEventsModal.fromJson(event.snapshot.key,event.snapshot.value));
+        if (widget.fromCourse) {
+          if (event.snapshot.value['teacheruid'] ==
+              "${FireBaseAuth.instance.user.uid}") {
+            if (_events[_key] == null) {
+              _events[_key] = [
+                EventsModal.fromJson(event.snapshot.key, event.snapshot.value)
+              ];
+            } else {
+              _events[_key].add(EventsModal.fromJson(
+                  event.snapshot.key, event.snapshot.value));
+            }
+          }
+        } else {
+          if (event.snapshot.value['hostuid'] ==
+              FireBaseAuth.instance.user.uid) {
+            if (_events[_key] == null) {
+              _events[_key] = [
+                GeneralEventsModal.fromJson(
+                    event.snapshot.key, event.snapshot.value)
+              ];
+            } else {
+              _events[_key].add(GeneralEventsModal.fromJson(
+                  event.snapshot.key, event.snapshot.value));
+            }
           }
         }
-        }
-        
       }
     });
   }
@@ -101,13 +102,12 @@ class _CalenderState extends State<Calender> {
     var index;
     _events[_key].forEach((element) {
       if (element.eventKey == event.snapshot.value['eventKey']) {
-        index= _events[_key].indexOf(element);
-        
+        index = _events[_key].indexOf(element);
       }
     });
     setState(() {
-          _events[_key].removeAt(index);
-        });
+      _events[_key].removeAt(index);
+    });
   }
 
   onEventChanged(Event event) {
@@ -117,10 +117,12 @@ class _CalenderState extends State<Calender> {
       if (element.eventKey == event.snapshot.value['eventKey']) {
         var index = _events[_key].indexOf(element);
         setState(() {
-          if(widget.fromCourse)
-          _events[_key][index] = EventsModal.fromJson(event.snapshot.key,event.snapshot.value);
-          else 
-           _events[_key][index] = GeneralEventsModal.fromJson(event.snapshot.key,event.snapshot.value);
+          if (widget.fromCourse)
+            _events[_key][index] =
+                EventsModal.fromJson(event.snapshot.key, event.snapshot.value);
+          else
+            _events[_key][index] = GeneralEventsModal.fromJson(
+                event.snapshot.key, event.snapshot.value);
         });
       }
     });
@@ -250,34 +252,32 @@ class _CalenderState extends State<Calender> {
                 elevation: 2.0,
                 child: ListTile(
                   onTap: () async {
-                    String pass2 = _pref.getString(e.description);
+                    String pass2 =
+                        FireBaseAuth.instance.prefs.getString(e.description);
                     if (pass2 == null) pass2 = e.meetingkey;
                     await Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) {
-
-                        if(widget.fromCourse){
+                      MaterialPageRoute(builder: (context) {
+                        if (widget.fromCourse) {
                           print(e.teacheruid);
                           print("llllllllllllllllll");
-                        return VideoConferencing(
-                          passVariable: pass2,
-                          eventkey: e.eventKey,
-                          hostuid: e.teacheruid,
-                          fromcourse: widget.fromCourse,
-                        );
-                        }
-                        else
-                        return VideoConferencing(
-                        passVariable: pass2,
-                        privilegelevel: FireBaseAuth.instance.previlagelevel,
-                        eventkey: e.eventKey,
-                        hostprevilagelevel: e.hostPrevilage,
-                        hostuid: e.hostuid,
-                        fromcourse: widget.fromCourse,
-                      );
-                        }
-                      ),
+                          return VideoConferencing(
+                            passVariable: pass2,
+                            eventkey: e.eventKey,
+                            hostuid: e.teacheruid,
+                            fromcourse: widget.fromCourse,
+                          );
+                        } else
+                          return VideoConferencing(
+                            passVariable: pass2,
+                            privilegelevel:
+                                FireBaseAuth.instance.previlagelevel,
+                            eventkey: e.eventKey,
+                            hostprevilagelevel: e.hostPrevilage,
+                            hostuid: e.hostuid,
+                            fromcourse: widget.fromCourse,
+                          );
+                      }),
                     );
                     var res = await showDialog(
                         context: context,
@@ -287,21 +287,22 @@ class _CalenderState extends State<Calender> {
                     if (res != 'Yes') {
                       return;
                     }
-                    if(widget.fromCourse)
-                    FirebaseDatabase.instance
-                        .reference()
-                        .child(
-                            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events/$pass2/')
-                        .update({"isStarted": 0});
-                    else 
-                    FirebaseDatabase.instance
-                      .reference()
-                      .child(
-                          'institute/${FireBaseAuth.instance.instituteid}/events/$pass2/')
-                      .update({"isStarted": 0});    
+                    if (widget.fromCourse)
+                      FirebaseDatabase.instance
+                          .reference()
+                          .child(
+                              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events/$pass2/')
+                          .update({"isStarted": 0});
+                    else
+                      FirebaseDatabase.instance
+                          .reference()
+                          .child(
+                              'institute/${FireBaseAuth.instance.instituteid}/events/$pass2/')
+                          .update({"isStarted": 0});
                   },
                   onLongPress: () {
-                    String pass = _pref.getString(e.description);
+                    String pass =
+                        FireBaseAuth.instance.prefs.getString(e.description);
                     if (pass == null) pass = e.meetingkey;
                     Navigator.push(
                       context,
@@ -313,7 +314,6 @@ class _CalenderState extends State<Calender> {
                           eventkey: pass?.substring(10, pass.length),
                           isedit: true,
                           fromcourse: widget.fromCourse,
-
                         ),
                       ),
                     );

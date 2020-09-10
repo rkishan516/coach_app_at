@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
+import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/InstituteAdmin/branchPage.dart';
 import 'package:coach_app/Models/model.dart';
@@ -44,7 +45,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
                   color: Colors.white,
                 ),
               );
-            }else{
+            } else {
               return Container();
             }
           },
@@ -85,6 +86,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
         elevation: 0.0,
         iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
       ),
+      drawer: getDrawer(context, branchListPage: true),
       body: Container(
         padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height / 20),
@@ -102,6 +104,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: GridView.builder(
+            controller: ScrollController(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2, childAspectRatio: 0.8),
             itemCount: length,
@@ -203,12 +206,11 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
         ),
       ),
       floatingActionButton: SlideButtonR(
-                        text: 'Add branch'.tr(),
-                        onTap: () => showCupertinoDialog(
-                            context: context,
-                            builder: (context) => BranchRegister()),
-                        width: 150,
-                        height: 50),
+          text: 'Add branch'.tr(),
+          onTap: () => showCupertinoDialog(
+              context: context, builder: (context) => BranchRegister()),
+          width: 150,
+          height: 50),
     );
   }
 }

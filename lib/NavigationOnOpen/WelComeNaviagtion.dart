@@ -4,6 +4,7 @@ import 'package:coach_app/InstituteAdmin/branchList.dart';
 import 'package:coach_app/InstituteAdmin/branchPage.dart';
 import 'package:coach_app/InstituteAdmin/midAdminBranchList.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Provider/AdminProvider.dart';
 import 'package:coach_app/Student/WaitScreen.dart';
 import 'package:coach_app/Student/all_course_view.dart';
 import 'package:coach_app/Student/registration_form.dart';
@@ -11,7 +12,7 @@ import 'package:coach_app/courses/course_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:coach_app/Student/course_page.dart' as st_cp;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class WelcomeNavigation {
   static signInWithGoogleAndGetPage(BuildContext context) {
@@ -21,7 +22,6 @@ class WelcomeNavigation {
         if (value == null) {
           return;
         }
-        SharedPreferences preferences = await SharedPreferences.getInstance();
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
           builder: (context) {
             if (FireBaseAuth.instance.previlagelevel == 4) {
@@ -70,15 +70,15 @@ class WelcomeNavigation {
                   .keepSynced(true);
               return st_cp.CoursePage();
             } else {
-              if (preferences.getString('insCode') == null ||
-                  preferences.getString('branchCode') == null) {
+              if (FireBaseAuth.instance.prefs.getString('insCode') == null ||
+                  FireBaseAuth.instance.prefs.getString('branchCode') == null) {
                 return RegistrationPage();
               }
               return StreamBuilder<Event>(
                 stream: FirebaseDatabase.instance
                     .reference()
                     .child(
-                        "institute/${preferences.getString('insCode')}/branches/${preferences.getString('branchCode')}/students/${value.uid}/status")
+                        "institute/${FireBaseAuth.instance.prefs.getString('insCode')}/branches/${FireBaseAuth.instance.prefs.getString('branchCode')}/students/${value.uid}/status")
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -88,7 +88,7 @@ class WelcomeNavigation {
                     if (snapshot.data.snapshot.value == 'New Student') {
                       return AllCoursePage(
                           ref: FirebaseDatabase.instance.reference().child(
-                              'institute/${preferences.getString('insCode')}/branches/${preferences.getString('branchCode')}'));
+                              'institute/${FireBaseAuth.instance.prefs.getString('insCode')}/branches/${FireBaseAuth.instance.prefs.getString('branchCode')}'));
                     } else if (snapshot.data.snapshot.value ==
                         'Existing Student') {
                       return WaitScreen();

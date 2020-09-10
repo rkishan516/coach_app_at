@@ -37,9 +37,6 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
 
   void storeTokenintoDatabase() async {
     _firebaseMessaging.getToken().then((token) {
-      print("/////////-----.........");
-      print("........$token.............");
-
       final dbref = FirebaseDatabase.instance.reference();
       dbref
           .child(
@@ -175,7 +172,6 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
   }
 
   onEventAdded(Event event) async {
-    print(event.snapshot.key);
     bool isallowedtoadd = await checkentry(event);
     if (event.snapshot.key != null && isallowedtoadd) {
       setState(() {
@@ -186,11 +182,10 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
   }
 
   onEventRemoved(Event event) {
-    print(_allEvent);
     _allEvent.forEach((element) {
       if (element.eventKey == event.snapshot.value['eventKey']) {
         var index = _allEvent.indexOf(element);
-        print(_allEvent[index]);
+
         setState(() {
           _allEvent.removeAt(index);
         });
@@ -199,7 +194,6 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
   }
 
   onEventChanged(Event event) {
-    print(_allEvent);
     _allEvent.forEach((element) async {
       if (element.eventKey == event.snapshot.value['eventKey']) {
         var index = _allEvent.indexOf(element);

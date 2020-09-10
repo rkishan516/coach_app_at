@@ -1,6 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/CountDot.dart';
-import 'package:coach_app/Drawer/NewBannerShow.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
@@ -9,18 +8,13 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ChapterPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;
-  final SharedPreferences pref;
   final String passKey;
   ChapterPage(
-      {@required this.title,
-      @required this.reference,
-      @required this.pref,
-      @required this.passKey});
+      {@required this.title, @required this.reference, @required this.passKey});
   @override
   _ChapterPageState createState() => _ChapterPageState();
 }
@@ -90,7 +84,7 @@ class _ChapterPageState extends State<ChapterPage> {
                           String searchkey = widget.passKey +
                               "__" +
                               '${subjects.chapters[keys.toList()[index]].name}';
-                          _list = widget.pref
+                          _list = FireBaseAuth.instance.prefs
                               .getKeys()
                               .where((element) => element.startsWith(searchkey))
                               .toList();
@@ -122,14 +116,13 @@ class _ChapterPageState extends State<ChapterPage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                  
-                                          CountDot(
-                                              count: _totalContent -
-                                                          _prevtotalContent <=
-                                                      0
-                                                  ? 0
-                                                  : _totalContent -
-                                                      _prevtotalContent),
+                                        CountDot(
+                                            count: _totalContent -
+                                                        _prevtotalContent <=
+                                                    0
+                                                ? 0
+                                                : _totalContent -
+                                                    _prevtotalContent),
                                         SizedBox(
                                           width: 10.0,
                                         ),
@@ -151,7 +144,6 @@ class _ChapterPageState extends State<ChapterPage> {
                                             reference: widget.reference.child(
                                               'chapters/${keys.toList()[index]}',
                                             ),
-                                            pref: widget.pref,
                                             passKey: searchkey),
                                       ),
                                     )

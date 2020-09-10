@@ -33,8 +33,6 @@ class RazorPayPayment {
           }
         },
       );
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 }

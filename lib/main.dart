@@ -14,8 +14,6 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // SystemChrome.setEnabledSystemUIOverlays([]);
@@ -23,6 +21,7 @@ void main() async {
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   FireBaseAuth.instance.packageInfo = packageInfo;
+  FireBaseAuth.instance.prefs = await SharedPreferences.getInstance();
   FirebaseDatabase.instance.setPersistenceEnabled(true);
 
   if (packageInfo.packageName != "com.VysionTech.coach") {
@@ -41,14 +40,12 @@ void main() async {
   InAppUpdate.checkForUpdate().then((value) {
     if (value.updateAvailable) {
       InAppUpdate.startFlexibleUpdate().then((value) {
-        InAppUpdate.completeFlexibleUpdate().then((value) {
-          print('Updated Successfully');
-        }).catchError(
-            (e) => print('completeFlexibleUpdateError : ' + e.toString()));
-      }).catchError((e) => print('startFlexibleUpdateError : ' + e.toString()));
+        InAppUpdate.completeFlexibleUpdate()
+            .then((value) {})
+            .catchError((e) => {print(e)});
+      }).catchError((e) => {print(e)});
     }
-    print(value);
-  }).catchError((e) => print('checkUpdateError : ' + e.toString()));
+  }).catchError((e) => {print(e)});
 
   runApp(
     EasyLocalization(
@@ -68,15 +65,15 @@ void main() async {
 class MyApp extends StatelessWidget {
   SharedPreferences prefs;
   _getPrefs() async {
-    prefs = await SharedPreferences.getInstance();
+    prefs = FireBaseAuth.instance.prefs;
     return prefs;
   }
-  
+
   @override
   Widget build(BuildContext context) {
     initializeDateFormatting();
     return MaterialApp(
-       routes: RouteMap().createroute(),
+      routes: RouteMap().createroute(),
       title: 'Guru Cool',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

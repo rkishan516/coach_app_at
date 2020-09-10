@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Models/model.dart';
@@ -36,7 +34,6 @@ class _TimeTablePageState extends State<TimeTablePage> {
       controllerFriday,
       controllerSaturday;
   LinkedScrollControllerGroup controllerGroup;
-  StreamSubscription<Event> dataFetch;
 
   @override
   void initState() {
@@ -54,7 +51,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
         .add(Periods(startTime: TimeOfDay.now(), endTime: TimeOfDay.now()));
     day1 = "Monday";
     day2 = "Tuesday";
-    dataFetch = FirebaseDatabase.instance
+    FirebaseDatabase.instance
         .reference()
         .child(
             'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}')

@@ -173,7 +173,6 @@ List<NoInstallments> _createInstallmentmodel(
           final difference = DateTime(yyyy, mm, dd)
               .difference(DateTime(endyyyy, endmm, enddd))
               .inDays;
-          print("Difference is $difference");
 
           int count = int.parse(
               fineMap["SetFine"]["Duration"].toString().split(" ")[0]);

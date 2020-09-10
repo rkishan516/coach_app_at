@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +8,8 @@ class Branch {
   AccountDetails accountDetails;
   String accountId;
   Map<String, Admin> admin;
+  Map<String, Student> students;
+  Map<String, Teacher> teachers;
   List<Courses> courses;
 
   Branch(
@@ -38,6 +39,18 @@ class Branch {
       admin = Map<String, Admin>();
       json['admin'].forEach((k, v) {
         admin[k] = Admin.fromJson(v);
+      });
+    }
+    if (json['students'] != null) {
+      students = Map<String, Student>();
+      json['students'].forEach((k, v) {
+        students[k] = Student.fromJson(v);
+      });
+    }
+    if (json['teachers'] != null) {
+      teachers = Map<String, Teacher>();
+      json['teachers'].forEach((k, v) {
+        teachers[k] = Teacher.fromJson(v);
       });
     }
   }
@@ -938,9 +951,6 @@ class Section {
         content[k] = Content.fromJson(v);
       });
     }
-    print('.......................///');
-      print(content);
-      
   }
 
   Map<String, dynamic> toJson() {

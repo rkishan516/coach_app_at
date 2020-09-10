@@ -7,7 +7,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RegistrationPage extends StatefulWidget {
   @override
@@ -18,25 +17,17 @@ class _RegistrationPageState extends State<RegistrationPage> {
   TextEditingController nameTextEditingController,
       addressTextEditingController,
       phoneTextEditingController,
-      instituteCodeTextEditingController,
-      fatherNameTextEditingController;
+      instituteCodeTextEditingController;
   String status = 'New Student';
-  DateTime dob;
-  SharedPreferences preferences;
   GlobalKey<ScaffoldState> _scKey;
 
   @override
   void initState() {
-    SharedPreferences.getInstance().then((value) {
-      preferences = value;
-    });
     _scKey = GlobalKey<ScaffoldState>();
     nameTextEditingController = TextEditingController();
     addressTextEditingController = TextEditingController();
     phoneTextEditingController = TextEditingController();
     instituteCodeTextEditingController = TextEditingController();
-    fatherNameTextEditingController = TextEditingController();
-    dob = DateTime.now();
     super.initState();
   }
 
@@ -108,44 +99,25 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: fatherNameTextEditingController,
-                      decoration: InputDecoration(
-                        hintText: 'Father Name'.tr(),
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: addressTextEditingController,
-                      decoration: InputDecoration(
-                        hintText: 'Address'.tr(),
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
-                  ],
-                ),
-              ),
+              // Container(
+              //   margin: EdgeInsets.symmetric(vertical: 10),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: <Widget>[
+              //       TextField(
+              //         controller: addressTextEditingController,
+              //         decoration: InputDecoration(
+              //           hintText: 'Address'.tr(),
+              //           hintStyle: TextStyle(
+              //               fontWeight: FontWeight.bold, fontSize: 15),
+              //           border: InputBorder.none,
+              //           fillColor: Color(0xfff3f3f4),
+              //           filled: true,
+              //         ),
+              //       )
+              //     ],
+              //   ),
+              // ),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
                 child: Column(
@@ -185,77 +157,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Date of Birth'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Card(
-                      child: CalendarDatePicker(
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(1970),
-                        lastDate: DateTime.now(),
-                        onDateChanged: (v) {
-                          dob = v;
-                        },
-                        initialCalendarMode: DatePickerMode.year,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Container(
-              //   margin: EdgeInsets.symmetric(vertical: 10),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: <Widget>[
-              //       Text(
-              //         'Status'.tr(),
-              //         style:
-              //             TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-              //       ),
-              //       SizedBox(
-              //         height: 10,
-              //       ),
-              //       Card(
-              //         child: Container(
-              //           padding: EdgeInsets.only(left: 20, right: 20),
-              //           width: MediaQuery.of(context).size.width,
-              //           child: DropdownButton(
-              //             items: ['Existing Student', 'New Student']
-              //                 .map(
-              //                   (e) => DropdownMenuItem(
-              //                     child: Text(e.tr()),
-              //                     value: e,
-              //                   ),
-              //                 )
-              //                 .toList(),
-              //             value: status,
-              //             onChanged: (value) {
-              //               setState(() {
-              //                 status = value;
-              //               });
-              //             },
-              //           ),
-              //         ),
-              //       )
-              //     ],
-              //   ),
-              // ),
               RaisedButton(
                 color: Colors.white,
                 elevation: 0.0,
                 onPressed: () async {
                   if (nameTextEditingController.text != '' &&
-                      addressTextEditingController.text != '' &&
+                      // addressTextEditingController.text != '' &&
                       phoneTextEditingController.text != '' &&
                       instituteCodeTextEditingController.text != '') {
                     Student student = Student(
@@ -264,7 +171,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         phoneNo: phoneTextEditingController.text,
                         photoURL: FireBaseAuth.instance.user.photoUrl,
                         email: FireBaseAuth.instance.user.email,
-                        fatherName: fatherNameTextEditingController.text,
+                        // fatherName: fatherNameTextEditingController.text,
                         status: status);
                     var branchCode =
                         instituteCodeTextEditingController.text.substring(4);
@@ -288,8 +195,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           .alert(context, 'Wrong Institute Code'.tr());
                       return;
                     }
-                    preferences.setString('insCode', dataSnapshot.value);
-                    preferences.setString('branchCode', branchCode);
+                    FireBaseAuth.instance.prefs
+                        .setString('insCode', dataSnapshot.value);
+                    FireBaseAuth.instance.prefs
+                        .setString('branchCode', branchCode);
                     DatabaseReference reference = FirebaseDatabase.instance
                         .reference()
                         .child(

@@ -8,7 +8,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CoursePage extends StatefulWidget {
   final Teacher teacher;
@@ -18,17 +17,7 @@ class CoursePage extends StatefulWidget {
 }
 
 class _CoursePageState extends State<CoursePage> {
-  SharedPreferences _pref;
   List _list;
-  _sharedprefinit() async {
-    _pref = await SharedPreferences.getInstance();
-  }
-
-  @override
-  void initState() {
-    _sharedprefinit();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,31 +75,29 @@ class _CoursePageState extends State<CoursePage> {
                     return ListView.builder(
                       itemCount: courses?.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
-                       _list = _pref
+                        _list = FireBaseAuth.instance.prefs
                             .getKeys()
                             .where((element) =>
                                 element.startsWith('${courses[index].name}'))
                             .toList();
                         int prevtotallength = _list.length;
-              
+
                         Map<String, int> _correspondingsubject = Map();
-                        int _totallength = 0, _contentlength , count=0;
+                        int _totallength = 0, _contentlength, count = 0;
                         if (courses[index].subjects != null) {
                           courses[index].subjects?.forEach((key1, value) {
                             _contentlength = 0;
                             String subjectname = value.name.toString();
 
-                          
-                            if (value.chapters!= null) {
+                            if (value.chapters != null) {
                               value.chapters.forEach((key2, value2) {
                                 String chaptername = value2.name.toString();
-
-                              
 
                                 if (value2.content != null) {
                                   _contentlength =
                                       _contentlength + value2.content.length;
-                                  _correspondingsubject[subjectname] =_contentlength;    
+                                  _correspondingsubject[subjectname] =
+                                      _contentlength;
                                   value2.content.forEach((key3, value3) {
                                     String contentname =
                                         value3.title.toString();
@@ -123,7 +110,8 @@ class _CoursePageState extends State<CoursePage> {
                                         contentname;
 
                                     if (prevtotallength == 0) {
-                                      _pref.setInt(key, 1);
+                                      FireBaseAuth.instance.prefs
+                                          .setInt(key, 1);
                                     } else {
                                       _list.remove(key);
                                     }
@@ -135,28 +123,32 @@ class _CoursePageState extends State<CoursePage> {
 
                           if (_list.length != 0) {
                             _list?.forEach((element) {
-                              _pref.remove(element);
+                              FireBaseAuth.instance.prefs.remove(element);
                             });
                           }
-                         
-                        
 
-                        if(prevtotallength!=0){
-                                    courses[index].subjects?.forEach((key, value) { 
-                                      _totallength = _correspondingsubject[value.name.toString()];
+                          if (prevtotallength != 0) {
+                            courses[index].subjects?.forEach((key, value) {
+                              _totallength =
+                                  _correspondingsubject[value.name.toString()];
 
-                                      int _totalContent = _totallength ?? 0;
-                                      String searchKey = courses[index].name+"__"+ value.name.toString();
-                                       _list = _pref.getKeys().where((element) => element.startsWith(searchKey)).toList();
+                              int _totalContent = _totallength ?? 0;
+                              String searchKey = courses[index].name +
+                                  "__" +
+                                  value.name.toString();
+                              _list = FireBaseAuth.instance.prefs
+                                  .getKeys()
+                                  .where((element) =>
+                                      element.startsWith(searchKey))
+                                  .toList();
 
-                                      int _prevtotalContent =  _list.length;
-                                      
-                                      if (_prevtotalContent < _totalContent) {
-                                      count++;
-                                      }
-                                    });
-                                  
-                                  } 
+                              int _prevtotalContent = _list.length;
+
+                              if (_prevtotalContent < _totalContent) {
+                                count++;
+                              }
+                            });
+                          }
                         }
                         TCourses tcourse = widget.teacher?.courses?.firstWhere(
                             (element) => element.id == courses[index].id);
@@ -177,8 +169,7 @@ class _CoursePageState extends State<CoursePage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       if (_showCountDot[index])
-                                        CountDot(
-                                            count: count),
+                                        CountDot(count: count),
                                       SizedBox(
                                         width: 10.0,
                                       ),
@@ -196,7 +187,6 @@ class _CoursePageState extends State<CoursePage> {
                                       builder: (context) => SubjectPage(
                                           tCourse: tcourse,
                                           course: courses[index],
-                                          pref: _pref,
                                           passKey: '${courses[index].name}'),
                                     ),
                                   )

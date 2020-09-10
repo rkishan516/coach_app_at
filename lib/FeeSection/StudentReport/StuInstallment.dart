@@ -39,8 +39,6 @@ class _StuInstallmentState extends State<StuInstallment> {
         : dateTime.month.toString());
     int yyyy = int.parse(dateTime.year.toString());
 
-    print(toggleValue);
-
     if (!toggleValue) {
       dbref
           .reference()
@@ -75,7 +73,6 @@ class _StuInstallmentState extends State<StuInstallment> {
             final difference = DateTime(yyyy, mm, dd)
                 .difference(DateTime(endyyyy, endmm, enddd))
                 .inDays;
-            print("Difference is $difference");
 
             int count =
                 int.parse(map["SetFine"]["Duration"].toString().split(" ")[0]);
@@ -196,7 +193,6 @@ class _StuInstallmentState extends State<StuInstallment> {
                 final difference = DateTime(yyyy, mm, dd)
                     .difference(DateTime(endyyyy, endmm, enddd))
                     .inDays;
-                print("Difference is $difference");
 
                 int count =
                     int.parse(fineMap["Duration"].toString().split(" ")[0]);
@@ -249,7 +245,6 @@ class _StuInstallmentState extends State<StuInstallment> {
 
   _updateList(String paidInstallment) async {
     if (!toggleValue) {
-      print(">>>>");
       for (int i = 0; i < _listInstallment.length; i++) {
         if (_listInstallment[i].sequence != paidInstallment) {
           dbref
@@ -447,7 +442,6 @@ class _StuInstallmentState extends State<StuInstallment> {
                                   String date = dd + " " + mm + " " + yyyy;
                                   void _handlePaymentSuccess(
                                       PaymentSuccessResponse response) async {
-                                    print('Payment Successful');
                                     await FirebaseDatabase.instance
                                         .reference()
                                         .reference()
@@ -477,13 +471,11 @@ class _StuInstallmentState extends State<StuInstallment> {
 
                                   void _handlePaymentError(
                                       PaymentFailureResponse response) {
-                                    print('Payment Failed');
                                     // Do something when payment fails
                                   }
 
                                   void _handleExternalWallet(
                                       ExternalWalletResponse response) {
-                                    print('Payment External Wallet');
                                     // Do something when an external wallet was selected
                                   }
 

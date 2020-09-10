@@ -1,6 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Drawer/CountDot.dart';
-import 'package:coach_app/Drawer/NewBannerShow.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Events/StudentEvent.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
@@ -12,14 +11,11 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SubjectPage extends StatefulWidget {
   final String courseID;
-  final SharedPreferences pref;
   final String passKey;
-  SubjectPage(
-      {@required this.courseID, @required this.pref, @required this.passKey});
+  SubjectPage({@required this.courseID, @required this.passKey});
   @override
   _SubjectPageState createState() => _SubjectPageState();
 }
@@ -105,7 +101,7 @@ class _SubjectPageState extends State<SubjectPage>
                                     .compareTo(courses.subjects[b].name));
                             }
                             length = courses.subjects?.length ?? 0;
-                            
+
                             return ListView.builder(
                               itemCount: length,
                               itemBuilder: (BuildContext context, int index) {
@@ -121,27 +117,26 @@ class _SubjectPageState extends State<SubjectPage>
                                     int _indvContent =
                                         value?.content?.length ?? 0;
                                     _contentlength = _indvContent;
-                                    
-                                    String searchkey = widget.passKey +
-                                    "__" +
-                                    '${courses.subjects[keys.toList()[index]].name}'+"__" +value.name.toString() ;
-                                _list = widget.pref
-                                    .getKeys()
-                                    .where((element) =>
-                                        element.startsWith(searchkey))
-                                    .toList();
-                                _totalContent = _contentlength;    
-                                int _prevtotalContent =
-                                    _list.length ?? _totalContent;
-                                if (_prevtotalContent < _totalContent) {
-                            
-                                  count++;
-                                } 
 
+                                    String searchkey = widget.passKey +
+                                        "__" +
+                                        '${courses.subjects[keys.toList()[index]].name}' +
+                                        "__" +
+                                        value.name.toString();
+                                    _list = FireBaseAuth.instance.prefs
+                                        .getKeys()
+                                        .where((element) =>
+                                            element.startsWith(searchkey))
+                                        .toList();
+                                    _totalContent = _contentlength;
+                                    int _prevtotalContent =
+                                        _list.length ?? _totalContent;
+                                    if (_prevtotalContent < _totalContent) {
+                                      count++;
+                                    }
                                   });
-                                  
                                 }
-                                  return Padding(
+                                return Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Card(
                                     shape: RoundedRectangleBorder(
@@ -159,9 +154,7 @@ class _SubjectPageState extends State<SubjectPage>
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                        
-                                              CountDot(
-                                                  count: count),
+                                            CountDot(count: count),
                                             SizedBox(
                                               width: 10.0,
                                             ),
@@ -186,8 +179,9 @@ class _SubjectPageState extends State<SubjectPage>
                                                     .reference()
                                                     .child(
                                                         'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${keys.toList()[index]}'),
-                                                pref: widget.pref,
-                                                passKey:  widget.passKey +"__" +'${courses.subjects[keys.toList()[index]].name}'),
+                                                passKey: widget.passKey +
+                                                    "__" +
+                                                    '${courses.subjects[keys.toList()[index]].name}'),
                                           ),
                                         )
                                             .then((value) {

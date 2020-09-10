@@ -64,7 +64,7 @@ class _SelectCandidateState extends State<TwoStepSelectCandidate> {
       String _branches = FireBaseAuth.instance.branchList.toString();
       List<String> _branchlist =
           _branches.replaceAll("[", "").replaceAll("]", "").split(",");
-      print(_branchlist);
+
       _branchlist.forEach((element) async {
         DataSnapshot addresssnapshot = await dbref
             .reference()

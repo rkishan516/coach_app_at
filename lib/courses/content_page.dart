@@ -17,21 +17,20 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ContentPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;
   final String passKey;
-  final SharedPreferences pref;
-  ContentPage({@required this.title, @required this.reference,  @required this.passKey,  @required this.pref});
+  ContentPage(
+      {@required this.title, @required this.reference, @required this.passKey});
   @override
   _ContentPageState createState() => _ContentPageState();
 }
 
 class _ContentPageState extends State<ContentPage> {
   int length;
-  
+
   List<bool> _showCountDot;
   @override
   Widget build(BuildContext context) {
@@ -71,16 +70,18 @@ class _ContentPageState extends State<ContentPage> {
                     }
                     length = chapter.content?.length ?? 0;
                     _showCountDot = List(length);
-                      for (int i = 0; i < length; i++) {
-                        _showCountDot[i] = false;
-                      }
+                    for (int i = 0; i < length; i++) {
+                      _showCountDot[i] = false;
+                    }
                     return ListView.builder(
                       itemCount: length,
                       itemBuilder: (BuildContext context, int index) {
-                        String checkkey = widget.passKey+"__"+'${chapter.content[keys.toList()[index]].title}';
-                        if(widget.pref.getInt(checkkey)!=1){
-                         _showCountDot[index] = true;
-                         widget.pref.setInt(checkkey,1);
+                        String checkkey = widget.passKey +
+                            "__" +
+                            '${chapter.content[keys.toList()[index]].title}';
+                        if (FireBaseAuth.instance.prefs.getInt(checkkey) != 1) {
+                          _showCountDot[index] = true;
+                          FireBaseAuth.instance.prefs.setInt(checkkey, 1);
                         }
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -111,21 +112,22 @@ class _ContentPageState extends State<ContentPage> {
                                 style: TextStyle(color: Color(0xffF36C24)),
                               ),
                               trailing: Container(
-                                    height: 40,
-                                    width: 80,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        if(_showCountDot[index])
-                                       NewBannerShow(),
-                                        SizedBox(width: 10.0,),
-                                        Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xffF36C24),
-                                        ),
-                                      ],
+                                height: 40,
+                                width: 80,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    if (_showCountDot[index]) NewBannerShow(),
+                                    SizedBox(
+                                      width: 10.0,
                                     ),
-                                  ),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      color: Color(0xffF36C24),
+                                    ),
+                                  ],
+                                ),
+                              ),
                               onTap: () {
                                 if (chapter
                                         .content[keys.toList()[index]].kind ==
@@ -177,7 +179,7 @@ class _ContentPageState extends State<ContentPage> {
                                 }
                               },
                               onLongPress: () => addContent(
-                                  context, widget.reference, widget.pref,widget.passKey,
+                                  context, widget.reference, widget.passKey,
                                   key: keys.toList()[index],
                                   title: chapter
                                       .content[keys.toList()[index]].title,
@@ -198,8 +200,7 @@ class _ContentPageState extends State<ContentPage> {
                                   description: chapter
                                       .content[keys.toList()[index]]
                                       .description,
-                                  time: chapter
-                                      .content[keys.toList()[index]].time,
+                                  time: chapter.content[keys.toList()[index]].time,
                                   type: chapter.content[keys.toList()[index]].kind),
                             ),
                           ),
@@ -233,14 +234,14 @@ class _ContentPageState extends State<ContentPage> {
       ),
       floatingActionButton: SlideButtonR(
         text: 'Add Content'.tr(),
-        onTap: () => addContent(context, widget.reference, widget.pref, widget.passKey),
+        onTap: () => addContent(context, widget.reference, widget.passKey),
         width: 150,
         height: 50,
       ),
     );
   }
 
-  addContent(BuildContext context, DatabaseReference reference, SharedPreferences pref, String passKey,
+  addContent(BuildContext context, DatabaseReference reference, String passKey,
       {String key,
       String title = '',
       String description = '',
@@ -259,7 +260,6 @@ class _ContentPageState extends State<ContentPage> {
         keyC: key,
         time: time,
         quizModel: quizModel,
-        pref: pref,
         passKey: passKey,
       ),
     );
@@ -275,20 +275,17 @@ class ContentUploadDialog extends StatefulWidget {
   final String type;
   final String time;
   final QuizModel quizModel;
-  final SharedPreferences pref;
   final String passKey;
-  ContentUploadDialog({
-    @required this.title,
-    @required this.description,
-    @required this.reference,
-    @required this.link,
-    @required this.keyC,
-    @required this.type,
-    @required this.time,
-    @required this.quizModel,
-    @required this.pref,
-    @required this.passKey
-  });
+  ContentUploadDialog(
+      {@required this.title,
+      @required this.description,
+      @required this.reference,
+      @required this.link,
+      @required this.keyC,
+      @required this.type,
+      @required this.time,
+      @required this.quizModel,
+      @required this.passKey});
   @override
   _ContentUploadDialogState createState() => _ContentUploadDialogState();
 }
@@ -523,7 +520,8 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                                 .child('content/')
                                 .push()
                                 .update(content.toJson());
-                            widget.pref.setInt( widget.passKey+ widget.title, 1);    
+                            FireBaseAuth.instance.prefs
+                                .setInt(widget.passKey + widget.title, 1);
                           } else {
                             widget.reference
                                 .child('content/${widget.keyC}')

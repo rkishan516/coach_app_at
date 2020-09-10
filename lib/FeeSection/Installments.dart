@@ -151,7 +151,8 @@ class _InstallmentsState extends State<Installments> {
                             padding: const EdgeInsets.only(right: 8),
                             child: Text(
                               '₹',
-                              style: TextStyle(fontSize: 22, color: Colors.white),
+                              style:
+                                  TextStyle(fontSize: 22, color: Colors.white),
                             ),
                           )
                         ],
@@ -225,7 +226,6 @@ class _InstallmentsState extends State<Installments> {
                                 setState(() {
                                   _currentDurationSelected[index] =
                                       newValueSelected;
-                                  print(_currentDurationSelected[index]);
                                 });
                               },
                               isExpanded: true,

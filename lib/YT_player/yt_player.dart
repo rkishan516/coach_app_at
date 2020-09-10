@@ -76,9 +76,7 @@ class _YTPlayerState extends State<YTPlayer> {
         adUnitId: "ca-app-pub-9529467099496606/3258157614",
         size: AdSize.banner,
         targetingInfo: targetingInfo,
-        listener: (MobileAdEvent event) {
-          print("Banner event $event");
-        });
+        listener: (MobileAdEvent event) {});
   }
 
   @override
