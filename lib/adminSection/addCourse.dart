@@ -94,25 +94,28 @@ class _AddCourseState extends State<AddCourse> {
             Container(
               padding: EdgeInsets.only(left: 10.0, right: 10.0),
               margin: EdgeInsets.symmetric(vertical: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  TextField(
-                    controller: nameTextEditingController,
-                    decoration: InputDecoration(
-                      hintStyle:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                      hintText: 'Course Name'.tr(),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          10,
+              child: Form(
+                autovalidate: true,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TextField(
+                      controller: nameTextEditingController,
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                        hintText: 'Course Name'.tr(),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            10,
+                          ),
                         ),
+                        fillColor: Color(0xfff3f3f4),
+                        filled: true,
                       ),
-                      fillColor: Color(0xfff3f3f4),
-                      filled: true,
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
             Container(
