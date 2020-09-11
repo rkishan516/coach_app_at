@@ -272,6 +272,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
 
 addSubject(BuildContext context, String courseId,
     {String key, String name = '', String mentors = ''}) {
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController nameTextEditingController = TextEditingController()
     ..text = name;
   List selectedTeacher = List();
@@ -302,254 +303,270 @@ addSubject(BuildContext context, String courseId,
               ),
             ],
           ),
-          child: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: nameTextEditingController,
-                      decoration: InputDecoration(
-                        hintText: 'Subject Name'.tr(),
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
-                  ],
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                        controller: nameTextEditingController,
+                        decoration: InputDecoration(
+                          hintText: 'Subject Name'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                          border: InputBorder.none,
+                          fillColor: Color(0xfff3f3f4),
+                          filled: true,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Mentors'.tr(),
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    StreamBuilder<Event>(
-                        stream: FirebaseDatabase.instance
-                            .reference()
-                            .child(
-                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers')
-                            .onValue,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            if (snapshot.data.snapshot.value == null) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Center(
-                                    child: Text(
-                                      'Your Institute does not have any Teacher'
-                                          .tr(),
-                                      textAlign: TextAlign.center,
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'Mentors'.tr(),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      StreamBuilder<Event>(
+                          stream: FirebaseDatabase.instance
+                              .reference()
+                              .child(
+                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers')
+                              .onValue,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              if (snapshot.data.snapshot.value == null) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Center(
+                                      child: Text(
+                                        'Your Institute does not have any Teacher'
+                                            .tr(),
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ),
-                                  ),
-                                  FlatButton(
-                                      color: Color(0xfff3f3f4),
-                                      onPressed: () => showCupertinoDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                TeacherRegister(),
-                                          ),
-                                      child: Text('Add Teacher'.tr()))
-                                ],
-                              );
-                            } else {
-                              teachers = List<Map<String, dynamic>>();
-                              initialTeachers = List<Map<String, dynamic>>();
-                              snapshot.data.snapshot.value.forEach(
-                                (k, v) {
-                                  Teacher teacher = Teacher.fromJson(v);
-                                  if (mentors.contains(teacher.email)) {
-                                    selectedTeacher.add(teacher);
-                                    initialTeachers.add({
+                                    FlatButton(
+                                        color: Color(0xfff3f3f4),
+                                        onPressed: () => showCupertinoDialog(
+                                              context: context,
+                                              builder: (context) =>
+                                                  TeacherRegister(),
+                                            ),
+                                        child: Text('Add Teacher'.tr()))
+                                  ],
+                                );
+                              } else {
+                                teachers = List<Map<String, dynamic>>();
+                                initialTeachers = List<Map<String, dynamic>>();
+                                snapshot.data.snapshot.value.forEach(
+                                  (k, v) {
+                                    Teacher teacher = Teacher.fromJson(v);
+                                    if (mentors.contains(teacher.email)) {
+                                      selectedTeacher.add(teacher);
+                                      initialTeachers.add({
+                                        "key": k,
+                                        "display": teacher?.email,
+                                        "value": teacher
+                                      });
+                                    }
+                                    teachers.add({
                                       "key": k,
                                       "display": teacher?.email,
                                       "value": teacher
                                     });
-                                  }
-                                  teachers.add({
-                                    "key": k,
-                                    "display": teacher?.email,
-                                    "value": teacher
-                                  });
-                                },
-                              );
-                              return MultiSelectFormField(
-                                dataSource: teachers ??
-                                    [
-                                      {'display': '', 'value': ''}
-                                    ],
-                                valueField: 'value',
-                                textField: 'display',
-                                titleText: 'Mentors'.tr(),
-                                okButtonLabel: 'Accept'.tr(),
-                                cancelButtonLabel: 'Reject'.tr(),
-                                hintText:
-                                    'Please select atleast one teacher'.tr(),
-                                initialValue: selectedTeacher,
-                                onSaved: (value) {
-                                  selectedTeacher = value;
-                                },
-                              );
+                                  },
+                                );
+                                return MultiSelectFormField(
+                                  dataSource: teachers ??
+                                      [
+                                        {'display': '', 'value': ''}
+                                      ],
+                                  valueField: 'value',
+                                  textField: 'display',
+                                  titleText: 'Mentors'.tr(),
+                                  okButtonLabel: 'Accept'.tr(),
+                                  cancelButtonLabel: 'Reject'.tr(),
+                                  hintText:
+                                      'Please select atleast one teacher'.tr(),
+                                  initialValue: selectedTeacher,
+                                  onSaved: (value) {
+                                    selectedTeacher = value;
+                                  },
+                                );
+                              }
+                            } else {
+                              return Container();
                             }
-                          } else {
-                            return Container();
-                          }
-                        }),
-                  ],
+                          }),
+                    ],
+                  ),
                 ),
-              ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    (name == '')
-                        ? Container()
-                        : FlatButton(
-                            onPressed: () async {
-                              String res = await showDialog(
-                                  context: context,
-                                  builder: (context) => AreYouSure());
-                              if (res != 'Yes') {
-                                return;
-                              }
-                              FirebaseDatabase.instance
-                                  .reference()
-                                  .child(
-                                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$key')
-                                  .remove();
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      (name == '')
+                          ? Container()
+                          : FlatButton(
+                              onPressed: () async {
+                                String res = await showDialog(
+                                    context: context,
+                                    builder: (context) => AreYouSure());
+                                if (res != 'Yes') {
+                                  return;
+                                }
+                                FirebaseDatabase.instance
+                                    .reference()
+                                    .child(
+                                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$key')
+                                    .remove();
 
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(
-                              'Remove'.tr(),
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                'Remove'.tr(),
+                              ),
                             ),
-                          ),
-                    FlatButton(
-                      onPressed: () {
-                        if (nameTextEditingController.text == '') {
-                          Alert.instance.alert(
-                              context, 'Please Enter the Name of Subject'.tr());
-                          return;
-                        }
-                        if (selectedTeacher.length == 0) {
-                          Alert.instance.alert(context,
-                              'Please select atleast one teacher'.tr());
-                          return;
-                        }
-                        Subjects subject = Subjects(
-                          name: nameTextEditingController.text
-                              .capitalize()
-                              .trim(),
-                          mentor: {
-                            for (var v in selectedTeacher)
-                              v.email.split('@')[0].replaceAll('.', ','):
-                                  v.email
-                          },
-                        );
-                        var refe;
-                        if (key == null) {
-                          refe = FirebaseDatabase.instance
-                              .reference()
-                              .child(
-                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/')
-                              .push();
-                          key = refe.key;
-                        } else {
-                          refe = FirebaseDatabase.instance.reference().child(
-                              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$key');
-                        }
-                        refe.update(subject.toJson());
-                        selectedTeacher.forEach(
-                          (element) {
-                            for (int i = 0; i < teachers.length; i++) {
-                              if (teachers[i]['value'] == element) {
-                                DatabaseReference ref =
-                                    FirebaseDatabase.instance.reference().child(
-                                        "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${teachers[i]['key']}/courses/");
-                                List subjects = [];
-                                int lengthC =
-                                    teachers[i]['value'].courses?.length ?? 0;
-                                for (int j = 0; j < lengthC; j++) {
-                                  if (teachers[i]['value'].courses[j].id ==
-                                      courseId) {
-                                    subjects = teachers[i]['value']
-                                        .courses[j]
-                                        .subjects;
-                                    lengthC = j;
-                                    break;
-                                  }
-                                }
-                                List<String> d = [];
-                                if (!subjects.contains(key)) {
-                                  d = [key];
-                                }
-
-                                ref.child(lengthC.toString()).update(
-                                    {"id": courseId, "subjects": subjects + d});
-                                initialTeachers?.removeWhere((element) =>
-                                    element["key"] == teachers[i]['key']);
-                              }
-                            }
-                          },
-                        );
-
-                        initialTeachers.forEach((element) {
-                          if (key != null) {
-                            Teacher teacher = element['value'];
-                            for (int i = 0;
-                                i < teacher?.courses?.length ?? 0;
-                                i++) {
-                              if (teacher.courses[i].id == courseId) {
-                                for (int j = 0;
-                                    j < teacher.courses[i]?.subjects?.length ??
-                                        0;
-                                    j++) {
-                                  if (teacher.courses[i]?.subjects[j] == key) {
-                                    teacher.courses[i]?.subjects?.removeAt(j);
-                                    break;
-                                  }
-                                }
-                                if ((teacher.courses[i]?.subjects?.length ??
-                                        0) ==
-                                    0) {
-                                  teacher.courses?.removeAt(i);
-                                }
-                                break;
-                              }
-                            }
-                            DatabaseReference ref = FirebaseDatabase.instance
+                      FlatButton(
+                        onPressed: () {
+                          if (nameTextEditingController.text == '') {
+                            Alert.instance.alert(context,
+                                'Please Enter the Name of Subject'.tr());
+                            return;
+                          }
+                          if (selectedTeacher.length == 0) {
+                            Alert.instance.alert(context,
+                                'Please select atleast one teacher'.tr());
+                            return;
+                          }
+                          Subjects subject = Subjects(
+                            name: nameTextEditingController.text
+                                .capitalize()
+                                .trim(),
+                            mentor: {
+                              for (var v in selectedTeacher)
+                                v.email.split('@')[0].replaceAll('.', ','):
+                                    v.email
+                            },
+                          );
+                          var refe;
+                          if (key == null) {
+                            refe = FirebaseDatabase.instance
                                 .reference()
                                 .child(
-                                    "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${element['key']}/");
-                            ref.update(teacher.toJson());
+                                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/')
+                                .push();
+                            key = refe.key;
+                          } else {
+                            refe = FirebaseDatabase.instance.reference().child(
+                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$key');
                           }
-                        });
+                          refe.update(subject.toJson());
+                          selectedTeacher.forEach(
+                            (element) {
+                              for (int i = 0; i < teachers.length; i++) {
+                                if (teachers[i]['value'] == element) {
+                                  DatabaseReference ref = FirebaseDatabase
+                                      .instance
+                                      .reference()
+                                      .child(
+                                          "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${teachers[i]['key']}/courses/");
+                                  List subjects = [];
+                                  int lengthC =
+                                      teachers[i]['value'].courses?.length ?? 0;
+                                  for (int j = 0; j < lengthC; j++) {
+                                    if (teachers[i]['value'].courses[j].id ==
+                                        courseId) {
+                                      subjects = teachers[i]['value']
+                                          .courses[j]
+                                          .subjects;
+                                      lengthC = j;
+                                      break;
+                                    }
+                                  }
+                                  List<String> d = [];
+                                  if (!subjects.contains(key)) {
+                                    d = [key];
+                                  }
 
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(
-                        'Add Subject'.tr(),
+                                  ref.child(lengthC.toString()).update({
+                                    "id": courseId,
+                                    "subjects": subjects + d
+                                  });
+                                  initialTeachers?.removeWhere((element) =>
+                                      element["key"] == teachers[i]['key']);
+                                }
+                              }
+                            },
+                          );
+
+                          initialTeachers.forEach((element) {
+                            if (key != null) {
+                              Teacher teacher = element['value'];
+                              for (int i = 0;
+                                  i < teacher?.courses?.length ?? 0;
+                                  i++) {
+                                if (teacher.courses[i].id == courseId) {
+                                  for (int j = 0;
+                                      j <
+                                              teacher.courses[i]?.subjects
+                                                  ?.length ??
+                                          0;
+                                      j++) {
+                                    if (teacher.courses[i]?.subjects[j] ==
+                                        key) {
+                                      teacher.courses[i]?.subjects?.removeAt(j);
+                                      break;
+                                    }
+                                  }
+                                  if ((teacher.courses[i]?.subjects?.length ??
+                                          0) ==
+                                      0) {
+                                    teacher.courses?.removeAt(i);
+                                  }
+                                  break;
+                                }
+                              }
+                              DatabaseReference ref = FirebaseDatabase.instance
+                                  .reference()
+                                  .child(
+                                      "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${element['key']}/");
+                              ref.update(teacher.toJson());
+                            }
+                          });
+
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'Add Subject'.tr(),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
