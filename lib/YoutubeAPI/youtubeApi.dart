@@ -14,11 +14,11 @@ class YoutubeUpload {
     var credentials = await storage.getCredentials();
     var scopes = [YoutubeApi.YoutubeScope];
     if (credentials == null) {
-      var clientID = ClientId(
-          '571534499090-khpqrmd88kq9lihi7810uf53omkhlpjv.apps.googleusercontent.com',
-          '');
-      var autoRefreshingAuthClient =
-          await clientViaUserConsent(clientID, scopes, (url) {
+      var autoRefreshingAuthClient = await clientViaUserConsent(
+          ClientId(
+              '571534499090-3tm4jm7rhkaprpbjaa785co92f5qbr0q.apps.googleusercontent.com',
+              'pA0nLIhjcfulg46bxiFD1l-2'),
+          scopes, (url) {
         launch(url);
       });
 
@@ -53,6 +53,7 @@ class YoutubeUpload {
 
     Video videon = await youtubeApi.videos.insert(video, 'snippet,status',
         uploadMedia: Media(file.openRead(), file.lengthSync()));
+    print(videon.toJson());
     return "https://www.youtube.com/watch?v=" + videon.id;
   }
 }
