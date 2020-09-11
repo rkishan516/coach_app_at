@@ -19,6 +19,7 @@ class AddCourse extends StatefulWidget {
 }
 
 class _AddCourseState extends State<AddCourse> {
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController nameTextEditingController,
       descriptionTextEditingController,
       mediumTextEditingController,
@@ -95,11 +96,18 @@ class _AddCourseState extends State<AddCourse> {
               padding: EdgeInsets.only(left: 10.0, right: 10.0),
               margin: EdgeInsets.symmetric(vertical: 10),
               child: Form(
+                key: _formKey,
                 autovalidate: true,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    TextField(
+                    TextFormField(
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      },
                       controller: nameTextEditingController,
                       decoration: InputDecoration(
                         hintStyle: TextStyle(
@@ -124,7 +132,13 @@ class _AddCourseState extends State<AddCourse> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  TextField(
+                  TextFormField(
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
                     controller: descriptionTextEditingController,
                     decoration: InputDecoration(
                       hintStyle:
@@ -148,7 +162,13 @@ class _AddCourseState extends State<AddCourse> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  TextField(
+                  TextFormField(
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
                     controller: mediumTextEditingController,
                     decoration: InputDecoration(
                       hintStyle:
