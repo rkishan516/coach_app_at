@@ -1,203 +1,58 @@
 {
   "project_info": {
-    "project_number": "491936436807",
-    "firebase_url": "https://guru-cool-test.firebaseio.com",
-    "project_id": "guru-cool-test",
-    "storage_bucket": "guru-cool-test.appspot.com"
+    "project_number": "571534499090",
+    "firebase_url": "https://coachapp-5a4c.firebaseio.com",
+    "project_id": "coachapp-5a4c",
+    "storage_bucket": "coachapp-5a4c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:491936436807:android:6a4ef18bf5756ca3225762",
+        "mobilesdk_app_id": "1:571534499090:android:7d3ed8ee2871842ccfe7cb",
         "android_client_info": {
-          "package_name": "com.VysionTech.coach"
+          "package_name": "com.VysionTech.gurucool"
         }
       },
       "oauth_client": [
         {
-          "client_id": "491936436807-n7kruqvudmbcruv9qo7fqqor1h0rs873.apps.googleusercontent.com",
+          "client_id": "571534499090-elcc8l3ab5a6vkb81cjpr5an19tkbgir.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.VysionTech.coach",
-            "certificate_hash": "5e27d92bc30ca61cf9210862065d0d3374802d70"
+            "package_name": "com.VysionTech.gurucool",
+            "certificate_hash": "c91f7a22db984d65c2b417de589d55cf7c8f6613"
           }
         },
         {
-          "client_id": "491936436807-4dl9hs7pi8n1e4dso1lbtigsaaae3s2i.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBTZQuVupjF1Ajv9I0XS-_8GOVznR1zaWM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "491936436807-4dl9hs7pi8n1e4dso1lbtigsaaae3s2i.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:491936436807:android:44c85785f98bf712225762",
-        "android_client_info": {
-          "package_name": "com.android.application"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "491936436807-1ne0mfrpvuqeic38gk7atj9kgtdi5i0j.apps.googleusercontent.com",
+          "client_id": "571534499090-psmfbpmbrgmp3u8ur0c7f0rttgi5099e.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.android.application",
-            "certificate_hash": "0afd116cf5626bf495916d778d64b68a01b20fcc"
+            "package_name": "com.VysionTech.gurucool",
+            "certificate_hash": "c42d4c7b2dc21492fad474c90929b4a235e6beb5"
           }
         },
         {
-          "client_id": "491936436807-4dl9hs7pi8n1e4dso1lbtigsaaae3s2i.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBTZQuVupjF1Ajv9I0XS-_8GOVznR1zaWM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "491936436807-4dl9hs7pi8n1e4dso1lbtigsaaae3s2i.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:491936436807:android:854b208c5460c1d5225762",
-        "android_client_info": {
-          "package_name": "com.example.CheckFlutterRun"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "491936436807-4dl9hs7pi8n1e4dso1lbtigsaaae3s2i.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBTZQuVupjF1Ajv9I0XS-_8GOVznR1zaWM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "491936436807-4dl9hs7pi8n1e4dso1lbtigsaaae3s2i.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:491936436807:android:e0d8da056b52ee55225762",
-        "android_client_info": {
-          "package_name": "com.example.FeesManageMent"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "491936436807-4dl9hs7pi8n1e4dso1lbtigsaaae3s2i.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBTZQuVupjF1Ajv9I0XS-_8GOVznR1zaWM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "491936436807-4dl9hs7pi8n1e4dso1lbtigsaaae3s2i.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:491936436807:android:7e0d89c00158cd8e225762",
-        "android_client_info": {
-          "package_name": "com.example.coach_app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "491936436807-k3qi9r6nuqq287acisd3o2t3r5c3t574.apps.googleusercontent.com",
+          "client_id": "571534499090-cmidu3tq87g59s44b6s4rcscucj64akp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.coach_app",
-            "certificate_hash": "0afd116cf5626bf495916d778d64b68a01b20fcc"
+            "package_name": "com.VysionTech.gurucool",
+            "certificate_hash": "017a59493f270ad1e69aa58e0b1b792b1de869f8"
           }
         },
         {
-          "client_id": "491936436807-4dl9hs7pi8n1e4dso1lbtigsaaae3s2i.apps.googleusercontent.com",
+          "client_id": "571534499090-cmhe7sr09q09cgqpqurk3o92joj3o585.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBTZQuVupjF1Ajv9I0XS-_8GOVznR1zaWM"
+          "current_key": "AIzaSyDrzBA1M5wj6c_c5GyOP1NcDxtQG9UJJ-Q"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "491936436807-4dl9hs7pi8n1e4dso1lbtigsaaae3s2i.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:491936436807:android:bda7ff7c0eeac74b225762",
-        "android_client_info": {
-          "package_name": "com.example.videocalling"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "491936436807-4dl9hs7pi8n1e4dso1lbtigsaaae3s2i.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBTZQuVupjF1Ajv9I0XS-_8GOVznR1zaWM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "491936436807-4dl9hs7pi8n1e4dso1lbtigsaaae3s2i.apps.googleusercontent.com",
+              "client_id": "571534499090-3tm4jm7rhkaprpbjaa785co92f5qbr0q.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
