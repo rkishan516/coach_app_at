@@ -11,7 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
- 
+
 class PublicContentPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;
@@ -75,8 +75,8 @@ class _PublicContentPageState extends State<PublicContentPage> {
                                       child: Center(
                                         child: Text(
                                           '${section.content[section.content.keys.toList()[index]].title}',
-                                          style:
-                                              TextStyle(color: Color(0xffF36C24)),
+                                          style: TextStyle(
+                                              color: Color(0xffF36C24)),
                                         ),
                                       ),
                                     ),
@@ -102,12 +102,11 @@ class _PublicContentPageState extends State<PublicContentPage> {
                                       )
                                     else
                                       CircleAvatar(
-                                        child: Icon(
-                                          Icons.library_books,
-                                          color: Colors.white,
-                                        ),
-                                        backgroundColor: Color(0xffF36C24)
-                                      ),
+                                          child: Icon(
+                                            Icons.library_books,
+                                            color: Colors.white,
+                                          ),
+                                          backgroundColor: Color(0xffF36C24)),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text(
@@ -224,12 +223,14 @@ class _PublicContentPageState extends State<PublicContentPage> {
           ],
         ),
       ),
-      floatingActionButton: (FireBaseAuth.instance.previlagelevel == 4) ? SlideButtonR(
-        text: 'Add Content'.tr(),
-        onTap: () => addContent(context, widget.reference),
-        width: 150,
-        height: 50,
-      ) : null,
+      floatingActionButton: (FireBaseAuth.instance.previlagelevel == 4)
+          ? SlideButtonR(
+              text: 'Add Content'.tr(),
+              onTap: () => addContent(context, widget.reference),
+              width: 150,
+              height: 50,
+            )
+          : null,
     );
   }
 
@@ -488,101 +489,3 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
     );
   }
 }
-
-//   child: ListTile(
-//     leading: CircleAvatar(
-//       backgroundImage: section
-//                   .content[section.content.keys
-//                       .toList()[index]]
-//                   .kind ==
-//               'Youtube Video' ? NetworkImage(
-//               YoutubePlayer.getThumbnail(
-//                 videoId: YoutubePlayer.convertUrlToId(
-//                   section
-//                       .content[section.content.keys
-//                           .toList()[index]]
-//                       .ylink,
-//                 ),
-//               ),
-//             ) : null,
-//       child: section
-//                   .content[section.content.keys
-//                       .toList()[index]]
-//                   .kind ==
-//               'Youtube Video'
-//           ? null
-//           : Icon(
-//               Icons.library_books,
-//               color: Colors.white,
-//             ),
-//       backgroundColor: Color(0xffF36C24),
-//     ),
-//     title: Text(
-//       '${section.content[section.content.keys.toList()[index]].title}',
-//       style: TextStyle(color: Color(0xffF36C24)),
-//     ),
-//     subtitle: Text(
-//       '${section.content[section.content.keys.toList()[index]].description}',
-//       style: TextStyle(color: Color(0xffF36C24)),
-//     ),
-//     trailing: Icon(
-//       Icons.chevron_right,
-//       color: Color(0xffF36C24),
-//     ),
-//     onTap: () {
-//       if (section
-//               .content[section.content.keys
-//                   .toList()[index]]
-//               .kind ==
-//           'Youtube Video') {
-//         Navigator.of(context).push(
-//           CupertinoPageRoute(
-//             builder: (context) => YTPlayer(
-//                 reference: widget.reference.child(
-//                     'content/${section.content.keys.toList()[index]}'),
-//                 link: section
-//                     .content[section.content.keys
-//                         .toList()[index]]
-//                     .ylink),
-//           ),
-//         );
-//       } else if (section
-//               .content[section.content.keys
-//                   .toList()[index]]
-//               .kind ==
-//           'PDF') {
-//         Navigator.of(context).push(
-//           CupertinoPageRoute(
-//             builder: (context) => PDFPlayer(
-//               link: section
-//                   .content[section.content.keys
-//                       .toList()[index]]
-//                   .link,
-//             ),
-//           ),
-//         );
-//       }
-//     },
-//     onLongPress: () => addContent(context, widget.reference,
-//         key: section.content.keys.toList()[index],
-//         title: section
-//             .content[
-//                 section.content.keys.toList()[index]]
-//             .title,
-//         link: section.content[section.content.keys.toList()[index]].kind ==
-//                 'Youtube Video'
-//             ? section
-//                 .content[section.content.keys
-//                     .toList()[index]]
-//                 .ylink
-//             : section.content[section.content.keys.toList()[index]].kind == 'PDF'
-//                 ? section
-//                     .content[section.content.keys
-//                         .toList()[index]]
-//                     .link
-//                 : '',
-//         description: section
-//             .content[section.content.keys.toList()[index]]
-//             .description,
-//         type: section.content[section.content.keys.toList()[index]].kind),
-//   ),

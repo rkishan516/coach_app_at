@@ -1,4 +1,5 @@
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
+import 'package:coach_app/Models/model.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -179,6 +180,80 @@ class _YTPlayerState extends State<YTPlayer> {
                     );
                   }
                 },
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: StreamBuilder<Event>(
+                  stream: widget.reference.parent().onValue,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      Map<String, Content> contents = Map<String, Content>();
+                      snapshot.data.snapshot.value?.forEach((key, value) {
+                        Content content = Content.fromJson(value);
+                        if (content.kind == 'Youtube Video') {
+                          contents[key] = content;
+                        }
+                      });
+                      return Card(
+                        child: ListView.builder(
+                          itemCount: contents.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () {
+                                Navigator.of(context).pushReplacement(
+                                  CupertinoPageRoute(
+                                    builder: (context) => YTPlayer(
+                                        reference: widget.reference.parent().child(
+                                            '/${contents.keys.toList()[index]}'),
+                                        link: contents[
+                                                contents.keys.toList()[index]]
+                                            .ylink),
+                                  ),
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20, top: 20),
+                                child: Container(
+                                  height: 80,
+                                  child: Row(
+                                    children: [
+                                      Image.network(
+                                        YoutubePlayer.getThumbnail(
+                                          videoId: YoutubePlayer.convertUrlToId(
+                                            contents[contents.keys
+                                                    .toList()[index]]
+                                                .ylink,
+                                          ),
+                                        ),
+                                        height: 120,
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 18.0),
+                                        child: Text(contents[
+                                                contents.keys.toList()[index]]
+                                            .title),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    } else {
+                      return PlaceholderLines(
+                        count: 3,
+                        animate: true,
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           ],

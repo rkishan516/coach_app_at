@@ -202,6 +202,7 @@ class _StudentListState extends State<StudentList> {
   }
 
   editStudent(Student student, String keyS) {
+    GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     TextEditingController nameTextEditingController = TextEditingController()
       ..text = student?.name ?? '';
     TextEditingController addressTextEditingController = TextEditingController()
@@ -234,179 +235,203 @@ class _StudentListState extends State<StudentList> {
               ),
             ],
           ),
-          child: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: nameTextEditingController,
-                      decoration: InputDecoration(
-                        hintText: 'Name'.tr(),
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
-                  ],
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter the name';
+                          }
+                          return null;
+                        },
+                        controller: nameTextEditingController,
+                        decoration: InputDecoration(
+                          hintText: 'Name'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                          border: InputBorder.none,
+                          fillColor: Color(0xfff3f3f4),
+                          filled: true,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: addressTextEditingController,
-                      decoration: InputDecoration(
-                        hintText: 'Address'.tr(),
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
-                  ],
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter the address';
+                          }
+                          return null;
+                        },
+                        controller: addressTextEditingController,
+                        decoration: InputDecoration(
+                          hintText: 'Address'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                          border: InputBorder.none,
+                          fillColor: Color(0xfff3f3f4),
+                          filled: true,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: phoneTextEditingController,
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        hintText: 'Phone No'.tr(),
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
-                  ],
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter the phone no';
+                          }
+                          return null;
+                        },
+                        controller: phoneTextEditingController,
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          hintText: 'Phone No'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                          border: InputBorder.none,
+                          fillColor: Color(0xfff3f3f4),
+                          filled: true,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              // StreamBuilder<Event>(
-              //   stream: FirebaseDatabase.instance
-              //       .reference()
-              //       .child(
-              //           'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses')
-              //       .onValue,
-              //   builder: (context, snapshot) {
-              //     if (snapshot.hasData) {
-              //       List<Courses> courses = List<Courses>();
-              //       snapshot.data.snapshot.value?.forEach((k, v) {
-              //         courses.add(Courses.fromJson(v));
-              //       });
-              //       return DropdownButton(
-              //           value: course,
-              //           hint: Text('Select Course'.tr()),
-              //           items: courses
-              //               .map(
-              //                 (k) => DropdownMenuItem(
-              //                   child: Container(
-              //                     width: MediaQuery.of(context).size.width / 5,
-              //                     child: Text(
-              //                       k.name,
-              //                       overflow: TextOverflow.ellipsis,
-              //                     ),
-              //                   ),
-              //                   value: k,
-              //                 ),
-              //               )
-              //               .toList(),
-              //           onChanged: (value) {
-              //             setState(() {
-              //               course = value;
-              //             });
-              //           });
-              //     } else {
-              //       return Container();
-              //     }
-              //   },
-              // ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    FlatButton(
-                      onPressed: () async {
-                        String res = await showDialog(
-                            context: context,
-                            builder: (context) => AreYouSure());
-                        if (res != 'Yes') {
-                          return;
-                        }
-                        FirebaseDatabase.instance
-                            .reference()
-                            .child(
-                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$keyS')
-                            .remove();
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(
-                        'Remove'.tr(),
+                // StreamBuilder<Event>(
+                //   stream: FirebaseDatabase.instance
+                //       .reference()
+                //       .child(
+                //           'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses')
+                //       .onValue,
+                //   builder: (context, snapshot) {
+                //     if (snapshot.hasData) {
+                //       List<Courses> courses = List<Courses>();
+                //       snapshot.data.snapshot.value?.forEach((k, v) {
+                //         courses.add(Courses.fromJson(v));
+                //       });
+                //       return DropdownButton(
+                //           value: course,
+                //           hint: Text('Select Course'.tr()),
+                //           items: courses
+                //               .map(
+                //                 (k) => DropdownMenuItem(
+                //                   child: Container(
+                //                     width: MediaQuery.of(context).size.width / 5,
+                //                     child: Text(
+                //                       k.name,
+                //                       overflow: TextOverflow.ellipsis,
+                //                     ),
+                //                   ),
+                //                   value: k,
+                //                 ),
+                //               )
+                //               .toList(),
+                //           onChanged: (value) {
+                //             setState(() {
+                //               course = value;
+                //             });
+                //           });
+                //     } else {
+                //       return Container();
+                //     }
+                //   },
+                // ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      FlatButton(
+                        onPressed: () async {
+                          String res = await showDialog(
+                              context: context,
+                              builder: (context) => AreYouSure());
+                          if (res != 'Yes') {
+                            return;
+                          }
+                          FirebaseDatabase.instance
+                              .reference()
+                              .child(
+                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$keyS')
+                              .remove();
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'Remove'.tr(),
+                        ),
                       ),
-                    ),
-                    FlatButton(
-                      onPressed: () {
-                        if (nameTextEditingController.text == '' ||
-                            addressTextEditingController.text == '' ||
-                            phoneTextEditingController.text == '') {
-                          Alert.instance.alert(
-                              context, 'Something remains unfilled'.tr());
-                          return;
-                        }
-                        // bool flag = false;
-                        // if (course != null) {
-                        //   student.course?.forEach((element) {
-                        //     if (course.id == element.courseID) {
-                        //       flag = true;
-                        //     }
-                        //   });
-                        //   if (flag == false) {
-                        //     Course(
-                        //         academicYear: DateTime.now().year.toString() +
-                        //             '-' +
-                        //             (DateTime.now().year + 1).toString(),
-                        //         courseID: course.id,
-                        //         courseName: course.name,
-                        //         paymentToken:
-                        //             'Registered By ${FireBaseAuth.instance.user.displayName}');
-                        //   }
-                        // }
-                        Student dstudent = Student(
-                            name: nameTextEditingController.text,
-                            address: addressTextEditingController.text,
-                            phoneNo: phoneTextEditingController.text,
-                            email: student.email,
-                            status: student.status,
-                            photoURL: student.photoURL,
-                            classs: student.classs,
-                            rollNo: student.rollNo);
-                        FirebaseDatabase.instance
-                            .reference()
-                            .child(
-                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$keyS')
-                            .update(dstudent.toJson());
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('Update Student'.tr()),
-                    ),
-                  ],
+                      FlatButton(
+                        onPressed: () {
+                          if (!_formKey.currentState.validate()) {
+                            return;
+                          }
+                          if (nameTextEditingController.text == '' ||
+                              addressTextEditingController.text == '' ||
+                              phoneTextEditingController.text == '') {
+                            Alert.instance.alert(
+                                context, 'Something remains unfilled'.tr());
+                            return;
+                          }
+                          // bool flag = false;
+                          // if (course != null) {
+                          //   student.course?.forEach((element) {
+                          //     if (course.id == element.courseID) {
+                          //       flag = true;
+                          //     }
+                          //   });
+                          //   if (flag == false) {
+                          //     Course(
+                          //         academicYear: DateTime.now().year.toString() +
+                          //             '-' +
+                          //             (DateTime.now().year + 1).toString(),
+                          //         courseID: course.id,
+                          //         courseName: course.name,
+                          //         paymentToken:
+                          //             'Registered By ${FireBaseAuth.instance.user.displayName}');
+                          //   }
+                          // }
+                          Student dstudent = Student(
+                              name: nameTextEditingController.text,
+                              address: addressTextEditingController.text,
+                              phoneNo: phoneTextEditingController.text,
+                              email: student.email,
+                              status: student.status,
+                              photoURL: student.photoURL,
+                              classs: student.classs,
+                              rollNo: student.rollNo);
+                          FirebaseDatabase.instance
+                              .reference()
+                              .child(
+                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$keyS')
+                              .update(dstudent.toJson());
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Update Student'.tr()),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

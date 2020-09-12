@@ -1,6 +1,6 @@
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class PDFPlayer extends StatefulWidget {
   final String link;
@@ -75,7 +75,7 @@ class _PDFPlayerState extends State<PDFPlayer> {
     super.dispose();
   }
 
-  WebViewController controller;
+  InAppWebViewController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -101,11 +101,9 @@ class _PDFPlayerState extends State<PDFPlayer> {
             )
           ],
         ),
-        child: WebView(
+        child: InAppWebView(
           initialUrl: widget.link,
           // 'https://docs.google.com/gview?embedded=true&url=${widget.link}',
-          javascriptMode: JavascriptMode.unrestricted,
-          gestureNavigationEnabled: true,
           onWebViewCreated: (cntlr) {
             controller = cntlr;
           },

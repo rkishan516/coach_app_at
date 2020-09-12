@@ -19,10 +19,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
       phoneTextEditingController,
       instituteCodeTextEditingController;
   String status = 'New Student';
+  GlobalKey<FormState> _formKey;
   GlobalKey<ScaffoldState> _scKey;
 
   @override
   void initState() {
+    _formKey = GlobalKey<FormState>();
     _scKey = GlobalKey<ScaffoldState>();
     nameTextEditingController = TextEditingController();
     addressTextEditingController = TextEditingController();
@@ -78,154 +80,162 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 colors: [Colors.white, Color(0xffF36C24)])),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ListView(
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: nameTextEditingController,
-                      decoration: InputDecoration(
-                        hintText: 'Name'.tr(),
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              // Container(
-              //   margin: EdgeInsets.symmetric(vertical: 10),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: <Widget>[
-              //       TextField(
-              //         controller: addressTextEditingController,
-              //         decoration: InputDecoration(
-              //           hintText: 'Address'.tr(),
-              //           hintStyle: TextStyle(
-              //               fontWeight: FontWeight.bold, fontSize: 15),
-              //           border: InputBorder.none,
-              //           fillColor: Color(0xfff3f3f4),
-              //           filled: true,
-              //         ),
-              //       )
-              //     ],
-              //   ),
-              // ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: instituteCodeTextEditingController,
-                      decoration: InputDecoration(
-                        hintText: 'Institute Code'.tr(),
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: phoneTextEditingController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        hintText: 'Phone No'.tr(),
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              RaisedButton(
-                color: Colors.white,
-                elevation: 0.0,
-                onPressed: () async {
-                  if (nameTextEditingController.text != '' &&
-                      // addressTextEditingController.text != '' &&
-                      phoneTextEditingController.text != '' &&
-                      instituteCodeTextEditingController.text != '') {
-                    Student student = Student(
-                        name: nameTextEditingController.text,
-                        address: addressTextEditingController.text,
-                        phoneNo: phoneTextEditingController.text,
-                        photoURL: FireBaseAuth.instance.user.photoUrl,
-                        email: FireBaseAuth.instance.user.email,
-                        // fatherName: fatherNameTextEditingController.text,
-                        status: status);
-                    var branchCode =
-                        instituteCodeTextEditingController.text.substring(4);
-                    DataSnapshot dataSnapshot = await FirebaseDatabase.instance
-                        .reference()
-                        .child(
-                            '/instituteList/${instituteCodeTextEditingController.text.substring(0, 4)}')
-                        .once();
-                    if (dataSnapshot.value == null) {
-                      Alert.instance
-                          .alert(context, 'Wrong Institute Code'.tr());
-                      return;
-                    }
-                    DataSnapshot dataSnapshot1 = await FirebaseDatabase.instance
-                        .reference()
-                        .child(
-                            '/institute/${dataSnapshot.value}/branches/$branchCode/name')
-                        .once();
-                    if (dataSnapshot1.value == null) {
-                      Alert.instance
-                          .alert(context, 'Wrong Institute Code'.tr());
-                      return;
-                    }
-                    FireBaseAuth.instance.prefs
-                        .setString('insCode', dataSnapshot.value);
-                    FireBaseAuth.instance.prefs
-                        .setString('branchCode', branchCode);
-                    DatabaseReference reference = FirebaseDatabase.instance
-                        .reference()
-                        .child(
-                            "institute/${dataSnapshot.value}/branches/$branchCode/");
-
-                    reference
-                        .child('students/${FireBaseAuth.instance.user.uid}')
-                        .update(student.toJson());
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) {
-                      return AllCoursePage(
-                        ref: reference,
-                      );
-                    }), (route) => false);
-                  } else {
-                    _scKey.currentState.showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Something remains unfilled'.tr(),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter your name';
+                          }
+                          return null;
+                        },
+                        controller: nameTextEditingController,
+                        decoration: InputDecoration(
+                          hintText: 'Name'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                          border: InputBorder.none,
+                          fillColor: Color(0xfff3f3f4),
+                          filled: true,
                         ),
-                      ),
-                    );
-                  }
-                },
-                child: Text('Register'.tr()),
-              )
-            ],
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter your institute code';
+                          }
+                          return null;
+                        },
+                        controller: instituteCodeTextEditingController,
+                        decoration: InputDecoration(
+                          hintText: 'Institute Code'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                          border: InputBorder.none,
+                          fillColor: Color(0xfff3f3f4),
+                          filled: true,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter your phone number';
+                          }
+                          if (value.length < 10) {
+                            return 'Please enter correct phone number';
+                          }
+                          return null;
+                        },
+                        controller: phoneTextEditingController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: 'Phone No'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                          border: InputBorder.none,
+                          fillColor: Color(0xfff3f3f4),
+                          filled: true,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                RaisedButton(
+                  color: Colors.white,
+                  elevation: 0.0,
+                  onPressed: () async {
+                    if (!_formKey.currentState.validate()) {
+                      return;
+                    }
+                    if (nameTextEditingController.text != '' &&
+                        phoneTextEditingController.text != '' &&
+                        instituteCodeTextEditingController.text != '') {
+                      Student student = Student(
+                          name: nameTextEditingController.text,
+                          address: addressTextEditingController.text,
+                          phoneNo: phoneTextEditingController.text,
+                          photoURL: FireBaseAuth.instance.user.photoUrl,
+                          email: FireBaseAuth.instance.user.email,
+                          status: status);
+                      var branchCode =
+                          instituteCodeTextEditingController.text.substring(4);
+                      DataSnapshot dataSnapshot = await FirebaseDatabase
+                          .instance
+                          .reference()
+                          .child(
+                              '/instituteList/${instituteCodeTextEditingController.text.substring(0, 4)}')
+                          .once();
+                      if (dataSnapshot.value == null) {
+                        Alert.instance
+                            .alert(context, 'Wrong Institute Code'.tr());
+                        return;
+                      }
+                      DataSnapshot dataSnapshot1 = await FirebaseDatabase
+                          .instance
+                          .reference()
+                          .child(
+                              '/institute/${dataSnapshot.value}/branches/$branchCode/name')
+                          .once();
+                      if (dataSnapshot1.value == null) {
+                        Alert.instance
+                            .alert(context, 'Wrong Institute Code'.tr());
+                        return;
+                      }
+                      FireBaseAuth.instance.prefs
+                          .setString('insCode', dataSnapshot.value);
+                      FireBaseAuth.instance.prefs
+                          .setString('branchCode', branchCode);
+                      DatabaseReference reference = FirebaseDatabase.instance
+                          .reference()
+                          .child(
+                              "institute/${dataSnapshot.value}/branches/$branchCode/");
+
+                      reference
+                          .child('students/${FireBaseAuth.instance.user.uid}')
+                          .update(student.toJson());
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) {
+                        return AllCoursePage(
+                          ref: reference,
+                        );
+                      }), (route) => false);
+                    } else {
+                      _scKey.currentState.showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Something remains unfilled'.tr(),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  child: Text('Register'.tr()),
+                )
+              ],
+            ),
           ),
         ),
       ),
