@@ -49,6 +49,7 @@ class FireBaseAuth {
         this.user = currUser;
       } else {
         var creds = await getAuthGCredentials();
+      
         final AuthCredential credential = GoogleAuthProvider.getCredential(
           accessToken: creds[0],
           idToken: creds[1],
