@@ -97,7 +97,6 @@ class _AddCourseState extends State<AddCourse> {
               margin: EdgeInsets.symmetric(vertical: 10),
               child: Form(
                 key: _formKey,
-                autovalidate: true,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
