@@ -318,6 +318,7 @@ addChapter(BuildContext context, DatabaseReference reference,
     String name = '',
     String description = '',
     Map<String, Content> content}) {
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController nameTextEditingController = TextEditingController()
     ..text = name;
   TextEditingController descriptionTextEditingController =
@@ -352,99 +353,117 @@ addChapter(BuildContext context, DatabaseReference reference,
               ),
             ],
           ),
-          child: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: nameTextEditingController,
-                      decoration: InputDecoration(
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                        hintText: 'Chapter Name'.tr(),
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: descriptionTextEditingController,
-                      decoration: InputDecoration(
-                        hintText: 'Chapter Description'.tr(),
-                        hintStyle: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                        border: InputBorder.none,
-                        fillColor: Color(0xfff3f3f4),
-                        filled: true,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    (key == null)
-                        ? Container()
-                        : FlatButton(
-                            onPressed: () async {
-                              String res = await showDialog(
-                                  context: context,
-                                  builder: (context) => AreYouSure());
-                              if (res != 'Yes') {
-                                return;
-                              }
-                              reference.child('chapters/$key').remove();
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(
-                              'Remove'.tr(),
-                            ),
-                          ),
-                    FlatButton(
-                      onPressed: () {
-                        if (nameTextEditingController.text != '' &&
-                            descriptionTextEditingController.text != '') {
-                          Chapters chapter = Chapters(
-                              name: nameTextEditingController.text,
-                              description:
-                                  descriptionTextEditingController.text,
-                              content: content);
-                          if (key == null) {
-                            reference
-                                .child('chapters/')
-                                .push()
-                                .update(chapter.toJson());
-                          } else {
-                            reference
-                                .child('chapters/$key')
-                                .update(chapter.toJson());
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter the chapter name';
                           }
-                        }
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(
-                        'Add Chapter'.tr(),
-                      ),
-                    ),
-                  ],
+                          return null;
+                        },
+                        controller: nameTextEditingController,
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                          hintText: 'Chapter Name'.tr(),
+                          border: InputBorder.none,
+                          fillColor: Color(0xfff3f3f4),
+                          filled: true,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter the chapter description';
+                          }
+                          return null;
+                        },
+                        controller: descriptionTextEditingController,
+                        decoration: InputDecoration(
+                          hintText: 'Chapter Description'.tr(),
+                          hintStyle: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                          border: InputBorder.none,
+                          fillColor: Color(0xfff3f3f4),
+                          filled: true,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      (key == null)
+                          ? Container()
+                          : FlatButton(
+                              onPressed: () async {
+                                String res = await showDialog(
+                                    context: context,
+                                    builder: (context) => AreYouSure());
+                                if (res != 'Yes') {
+                                  return;
+                                }
+                                reference.child('chapters/$key').remove();
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                'Remove'.tr(),
+                              ),
+                            ),
+                      FlatButton(
+                        onPressed: () {
+                          if (!_formKey.currentState.validate()) {
+                            return;
+                          }
+                          if (nameTextEditingController.text != '' &&
+                              descriptionTextEditingController.text != '') {
+                            Chapters chapter = Chapters(
+                                name: nameTextEditingController.text,
+                                description:
+                                    descriptionTextEditingController.text,
+                                content: content);
+                            if (key == null) {
+                              reference
+                                  .child('chapters/')
+                                  .push()
+                                  .update(chapter.toJson());
+                            } else {
+                              reference
+                                  .child('chapters/$key')
+                                  .update(chapter.toJson());
+                            }
+                          }
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'Add Chapter'.tr(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );

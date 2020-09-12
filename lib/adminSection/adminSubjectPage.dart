@@ -450,6 +450,9 @@ addSubject(BuildContext context, String courseId,
                             ),
                       FlatButton(
                         onPressed: () {
+                          if (!_formKey.currentState.validate()) {
+                            return;
+                          }
                           if (nameTextEditingController.text == '') {
                             Alert.instance.alert(context,
                                 'Please Enter the Name of Subject'.tr());
