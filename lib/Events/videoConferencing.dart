@@ -3,6 +3,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 class VideoConferencing extends StatefulWidget {
   final String passVariable;
@@ -33,6 +34,7 @@ class _VideoConferencingState extends State<VideoConferencing> {
     return Scaffold(
       appBar: AppBar(
         title: Text('GuruCool Meet'),
+        automaticallyImplyLeading: false,
       ),
       body: InAppWebView(
         initialUrl: _joinMeeting(),
@@ -88,7 +90,7 @@ class _VideoConferencingState extends State<VideoConferencing> {
   String _launchURL() {
     bool _ishost = false;
     if (widget.hostuid == FireBaseAuth.instance.user.uid) _ishost = true;
-    var midurl = "https://coachapp-5a4c.firebaseapp.com?previlagelevel=" +
+    var midurl = "https://guru-cool-test.web.app?previlagelevel=" +
         FireBaseAuth.instance.previlagelevel.toString() +
         "&photourl=" +
         FireBaseAuth.instance.user.photoUrl +
