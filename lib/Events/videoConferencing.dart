@@ -107,15 +107,7 @@ class _VideoConferencingState extends State<VideoConferencing> {
         widget.hostprevilagelevel.toString() +
         "&ishost=" +
         _ishost.toString();
-
-    // var url = 'googlechrome://navigate?url=$midurl';
     return midurl;
-    // if (await canLaunch(url)) {
-    //   await launch(url, forceWebView: false,
-    // );
-    // } else {
-    //   throw 'Could not launch $url';
-    // }
   }
 
   String _joinMeeting() {
