@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Events/FirebaseMessaging.dart';
 import 'package:coach_app/Events/SessionDetail.dart';
@@ -10,6 +11,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:coach_app/Events/TableCalender/table_calendar.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../Authentication/FirebaseAuth.dart';
 
@@ -255,30 +257,36 @@ class _CalenderState extends State<Calender> {
                     String pass2 =
                         FireBaseAuth.instance.prefs.getString(e.description);
                     if (pass2 == null) pass2 = e.meetingkey;
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        if (widget.fromCourse) {
-                          print(e.teacheruid);
-                          print("llllllllllllllllll");
-                          return VideoConferencing(
-                            passVariable: pass2,
-                            eventkey: e.eventKey,
-                            hostuid: e.teacheruid,
-                            fromcourse: widget.fromCourse,
-                          );
-                        } else
-                          return VideoConferencing(
-                            passVariable: pass2,
-                            privilegelevel:
-                                FireBaseAuth.instance.previlagelevel,
-                            eventkey: e.eventKey,
-                            hostprevilagelevel: e.hostPrevilage,
-                            hostuid: e.hostuid,
-                            fromcourse: widget.fromCourse,
-                          );
-                      }),
-                    );
+                    if (await Permission.camera.request().isGranted &&
+                        await Permission.microphone.request().isGranted) {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          if (widget.fromCourse) {
+                            print(e.teacheruid);
+                            print("llllllllllllllllll");
+                            return VideoConferencing(
+                              passVariable: pass2,
+                              eventkey: e.eventKey,
+                              hostuid: e.teacheruid,
+                              fromcourse: widget.fromCourse,
+                            );
+                          } else
+                            return VideoConferencing(
+                              passVariable: pass2,
+                              privilegelevel:
+                                  FireBaseAuth.instance.previlagelevel,
+                              eventkey: e.eventKey,
+                              hostprevilagelevel: e.hostPrevilage,
+                              hostuid: e.hostuid,
+                              fromcourse: widget.fromCourse,
+                            );
+                        }),
+                      );
+                    } else {
+                      Alert.instance.alert(context,
+                          "You don't have given permission for camera or microphone");
+                    }
                     var res = await showDialog(
                         context: context,
                         builder: (context) => AreYouSure(

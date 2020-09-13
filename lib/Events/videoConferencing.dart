@@ -31,6 +31,9 @@ class _VideoConferencingState extends State<VideoConferencing> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('GuruCool Meet'),
+      ),
       body: InAppWebView(
         initialUrl: _joinMeeting(),
         initialHeaders: {
