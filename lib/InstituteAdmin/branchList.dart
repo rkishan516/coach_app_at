@@ -10,7 +10,6 @@ import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/InstituteAdmin/branchPage.dart';
 import 'package:coach_app/InstituteAdmin/midAdminList.dart';
 import 'package:coach_app/Models/model.dart';
-import 'package:coach_app/adminCorner/noticeBoard.dart';
 import 'package:coach_app/adminSection/branchRegister.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_database/firebase_database.dart';
