@@ -188,7 +188,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                               .push(
                                             CupertinoPageRoute(
                                               builder: (context) => ChapterPage(
-                                                  courseId: widget.courseId,
+                                                  courseId: widget.courseId, 
                                                   title: courses
                                                       .subjects[
                                                           keys.toList()[index]]
