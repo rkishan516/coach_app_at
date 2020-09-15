@@ -23,6 +23,7 @@ import 'package:coach_app/Student/all_course_view.dart';
 import 'package:coach_app/Student/course_page.dart';
 import 'package:coach_app/adminCorner/noticeBoard.dart';
 import 'package:coach_app/adminSection/Statistics.dart';
+import 'package:coach_app/adminSection/UploadContent.dart';
 import 'package:coach_app/adminSection/studentRequest.dart';
 import 'package:coach_app/InstituteAdmin/branchList.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
@@ -273,6 +274,15 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                           ))),
                   trailing: CountDot(count: totalNotice + totalPublicContent),
                 ),
+                ListTile(
+                  title: Text('Upload Content'.tr()),
+                  leading: Icon(Icons.file_upload),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => UploadContent()),
+                    );
+                                     },
+                ),
                 if (FireBaseAuth.instance.previlagelevel == 4 &&
                     !widget.branchListPage)
                   ListTile(
@@ -493,13 +503,14 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                         builder: (context) => LanguageDialog());
                   },
                 ),
-                // ListTile(
+                // ListTile( 
                 //   title: Text('GuruCool Assistant'.tr()),
                 //   leading: Icon(Icons.mic),
                 //   onTap: () {
                 //     ShowBottomSheetCheck(context: context).showBottomSheet();
                 //   },
                 // ),
+                
                 ListTile(
                   title: Text('Log Out'.tr()),
                   leading: Icon(Icons.exit_to_app),
