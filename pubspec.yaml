@@ -68,6 +68,10 @@ dependencies:
   linked_scroll_controller:
   avatar_glow:
   permission_handler:
+  flutter_speed_dial:
+  flutter_image_compress:
+  circular_check_box:
+  chewie:
 
 dev_dependencies:
   flutter_test:
