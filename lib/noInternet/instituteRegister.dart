@@ -38,7 +38,8 @@ class _InstituteRegisterState extends State<InstituteRegister> {
   File _image;
 
   Future getImage() async {
-    final pickedFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().getImage(source: ImageSource.gallery);
 
     setState(() {
       _image = File(pickedFile?.path);

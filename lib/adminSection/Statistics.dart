@@ -22,7 +22,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
     branchesCount = branches?.length ?? 0;
     branches?.forEach((key, value) {
       coursesCount += value.courses?.length ?? 0;
-      studentCount += value.students?.length ?? 0;
+      studentCount += value.students?.values
+              ?.toList()
+              ?.where((element) => element.status == "Registered")
+              ?.length ??
+          0;
       teacherCount += value.teachers?.length ?? 0;
     });
     return Scaffold(
@@ -218,6 +222,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                             (branches[branches.keys
                                                             .toList()[index]]
                                                         .students
+                                                        ?.values
+                                                        ?.toList()
+                                                        ?.where((element) =>
+                                                            element.status ==
+                                                            "Registered")
                                                         ?.length ??
                                                     0)
                                                 .toString(),

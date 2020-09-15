@@ -3,7 +3,6 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 class VideoConferencing extends StatefulWidget {
   final String passVariable;
@@ -29,39 +28,39 @@ class VideoConferencing extends StatefulWidget {
 }
 
 class _VideoConferencingState extends State<VideoConferencing> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('GuruCool Meet'),
-      automaticallyImplyLeading: false,),
-      body: InAppWebView(
-            
-            initialUrl: _joinMeeting(),
-            initialHeaders: {
-      "previlagelevel": FireBaseAuth.instance.previlagelevel.toString(),
-      "photourl": FireBaseAuth.instance.user.photoUrl,
-      "title": 'GuruCoolSession' + widget.eventkey.toString(),
-      "displayName": FireBaseAuth.instance.user.displayName,
-      "eventkey": widget.eventkey.toString(),
-      "email": FireBaseAuth.instance.user.email,
-      "hostPrevilage": widget.hostprevilagelevel.toString(),
-      "ishost":
-        (widget.hostuid == FireBaseAuth.instance.user.uid).toString()
-            },
-            initialOptions: InAppWebViewGroupOptions(
-      crossPlatform: InAppWebViewOptions(
-      mediaPlaybackRequiresUserGesture: false,
-      debuggingEnabled: true,
+      appBar: AppBar(
+        title: Text('GuruCool Meet'),
+        automaticallyImplyLeading: false,
       ),
-            ),
-            androidOnPermissionRequest: (InAppWebViewController controller,
-      String origin, List<String> resources) async {
-      return PermissionRequestResponse(
-        resources: resources,
-        action: PermissionRequestResponseAction.GRANT);
-            },
+      body: InAppWebView(
+        initialUrl: _joinMeeting(),
+        initialHeaders: {
+          "previlagelevel": FireBaseAuth.instance.previlagelevel.toString(),
+          "photourl": FireBaseAuth.instance.user.photoUrl,
+          "title": 'GuruCoolSession' + widget.eventkey.toString(),
+          "displayName": FireBaseAuth.instance.user.displayName,
+          "eventkey": widget.eventkey.toString(),
+          "email": FireBaseAuth.instance.user.email,
+          "hostPrevilage": widget.hostprevilagelevel.toString(),
+          "ishost":
+              (widget.hostuid == FireBaseAuth.instance.user.uid).toString()
+        },
+        initialOptions: InAppWebViewGroupOptions(
+          crossPlatform: InAppWebViewOptions(
+            mediaPlaybackRequiresUserGesture: false,
+            debuggingEnabled: true,
           ),
+        ),
+        androidOnPermissionRequest: (InAppWebViewController controller,
+            String origin, List<String> resources) async {
+          return PermissionRequestResponse(
+              resources: resources,
+              action: PermissionRequestResponseAction.GRANT);
+        },
+      ),
     );
   }
 
@@ -107,15 +106,7 @@ class _VideoConferencingState extends State<VideoConferencing> {
         widget.hostprevilagelevel.toString() +
         "&ishost=" +
         _ishost.toString();
-   
-    // var url = 'googlechrome://navigate?url=$midurl';
     return midurl;
-    // if (await canLaunch(url)) {
-    //   await launch(url, forceWebView: false,
-    // );
-    // } else {
-    //   throw 'Could not launch $url';
-    // }
   }
 
   String _joinMeeting() {

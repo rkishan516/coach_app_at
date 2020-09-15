@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Events/FirebaseMessaging.dart';
 import 'package:coach_app/Events/videoConferencing.dart';
 import 'package:coach_app/Models/model.dart';
@@ -7,6 +8,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../Authentication/FirebaseAuth.dart';
 
@@ -54,7 +56,8 @@ class _StudentEventState extends State<StudentEvent> {
       setState(() {
         if (event.snapshot.key != null &&
             event.snapshot.value['courseid'] == widget.courseId) {
-          _allEvent.add(EventsModal.fromJson(event.snapshot.key, event.snapshot.value));
+          _allEvent.add(
+              EventsModal.fromJson(event.snapshot.key, event.snapshot.value));
         }
       });
     });
@@ -65,7 +68,8 @@ class _StudentEventState extends State<StudentEvent> {
         if (element.eventKey == event.snapshot.value['eventKey']) {
           var index = _allEvent.indexOf(element);
           setState(() {
-            _allEvent[index] = EventsModal.fromJson(event.snapshot.key,event.snapshot.value);
+            _allEvent[index] =
+                EventsModal.fromJson(event.snapshot.key, event.snapshot.value);
           });
         }
       });
@@ -159,17 +163,23 @@ class _StudentEventState extends State<StudentEvent> {
                         style: TextStyle(
                             fontSize: 15.0, fontWeight: FontWeight.bold),
                       ),
-                      onTap: () {
-                        if (_allEvent[index].isStarted == 1) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => VideoConferencing(
-                                room: _allEvent[index].title,
-                                eventkey: _allEvent[index].eventKey,
-                                subject: _allEvent[index].description,
+                      onTap: () async {
+                        if (await Permission.camera.request().isGranted &&
+                            await Permission.microphone.request().isGranted) {
+                          if (_allEvent[index].isStarted == 1) {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => VideoConferencing(
+                                  room: _allEvent[index].title,
+                                  eventkey: _allEvent[index].eventKey,
+                                  subject: _allEvent[index].description,
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          }
+                        } else {
+                          Alert.instance.alert(context,
+                              "You don't have given permission for camera or microphone");
                         }
                       },
                     ),
