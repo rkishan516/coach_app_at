@@ -1,5 +1,6 @@
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Chat/group_list.dart';
-import 'package:coach_app/Chat/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -315,12 +316,9 @@ class _AllUsersScreenState extends State<AllUsersScreen>
           IconButton(
             icon: Icon(Icons.close),
             onPressed: () async {
-              await firebaseAuth.signOut();
-              await googleSignIn.disconnect();
-              await googleSignIn.signOut();
-              print("Signed Out");
+              FireBaseAuth.instance.signoutWithGoogle();
               Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => MyApp()),
+                  MaterialPageRoute(builder: (context) => WelcomePage()),
                   (Route<dynamic> route) => false);
             },
           ),
