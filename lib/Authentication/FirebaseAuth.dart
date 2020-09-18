@@ -49,7 +49,7 @@ class FireBaseAuth {
         this.user = currUser;
       } else {
         var creds = await getAuthGCredentials();
-      
+
         final AuthCredential credential = GoogleAuthProvider.getCredential(
           accessToken: creds[0],
           idToken: creds[1],
@@ -120,7 +120,7 @@ class FireBaseAuth {
       } else if (previlagelevel == 3) {
         dbref
             .child(
-                'branches/${FireBaseAuth.instance.branchid}/admin/${FireBaseAuth.instance.user.uid}/tokenid')
+                'branches/${FireBaseAuth.instance.branchid}/admin/${user.uid}/tokenid')
             .set(token.toString());
       } else if (previlagelevel == 4) {
         dbref

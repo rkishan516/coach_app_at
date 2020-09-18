@@ -7,20 +7,36 @@ class AdminProvider extends ChangeNotifier {
   AdminProvider() {
     FirebaseDatabase.instance
         .reference()
-        .child('institute/${FireBaseAuth.instance.instituteid}/branches')
+        .child('institute/${FireBaseAuth.instance.instituteid}')
         .onValue
         .listen((event) {
       branch = Map<String, Branch>();
-      event.snapshot.value?.forEach((k, v) {
-        setBranch(k, Branch.fromJson(v));
-      });
+      midAdmins = Map<String, MidAdmin>();
+      if (event.snapshot.value != null) {
+        if (event.snapshot.value['branches'] != null) {
+          event.snapshot.value['branches'].forEach((k, v) {
+            setBranch(k, Branch.fromJson(v));
+          });
+        }
+        if (event.snapshot.value['midAdmin'] != null) {
+          event.snapshot.value['midAdmin'].forEach((k, v) {
+            setMidAdmin(k, MidAdmin.fromJson(v));
+          });
+        }
+      }
     });
   }
 
   Map<String, Branch> branch;
+  Map<String, MidAdmin> midAdmins;
 
   setBranch(String key, Branch branch) {
     this.branch[key] = branch;
+    notifyListeners();
+  }
+
+  setMidAdmin(String key, MidAdmin midAdmin) {
+    this.midAdmins[key] = midAdmin;
     notifyListeners();
   }
 }

@@ -287,6 +287,7 @@ class _BranchRegisterState extends State<BranchRegister> {
                             Alert.instance.alert(
                                 context, 'Please fill all account details');
                             return;
+                            //TODO: Change bank id
                           } else if (!RegExp(r'^[0-9]{14}$')
                               .hasMatch(accountNoTextEditingController.text)) {
                             Alert.instance.alert(
