@@ -490,6 +490,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2"
+  linkwell:
+    dependency: "direct main"
+    description:
+      name: linkwell
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.9"
   matcher:
     dependency: transitive
     description:

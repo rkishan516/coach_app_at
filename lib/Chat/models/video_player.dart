@@ -82,7 +82,7 @@ class _ChewieDemoState extends State<ChewieDemo> {
             },
           ),
           backgroundColor: Color.fromARGB(255, 242, 108, 37),
-          title: Text(widget.title),
+          title: Text("Media"),
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,

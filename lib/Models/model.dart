@@ -929,13 +929,15 @@ class Messages {
   String textMsg;
   String uid;
   String time;
-  Messages(this.key, this.textMsg, this.uid, this.time);
+  String type;
+  Messages(this.key, this.textMsg, this.uid, this.time, this.type);
 
   Messages.fromSnapshot(DataSnapshot snapshot)
       : key = snapshot.key,
         textMsg = snapshot.value["textMsg"],
         uid = snapshot.value["selfId"],
-        time = snapshot.value["time"];
+        time = snapshot.value["time"],
+        type = snapshot.value["type"];
 }
 
 class Section {

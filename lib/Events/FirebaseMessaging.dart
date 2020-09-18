@@ -62,6 +62,9 @@ class FirebaseMessagingService {
     var iOS = IOSNotificationDetails();
     var platform = NotificationDetails(android, iOS);
     new Future.delayed(Duration.zero, () {
+      if(body.startsWith("https://firebasestorage.googleapis.com")){
+        body = "Notice with content attached";
+      }
       flutterlocalnotificationplugin.show(
           int.parse(randomNumeric(4)), title, body, platform);
     });

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
+import 'package:coach_app/Chat/home_page.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Dialogs/languageDialog.dart';
 import 'package:coach_app/Dialogs/replaceSubAdmin.dart';
@@ -279,6 +280,15 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) => UploadContent()),
+                    );
+                                     },
+                ),
+                ListTile(
+                  title: Text('Chattiao'.tr()),
+                  leading: Icon(Icons.chat_bubble),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => HomePage()),
                     );
                                      },
                 ),

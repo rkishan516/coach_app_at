@@ -72,6 +72,7 @@ dependencies:
   flutter_image_compress:
   circular_check_box:
   chewie:
+  linkwell:  
 
 dev_dependencies:
   flutter_test:

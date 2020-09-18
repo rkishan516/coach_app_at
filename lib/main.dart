@@ -24,7 +24,7 @@ void main() async {
   FireBaseAuth.instance.prefs = await SharedPreferences.getInstance();
   FirebaseDatabase.instance.setPersistenceEnabled(true);
 
-  if (packageInfo.packageName != "com.VysionTech.gurucool") {
+  if (packageInfo.packageName != "com.VysionTech.coach") {
     runApp(MaterialApp(
       title: 'Guru Cool',
       debugShowCheckedModeBanner: false,
