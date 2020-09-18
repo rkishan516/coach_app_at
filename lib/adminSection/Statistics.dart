@@ -18,13 +18,23 @@ class _StatisticsPageState extends State<StatisticsPage> {
         : (FireBaseAuth.instance.previlagelevel == 34)
             ? Provider.of<MidAdminProvider>(context).branches
             : Map<String, Branch>();
-    int teacherCount = 0, studentCount = 0, branchesCount = 0, coursesCount = 0;
+    int teacherCount = 0,
+        studentCount = 0,
+        branchesCount = 0,
+        coursesCount = 0,
+        studentRequestCount = 0,
+        midAdminCount = 0;
     branchesCount = branches?.length ?? 0;
     branches?.forEach((key, value) {
       coursesCount += value.courses?.length ?? 0;
       studentCount += value.students?.values
               ?.toList()
               ?.where((element) => element.status == "Registered")
+              ?.length ??
+          0;
+      studentRequestCount += value.students?.values
+              ?.toList()
+              ?.where((element) => element.status == "Existing Student")
               ?.length ??
           0;
       teacherCount += value.teachers?.length ?? 0;
@@ -51,7 +61,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
         child: Column(
           children: [
             Expanded(
-              flex: 2,
+              flex: 1,
               child: Container(
                 child: Column(
                   children: [
@@ -78,6 +88,16 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         ),
                       ],
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        StatisticsCapsule(
+                          text: "Student Request",
+                          count: studentRequestCount.toString(),
+                          width: 1.2 * MediaQuery.of(context).size.width / 2,
+                        ),
+                      ],
+                    ),
                     Expanded(
                       child: Container(),
                     )
@@ -94,7 +114,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
               ),
             ),
             Expanded(
-              flex: 5,
+              flex: 2,
               child: Container(
                 child: Column(
                   children: [
@@ -164,7 +184,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                           ),
                         ),
                         child: Container(
-                          height: 1.4 * MediaQuery.of(context).size.height / 3,
+                          height: 1.25 * MediaQuery.of(context).size.height / 3,
                           child: ListView.builder(
                               itemCount: branches?.length ?? 0,
                               itemBuilder: (context, index) {
@@ -253,7 +273,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
 class StatisticsCapsule extends StatelessWidget {
   final String text, count;
-  StatisticsCapsule({@required this.text, @required this.count});
+  final double width;
+  StatisticsCapsule({@required this.text, @required this.count, this.width});
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -263,7 +284,7 @@ class StatisticsCapsule extends StatelessWidget {
         ),
       ),
       child: Container(
-        width: 1.2 * MediaQuery.of(context).size.width / 3,
+        width: width ?? 1.2 * MediaQuery.of(context).size.width / 3,
         child: Row(
           children: [
             Expanded(
