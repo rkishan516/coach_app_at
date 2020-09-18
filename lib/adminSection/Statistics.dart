@@ -11,6 +11,7 @@ class StatisticsPage extends StatefulWidget {
 }
 
 class _StatisticsPageState extends State<StatisticsPage> {
+  String filter = "";
   @override
   Widget build(BuildContext context) {
     Map<String, Branch> branches = (FireBaseAuth.instance.previlagelevel == 4)
@@ -18,12 +19,17 @@ class _StatisticsPageState extends State<StatisticsPage> {
         : (FireBaseAuth.instance.previlagelevel == 34)
             ? Provider.of<MidAdminProvider>(context).branches
             : Map<String, Branch>();
+    if (filter != "") {
+      branches.removeWhere((key, value) => !filter.contains(key.toString()));
+    }
+    Map<String, MidAdmin> midAdmin = (FireBaseAuth.instance.previlagelevel == 4)
+        ? Provider.of<AdminProvider>(context).midAdmins
+        : Map<String, MidAdmin>();
     int teacherCount = 0,
         studentCount = 0,
         branchesCount = 0,
         coursesCount = 0,
-        studentRequestCount = 0,
-        midAdminCount = 0;
+        studentRequestCount = 0;
     branchesCount = branches?.length ?? 0;
     branches?.forEach((key, value) {
       coursesCount += value.courses?.length ?? 0;
@@ -65,7 +71,148 @@ class _StatisticsPageState extends State<StatisticsPage> {
               child: Container(
                 child: Column(
                   children: [
-                    Expanded(flex: 2, child: Center(child: Text('Total'))),
+                    Expanded(
+                        flex: 4,
+                        child: Stack(
+                          children: [
+                            Center(child: Text('Total')),
+                            if (FireBaseAuth.instance.previlagelevel == 4)
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 20.0, top: 2),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        color: Color(
+                                          0xffF36C24,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    padding: EdgeInsets.only(left: 5, right: 5),
+                                    child: DropdownButton(
+                                        selectedItemBuilder: (context) {
+                                          return [
+                                            Container(
+                                              color: Color(
+                                                0xffF36C24,
+                                              ),
+                                              child: Text(
+                                                'filter',
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                            )
+                                          ];
+                                        },
+                                        hint: Text(
+                                          'filter',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        items: ['None', 'Mid - Admins']
+                                            .map(
+                                              (e) => DropdownMenuItem(
+                                                value: e,
+                                                child: Text(
+                                                  e,
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                        onChanged: (value) {
+                                          if (value == 'Mid - Admins') {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return Dialog(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              16.0),
+                                                    ),
+                                                    elevation: 0.0,
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                    child: Stack(
+                                                      children: <Widget>[
+                                                        Container(
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                            16.0,
+                                                          ),
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  top: 66.0),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.white,
+                                                            shape: BoxShape
+                                                                .rectangle,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        16.0),
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .black26,
+                                                                blurRadius:
+                                                                    10.0,
+                                                                offset:
+                                                                    const Offset(
+                                                                        0.0,
+                                                                        10.0),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          child:
+                                                              ListView.builder(
+                                                            itemCount:
+                                                                midAdmin.length,
+                                                            itemBuilder:
+                                                                (context,
+                                                                    index) {
+                                                              return ListTile(
+                                                                title: Text(midAdmin[
+                                                                        midAdmin
+                                                                            .keys
+                                                                            .toList()[index]]
+                                                                    .name),
+                                                                onTap: () {
+                                                                  setState(() {
+                                                                    filter = midAdmin[midAdmin
+                                                                            .keys
+                                                                            .toList()[index]]
+                                                                        .branches;
+                                                                  });
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                },
+                                                              );
+                                                            },
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  );
+                                                });
+                                          } else {
+                                            setState(() {
+                                              filter = "";
+                                            });
+                                          }
+                                        }),
+                                  ),
+                                ),
+                              )
+                          ],
+                        )),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [

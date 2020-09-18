@@ -2,9 +2,11 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Drawer/drawer.dart';
+import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/StudentProfilePage.dart';
+import 'package:coach_app/adminSection/addStudent.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -23,6 +25,18 @@ class _StudentListState extends State<StudentList> {
     return Scaffold(
       drawer: widget.courseId != null ? null : getDrawer(context),
       appBar: widget.courseId != null ? null : getAppBar(context),
+      floatingActionButton: SlideButtonR(
+        height: 50,
+        width: 150,
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => AddStudent(
+              courseId: widget.courseId,
+            ),
+          ),
+        ),
+        text: 'Create Course'.tr(),
+      ),
       body: Container(
         padding: widget.courseId != null
             ? EdgeInsets.all(0)
@@ -316,45 +330,6 @@ class _StudentListState extends State<StudentList> {
                     ],
                   ),
                 ),
-                // StreamBuilder<Event>(
-                //   stream: FirebaseDatabase.instance
-                //       .reference()
-                //       .child(
-                //           'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses')
-                //       .onValue,
-                //   builder: (context, snapshot) {
-                //     if (snapshot.hasData) {
-                //       List<Courses> courses = List<Courses>();
-                //       snapshot.data.snapshot.value?.forEach((k, v) {
-                //         courses.add(Courses.fromJson(v));
-                //       });
-                //       return DropdownButton(
-                //           value: course,
-                //           hint: Text('Select Course'.tr()),
-                //           items: courses
-                //               .map(
-                //                 (k) => DropdownMenuItem(
-                //                   child: Container(
-                //                     width: MediaQuery.of(context).size.width / 5,
-                //                     child: Text(
-                //                       k.name,
-                //                       overflow: TextOverflow.ellipsis,
-                //                     ),
-                //                   ),
-                //                   value: k,
-                //                 ),
-                //               )
-                //               .toList(),
-                //           onChanged: (value) {
-                //             setState(() {
-                //               course = value;
-                //             });
-                //           });
-                //     } else {
-                //       return Container();
-                //     }
-                //   },
-                // ),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Row(
@@ -391,24 +366,6 @@ class _StudentListState extends State<StudentList> {
                                 context, 'Something remains unfilled'.tr());
                             return;
                           }
-                          // bool flag = false;
-                          // if (course != null) {
-                          //   student.course?.forEach((element) {
-                          //     if (course.id == element.courseID) {
-                          //       flag = true;
-                          //     }
-                          //   });
-                          //   if (flag == false) {
-                          //     Course(
-                          //         academicYear: DateTime.now().year.toString() +
-                          //             '-' +
-                          //             (DateTime.now().year + 1).toString(),
-                          //         courseID: course.id,
-                          //         courseName: course.name,
-                          //         paymentToken:
-                          //             'Registered By ${FireBaseAuth.instance.user.displayName}');
-                          //   }
-                          // }
                           Student dstudent = Student(
                               name: nameTextEditingController.text,
                               address: addressTextEditingController.text,
