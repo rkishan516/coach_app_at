@@ -28,14 +28,13 @@ class _StudentListState extends State<StudentList> {
       floatingActionButton: SlideButtonR(
         height: 50,
         width: 150,
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => AddStudent(
-              courseId: widget.courseId,
-            ),
+        onTap: () => showDialog(
+          context: context,
+          builder: (context) => AddStudent(
+            courseId: widget.courseId,
           ),
         ),
-        text: 'Create Course'.tr(),
+        text: 'Add Student',
       ),
       body: Container(
         padding: widget.courseId != null
