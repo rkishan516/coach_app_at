@@ -929,15 +929,30 @@ class Messages {
   String textMsg;
   String uid;
   String time;
+  String changetime;
   String type;
   Messages(this.key, this.textMsg, this.uid, this.time, this.type);
 
   Messages.fromSnapshot(DataSnapshot snapshot)
-      : key = snapshot.key,
-        textMsg = snapshot.value["textMsg"],
-        uid = snapshot.value["selfId"],
-        time = snapshot.value["time"],
+      {key = snapshot.key;
+        textMsg = snapshot.value["textMsg"];
+        uid = snapshot.value["selfId"];
+        time = snapshot.value["time"];
+        changetime= changeTime(time);
         type = snapshot.value["type"];
+      }
+      String changeTime(String time){
+       String midtime;
+       int hh = int.parse(time.split(" ")[1].split(":")[0]);
+       if(time.split(" ")[2]=="PM"){
+        midtime = (hh+12).toString();
+       }
+       else{
+         if(hh.toString().length==1)
+         midtime = "0"+hh.toString();
+       }
+       return  time.split(" ")[0] + "T"+ midtime+":"+time.split(" ")[1].split(":")[1]+":"+time.split(" ")[1].split(":")[2];
+      }      
 }
 
 class Section {

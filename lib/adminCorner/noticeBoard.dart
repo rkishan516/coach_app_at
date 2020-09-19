@@ -61,7 +61,7 @@ class _NoticeBoardState extends State<NoticeBoard>
   ChewieController _chewieController;
 
   Widget _child1(Messages message, bool isMe){
-    String splitDate = message.time.split(":_:_:")[0].split(' ')[0];
+    String splitDate = message.time.split(' ')[0];
     String noticeDate = splitDate.split("-")[2] +
         " " +
         _months[splitDate.split("-")[1]] +
@@ -130,7 +130,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                         if(!isMe && FireBaseAuth.instance.previlagelevel!=4 ) Positioned(
                           left: 8.0, 
                           top: 3.0,
-                          child: Text(message.uid.split(":_:_:")[3],
+                          child: Text(message.type!=null? message.uid.split(":_:_:")[3]:"Admin",
                           style: TextStyle(
                             color: Color(0xffF36C24)
                           ),
@@ -213,11 +213,12 @@ class _NoticeBoardState extends State<NoticeBoard>
                         Align(
                           alignment: isMe?  Alignment.bottomLeft: Alignment.bottomRight,
                           child: Text(
-                            message.time.split(":_:_:")[1].split(' ')[0].split(':')[0] +
+                            message.time.split(' ')[1].split(':')[0] +
                                 ":" +
-                                message.time.split(":_:_:")[1].split(' ')[0].split(':')[1] +
-                                " " +
-                                message.time.split(":_:_:")[1].split(' ')[1],
+                                message.time.split(' ')[1].split(':')[1] 
+                                +" " +
+                                message.time.split(' ')[2],
+                                
                             style: TextStyle(
                                 color: Color(0xffF36C24),
                                 fontSize: 12.0,
@@ -232,7 +233,7 @@ class _NoticeBoardState extends State<NoticeBoard>
   _buildMessage(Messages message, bool isMe) {
     final GestureDetector msg = GestureDetector(
         onLongPress: () async {
-             if (isMe && FireBaseAuth.instance.previlagelevel>=3) {
+             if ((isMe && FireBaseAuth.instance.previlagelevel>=3)||FireBaseAuth.instance.previlagelevel==4) {
             
            setState(() {
              _scrolleffect = false;
@@ -281,11 +282,9 @@ class _NoticeBoardState extends State<NoticeBoard>
     if(url.toString()!="none"){
       msg = url;
     }
-    print("PPPPPPPPPPPP");
-    print(DateTime.now());
-    print("lllllll");
-    String time = DateTime.now().toString() +
-        ":_:_:" +
+   
+    String time = DateTime.now().toString().split(" ")[0] +
+        " " +
         DateFormat('jms').format(new DateTime.now());
     if(type=="Text")
     await dbRef
@@ -500,15 +499,27 @@ class _NoticeBoardState extends State<NoticeBoard>
         .child('institute/${FireBaseAuth.instance.instituteid}/notices');
     _query.onChildAdded.listen((Event event) { 
       Messages _messages = Messages.fromSnapshot(event.snapshot);
-           if(_isshowableMsg(_messages)){
+      bool _isMsgshow= false;
+           if(_messages.type!=null){
+           _isMsgshow= _isshowableMsg(_messages); 
+           if(_isMsgshow){
           _allMessages.add(_messages);
           _isDeleting[_messages.key]= false;
            }
+           }
 
       return setState(
-        (){if(_isshowableMsg(_messages)){
+        (){
+          if(_messages.type==null){
+            _isDeleting[_messages.key]= false;
+           _allMessages.add(_messages);   
+           _allMessages.sort((a, b) => a.changetime.compareTo(b.changetime));
+           }
+          else{ 
+          if(_isMsgshow){
           _scrolleffect= true;
-          _allMessages.sort((a, b) => a.time.split(":_:_:")[0].compareTo(b.time.split(":_:_:")[0])); 
+          _allMessages.sort((a, b) => a.changetime.compareTo(b.changetime)); 
+          }
         }
         }
         );
@@ -592,7 +603,12 @@ class _NoticeBoardState extends State<NoticeBoard>
                         itemCount: _allMessages.length,
                         itemBuilder: (BuildContext context, int index) {
                           final message = _allMessages[index];
-                          bool isMe = message.uid.split(":_:_:")[2] == FireBaseAuth.instance.user.uid;
+                          bool isMe;
+                          if(message.type==null){
+                            isMe = false;
+                          }else{
+                          isMe = message.uid.split(":_:_:")[2] == FireBaseAuth.instance.user.uid;
+                          }
                           if(FireBaseAuth.instance.previlagelevel<=2 ||FireBaseAuth.instance.previlagelevel==4 )
                           isMe = false;
                           
