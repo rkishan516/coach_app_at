@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:chewie/chewie.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Models/random_string.dart';
 import 'package:coach_app/adminCorner/ShowMedia.dart';
 import 'package:video_player/video_player.dart';
@@ -315,7 +316,25 @@ class _NoticeBoardState extends State<NoticeBoard>
     _storageReference = FirebaseStorage.instance.ref().child('$randomkey');
 
     StorageUploadTask storageUploadTask = _storageReference.putFile(videoFile);
-    var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+    double percent = 0;
+    storageUploadTask.events.listen((event) {
+      setState(() {
+        percent = event.snapshot.bytesTransferred *
+            100 /
+            event.snapshot.totalByteCount;
+      });
+    });
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) =>
+            UploadDialog(warning: '${percent.toInt()}% Uploaded'),
+      ),
+    );
+    StorageTaskSnapshot snapshot = await storageUploadTask.onComplete;
+    var url = await snapshot.ref.getDownloadURL();
+    Navigator.of(context).pop();
 
     _createNotice(url, randomkey);
     return url;
