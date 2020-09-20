@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:chewie/chewie.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
@@ -61,6 +62,7 @@ class _NoticeBoardState extends State<NoticeBoard>
   };
   Map<String, VideoPlayerController> _videoPlayerController = {};
   ChewieController _chewieController;
+  Timer timer;
 
   Widget _child1(Messages message, bool isMe) {
     String splitDate = message.time.split(' ')[0];
@@ -317,12 +319,13 @@ class _NoticeBoardState extends State<NoticeBoard>
 
     StorageUploadTask storageUploadTask = _storageReference.putFile(videoFile);
     double percent = 0;
-    storageUploadTask.events.listen((event) {
-      setState(() {
-        percent = event.snapshot.bytesTransferred *
-            100 /
-            event.snapshot.totalByteCount;
-      });
+    timer = Timer.periodic(Duration(seconds: 2), (timer) {
+      percent = storageUploadTask.lastSnapshot.bytesTransferred *
+          100 /
+          storageUploadTask.lastSnapshot.totalByteCount;
+      if (percent.toInt() == 100) {
+        timer.cancel();
+      }
     });
     showDialog(
       context: context,
@@ -376,6 +379,7 @@ class _NoticeBoardState extends State<NoticeBoard>
     });
 
     _chewieController.dispose();
+    timer?.cancel();
     super.dispose();
   }
 
