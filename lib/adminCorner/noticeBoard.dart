@@ -3,6 +3,7 @@ import 'package:chewie/chewie.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Models/random_string.dart';
+import 'package:coach_app/adminCorner/BeforeImageLoading.dart';
 import 'package:coach_app/adminCorner/ShowMedia.dart';
 import 'package:video_player/video_player.dart';
 import 'package:coach_app/Chat/models/video_player.dart';
@@ -59,8 +60,8 @@ class _NoticeBoardState extends State<NoticeBoard>
     "11": "Nov",
     "12": "Dec"
   };
-  Map<String, VideoPlayerController> _videoPlayerController = {};
-  ChewieController _chewieController;
+  // Map<String, VideoPlayerController> _videoPlayerController = {};
+  // ChewieController _chewieController;
 
   Widget _child1(Messages message, bool isMe) {
     String splitDate = message.time.split(' ')[0];
@@ -92,37 +93,39 @@ class _NoticeBoardState extends State<NoticeBoard>
   }
 
   Widget _child2(Messages message, bool isMe) {
-    if (message.type == "video") {
-      if (_videoPlayerController[message.key] == null)
-        _videoPlayerController[message.key] =
-            VideoPlayerController.network(message.textMsg);
-      _chewieController = ChewieController(
-        videoPlayerController: _videoPlayerController[message.key],
-        aspectRatio: 1,
-        autoPlay: false,
-        looping: false,
-        cupertinoProgressColors: ChewieProgressColors(
-          playedColor: Color.fromARGB(255, 242, 108, 37),
-          handleColor: Color.fromARGB(255, 242, 108, 37),
-          backgroundColor: Colors.grey,
-          bufferedColor: Color.fromARGB(255, 242, 108, 37),
-        ),
-        materialProgressColors: ChewieProgressColors(
-          playedColor: Color.fromARGB(255, 242, 108, 37),
-          handleColor: Color.fromARGB(255, 242, 108, 37),
-          backgroundColor: Colors.grey,
-          bufferedColor: Color.fromARGB(255, 242, 108, 37),
-        ),
-        placeholder: Container(
-          color: Colors.grey,
-        ),
-        autoInitialize: true,
-      );
-    }
+    // if (message.type == "video") {
+    //   if (_videoPlayerController[message.key] == null){
+    //     _videoPlayerController[message.key] =
+    //         VideoPlayerController.network(message.textMsg);
+    //   _chewieController = ChewieController(
+    //     videoPlayerController: _videoPlayerController[message.key],
+    //     aspectRatio: 1,
+    //     autoPlay: false,
+    //     looping: false,
+    //     cupertinoProgressColors: ChewieProgressColors(
+    //       playedColor: Color.fromARGB(255, 242, 108, 37),
+    //       handleColor: Color.fromARGB(255, 242, 108, 37),
+    //       backgroundColor: Colors.grey,
+    //       bufferedColor: Color.fromARGB(255, 242, 108, 37),
+    //     ),
+    //     materialProgressColors: ChewieProgressColors(
+    //       playedColor: Color.fromARGB(255, 242, 108, 37),
+    //       handleColor: Color.fromARGB(255, 242, 108, 37),
+    //       backgroundColor: Colors.grey,
+    //       bufferedColor: Color.fromARGB(255, 242, 108, 37),
+    //     ),
+    //     placeholder: Container(
+    //       color: Colors.grey,
+    //     ),
+    //     autoInitialize: true,
+    //   );
+    //   }
+    // }
 
     return Expanded(
       flex: 13,
       child: Container(
+        padding: EdgeInsets.only(left: 8.0, right: 8.0),
         width: MediaQuery.of(context).size.width * 0.6,
         child: Stack(
           fit: StackFit.loose,
@@ -141,22 +144,39 @@ class _NoticeBoardState extends State<NoticeBoard>
               ),
             message.type == "image"
                 ? Container(
-                    width: MediaQuery.of(context).size.width * 0.75,
+                    
                     padding: EdgeInsets.only(top: 20.0, bottom: 16.0),
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context)
                             .push(new MaterialPageRoute(builder: (context) {
                           return ShowMedia(
-                            imageurl: message.textMsg,
+                            imageurl: message.textMsg.split(":_:_:")[0],
                           );
-                        }));
+                        })).then((value) {
+                        _scrolleffect=false;
+                        });
                       },
-                      child: FadeInImage(
-                        height: 180.0,
-                        fit: BoxFit.cover,
-                        image: NetworkImage(message.textMsg),
-                        placeholder: AssetImage('assets/blankimage.png'),
+                      child: Column(
+                        children: [
+                          FadeInImage(
+                            height: 180.0,
+                            width: MediaQuery.of(context).size.width,
+                            fit: BoxFit.cover,
+                            image: NetworkImage(message.textMsg.split(":_:_:")[0]),
+                            placeholder: AssetImage('assets/blankimage.png'),
+                          ),
+                          SizedBox(height: 6.0,),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                             child: Text(message.textMsg.split(":_:_:")[1]=="EmpText"?"":message.textMsg.split(":_:_:")[1],
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600)),
+                          ),
+                          SizedBox(height:message.textMsg.split(":_:_:")[1]=="EmpText"?0.0:4.0)
+                        ],
                       ),
                     ),
                   )
@@ -165,7 +185,14 @@ class _NoticeBoardState extends State<NoticeBoard>
                         child: Container(
                             width: MediaQuery.of(context).size.width * 0.75,
                             padding: EdgeInsets.only(top: 20.0, bottom: 16.0),
-                            child: Chewie(controller: _chewieController)),
+                            child: FadeInImage(
+                            height: 180.0,
+                            width: MediaQuery.of(context).size.width,
+                            fit: BoxFit.cover,
+                            image: AssetImage("assets/video_black.jpg"),
+                            placeholder: AssetImage('assets/blankimage.png'),
+                          )
+                        ),
                         onTap: () {
                           Navigator.of(context)
                               .push(new MaterialPageRoute(builder: (context) {
@@ -254,14 +281,9 @@ class _NoticeBoardState extends State<NoticeBoard>
         },
         child: Container(
           margin:
-              EdgeInsets.only(top: 15.0, bottom: 15.0, left: 20.0, right: 20.0),
+          EdgeInsets.only(top: 15.0, bottom: 15.0, left: 20.0, right: 20.0),
           width: MediaQuery.of(context).size.width * 0.75,
-          decoration: BoxDecoration(color: Colors.white, boxShadow: [
-            new BoxShadow(
-              color: Colors.black,
-              blurRadius: 8.0,
-            ),
-          ]),
+          decoration: BoxDecoration(color: Colors.white, ),
           child: IntrinsicHeight(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -344,7 +366,7 @@ class _NoticeBoardState extends State<NoticeBoard>
     PickedFile selectedImage = await ImagePicker().getImage(
       source: ImageSource.gallery,
     );
-
+    
     final filePath = selectedImage.path;
     final lastIndex = filePath.lastIndexOf(new RegExp(r'.jp'));
     final splitted = filePath.substring(0, (lastIndex));
@@ -358,25 +380,35 @@ class _NoticeBoardState extends State<NoticeBoard>
     );
 
     imageFile = compressedFile;
-
+    if(selectedImage!=null){
+      Navigator.push(context,MaterialPageRoute(builder: (contex)=>BeforeImageLoading(imageurl: imageFile,)))
+      .then((value)async{
+        print(value);
+        if(value!=null){
+    
     String randomkey = randomNumeric(7);
     _storageReference = FirebaseStorage.instance.ref().child('$randomkey');
     StorageUploadTask storageUploadTask = _storageReference.putFile(imageFile);
     var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
 
-    _createNotice(url, randomkey);
+    _createNotice(url+":_:_:"+ value, randomkey);
 
-    return url;
+    return url+":_:_:"+ value;
+        }
+      }
+      );
+    }
+    
   }
 
   @override
   void dispose() {
-    _videoPlayerController.forEach((key, value) {
-      value.dispose();
-    });
+    // _videoPlayerController.forEach((key, value) {
+    //   value.dispose();
+    // });
 
-    _chewieController.dispose();
-    super.dispose();
+    // _chewieController.dispose();
+     super.dispose();
   }
 
   _buildMessageComposer() {
