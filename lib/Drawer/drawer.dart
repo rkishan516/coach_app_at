@@ -274,24 +274,24 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                           ))),
                   trailing: CountDot(count: totalNotice + totalPublicContent),
                 ),
-                ListTile(
-                  title: Text('Upload Content'.tr()),
-                  leading: Icon(Icons.file_upload),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => UploadContent()),
-                    );
-                                     },
-                ),
-                ListTile(
-                  title: Text('Chattiao'.tr()),
-                  leading: Icon(Icons.chat_bubble),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => HomePage()),
-                    );
-                                     },
-                ),
+                // ListTile(
+                //   title: Text('Upload Content'.tr()),
+                //   leading: Icon(Icons.file_upload),
+                //   onTap: () {
+                //     Navigator.of(context).push(
+                //       MaterialPageRoute(builder: (context) => UploadContent()),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   title: Text('Chattiao'.tr()),
+                //   leading: Icon(Icons.chat_bubble),
+                //   onTap: () {
+                //     Navigator.of(context).push(
+                //       MaterialPageRoute(builder: (context) => HomePage()),
+                //     );
+                //                      },
+                // ),
                 if (FireBaseAuth.instance.previlagelevel == 4 &&
                     !widget.branchListPage)
                   ListTile(
@@ -512,14 +512,14 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                         builder: (context) => LanguageDialog());
                   },
                 ),
-                // ListTile( 
+                // ListTile(
                 //   title: Text('GuruCool Assistant'.tr()),
                 //   leading: Icon(Icons.mic),
                 //   onTap: () {
                 //     ShowBottomSheetCheck(context: context).showBottomSheet();
                 //   },
                 // ),
-                
+
                 ListTile(
                   title: Text('Log Out'.tr()),
                   leading: Icon(Icons.exit_to_app),
