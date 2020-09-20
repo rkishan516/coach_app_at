@@ -4,6 +4,7 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Models/random_string.dart';
 import 'package:coach_app/adminCorner/BeforeImageLoading.dart';
+import 'package:coach_app/adminCorner/BeforeVideoLoading.dart';
 import 'package:coach_app/adminCorner/ShowMedia.dart';
 import 'package:video_player/video_player.dart';
 import 'package:coach_app/Chat/models/video_player.dart';
@@ -151,7 +152,8 @@ class _NoticeBoardState extends State<NoticeBoard>
                         Navigator.of(context)
                             .push(new MaterialPageRoute(builder: (context) {
                           return ShowMedia(
-                            imageurl: message.textMsg.split(":_:_:")[0],
+                            url: message.textMsg.split(":_:_:")[0],
+                            type:message.type ,
                           );
                         })).then((value) {
                         _scrolleffect=false;
@@ -183,23 +185,38 @@ class _NoticeBoardState extends State<NoticeBoard>
                 : message.type == "video"
                     ? InkWell(
                         child: Container(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            padding: EdgeInsets.only(top: 20.0, bottom: 16.0),
-                            child: FadeInImage(
-                            height: 180.0,
-                            width: MediaQuery.of(context).size.width,
-                            fit: BoxFit.cover,
-                            image: AssetImage("assets/video_black.jpg"),
-                            placeholder: AssetImage('assets/blankimage.png'),
-                          )
+                          
+                    padding: EdgeInsets.only(top: 20.0, bottom: 16.0),
+                          child: Column(
+                            children: [
+                              FadeInImage(
+                              height: 180.0,
+                              width: MediaQuery.of(context).size.width,
+                              fit: BoxFit.cover,
+                              image: AssetImage("assets/video_black.jpg"),
+                              placeholder: AssetImage('assets/blankimage.png'),
+                                ),
+                              SizedBox(height: 6.0,),
+                              Align(
+                              alignment: Alignment.centerLeft,
+                               child: Text(message.textMsg.split(":_:_:")[1]=="EmpText"?"":message.textMsg.split(":_:_:")[1],
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600)),
+                              ),
+                              SizedBox(height:message.textMsg.split(":_:_:")[1]=="EmpText"?0.0:4.0)
+                          
+                            ],
+                          ),
                         ),
                         onTap: () {
                           Navigator.of(context)
                               .push(new MaterialPageRoute(builder: (context) {
-                            return ChewieDemo(
-                              dataSource: message.textMsg,
-                              title: "",
-                            );
+                            return ShowMedia(
+                            url: message.textMsg.split(":_:_:")[0],
+                            type:message.type ,
+                          );
                           }));
                         },
                       )
@@ -329,13 +346,17 @@ class _NoticeBoardState extends State<NoticeBoard>
         .child('institute/${FireBaseAuth.instance.instituteid}/notices/$key')
         .remove();
     if (key.length == 7)
-      await FirebaseStorage.instance.ref().child('$key').delete();
+      await FirebaseStorage.instance.ref().child('notices/${FireBaseAuth.instance.instituteid}/$key').delete();
   }
 
   Future<String> pickVideo() async {
     File videoFile = await FilePicker.getFile(type: FileType.video);
-    String randomkey = randomNumeric(7);
-    _storageReference = FirebaseStorage.instance.ref().child('$randomkey');
+    if(videoFile!=null){
+       Navigator.push(context,MaterialPageRoute(builder: (contex)=>BeforeVideoLoading(videourl: videoFile,)))
+       .then((value) async{
+         if(value!=null){
+         String randomkey = randomNumeric(7);
+       _storageReference = FirebaseStorage.instance.ref().child('notices/${FireBaseAuth.instance.instituteid}/$randomkey');
 
     StorageUploadTask storageUploadTask = _storageReference.putFile(videoFile);
     double percent = 0;
@@ -358,8 +379,14 @@ class _NoticeBoardState extends State<NoticeBoard>
     var url = await snapshot.ref.getDownloadURL();
     Navigator.of(context).pop();
 
-    _createNotice(url, randomkey);
-    return url;
+    _createNotice(url+":_:_:"+value, randomkey);
+    return url+":_:_:"+value;
+       }
+       }
+       );
+       
+    }
+    
   }
 
   Future<String> pickImage() async {
@@ -383,11 +410,11 @@ class _NoticeBoardState extends State<NoticeBoard>
     if(selectedImage!=null){
       Navigator.push(context,MaterialPageRoute(builder: (contex)=>BeforeImageLoading(imageurl: imageFile,)))
       .then((value)async{
-        print(value);
+      
         if(value!=null){
     
     String randomkey = randomNumeric(7);
-    _storageReference = FirebaseStorage.instance.ref().child('$randomkey');
+    _storageReference = FirebaseStorage.instance.ref().child('notices/${FireBaseAuth.instance.instituteid}/$randomkey');
     StorageUploadTask storageUploadTask = _storageReference.putFile(imageFile);
     var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
 
