@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:chewie/chewie.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Chat/all_users_screen.dart';
 import 'package:coach_app/Models/random_string.dart';
 import 'package:coach_app/adminCorner/ShowMedia.dart';
 import 'package:video_player/video_player.dart';
@@ -34,10 +33,12 @@ class _NoticeBoardState extends State<NoticeBoard>
     with SingleTickerProviderStateMixin {
   ScrollController _scrollController = ScrollController();
   TextEditingController _textController = TextEditingController();
-  List<Messages> _allMessages = []; bool _scrolleffect= true;
-  String _selfId , type="Text";
+  List<Messages> _allMessages = [];
+  bool _scrolleffect = true;
+  String _selfId, type = "Text";
   final dbRef = FirebaseDatabase.instance;
-  Query _query; Map<String, bool>_isDeleting={};
+  Query _query;
+  Map<String, bool> _isDeleting = {};
   int previlagelevel = FireBaseAuth.instance.previlagelevel;
   TabController _controller;
   File imageFile;
@@ -57,199 +58,197 @@ class _NoticeBoardState extends State<NoticeBoard>
     "11": "Nov",
     "12": "Dec"
   };
-  Map< String,VideoPlayerController> _videoPlayerController ={};
+  Map<String, VideoPlayerController> _videoPlayerController = {};
   ChewieController _chewieController;
 
-  Widget _child1(Messages message, bool isMe){
+  Widget _child1(Messages message, bool isMe) {
     String splitDate = message.time.split(' ')[0];
     String noticeDate = splitDate.split("-")[2] +
         " " +
         _months[splitDate.split("-")[1]] +
         " " +
         splitDate.split("-")[0];
-    
-    return Expanded(
-                  flex: 2,
-                  child: Container(
-                    padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                    constraints: BoxConstraints.expand(),
-                    width: 30.0,
-                    child: RotatedBox(
-                      quarterTurns: isMe?1:3,
-                      child: Center(
-                          child: Text(
-                        noticeDate,
-                        style: TextStyle(color: Colors.white),
-                      )),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color(0xffF36C24),
-                    ),
-                  ),
-                );
-  }
-  Widget _child2 (Messages message, bool isMe){
-    if(message.type=="video"){
-      if(_videoPlayerController[message.key]==null)
-     _videoPlayerController[message.key]= VideoPlayerController.network(message.textMsg);
-    _chewieController= ChewieController(
-      
-      videoPlayerController:_videoPlayerController[message.key] ,
-      aspectRatio: 1,
-      autoPlay: false,
-      looping: false,
-      cupertinoProgressColors: ChewieProgressColors(
-        playedColor: Color.fromARGB(255, 242, 108, 37),
-        handleColor: Color.fromARGB(255, 242, 108, 37),
-        backgroundColor: Colors.grey,
-        bufferedColor: Color.fromARGB(255, 242, 108, 37),
-      ),
-      materialProgressColors: ChewieProgressColors(
-        playedColor: Color.fromARGB(255, 242, 108, 37),
-        handleColor: Color.fromARGB(255, 242, 108, 37),
-        backgroundColor: Colors.grey,
-        bufferedColor: Color.fromARGB(255, 242, 108, 37),
-      ),
-      placeholder: Container(
-        color: Colors.grey,
-      ),
-      autoInitialize: true,
-    );
-    }    
-    
-    return Expanded(
-                  flex: 13,
-                  child: Container(
-                    
-                    width: MediaQuery.of(context).size.width * 0.6,
-                    child: Stack(
-                      fit: StackFit.loose,
-                      alignment: Alignment.center,
-                      
-                      children: <Widget>[
-                        if(!isMe && FireBaseAuth.instance.previlagelevel!=4 ) Positioned(
-                          left: 8.0, 
-                          top: 3.0,
-                          child: Text(message.type!=null? message.uid.split(":_:_:")[3]:"Admin",
-                          style: TextStyle(
-                            color: Color(0xffF36C24)
-                          ),
-                          ),
-                        ),
-                        message.type=="image"?
-                        Container(
-                          width: MediaQuery.of(context).size.width*0.75,
-                          
-                          padding: EdgeInsets.only(top: 20.0,bottom: 16.0),
-                         
-                          child: InkWell(
-                              onTap: (){
-                                Navigator.of(context).push(
-                                      new MaterialPageRoute(builder: (context) {
-                                    return  ShowMedia(imageurl: message.textMsg,);
-                                  }));
-                              },
-                                                      child: FadeInImage(
-                              height: 180.0,
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(message.textMsg),
-                                        placeholder:
-                                            AssetImage('assets/blankimage.png'),
-                                       
-                                      ),
-                          ),
-                        ):
-                        message.type=="video"?
-                        InkWell(
-                          child: Container(
-                              width: MediaQuery.of(context).size.width*0.75,
-                          
-                              padding: EdgeInsets.only(top: 20.0,bottom: 16.0),
-                         
-                            child:  Chewie(
-                             controller: _chewieController
-                            )
-                          ),
-                          onTap: () {
-                                  Navigator.of(context).push(
-                                      new MaterialPageRoute(builder: (context) {
-                                    return  ChewieDemo(
-                                      dataSource: message.textMsg,
-                                      title: "",
-                                    );
-                                  }));
-                                },
-                        )
-                        :          
-                        LinkWell(message.textMsg,
-                            style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600)),
-                        _isDeleting[message.key]? Align(
-                                                    alignment: isMe? Alignment.topLeft:Alignment.topRight,
-                                                    child: IconButton(
-                         icon:Icon( Icons.delete, color: Color(0xffF36C24),size: 30.0, ),
 
-                            onPressed: ()async{
-                              
-                            String res = await showDialog(
-                                context: context,
-                                builder: (context) => AreYouSure(
-                                      text: 'Are you sure, You want to delete ?'.tr(),
-                                    ));
-                            if (res == 'Yes') {
-                              _deleteNotice(message.key);
-                              
-                              return;
-                            }
-                            setState(() {
-                              _isDeleting[message.key] = false;
-                            });
-                            
-                            }),
-                        ): Container(width: 0.0, height: 0.0,),
-                        SizedBox(height: 10.0),
-                        Align(
-                          alignment: isMe?  Alignment.bottomLeft: Alignment.bottomRight,
-                          child: Text(
-                            message.time.split(' ')[1].split(':')[0] +
-                                ":" +
-                                message.time.split(' ')[1].split(':')[1] 
-                                +" " +
-                                message.time.split(' ')[2],
-                                
-                            style: TextStyle(
-                                color: Color(0xffF36C24),
-                                fontSize: 12.0,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
+    return Expanded(
+      flex: 2,
+      child: Container(
+        padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+        constraints: BoxConstraints.expand(),
+        width: 30.0,
+        child: RotatedBox(
+          quarterTurns: isMe ? 1 : 3,
+          child: Center(
+              child: Text(
+            noticeDate,
+            style: TextStyle(color: Colors.white),
+          )),
+        ),
+        decoration: BoxDecoration(
+          color: Color(0xffF36C24),
+        ),
+      ),
+    );
   }
+
+  Widget _child2(Messages message, bool isMe) {
+    if (message.type == "video") {
+      if (_videoPlayerController[message.key] == null)
+        _videoPlayerController[message.key] =
+            VideoPlayerController.network(message.textMsg);
+      _chewieController = ChewieController(
+        videoPlayerController: _videoPlayerController[message.key],
+        aspectRatio: 1,
+        autoPlay: false,
+        looping: false,
+        cupertinoProgressColors: ChewieProgressColors(
+          playedColor: Color.fromARGB(255, 242, 108, 37),
+          handleColor: Color.fromARGB(255, 242, 108, 37),
+          backgroundColor: Colors.grey,
+          bufferedColor: Color.fromARGB(255, 242, 108, 37),
+        ),
+        materialProgressColors: ChewieProgressColors(
+          playedColor: Color.fromARGB(255, 242, 108, 37),
+          handleColor: Color.fromARGB(255, 242, 108, 37),
+          backgroundColor: Colors.grey,
+          bufferedColor: Color.fromARGB(255, 242, 108, 37),
+        ),
+        placeholder: Container(
+          color: Colors.grey,
+        ),
+        autoInitialize: true,
+      );
+    }
+
+    return Expanded(
+      flex: 13,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.6,
+        child: Stack(
+          fit: StackFit.loose,
+          alignment: Alignment.center,
+          children: <Widget>[
+            if (!isMe && FireBaseAuth.instance.previlagelevel != 4)
+              Positioned(
+                left: 8.0,
+                top: 3.0,
+                child: Text(
+                  message.type != null
+                      ? message.uid.split(":_:_:")[3]
+                      : "Admin",
+                  style: TextStyle(color: Color(0xffF36C24)),
+                ),
+              ),
+            message.type == "image"
+                ? Container(
+                    width: MediaQuery.of(context).size.width * 0.75,
+                    padding: EdgeInsets.only(top: 20.0, bottom: 16.0),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(new MaterialPageRoute(builder: (context) {
+                          return ShowMedia(
+                            imageurl: message.textMsg,
+                          );
+                        }));
+                      },
+                      child: FadeInImage(
+                        height: 180.0,
+                        fit: BoxFit.cover,
+                        image: NetworkImage(message.textMsg),
+                        placeholder: AssetImage('assets/blankimage.png'),
+                      ),
+                    ),
+                  )
+                : message.type == "video"
+                    ? InkWell(
+                        child: Container(
+                            width: MediaQuery.of(context).size.width * 0.75,
+                            padding: EdgeInsets.only(top: 20.0, bottom: 16.0),
+                            child: Chewie(controller: _chewieController)),
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(new MaterialPageRoute(builder: (context) {
+                            return ChewieDemo(
+                              dataSource: message.textMsg,
+                              title: "",
+                            );
+                          }));
+                        },
+                      )
+                    : LinkWell(message.textMsg,
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600)),
+            _isDeleting[message.key]
+                ? Align(
+                    alignment: isMe ? Alignment.topLeft : Alignment.topRight,
+                    child: IconButton(
+                        icon: Icon(
+                          Icons.delete,
+                          color: Color(0xffF36C24),
+                          size: 30.0,
+                        ),
+                        onPressed: () async {
+                          String res = await showDialog(
+                              context: context,
+                              builder: (context) => AreYouSure(
+                                    text: 'Are you sure, You want to delete ?'
+                                        .tr(),
+                                  ));
+                          if (res == 'Yes') {
+                            _deleteNotice(message.key);
+
+                            return;
+                          }
+                          setState(() {
+                            _isDeleting[message.key] = false;
+                          });
+                        }),
+                  )
+                : Container(
+                    width: 0.0,
+                    height: 0.0,
+                  ),
+            SizedBox(height: 10.0),
+            Align(
+              alignment: isMe ? Alignment.bottomLeft : Alignment.bottomRight,
+              child: Text(
+                message.time.split(' ')[1].split(':')[0] +
+                    ":" +
+                    message.time.split(' ')[1].split(':')[1] +
+                    " " +
+                    message.time.split(' ')[2],
+                style: TextStyle(
+                    color: Color(0xffF36C24),
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   _buildMessage(Messages message, bool isMe) {
     final GestureDetector msg = GestureDetector(
         onLongPress: () async {
-             if ((isMe && FireBaseAuth.instance.previlagelevel>=3)||FireBaseAuth.instance.previlagelevel==4) {
-            
-           setState(() {
-             _scrolleffect = false;
-             if(!_isDeleting[message.key])
-             _isDeleting[message.key]= true;
-             else
-             _isDeleting[message.key]= false;
-            
-           });    
-               
-           FocusScopeNode currentFocus = FocusScope.of(context);
+          if ((isMe && FireBaseAuth.instance.previlagelevel >= 3) ||
+              FireBaseAuth.instance.previlagelevel == 4) {
+            setState(() {
+              _scrolleffect = false;
+              if (!_isDeleting[message.key])
+                _isDeleting[message.key] = true;
+              else
+                _isDeleting[message.key] = false;
+            });
+
+            FocusScopeNode currentFocus = FocusScope.of(context);
 
             if (!currentFocus.hasPrimaryFocus) {
               currentFocus.unfocus();
             }
-            
           }
         },
         child: Container(
@@ -265,10 +264,9 @@ class _NoticeBoardState extends State<NoticeBoard>
           child: IntrinsicHeight(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              
-               children: [
-                 isMe? _child2(message, isMe) :_child1(message, isMe),
-                isMe? _child1(message, isMe): _child2(message, isMe)
+              children: [
+                isMe ? _child2(message, isMe) : _child1(message, isMe),
+                isMe ? _child1(message, isMe) : _child2(message, isMe)
               ],
             ),
           ),
@@ -278,27 +276,28 @@ class _NoticeBoardState extends State<NoticeBoard>
   }
 
   _createNotice(String url, String randomKey) async {
-    String msg= _textController.text;
-    if(url.toString()!="none"){
+    String msg = _textController.text;
+    if (url.toString() != "none") {
       msg = url;
     }
-   
+
     String time = DateTime.now().toString().split(" ")[0] +
         " " +
         DateFormat('jms').format(new DateTime.now());
-    if(type=="Text")
-    await dbRef
-        .reference()
-        .child('institute/${FireBaseAuth.instance.instituteid}/notices')
-        .push()
-        .update(
-            {'textMsg': msg, 'time': time, 'selfId': _selfId, 'type': type});
+    if (type == "Text")
+      await dbRef
+          .reference()
+          .child('institute/${FireBaseAuth.instance.instituteid}/notices')
+          .push()
+          .update(
+              {'textMsg': msg, 'time': time, 'selfId': _selfId, 'type': type});
     else
-    await dbRef
-        .reference()
-        .child('institute/${FireBaseAuth.instance.instituteid}/notices/$randomKey')
-        .update(
-            {'textMsg': msg, 'time': time, 'selfId': _selfId, 'type': type});
+      await dbRef
+          .reference()
+          .child(
+              'institute/${FireBaseAuth.instance.instituteid}/notices/$randomKey')
+          .update(
+              {'textMsg': msg, 'time': time, 'selfId': _selfId, 'type': type});
   }
 
   _deleteNotice(String key) async {
@@ -306,17 +305,14 @@ class _NoticeBoardState extends State<NoticeBoard>
         .reference()
         .child('institute/${FireBaseAuth.instance.instituteid}/notices/$key')
         .remove();
-    if(key.length==7)    
-    await FirebaseStorage.instance
-        .ref()
-        .child('$key').delete();    
+    if (key.length == 7)
+      await FirebaseStorage.instance.ref().child('$key').delete();
   }
-    Future<String> pickVideo() async {
+
+  Future<String> pickVideo() async {
     File videoFile = await FilePicker.getFile(type: FileType.video);
     String randomkey = randomNumeric(7);
-    _storageReference = FirebaseStorage.instance
-        .ref()
-        .child('$randomkey');
+    _storageReference = FirebaseStorage.instance.ref().child('$randomkey');
 
     StorageUploadTask storageUploadTask = _storageReference.putFile(videoFile);
     var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
@@ -324,25 +320,28 @@ class _NoticeBoardState extends State<NoticeBoard>
     _createNotice(url, randomkey);
     return url;
   }
-    Future<String> pickImage() async {
-    var selectedImage = await ImagePicker.pickImage(
+
+  Future<String> pickImage() async {
+    PickedFile selectedImage = await ImagePicker().getImage(
       source: ImageSource.gallery,
     );
 
-    final filePath = selectedImage.absolute.path;
-     final lastIndex = filePath.lastIndexOf(new RegExp(r'.jp'));
+    final filePath = selectedImage.path;
+    final lastIndex = filePath.lastIndexOf(new RegExp(r'.jp'));
     final splitted = filePath.substring(0, (lastIndex));
     final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
     var compressedFile = await FlutterImageCompress.compressAndGetFile(
-        selectedImage?.path, outPath,
-        quality: 50, minWidth: 720, minHeight: 1280,);
+      selectedImage?.path,
+      outPath,
+      quality: 50,
+      minWidth: 720,
+      minHeight: 1280,
+    );
 
     imageFile = compressedFile;
 
     String randomkey = randomNumeric(7);
-    _storageReference = FirebaseStorage.instance
-        .ref()
-        .child('$randomkey');
+    _storageReference = FirebaseStorage.instance.ref().child('$randomkey');
     StorageUploadTask storageUploadTask = _storageReference.putFile(imageFile);
     var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
 
@@ -350,15 +349,17 @@ class _NoticeBoardState extends State<NoticeBoard>
 
     return url;
   }
-   @override
+
+  @override
   void dispose() {
-    _videoPlayerController.forEach((key, value) { 
+    _videoPlayerController.forEach((key, value) {
       value.dispose();
     });
-    
+
     _chewieController.dispose();
     super.dispose();
   }
+
   _buildMessageComposer() {
     return Container(
       padding: EdgeInsets.only(left: 10.0, right: 10.0),
@@ -373,16 +374,13 @@ class _NoticeBoardState extends State<NoticeBoard>
               style: TextStyle(
                 fontSize: 18.0,
               ),
-              
               autofocus: true,
               autocorrect: true,
-            
               controller: _textController,
               keyboardType: TextInputType.multiline,
               maxLines: null,
               textCapitalization: TextCapitalization.sentences,
               onChanged: (value) {},
-              
               decoration: InputDecoration(
                 suffixIcon: Container(
                   width: 100.0,
@@ -391,25 +389,25 @@ class _NoticeBoardState extends State<NoticeBoard>
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       IconButton(
-                          icon: Icon(
-                            Icons.image,
-                            color: Colors.grey[400],
-                          ),
-                          onPressed: () {
-                            type= "image";
-                            pickImage();
-                          },
+                        icon: Icon(
+                          Icons.image,
+                          color: Colors.grey[400],
                         ),
+                        onPressed: () {
+                          type = "image";
+                          pickImage();
+                        },
+                      ),
                       IconButton(
-                          icon: Icon(
-                            Icons.play_circle_filled,
-                            color: Colors.grey[400],
-                          ),
-                          onPressed: () {
-                            type="video";
-                            pickVideo();
-                          },
-                        ),  
+                        icon: Icon(
+                          Icons.play_circle_filled,
+                          color: Colors.grey[400],
+                        ),
+                        onPressed: () {
+                          type = "video";
+                          pickVideo();
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -435,7 +433,7 @@ class _NoticeBoardState extends State<NoticeBoard>
             onPressed: () {
               _createNotice("none", null);
               setState(() {
-                type="Text";
+                type = "Text";
                 _textController.text = "";
               });
             },
@@ -461,76 +459,82 @@ class _NoticeBoardState extends State<NoticeBoard>
       _allMessages.removeAt(index);
     });
   }
-  bool _isshowableMsg(Messages _messages){
+
+  bool _isshowableMsg(Messages _messages) {
     int _previlagelevel = FireBaseAuth.instance.previlagelevel;
     String _branch = FireBaseAuth.instance.branchid.toString();
     String _branchlist = FireBaseAuth.instance.branchList.toString();
-    int _senderprevilagelevel = int.parse( _messages.uid.split(":_:_:")[0]);
+    int _senderprevilagelevel = int.parse(_messages.uid.split(":_:_:")[0]);
     String _senderbranch = _messages.uid.split(":_:_:")[1];
-    if(_senderprevilagelevel == 4)
-    {
+    if (_senderprevilagelevel == 4) {
       return true;
+    } else if (_senderprevilagelevel == 3) {
+      if (_previlagelevel <= 3 && _branch == _senderbranch)
+        return true;
+      else if (_previlagelevel >= 4) return false;
+    } else if (_senderprevilagelevel == 34) {
+      if ((_previlagelevel <= 3 && _senderbranch.contains(_branch)) ||
+          (_previlagelevel == 34 && _branchlist == _senderbranch))
+        return true;
+      else if (_previlagelevel == 4) return false;
     }
-    else if(_senderprevilagelevel == 3){
-      if(_previlagelevel<=3 && _branch==_senderbranch )
-      return true;
-      else if(_previlagelevel>=4)
-      return false;
-    }
-    else if(_senderprevilagelevel == 34){
-      if((_previlagelevel<=3 && _senderbranch.contains(_branch))||(_previlagelevel==34 && _branchlist==_senderbranch))
-       return true;
-      else if(_previlagelevel==4)
-      return false; 
-    }
-   
   }
 
   @override
   void initState() {
     _controller = new TabController(length: items, vsync: this);
     super.initState();
-    if(FireBaseAuth.instance.previlagelevel==34)
-    _selfId= FireBaseAuth.instance.previlagelevel.toString()+":_:_:"+FireBaseAuth.instance.branchList.toString()+":_:_:"+ FireBaseAuth.instance.user.uid+":_:_:"+FireBaseAuth.instance.user.displayName;
-    else if(FireBaseAuth.instance.previlagelevel==4 || FireBaseAuth.instance.previlagelevel==3)
-    _selfId= FireBaseAuth.instance.previlagelevel.toString()+":_:_:"+FireBaseAuth.instance.branchid+":_:_:"+ FireBaseAuth.instance.user.uid+":_:_:"+FireBaseAuth.instance.user.displayName;
+    if (FireBaseAuth.instance.previlagelevel == 34)
+      _selfId = FireBaseAuth.instance.previlagelevel.toString() +
+          ":_:_:" +
+          FireBaseAuth.instance.branchList.toString() +
+          ":_:_:" +
+          FireBaseAuth.instance.user.uid +
+          ":_:_:" +
+          FireBaseAuth.instance.user.displayName;
+    else if (FireBaseAuth.instance.previlagelevel == 4 ||
+        FireBaseAuth.instance.previlagelevel == 3)
+      _selfId = FireBaseAuth.instance.previlagelevel.toString() +
+          ":_:_:" +
+          FireBaseAuth.instance.branchid.toString() +
+          ":_:_:" +
+          FireBaseAuth.instance.user.uid +
+          ":_:_:" +
+          FireBaseAuth.instance.user.displayName;
     _query = dbRef
         .reference()
         .child('institute/${FireBaseAuth.instance.instituteid}/notices');
-    _query.onChildAdded.listen((Event event) { 
+    _query.onChildAdded.listen((Event event) {
       Messages _messages = Messages.fromSnapshot(event.snapshot);
-      bool _isMsgshow= false;
-           if(_messages.type!=null){
-           _isMsgshow= _isshowableMsg(_messages); 
-           if(_isMsgshow){
+      bool _isMsgshow = false;
+      if (_messages.type != null) {
+        _isMsgshow = _isshowableMsg(_messages);
+        if (_isMsgshow) {
           _allMessages.add(_messages);
-          _isDeleting[_messages.key]= false;
-           }
-           }
+          _isDeleting[_messages.key] = false;
+        }
+      }
 
-      return setState(
-        (){
-          if(_messages.type==null){
-            _isDeleting[_messages.key]= false;
-           _allMessages.add(_messages);   
-           _allMessages.sort((a, b) => a.changetime.compareTo(b.changetime));
-           }
-          else{ 
-          if(_isMsgshow){
-          _scrolleffect= true;
-          _allMessages.sort((a, b) => a.changetime.compareTo(b.changetime)); 
+      return setState(() {
+        if (_messages.type == null) {
+          _isDeleting[_messages.key] = false;
+          _allMessages.add(_messages);
+          _allMessages.sort((a, b) => a.changetime.compareTo(b.changetime));
+        } else {
+          if (_isMsgshow) {
+            _scrolleffect = true;
+            _allMessages.sort((a, b) => a.changetime.compareTo(b.changetime));
           }
         }
-        }
-        );
+      });
     });
     _query.onChildRemoved.listen(onEventRemoved);
   }
 
   @override
   Widget build(BuildContext context) {
-    if(_scrolleffect)
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    if (_scrolleffect)
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
 
     return Scaffold(
       appBar: AppBar(
@@ -604,14 +608,16 @@ class _NoticeBoardState extends State<NoticeBoard>
                         itemBuilder: (BuildContext context, int index) {
                           final message = _allMessages[index];
                           bool isMe;
-                          if(message.type==null){
+                          if (message.type == null) {
                             isMe = false;
-                          }else{
-                          isMe = message.uid.split(":_:_:")[2] == FireBaseAuth.instance.user.uid;
+                          } else {
+                            isMe = message.uid.split(":_:_:")[2] ==
+                                FireBaseAuth.instance.user.uid;
                           }
-                          if(FireBaseAuth.instance.previlagelevel<=2 ||FireBaseAuth.instance.previlagelevel==4 )
-                          isMe = false;
-                          
+                          if (FireBaseAuth.instance.previlagelevel <= 2 ||
+                              FireBaseAuth.instance.previlagelevel == 4)
+                            isMe = false;
+
                           return _buildMessage(message, isMe);
                         },
                       ),

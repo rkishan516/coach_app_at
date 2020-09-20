@@ -12,6 +12,8 @@ class AdminProvider extends ChangeNotifier {
         .listen((event) {
       branch = Map<String, Branch>();
       midAdmins = Map<String, MidAdmin>();
+      setInstituteDetails(
+          event.snapshot.value['name'], event.snapshot.value['paid']);
       if (event.snapshot.value != null) {
         if (event.snapshot.value['branches'] != null) {
           event.snapshot.value['branches'].forEach((k, v) {
@@ -29,6 +31,14 @@ class AdminProvider extends ChangeNotifier {
 
   Map<String, Branch> branch;
   Map<String, MidAdmin> midAdmins;
+  String instituteName;
+  String status;
+
+  setInstituteDetails(String instituteName, String status) {
+    this.instituteName = instituteName;
+    this.status = status;
+    notifyListeners();
+  }
 
   setBranch(String key, Branch branch) {
     this.branch[key] = branch;

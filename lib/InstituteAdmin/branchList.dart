@@ -10,6 +10,7 @@ import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/InstituteAdmin/branchPage.dart';
 import 'package:coach_app/InstituteAdmin/midAdminList.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Provider/AdminProvider.dart';
 import 'package:coach_app/adminSection/branchRegister.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -17,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class BranchList extends StatefulWidget {
   @override
@@ -32,24 +34,24 @@ class _BranchListState extends State<BranchList> {
     return StreamBuilder<Event>(
       stream: FirebaseDatabase.instance
           .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/')
+          .child('institute/${FireBaseAuth.instance.instituteid}/name')
           .onValue,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           Map<String, Branch> institutes = SplayTreeMap<String, Branch>();
           List<int> districtWise = List<int>();
           if (snapshot.data.snapshot.value != null) {
-            snapshot.data.snapshot.value['midAdmin']?.forEach((k, v) {
+            Provider.of<AdminProvider>(context).midAdmins?.forEach((k, v) {
               if (searchTextEditingController.text.toLowerCase() ==
-                  v['district']?.toLowerCase()) {
-                districtWise = JsonCodec().decode(v['branches']).cast<int>();
+                  v.district?.toLowerCase()) {
+                districtWise = JsonCodec().decode(v.district).cast<int>();
               }
             });
-            snapshot.data.snapshot.value['branches']?.forEach((k, v) {
+            Provider.of<AdminProvider>(context).branch?.forEach((k, v) {
               if (searchTextEditingController.text == '') {
-                institutes[k] = Branch.fromJson(v);
+                institutes[k] = v;
               } else {
-                Branch branch = Branch.fromJson(v);
+                Branch branch = v;
                 if (branch.name.toLowerCase().contains(
                         searchTextEditingController.text.toLowerCase()) ||
                     branch.address.toLowerCase().contains(
@@ -69,7 +71,7 @@ class _BranchListState extends State<BranchList> {
               title: Padding(
                 padding: const EdgeInsets.only(right: 70.0),
                 child: AutoSizeText(
-                  snapshot.data.snapshot.value['name'] ?? '',
+                  snapshot.data.snapshot.value ?? '',
                   maxLines: 2,
                   style: GoogleFonts.portLligatSans(
                     fontWeight: FontWeight.w700,
@@ -83,7 +85,8 @@ class _BranchListState extends State<BranchList> {
                     offset: Offset(size.width - 70, kToolbarHeight - 24),
                     child: Padding(
                       padding: const EdgeInsets.only(right: 8.0),
-                      child: (snapshot.data.snapshot.value['paid'] == 'Trial')
+                      child: (Provider.of<AdminProvider>(context).status ==
+                              'Trial')
                           ? Padding(
                               padding: const EdgeInsets.only(left: 10.0),
                               child: Text(
@@ -274,8 +277,8 @@ class _BranchListState extends State<BranchList> {
             bottomNavigationBar: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                if (snapshot.data.snapshot.value['paid'] == 'Trial' ||
-                    snapshot.data.snapshot.value['paid'] == 'Paid')
+                if (Provider.of<AdminProvider>(context).status == 'Trial' ||
+                    Provider.of<AdminProvider>(context).status == 'Paid')
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SlideButton(

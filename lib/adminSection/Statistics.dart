@@ -14,11 +14,12 @@ class _StatisticsPageState extends State<StatisticsPage> {
   String filter = "";
   @override
   Widget build(BuildContext context) {
-    Map<String, Branch> branches = (FireBaseAuth.instance.previlagelevel == 4)
-        ? Provider.of<AdminProvider>(context).branch
-        : (FireBaseAuth.instance.previlagelevel == 34)
-            ? Provider.of<MidAdminProvider>(context).branches
-            : Map<String, Branch>();
+    Map<String, Branch> branches = Map<String, Branch>.from(
+        (FireBaseAuth.instance.previlagelevel == 4)
+            ? Provider.of<AdminProvider>(context).branch
+            : (FireBaseAuth.instance.previlagelevel == 34)
+                ? Provider.of<MidAdminProvider>(context).branches
+                : Map<String, Branch>());
     if (filter != "") {
       branches.removeWhere((key, value) => !filter.contains(key.toString()));
     }
@@ -67,7 +68,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
         child: Column(
           children: [
             Expanded(
-              flex: 1,
+              flex: 4,
               child: Container(
                 child: Column(
                   children: [
@@ -80,34 +81,37 @@ class _StatisticsPageState extends State<StatisticsPage> {
                               Align(
                                 alignment: Alignment.centerRight,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      right: 20.0, top: 2),
+                                  padding: const EdgeInsets.only(right: 20.0),
                                   child: Container(
+                                    height: 25,
                                     decoration: BoxDecoration(
                                         color: Color(
                                           0xffF36C24,
                                         ),
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    padding: EdgeInsets.only(left: 5, right: 5),
+                                        borderRadius: BorderRadius.circular(5)),
+                                    padding:
+                                        EdgeInsets.only(left: 15, right: 5),
                                     child: DropdownButton(
+                                        icon: Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: Colors.white,
+                                        ),
+                                        underline: SizedBox(),
                                         selectedItemBuilder: (context) {
                                           return [
-                                            Container(
-                                              color: Color(
-                                                0xffF36C24,
-                                              ),
-                                              child: Text(
-                                                'filter',
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              ),
+                                            Text(
+                                              'Filter',
+                                              style: TextStyle(
+                                                  color: Colors.white),
                                             )
                                           ];
                                         },
-                                        hint: Text(
-                                          'filter',
-                                          style: TextStyle(color: Colors.white),
+                                        hint: Center(
+                                          child: Text(
+                                            'Filter',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
                                         ),
                                         items: ['None', 'Mid - Admins']
                                             .map(
@@ -261,7 +265,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 7,
               child: Container(
                 child: Column(
                   children: [
@@ -331,7 +335,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                           ),
                         ),
                         child: Container(
-                          height: 1.25 * MediaQuery.of(context).size.height / 3,
+                          height: 1.15 * MediaQuery.of(context).size.height / 3,
                           child: ListView.builder(
                               itemCount: branches?.length ?? 0,
                               itemBuilder: (context, index) {

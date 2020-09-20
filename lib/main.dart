@@ -37,15 +37,15 @@ void main() async {
     ));
     return;
   }
-  InAppUpdate.checkForUpdate().then((value) {
-    if (value.updateAvailable) {
-      InAppUpdate.startFlexibleUpdate().then((value) {
-        InAppUpdate.completeFlexibleUpdate()
-            .then((value) {})
-            .catchError((e) => {print(e)});
-      }).catchError((e) => {print(e)});
-    }
-  }).catchError((e) => {print(e)});
+  // InAppUpdate.checkForUpdate().then((value) {
+  //   if (value.updateAvailable) {
+  //     InAppUpdate.startFlexibleUpdate().then((value) {
+  //       InAppUpdate.completeFlexibleUpdate()
+  //           .then((value) {})
+  //           .catchError((e) => {print(e)});
+  //     }).catchError((e) => {print(e)});
+  //   }
+  // }).catchError((e) => {print(e)});
 
   runApp(
     EasyLocalization(
