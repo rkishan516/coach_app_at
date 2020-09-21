@@ -947,9 +947,18 @@ class Messages {
     int hh = int.parse(time.split(" ")[1].split(":")[0]);
     if (time.split(" ")[2] == "PM") {
       midtime = (hh + 12).toString();
-    } else {
-      if (hh.toString().length == 1) midtime = "0" + hh.toString();
+    } else if (time.split(" ")[2] == "AM") {
+      if (hh.toString().length == 1)
+        midtime = "0" + hh.toString();
+      else {
+        midtime = hh.toString();
+        if (midtime == "12") {
+          midtime = "00";
+        }
+      }
     }
+    print(">>>>>>>>>>");
+    print(midtime);
     return time.split(" ")[0] +
         "T" +
         midtime +
