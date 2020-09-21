@@ -691,7 +691,7 @@ class TCourses {
 
 class Student {
   String address;
-  List<Course> course;
+  Map<String, Course> course;
   String email;
   String classs;
   RequestedCourseFee requestedCourseFee;
@@ -723,9 +723,9 @@ class Student {
           RequestedCourseFee.fromJson(json['requestedCourseFee']);
     }
     if (json['course'] != null) {
-      course = new List<Course>();
+      course = new Map<String, Course>();
       json['course'].forEach((k, v) {
-        course.add(new Course.fromJson(v));
+        course[k] = new Course.fromJson(v);
       });
     }
 
@@ -746,7 +746,8 @@ class Student {
     }
     data['address'] = this.address;
     if (this.course != null) {
-      data['course'] = this.course.map((v) => v.toJson()).toList();
+      data['course'] =
+          this.course.map((key, value) => MapEntry(key, value.toJson()));
     }
     data['email'] = this.email;
     data['name'] = this.name;
@@ -933,26 +934,30 @@ class Messages {
   String type;
   Messages(this.key, this.textMsg, this.uid, this.time, this.type);
 
-  Messages.fromSnapshot(DataSnapshot snapshot)
-      {key = snapshot.key;
-        textMsg = snapshot.value["textMsg"];
-        uid = snapshot.value["selfId"];
-        time = snapshot.value["time"];
-        changetime= changeTime(time);
-        type = snapshot.value["type"];
-      }
-      String changeTime(String time){
-       String midtime;
-       int hh = int.parse(time.split(" ")[1].split(":")[0]);
-       if(time.split(" ")[2]=="PM"){
-        midtime = (hh+12).toString();
-       }
-       else{
-         if(hh.toString().length==1)
-         midtime = "0"+hh.toString();
-       }
-       return  time.split(" ")[0] + "T"+ midtime+":"+time.split(" ")[1].split(":")[1]+":"+time.split(" ")[1].split(":")[2];
-      }      
+  Messages.fromSnapshot(DataSnapshot snapshot) {
+    key = snapshot.key;
+    textMsg = snapshot.value["textMsg"];
+    uid = snapshot.value["selfId"];
+    time = snapshot.value["time"];
+    changetime = changeTime(time);
+    type = snapshot.value["type"];
+  }
+  String changeTime(String time) {
+    String midtime;
+    int hh = int.parse(time.split(" ")[1].split(":")[0]);
+    if (time.split(" ")[2] == "PM") {
+      midtime = (hh + 12).toString();
+    } else {
+      if (hh.toString().length == 1) midtime = "0" + hh.toString();
+    }
+    return time.split(" ")[0] +
+        "T" +
+        midtime +
+        ":" +
+        time.split(" ")[1].split(":")[1] +
+        ":" +
+        time.split(" ")[1].split(":")[2];
+  }
 }
 
 class Section {

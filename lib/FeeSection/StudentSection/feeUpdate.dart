@@ -157,7 +157,7 @@ class _FeeUpdateState extends State<FeeUpdate> {
         width: MediaQuery.of(context).size.width,
         child: ListView(
           children: [
-            if (fees.oneTime?.isOneTimeAllowed ?? false)
+            if (fees?.oneTime?.isOneTimeAllowed ?? false)
               SwitchListTile.adaptive(
                 title: Text('Paid One Time'),
                 value: paidOneTime,
@@ -173,7 +173,7 @@ class _FeeUpdateState extends State<FeeUpdate> {
                       }
                     : null,
               ),
-            if (fees.maxInstallment?.isMaxAllowed ?? false)
+            if (fees?.maxInstallment?.isMaxAllowed ?? false)
               SwitchListTile.adaptive(
                 title: Text('Paid In Installments'),
                 value: !paidOneTime,

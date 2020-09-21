@@ -350,21 +350,20 @@ class _NoticeBoardState extends State<NoticeBoard>
     _storageReference = FirebaseStorage.instance.ref().child('$randomkey');
 
     StorageUploadTask storageUploadTask = _storageReference.putFile(videoFile);
-    double percent = 0;
-    timer = Timer.periodic(Duration(seconds: 2), (timer) {
-      percent = storageUploadTask.lastSnapshot.bytesTransferred *
-          100 /
-          storageUploadTask.lastSnapshot.totalByteCount;
-      if (percent.toInt() == 100) {
-        timer.cancel();
+    String uploadString = 'Uploading';
+
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (uploadString.contains('...')) {
+        uploadString = 'Uploading';
+      } else {
+        uploadString += '.';
       }
     });
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => StatefulBuilder(
-        builder: (context, setState) =>
-            UploadDialog(warning: '${percent.toInt()}% Uploaded'),
+        builder: (context, setState) => UploadDialog(warning: uploadString),
       ),
     );
     StorageTaskSnapshot snapshot = await storageUploadTask.onComplete;

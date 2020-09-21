@@ -103,10 +103,9 @@ class _StudentListState extends State<StudentList> {
                           if (sstudent.name.toLowerCase().contains(
                                   searchTextEditingController.text
                                       .toLowerCase()) &&
-                              sstudent.course?.firstWhere((element) =>
-                                      element.courseID == widget.courseId) !=
-                                  null) {
-                            if (sstudent.status == 'Registered') {
+                              sstudent.course != null) {
+                            if (sstudent.course[widget.courseId] != null &&
+                                sstudent.status == 'Registered') {
                               students[k] = sstudent;
                             }
                           }
