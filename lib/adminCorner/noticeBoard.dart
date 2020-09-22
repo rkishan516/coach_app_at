@@ -220,11 +220,15 @@ class _NoticeBoardState extends State<NoticeBoard>
                           }));
                         },
                       )
-                    : LinkWell(message.textMsg,
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600)),
+                    : Container(
+                      padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                    
+                      child: LinkWell(message.textMsg,
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600)),
+                    ),
             _isDeleting[message.key]
                 ? Align(
                     alignment: isMe ? Alignment.topLeft : Alignment.topRight,
