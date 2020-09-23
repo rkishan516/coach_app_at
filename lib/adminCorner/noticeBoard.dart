@@ -360,6 +360,7 @@ class _NoticeBoardState extends State<NoticeBoard>
        .then((value) async{
          if(value!=null){
          String randomkey = randomNumeric(7);
+    if(randomkey!=null){     
        _storageReference = FirebaseStorage.instance.ref().child('notices/${FireBaseAuth.instance.instituteid}/$randomkey');
 
     StorageUploadTask storageUploadTask = _storageReference.putFile(videoFile);
@@ -385,6 +386,7 @@ class _NoticeBoardState extends State<NoticeBoard>
 
     _createNotice(url+":_:_:"+value, randomkey);
     return url+":_:_:"+value;
+       }
        }
        }
        );
@@ -418,6 +420,7 @@ class _NoticeBoardState extends State<NoticeBoard>
         if(value!=null){
     
     String randomkey = randomNumeric(7);
+    if(randomkey!=null){
     _storageReference = FirebaseStorage.instance.ref().child('notices/${FireBaseAuth.instance.instituteid}/$randomkey');
     StorageUploadTask storageUploadTask = _storageReference.putFile(imageFile);
     var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
@@ -425,6 +428,7 @@ class _NoticeBoardState extends State<NoticeBoard>
     _createNotice(url+":_:_:"+ value, randomkey);
 
     return url+":_:_:"+ value;
+        }
         }
       }
       );
@@ -546,6 +550,8 @@ class _NoticeBoardState extends State<NoticeBoard>
     int _previlagelevel = FireBaseAuth.instance.previlagelevel;
     String _branch = FireBaseAuth.instance.branchid.toString();
     String _branchlist = FireBaseAuth.instance.branchList.toString();
+   
+      
     int _senderprevilagelevel = int.parse(_messages.uid.split(":_:_:")[0]);
     String _senderbranch = _messages.uid.split(":_:_:")[1];
     if (_senderprevilagelevel == 4) {
@@ -589,7 +595,7 @@ class _NoticeBoardState extends State<NoticeBoard>
     _query.onChildAdded.listen((Event event) {
       Messages _messages = Messages.fromSnapshot(event.snapshot);
       bool _isMsgshow = false;
-      if (_messages.type != null) {
+      if (_messages.type != null&& _messages.key != "null" ) {
         _isMsgshow = _isshowableMsg(_messages);
         if (_isMsgshow) {
           _allMessages.add(_messages);
@@ -598,7 +604,7 @@ class _NoticeBoardState extends State<NoticeBoard>
       }
 
       return setState(() {
-        if (_messages.type == null) {
+        if (_messages.type == null&& _messages.key != "null") {
           _isDeleting[_messages.key] = false;
           _allMessages.add(_messages);
           _allMessages.sort((a, b) => a.changetime.compareTo(b.changetime));

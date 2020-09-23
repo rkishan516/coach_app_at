@@ -958,8 +958,6 @@ class Messages {
          }
          }
        }
-       print(">>>>>>>>>>");
-       print(midtime);
        return  time.split(" ")[0] + "T"+ midtime+":"+time.split(" ")[1].split(":")[1]+":"+time.split(" ")[1].split(":")[2];
       }      
 }
