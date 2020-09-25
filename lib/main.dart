@@ -6,7 +6,6 @@ import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:coach_app/SpeechRouting/RouteMap.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:in_app_update/in_app_update.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,15 +36,6 @@ void main() async {
     ));
     return;
   }
-  // InAppUpdate.checkForUpdate().then((value) {
-  //   if (value.updateAvailable) {
-  //     InAppUpdate.startFlexibleUpdate().then((value) {
-  //       InAppUpdate.completeFlexibleUpdate()
-  //           .then((value) {})
-  //           .catchError((e) => {print(e)});
-  //     }).catchError((e) => {print(e)});
-  //   }
-  // }).catchError((e) => {print(e)});
 
   runApp(
     EasyLocalization(

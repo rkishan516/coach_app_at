@@ -34,7 +34,6 @@ dependencies:
   firebase_database:
   cloud_firestore:
   firebase_storage:
-  firebase:
   google_fonts:
   firebase_auth:
   image_picker:
@@ -54,7 +53,6 @@ dependencies:
   url_launcher:
   auto_size_text:
   package_info:
-  in_app_update:
   googleapis:
   googleapis_auth:
   http:
