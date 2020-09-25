@@ -138,16 +138,30 @@ class StudentProfilePage extends StatelessWidget {
                         ),
                       ),
                       Container(
-                          padding: EdgeInsets.fromLTRB(
-                              SizeConfig.b * 3.77,
-                              SizeConfig.v * 1.25,
-                              SizeConfig.b * 7.77,
-                              SizeConfig.v * 1.25),
-                          width: MediaQuery.of(context).size.width * 0.35,
-                          child: CircleAvatar(
-                            radius: SizeConfig.b * 11.1,
-                            backgroundImage: NetworkImage(student.photoURL),
-                          ))
+                        padding: EdgeInsets.fromLTRB(
+                            SizeConfig.b * 3.77,
+                            SizeConfig.v * 1.25,
+                            SizeConfig.b * 7.77,
+                            SizeConfig.v * 1.25),
+                        width: MediaQuery.of(context).size.width * 0.35,
+                        child: student.photoURL != null
+                            ? CircleAvatar(
+                                radius: SizeConfig.b * 11.1,
+                                backgroundImage: NetworkImage(student.photoURL),
+                              )
+                            : Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Colors.white,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    student.name[0].toUpperCase(),
+                                  ),
+                                ),
+                              ),
+                      )
                     ],
                   ),
                 ],
@@ -161,7 +175,8 @@ class StudentProfilePage extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,
                   itemCount: student.course.length,
-                  itemBuilder: (context, index) {
+                  itemBuilder: (context, ind) {
+                    String index = student.course.keys.toList()[ind];
                     return InkWell(
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(

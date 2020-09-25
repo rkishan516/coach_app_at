@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:chewie/chewie.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Models/random_string.dart';
+import 'package:coach_app/adminCorner/BeforeImageLoading.dart';
+import 'package:coach_app/adminCorner/BeforeVideoLoading.dart';
 import 'package:coach_app/adminCorner/ShowMedia.dart';
 import 'package:video_player/video_player.dart';
 import 'package:coach_app/Chat/models/video_player.dart';
@@ -58,8 +62,9 @@ class _NoticeBoardState extends State<NoticeBoard>
     "11": "Nov",
     "12": "Dec"
   };
-  Map<String, VideoPlayerController> _videoPlayerController = {};
-  ChewieController _chewieController;
+  // Map<String, VideoPlayerController> _videoPlayerController = {};
+  // ChewieController _chewieController;
+  Timer timer;
 
   Widget _child1(Messages message, bool isMe) {
     String splitDate = message.time.split(' ')[0];
@@ -91,37 +96,39 @@ class _NoticeBoardState extends State<NoticeBoard>
   }
 
   Widget _child2(Messages message, bool isMe) {
-    if (message.type == "video") {
-      if (_videoPlayerController[message.key] == null)
-        _videoPlayerController[message.key] =
-            VideoPlayerController.network(message.textMsg);
-      _chewieController = ChewieController(
-        videoPlayerController: _videoPlayerController[message.key],
-        aspectRatio: 1,
-        autoPlay: false,
-        looping: false,
-        cupertinoProgressColors: ChewieProgressColors(
-          playedColor: Color.fromARGB(255, 242, 108, 37),
-          handleColor: Color.fromARGB(255, 242, 108, 37),
-          backgroundColor: Colors.grey,
-          bufferedColor: Color.fromARGB(255, 242, 108, 37),
-        ),
-        materialProgressColors: ChewieProgressColors(
-          playedColor: Color.fromARGB(255, 242, 108, 37),
-          handleColor: Color.fromARGB(255, 242, 108, 37),
-          backgroundColor: Colors.grey,
-          bufferedColor: Color.fromARGB(255, 242, 108, 37),
-        ),
-        placeholder: Container(
-          color: Colors.grey,
-        ),
-        autoInitialize: true,
-      );
-    }
+    // if (message.type == "video") {
+    //   if (_videoPlayerController[message.key] == null){
+    //     _videoPlayerController[message.key] =
+    //         VideoPlayerController.network(message.textMsg);
+    //   _chewieController = ChewieController(
+    //     videoPlayerController: _videoPlayerController[message.key],
+    //     aspectRatio: 1,
+    //     autoPlay: false,
+    //     looping: false,
+    //     cupertinoProgressColors: ChewieProgressColors(
+    //       playedColor: Color.fromARGB(255, 242, 108, 37),
+    //       handleColor: Color.fromARGB(255, 242, 108, 37),
+    //       backgroundColor: Colors.grey,
+    //       bufferedColor: Color.fromARGB(255, 242, 108, 37),
+    //     ),
+    //     materialProgressColors: ChewieProgressColors(
+    //       playedColor: Color.fromARGB(255, 242, 108, 37),
+    //       handleColor: Color.fromARGB(255, 242, 108, 37),
+    //       backgroundColor: Colors.grey,
+    //       bufferedColor: Color.fromARGB(255, 242, 108, 37),
+    //     ),
+    //     placeholder: Container(
+    //       color: Colors.grey,
+    //     ),
+    //     autoInitialize: true,
+    //   );
+    //   }
+    // }
 
     return Expanded(
       flex: 13,
       child: Container(
+        padding: EdgeInsets.only(left: 8.0, right: 8.0),
         width: MediaQuery.of(context).size.width * 0.6,
         child: Stack(
           fit: StackFit.loose,
@@ -140,46 +147,108 @@ class _NoticeBoardState extends State<NoticeBoard>
               ),
             message.type == "image"
                 ? Container(
-                    width: MediaQuery.of(context).size.width * 0.75,
                     padding: EdgeInsets.only(top: 20.0, bottom: 16.0),
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context)
                             .push(new MaterialPageRoute(builder: (context) {
                           return ShowMedia(
-                            imageurl: message.textMsg,
+                            url: message.textMsg.split(":_:_:")[0],
+                            type: message.type,
                           );
-                        }));
+                        })).then((value) {
+                          _scrolleffect = false;
+                        });
                       },
-                      child: FadeInImage(
-                        height: 180.0,
-                        fit: BoxFit.cover,
-                        image: NetworkImage(message.textMsg),
-                        placeholder: AssetImage('assets/blankimage.png'),
+                      child: Column(
+                        children: [
+                          FadeInImage(
+                            height: 180.0,
+                            width: MediaQuery.of(context).size.width,
+                            fit: BoxFit.cover,
+                            image:
+                                NetworkImage(message.textMsg.split(":_:_:")[0]),
+                            placeholder: AssetImage('assets/blankimage.png'),
+                          ),
+                          SizedBox(
+                            height: 6.0,
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                                message.textMsg.split(":_:_:")[1] == "EmpText"
+                                    ? ""
+                                    : message.textMsg.split(":_:_:")[1],
+                                style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w600)),
+                          ),
+                          SizedBox(
+                              height:
+                                  message.textMsg.split(":_:_:")[1] == "EmpText"
+                                      ? 0.0
+                                      : 4.0)
+                        ],
                       ),
                     ),
                   )
                 : message.type == "video"
                     ? InkWell(
                         child: Container(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            padding: EdgeInsets.only(top: 20.0, bottom: 16.0),
-                            child: Chewie(controller: _chewieController)),
+                          padding: EdgeInsets.only(top: 20.0, bottom: 16.0),
+                          child: Column(
+                            children: [
+                              FadeInImage(
+                                height: 180.0,
+                                width: MediaQuery.of(context).size.width,
+                                fit: BoxFit.cover,
+                                image: AssetImage("assets/video_black.jpg"),
+                                placeholder:
+                                    AssetImage('assets/blankimage.png'),
+                              ),
+                              SizedBox(
+                                height: 6.0,
+                              ),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                    message.textMsg.split(":_:_:")[1] ==
+                                            "EmpText"
+                                        ? ""
+                                        : message.textMsg.split(":_:_:")[1],
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600)),
+                              ),
+                              SizedBox(
+                                  height: message.textMsg.split(":_:_:")[1] ==
+                                          "EmpText"
+                                      ? 0.0
+                                      : 4.0)
+                            ],
+                          ),
+                        ),
                         onTap: () {
                           Navigator.of(context)
                               .push(new MaterialPageRoute(builder: (context) {
-                            return ChewieDemo(
-                              dataSource: message.textMsg,
-                              title: "",
+                            return ShowMedia(
+                              url: message.textMsg.split(":_:_:")[0],
+                              type: message.type,
                             );
                           }));
                         },
                       )
-                    : LinkWell(message.textMsg,
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600)),
+                    : Container(
+                      padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                    
+                      child: LinkWell(message.textMsg,
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600)),
+                    ),
             _isDeleting[message.key]
                 ? Align(
                     alignment: isMe ? Alignment.topLeft : Alignment.topRight,
@@ -255,12 +324,9 @@ class _NoticeBoardState extends State<NoticeBoard>
           margin:
               EdgeInsets.only(top: 15.0, bottom: 15.0, left: 20.0, right: 20.0),
           width: MediaQuery.of(context).size.width * 0.75,
-          decoration: BoxDecoration(color: Colors.white, boxShadow: [
-            new BoxShadow(
-              color: Colors.black,
-              blurRadius: 8.0,
-            ),
-          ]),
+          decoration: BoxDecoration(
+            color: Colors.white,
+          ),
           child: IntrinsicHeight(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -306,19 +372,51 @@ class _NoticeBoardState extends State<NoticeBoard>
         .child('institute/${FireBaseAuth.instance.instituteid}/notices/$key')
         .remove();
     if (key.length == 7)
-      await FirebaseStorage.instance.ref().child('$key').delete();
+      await FirebaseStorage.instance
+          .ref()
+          .child('notices/${FireBaseAuth.instance.instituteid}/$key')
+          .delete();
   }
 
   Future<String> pickVideo() async {
     File videoFile = await FilePicker.getFile(type: FileType.video);
-    String randomkey = randomNumeric(7);
-    _storageReference = FirebaseStorage.instance.ref().child('$randomkey');
+    if(videoFile!=null){
+       Navigator.push(context,MaterialPageRoute(builder: (contex)=>BeforeVideoLoading(videourl: videoFile,)))
+       .then((value) async{
+         if(value!=null){
+         String randomkey = randomNumeric(7);
+    if(randomkey!=null){     
+       _storageReference = FirebaseStorage.instance.ref().child('notices/${FireBaseAuth.instance.instituteid}/$randomkey');
 
     StorageUploadTask storageUploadTask = _storageReference.putFile(videoFile);
-    var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+    double percent = 0;
+    storageUploadTask.events.listen((event) {
+      setState(() {
+        percent = event.snapshot.bytesTransferred *
+            100 /
+            event.snapshot.totalByteCount;
+      });
+    });
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) =>
+            UploadDialog(warning: '${percent.toInt()}% Uploaded'),
+      ),
+    );
+    StorageTaskSnapshot snapshot = await storageUploadTask.onComplete;
+    var url = await snapshot.ref.getDownloadURL();
+    Navigator.of(context).pop();
 
-    _createNotice(url, randomkey);
-    return url;
+    _createNotice(url+":_:_:"+value, randomkey);
+    return url+":_:_:"+value;
+       }
+       }
+       }
+       );
+       
+    }
   }
 
   Future<String> pickImage() async {
@@ -339,24 +437,36 @@ class _NoticeBoardState extends State<NoticeBoard>
     );
 
     imageFile = compressedFile;
-
+    if(selectedImage!=null){
+      Navigator.push(context,MaterialPageRoute(builder: (contex)=>BeforeImageLoading(imageurl: imageFile,)))
+      .then((value)async{
+      
+        if(value!=null){
+    
     String randomkey = randomNumeric(7);
-    _storageReference = FirebaseStorage.instance.ref().child('$randomkey');
+    if(randomkey!=null){
+    _storageReference = FirebaseStorage.instance.ref().child('notices/${FireBaseAuth.instance.instituteid}/$randomkey');
     StorageUploadTask storageUploadTask = _storageReference.putFile(imageFile);
     var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
 
-    _createNotice(url, randomkey);
+    _createNotice(url+":_:_:"+ value, randomkey);
 
-    return url;
+    return url+":_:_:"+ value;
+        }
+        }
+      }
+      );
+    }
   }
 
   @override
   void dispose() {
-    _videoPlayerController.forEach((key, value) {
-      value.dispose();
-    });
+    // _videoPlayerController.forEach((key, value) {
+    //   value.dispose();
+    // });
 
-    _chewieController.dispose();
+    // _chewieController.dispose();
+    timer?.cancel();
     super.dispose();
   }
 
@@ -464,6 +574,8 @@ class _NoticeBoardState extends State<NoticeBoard>
     int _previlagelevel = FireBaseAuth.instance.previlagelevel;
     String _branch = FireBaseAuth.instance.branchid.toString();
     String _branchlist = FireBaseAuth.instance.branchList.toString();
+   
+      
     int _senderprevilagelevel = int.parse(_messages.uid.split(":_:_:")[0]);
     String _senderbranch = _messages.uid.split(":_:_:")[1];
     if (_senderprevilagelevel == 4) {
@@ -507,7 +619,7 @@ class _NoticeBoardState extends State<NoticeBoard>
     _query.onChildAdded.listen((Event event) {
       Messages _messages = Messages.fromSnapshot(event.snapshot);
       bool _isMsgshow = false;
-      if (_messages.type != null) {
+      if (_messages.type != null&& _messages.key != "null" ) {
         _isMsgshow = _isshowableMsg(_messages);
         if (_isMsgshow) {
           _allMessages.add(_messages);
@@ -516,7 +628,7 @@ class _NoticeBoardState extends State<NoticeBoard>
       }
 
       return setState(() {
-        if (_messages.type == null) {
+        if (_messages.type == null&& _messages.key != "null") {
           _isDeleting[_messages.key] = false;
           _allMessages.add(_messages);
           _allMessages.sort((a, b) => a.changetime.compareTo(b.changetime));

@@ -69,7 +69,7 @@ class _ToggleButtonState extends State<ToggleButton> {
             "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coupons")
         .once()
         .then((snapshot) {
-      snapshot.value.forEach((key, value) {
+      snapshot.value?.forEach((key, value) {
         couponslist.add(snapshot.value[key]["discount"]);
       });
     });

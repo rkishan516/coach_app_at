@@ -18,6 +18,7 @@ class _AddStudentState extends State<AddStudent> {
       addressTextEditingController,
       phoneTextEditingController;
   String courseName;
+  String courseId;
 
   @override
   void initState() {
@@ -106,7 +107,7 @@ class _AddStudentState extends State<AddStudent> {
                     children: <Widget>[
                       TextField(
                         controller: phoneTextEditingController,
-                        keyboardType: TextInputType.emailAddress,
+                        keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
                           hintStyle: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 15),
@@ -138,6 +139,59 @@ class _AddStudentState extends State<AddStudent> {
                     ],
                   ),
                 ),
+                if (widget.courseId == null)
+                  StreamBuilder<Event>(
+                      stream: FirebaseDatabase.instance
+                          .reference()
+                          .child(
+                              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses')
+                          .onValue,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return Container();
+                        }
+                        Map<String, Courses> courses = Map<String, Courses>();
+                        snapshot.data.snapshot.value?.forEach((k, v) {
+                          courses[k] = Courses.fromJson(v);
+                        });
+                        return Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                              color: Color(0xfff3f3f4),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: DropdownButtonHideUnderline(
+                            child: ButtonTheme(
+                              alignedDropdown: true,
+                              child: DropdownButton<String>(
+                                  value: courseId,
+                                  icon: Icon(Icons.arrow_drop_down),
+                                  iconSize: 42,
+                                  underline: SizedBox(),
+                                  onChanged: (String newValue) {
+                                    setState(() {
+                                      courseId = newValue;
+                                      courseName = courses[courseId].name;
+                                    });
+                                  },
+                                  hint: Text(
+                                    'Select Course',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15),
+                                  ),
+                                  items: courses.values
+                                      .map<DropdownMenuItem<String>>(
+                                          (Courses value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.id,
+                                      child: Text(value.name),
+                                    );
+                                  }).toList()),
+                            ),
+                          ),
+                        );
+                      }),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: Row(
@@ -148,6 +202,7 @@ class _AddStudentState extends State<AddStudent> {
                           if (emailTextEditingController.text == '' ||
                               nameTextEditingController.text == '' ||
                               addressTextEditingController.text == '' ||
+                              (widget.courseId == null && courseId == null) ||
                               phoneTextEditingController.text == '') {
                             Alert.instance.alert(context, 'Something is wrong');
                             return;
@@ -182,7 +237,7 @@ class _AddStudentState extends State<AddStudent> {
                           FirebaseDatabase.instance
                               .reference()
                               .child(
-                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/student')
+                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students')
                               .push()
                               .update(Student(
                                       name: nameTextEditingController.text,
@@ -190,18 +245,19 @@ class _AddStudentState extends State<AddStudent> {
                                       phoneNo: phoneTextEditingController.text,
                                       address:
                                           addressTextEditingController.text,
-                                      course: [
-                                        Course(
+                                      course: {
+                                        widget.courseId ?? courseId: Course(
                                             academicYear:
                                                 DateTime.now().year.toString() +
                                                     " - " +
                                                     (DateTime.now().year + 1)
                                                         .toString(),
-                                            courseID: widget.courseId,
+                                            courseID:
+                                                widget.courseId ?? courseId,
                                             courseName: courseName,
                                             paymentToken:
                                                 "Registered By ${FireBaseAuth.instance.user.displayName}"),
-                                      ],
+                                      },
                                       status: 'Registered')
                                   .toJson());
                           Navigator.of(context).pop();
