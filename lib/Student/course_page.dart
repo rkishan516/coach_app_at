@@ -69,7 +69,8 @@ class _CoursePageState extends State<CoursePage> {
 
                       return ListView.builder(
                         itemCount: student.course.length,
-                        itemBuilder: (BuildContext context, int index) {
+                        itemBuilder: (BuildContext context, int i) {
+                          var index = student.course.keys.toList()[i];
                           return StreamBuilder(
                               stream: FirebaseDatabase.instance
                                   .reference()
