@@ -176,19 +176,24 @@ class _NoticeBoardState extends State<NoticeBoard>
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                                message.textMsg.split(":_:_:")[1] == "EmpText"
-                                    ? ""
-                                    : message.textMsg.split(":_:_:")[1],
+                                message.textMsg.split(":_:_:").length > 1
+                                    ? (message.textMsg.split(":_:_:")[1] ==
+                                            "EmpText"
+                                        ? ""
+                                        : message.textMsg.split(":_:_:")[1])
+                                    : "",
                                 style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.w600)),
                           ),
                           SizedBox(
-                              height:
-                                  message.textMsg.split(":_:_:")[1] == "EmpText"
+                              height: message.textMsg.split(":_:_:").length > 1
+                                  ? (message.textMsg.split(":_:_:")[1] ==
+                                          "EmpText"
                                       ? 0.0
                                       : 4.0)
+                                  : 0.0)
                         ],
                       ),
                     ),
@@ -213,20 +218,26 @@ class _NoticeBoardState extends State<NoticeBoard>
                               Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                    message.textMsg.split(":_:_:")[1] ==
-                                            "EmpText"
-                                        ? ""
-                                        : message.textMsg.split(":_:_:")[1],
+                                    message.textMsg.split(":_:_:").length > 1
+                                        ? (message.textMsg.split(":_:_:")[1] ==
+                                                "EmpText"
+                                            ? ""
+                                            : message.textMsg.split(":_:_:")[1])
+                                        : "",
                                     style: TextStyle(
                                         color: Colors.grey,
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w600)),
                               ),
                               SizedBox(
-                                  height: message.textMsg.split(":_:_:")[1] ==
-                                          "EmpText"
-                                      ? 0.0
-                                      : 4.0)
+                                  height:
+                                      message.textMsg.split(":_:_:").length > 1
+                                          ? (message.textMsg
+                                                      .split(":_:_:")[1] ==
+                                                  "EmpText"
+                                              ? 0.0
+                                              : 4.0)
+                                          : 0.0)
                             ],
                           ),
                         ),
@@ -241,14 +252,13 @@ class _NoticeBoardState extends State<NoticeBoard>
                         },
                       )
                     : Container(
-                      padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
-                    
-                      child: LinkWell(message.textMsg,
-                          style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600)),
-                    ),
+                        padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                        child: LinkWell(message.textMsg,
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600)),
+                      ),
             _isDeleting[message.key]
                 ? Align(
                     alignment: isMe ? Alignment.topLeft : Alignment.topRight,
@@ -380,42 +390,46 @@ class _NoticeBoardState extends State<NoticeBoard>
 
   Future<String> pickVideo() async {
     File videoFile = await FilePicker.getFile(type: FileType.video);
-    if(videoFile!=null){
-       Navigator.push(context,MaterialPageRoute(builder: (contex)=>BeforeVideoLoading(videourl: videoFile,)))
-       .then((value) async{
-         if(value!=null){
-         String randomkey = randomNumeric(7);
-    if(randomkey!=null){     
-       _storageReference = FirebaseStorage.instance.ref().child('notices/${FireBaseAuth.instance.instituteid}/$randomkey');
+    if (videoFile != null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (contex) => BeforeVideoLoading(
+                    videourl: videoFile,
+                  ))).then((value) async {
+        if (value != null) {
+          String randomkey = randomNumeric(7);
+          if (randomkey != null) {
+            _storageReference = FirebaseStorage.instance.ref().child(
+                'notices/${FireBaseAuth.instance.instituteid}/$randomkey');
 
-    StorageUploadTask storageUploadTask = _storageReference.putFile(videoFile);
-    double percent = 0;
-    storageUploadTask.events.listen((event) {
-      setState(() {
-        percent = event.snapshot.bytesTransferred *
-            100 /
-            event.snapshot.totalByteCount;
+            StorageUploadTask storageUploadTask =
+                _storageReference.putFile(videoFile);
+            double percent = 0;
+            storageUploadTask.events.listen((event) {
+              setState(() {
+                percent = event.snapshot.bytesTransferred *
+                    100 /
+                    event.snapshot.totalByteCount;
+              });
+            });
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => StatefulBuilder(
+                builder: (context, setState) =>
+                    UploadDialog(warning: '${percent.toInt()}% Uploaded'),
+              ),
+            );
+            StorageTaskSnapshot snapshot = await storageUploadTask.onComplete;
+            var url = await snapshot.ref.getDownloadURL();
+            Navigator.of(context).pop();
+
+            _createNotice(url + ":_:_:" + value, randomkey);
+            return url + ":_:_:" + value;
+          }
+        }
       });
-    });
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) =>
-            UploadDialog(warning: '${percent.toInt()}% Uploaded'),
-      ),
-    );
-    StorageTaskSnapshot snapshot = await storageUploadTask.onComplete;
-    var url = await snapshot.ref.getDownloadURL();
-    Navigator.of(context).pop();
-
-    _createNotice(url+":_:_:"+value, randomkey);
-    return url+":_:_:"+value;
-       }
-       }
-       }
-       );
-       
     }
   }
 
@@ -437,25 +451,29 @@ class _NoticeBoardState extends State<NoticeBoard>
     );
 
     imageFile = compressedFile;
-    if(selectedImage!=null){
-      Navigator.push(context,MaterialPageRoute(builder: (contex)=>BeforeImageLoading(imageurl: imageFile,)))
-      .then((value)async{
-      
-        if(value!=null){
-    
-    String randomkey = randomNumeric(7);
-    if(randomkey!=null){
-    _storageReference = FirebaseStorage.instance.ref().child('notices/${FireBaseAuth.instance.instituteid}/$randomkey');
-    StorageUploadTask storageUploadTask = _storageReference.putFile(imageFile);
-    var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+    if (selectedImage != null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (contex) => BeforeImageLoading(
+                    imageurl: imageFile,
+                  ))).then((value) async {
+        if (value != null) {
+          String randomkey = randomNumeric(7);
+          if (randomkey != null) {
+            _storageReference = FirebaseStorage.instance.ref().child(
+                'notices/${FireBaseAuth.instance.instituteid}/$randomkey');
+            StorageUploadTask storageUploadTask =
+                _storageReference.putFile(imageFile);
+            var url =
+                await (await storageUploadTask.onComplete).ref.getDownloadURL();
 
-    _createNotice(url+":_:_:"+ value, randomkey);
+            _createNotice(url + ":_:_:" + value, randomkey);
 
-    return url+":_:_:"+ value;
+            return url + ":_:_:" + value;
+          }
         }
-        }
-      }
-      );
+      });
     }
   }
 
@@ -574,8 +592,7 @@ class _NoticeBoardState extends State<NoticeBoard>
     int _previlagelevel = FireBaseAuth.instance.previlagelevel;
     String _branch = FireBaseAuth.instance.branchid.toString();
     String _branchlist = FireBaseAuth.instance.branchList.toString();
-   
-      
+
     int _senderprevilagelevel = int.parse(_messages.uid.split(":_:_:")[0]);
     String _senderbranch = _messages.uid.split(":_:_:")[1];
     if (_senderprevilagelevel == 4) {
@@ -619,7 +636,7 @@ class _NoticeBoardState extends State<NoticeBoard>
     _query.onChildAdded.listen((Event event) {
       Messages _messages = Messages.fromSnapshot(event.snapshot);
       bool _isMsgshow = false;
-      if (_messages.type != null&& _messages.key != "null" ) {
+      if (_messages.type != null && _messages.key != "null") {
         _isMsgshow = _isshowableMsg(_messages);
         if (_isMsgshow) {
           _allMessages.add(_messages);
@@ -628,7 +645,7 @@ class _NoticeBoardState extends State<NoticeBoard>
       }
 
       return setState(() {
-        if (_messages.type == null&& _messages.key != "null") {
+        if (_messages.type == null && _messages.key != "null") {
           _isDeleting[_messages.key] = false;
           _allMessages.add(_messages);
           _allMessages.sort((a, b) => a.changetime.compareTo(b.changetime));
