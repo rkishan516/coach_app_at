@@ -302,7 +302,11 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                     onTap: () {
                       Navigator.of(context).pushAndRemoveUntil(
                           CupertinoPageRoute(
-                              builder: (context) => BranchList()),
+                            builder: (context) => ChangeNotifierProvider(
+                              create: (context) => AdminProvider(),
+                              child: BranchList(),
+                            ),
+                          ),
                           (route) => false);
                     },
                   ),

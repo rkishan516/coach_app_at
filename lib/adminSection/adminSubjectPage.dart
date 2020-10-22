@@ -383,7 +383,7 @@ addSubject(BuildContext context, String courseId,
                               } else {
                                 teachers = List<Map<String, dynamic>>();
                                 initialTeachers = List<Map<String, dynamic>>();
-                                snapshot.data.snapshot.value.forEach(
+                                snapshot.data.snapshot.value?.forEach(
                                   (k, v) {
                                     Teacher teacher = Teacher.fromJson(v);
                                     if (mentors.contains(teacher.email)) {

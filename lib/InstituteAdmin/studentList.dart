@@ -25,17 +25,19 @@ class _StudentListState extends State<StudentList> {
     return Scaffold(
       drawer: widget.courseId != null ? null : getDrawer(context),
       appBar: widget.courseId != null ? null : getAppBar(context),
-      floatingActionButton: SlideButtonR(
-        height: 50,
-        width: 150,
-        onTap: () => showDialog(
-          context: context,
-          builder: (context) => AddStudent(
-            courseId: widget.courseId,
-          ),
-        ),
-        text: 'Add Student',
-      ),
+      floatingActionButton: (FireBaseAuth.instance.previlagelevel >= 3)
+          ? SlideButtonR(
+              height: 50,
+              width: 150,
+              onTap: () => showDialog(
+                context: context,
+                builder: (context) => AddStudent(
+                  courseId: widget.courseId,
+                ),
+              ),
+              text: 'Add Student',
+            )
+          : Container(),
       body: Container(
         padding: widget.courseId != null
             ? EdgeInsets.all(0)
