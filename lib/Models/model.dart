@@ -1072,3 +1072,58 @@ class GeneralEventsModal {
     hostname = json['hostname'];
   }
 }
+class AppUser{
+  final String uid;
+  final String name;
+  final bool isEmailVerfied;
+  AppUser({this.uid, this.name, this.isEmailVerfied});
+}
+
+class TypeSelection {
+  static String typeOfPage;
+}
+
+
+
+class AuthError extends ChangeNotifier{
+  String resultLogin = "";
+  String resultSignUp = "";
+  void errorOccured(String error, String page){
+    if(page=="LoginPage"){
+    resultLogin = error;
+    resultSignUp="";
+    }
+    else{
+      resultSignUp = error;
+      resultLogin = "";
+    }
+    notifyListeners();
+  }
+}
+class Counter extends ChangeNotifier{
+  int flexofCircle =6;
+  int flexofLogo =3;
+  int flexofFields = 7;
+  String page = "FirstPage";
+  void increment(String key){
+    if(key=="FirstPage"){
+    flexofCircle = 6;
+    flexofLogo = 3;
+    flexofFields = 7;
+    page = "FirstPage";
+    }
+    else if(key=="LoginPage"){
+    flexofCircle = 5;
+    flexofLogo = 3;
+    flexofFields = 7;
+    page = "LoginPage";
+    }
+    else if(key == "SignUpPage"){
+    flexofCircle = 3;
+    flexofLogo = 2;
+    flexofFields = 7;
+    page = "SignUpPage";
+    }
+    notifyListeners();
+  }
+}

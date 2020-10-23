@@ -94,35 +94,7 @@ class _NoticeBoardState extends State<NoticeBoard>
   }
 
   Widget _child2(Messages message, bool isMe) {
-    // if (message.type == "video") {
-    //   if (_videoPlayerController[message.key] == null){
-    //     _videoPlayerController[message.key] =
-    //         VideoPlayerController.network(message.textMsg);
-    //   _chewieController = ChewieController(
-    //     videoPlayerController: _videoPlayerController[message.key],
-    //     aspectRatio: 1,
-    //     autoPlay: false,
-    //     looping: false,
-    //     cupertinoProgressColors: ChewieProgressColors(
-    //       playedColor: Color.fromARGB(255, 242, 108, 37),
-    //       handleColor: Color.fromARGB(255, 242, 108, 37),
-    //       backgroundColor: Colors.grey,
-    //       bufferedColor: Color.fromARGB(255, 242, 108, 37),
-    //     ),
-    //     materialProgressColors: ChewieProgressColors(
-    //       playedColor: Color.fromARGB(255, 242, 108, 37),
-    //       handleColor: Color.fromARGB(255, 242, 108, 37),
-    //       backgroundColor: Colors.grey,
-    //       bufferedColor: Color.fromARGB(255, 242, 108, 37),
-    //     ),
-    //     placeholder: Container(
-    //       color: Colors.grey,
-    //     ),
-    //     autoInitialize: true,
-    //   );
-    //   }
-    // }
-
+    
     return Expanded(
       flex: 13,
       child: Container(
@@ -154,6 +126,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                           return ShowMedia(
                             url: message.textMsg.split(":_:_:")[0],
                             type:message.type ,
+                            allMessages: _allMessages
                           );
                         })).then((value) {
                         _scrolleffect=false;
@@ -166,7 +139,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                             width: MediaQuery.of(context).size.width,
                             fit: BoxFit.cover,
                             image: NetworkImage(message.textMsg.split(":_:_:")[0]),
-                            placeholder: AssetImage('assets/blankimage.png'),
+                            placeholder: AssetImage('assets/blankimage.jpg'),
                           ),
                           SizedBox(height: 6.0,),
                           Align(
@@ -194,7 +167,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                               width: MediaQuery.of(context).size.width,
                               fit: BoxFit.cover,
                               image: AssetImage("assets/video_black.jpg"),
-                              placeholder: AssetImage('assets/blankimage.png'),
+                              placeholder: AssetImage('assets/blankimage.jpg'),
                                 ),
                               SizedBox(height: 6.0,),
                               Align(
@@ -216,6 +189,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                             return ShowMedia(
                             url: message.textMsg.split(":_:_:")[0],
                             type:message.type ,
+                            allMessages: _allMessages
                           );
                           }));
                         },
