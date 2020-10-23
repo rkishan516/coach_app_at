@@ -14,7 +14,7 @@ class FirebaseMessagingService {
     //initializing setting
     var android = AndroidInitializationSettings('@mipmap/launcher_icon');
     var ios = IOSInitializationSettings();
-    var initializationSettings = InitializationSettings(android, ios);
+    var initializationSettings = InitializationSettings(android: android, iOS: ios);
     flutterlocalnotificationplugin.initialize(initializationSettings);
   }
 
@@ -52,7 +52,7 @@ class FirebaseMessagingService {
         new FlutterLocalNotificationsPlugin();
     var androidinit = AndroidInitializationSettings('@mipmap/launcher_icon');
     var ios = IOSInitializationSettings();
-    var initializationSettings = InitializationSettings(androidinit, ios);
+    var initializationSettings = InitializationSettings(android: androidinit, iOS: ios);
     flutterlocalnotificationplugin.initialize(initializationSettings);
 
     var android = AndroidNotificationDetails(
@@ -60,7 +60,7 @@ class FirebaseMessagingService {
         title + randomNumeric(4).toString(),
         body);
     var iOS = IOSNotificationDetails();
-    var platform = NotificationDetails(android, iOS);
+    var platform = NotificationDetails(android: android, iOS: iOS);
     new Future.delayed(Duration.zero, () {
       if(body.startsWith("https://firebasestorage.googleapis.com")){
         body = "Notice with content attached";

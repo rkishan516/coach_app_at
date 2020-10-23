@@ -65,6 +65,9 @@ class _BranchListState extends State<BranchList> {
           }
 
           length = institutes.length;
+          if ((Provider.of<AdminProvider>(context).branch?.length ?? 0) == 0) {
+            return UploadDialog(warning: 'Fetching'.tr());
+          }
           return Scaffold(
             appBar: AppBar(
               backgroundColor: Color(0xffF36C24),

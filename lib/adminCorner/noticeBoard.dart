@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:chewie/chewie.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
@@ -63,6 +64,7 @@ class _NoticeBoardState extends State<NoticeBoard>
   };
   // Map<String, VideoPlayerController> _videoPlayerController = {};
   // ChewieController _chewieController;
+  Timer timer;
 
   Widget _child1(Messages message, bool isMe) {
     String splitDate = message.time.split(' ')[0];
@@ -117,7 +119,6 @@ class _NoticeBoardState extends State<NoticeBoard>
               ),
             message.type == "image"
                 ? Container(
-                    
                     padding: EdgeInsets.only(top: 20.0, bottom: 16.0),
                     child: InkWell(
                       onTap: () {
@@ -125,11 +126,15 @@ class _NoticeBoardState extends State<NoticeBoard>
                             .push(new MaterialPageRoute(builder: (context) {
                           return ShowMedia(
                             url: message.textMsg.split(":_:_:")[0],
+<<<<<<< HEAD
                             type:message.type ,
                             allMessages: _allMessages
+=======
+                            type: message.type,
+>>>>>>> fb1a42abf757cfc02e46f773323c79d01f363ff0
                           );
                         })).then((value) {
-                        _scrolleffect=false;
+                          _scrolleffect = false;
                         });
                       },
                       child: Column(
@@ -138,19 +143,39 @@ class _NoticeBoardState extends State<NoticeBoard>
                             height: 180.0,
                             width: MediaQuery.of(context).size.width,
                             fit: BoxFit.cover,
+<<<<<<< HEAD
                             image: NetworkImage(message.textMsg.split(":_:_:")[0]),
                             placeholder: AssetImage('assets/blankimage.jpg'),
+=======
+                            image:
+                                NetworkImage(message.textMsg.split(":_:_:")[0]),
+                            placeholder: AssetImage('assets/blankimage.png'),
+>>>>>>> fb1a42abf757cfc02e46f773323c79d01f363ff0
                           ),
-                          SizedBox(height: 6.0,),
+                          SizedBox(
+                            height: 6.0,
+                          ),
                           Align(
                             alignment: Alignment.centerLeft,
-                             child: Text(message.textMsg.split(":_:_:")[1]=="EmpText"?"":message.textMsg.split(":_:_:")[1],
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600)),
+                            child: Text(
+                                message.textMsg.split(":_:_:").length > 1
+                                    ? (message.textMsg.split(":_:_:")[1] ==
+                                            "EmpText"
+                                        ? ""
+                                        : message.textMsg.split(":_:_:")[1])
+                                    : "",
+                                style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w600)),
                           ),
-                          SizedBox(height:message.textMsg.split(":_:_:")[1]=="EmpText"?0.0:4.0)
+                          SizedBox(
+                              height: message.textMsg.split(":_:_:").length > 1
+                                  ? (message.textMsg.split(":_:_:")[1] ==
+                                          "EmpText"
+                                      ? 0.0
+                                      : 4.0)
+                                  : 0.0)
                         ],
                       ),
                     ),
@@ -158,11 +183,11 @@ class _NoticeBoardState extends State<NoticeBoard>
                 : message.type == "video"
                     ? InkWell(
                         child: Container(
-                          
-                    padding: EdgeInsets.only(top: 20.0, bottom: 16.0),
+                          padding: EdgeInsets.only(top: 20.0, bottom: 16.0),
                           child: Column(
                             children: [
                               FadeInImage(
+<<<<<<< HEAD
                               height: 180.0,
                               width: MediaQuery.of(context).size.width,
                               fit: BoxFit.cover,
@@ -170,16 +195,41 @@ class _NoticeBoardState extends State<NoticeBoard>
                               placeholder: AssetImage('assets/blankimage.jpg'),
                                 ),
                               SizedBox(height: 6.0,),
-                              Align(
-                              alignment: Alignment.centerLeft,
-                               child: Text(message.textMsg.split(":_:_:")[1]=="EmpText"?"":message.textMsg.split(":_:_:")[1],
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600)),
+=======
+                                height: 180.0,
+                                width: MediaQuery.of(context).size.width,
+                                fit: BoxFit.cover,
+                                image: AssetImage("assets/video_black.jpg"),
+                                placeholder:
+                                    AssetImage('assets/blankimage.png'),
                               ),
-                              SizedBox(height:message.textMsg.split(":_:_:")[1]=="EmpText"?0.0:4.0)
-                          
+                              SizedBox(
+                                height: 6.0,
+                              ),
+>>>>>>> fb1a42abf757cfc02e46f773323c79d01f363ff0
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                    message.textMsg.split(":_:_:").length > 1
+                                        ? (message.textMsg.split(":_:_:")[1] ==
+                                                "EmpText"
+                                            ? ""
+                                            : message.textMsg.split(":_:_:")[1])
+                                        : "",
+                                    style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600)),
+                              ),
+                              SizedBox(
+                                  height:
+                                      message.textMsg.split(":_:_:").length > 1
+                                          ? (message.textMsg
+                                                      .split(":_:_:")[1] ==
+                                                  "EmpText"
+                                              ? 0.0
+                                              : 4.0)
+                                          : 0.0)
                             ],
                           ),
                         ),
@@ -187,22 +237,27 @@ class _NoticeBoardState extends State<NoticeBoard>
                           Navigator.of(context)
                               .push(new MaterialPageRoute(builder: (context) {
                             return ShowMedia(
+<<<<<<< HEAD
                             url: message.textMsg.split(":_:_:")[0],
                             type:message.type ,
                             allMessages: _allMessages
                           );
+=======
+                              url: message.textMsg.split(":_:_:")[0],
+                              type: message.type,
+                            );
+>>>>>>> fb1a42abf757cfc02e46f773323c79d01f363ff0
                           }));
                         },
                       )
                     : Container(
-                      padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
-                    
-                      child: LinkWell(message.textMsg,
-                          style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600)),
-                    ),
+                        padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                        child: LinkWell(message.textMsg,
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600)),
+                      ),
             _isDeleting[message.key]
                 ? Align(
                     alignment: isMe ? Alignment.topLeft : Alignment.topRight,
@@ -276,9 +331,11 @@ class _NoticeBoardState extends State<NoticeBoard>
         },
         child: Container(
           margin:
-          EdgeInsets.only(top: 15.0, bottom: 15.0, left: 20.0, right: 20.0),
+              EdgeInsets.only(top: 15.0, bottom: 15.0, left: 20.0, right: 20.0),
           width: MediaQuery.of(context).size.width * 0.75,
-          decoration: BoxDecoration(color: Colors.white, ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+          ),
           child: IntrinsicHeight(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -324,56 +381,62 @@ class _NoticeBoardState extends State<NoticeBoard>
         .child('institute/${FireBaseAuth.instance.instituteid}/notices/$key')
         .remove();
     if (key.length == 7)
-      await FirebaseStorage.instance.ref().child('notices/${FireBaseAuth.instance.instituteid}/$key').delete();
+      await FirebaseStorage.instance
+          .ref()
+          .child('notices/${FireBaseAuth.instance.instituteid}/$key')
+          .delete();
   }
 
   Future<String> pickVideo() async {
     File videoFile = await FilePicker.getFile(type: FileType.video);
-    if(videoFile!=null){
-       Navigator.push(context,MaterialPageRoute(builder: (contex)=>BeforeVideoLoading(videourl: videoFile,)))
-       .then((value) async{
-         if(value!=null){
-         String randomkey = randomNumeric(7);
-    if(randomkey!=null){     
-       _storageReference = FirebaseStorage.instance.ref().child('notices/${FireBaseAuth.instance.instituteid}/$randomkey');
+    if (videoFile != null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (contex) => BeforeVideoLoading(
+                    videourl: videoFile,
+                  ))).then((value) async {
+        if (value != null) {
+          String randomkey = randomNumeric(7);
+          if (randomkey != null) {
+            _storageReference = FirebaseStorage.instance.ref().child(
+                'notices/${FireBaseAuth.instance.instituteid}/$randomkey');
 
-    StorageUploadTask storageUploadTask = _storageReference.putFile(videoFile);
-    double percent = 0;
-    storageUploadTask.events.listen((event) {
-      setState(() {
-        percent = event.snapshot.bytesTransferred *
-            100 /
-            event.snapshot.totalByteCount;
+            StorageUploadTask storageUploadTask =
+                _storageReference.putFile(videoFile);
+            double percent = 0;
+            storageUploadTask.events.listen((event) {
+              setState(() {
+                percent = event.snapshot.bytesTransferred *
+                    100 /
+                    event.snapshot.totalByteCount;
+              });
+            });
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => StatefulBuilder(
+                builder: (context, setState) =>
+                    UploadDialog(warning: '${percent.toInt()}% Uploaded'),
+              ),
+            );
+            StorageTaskSnapshot snapshot = await storageUploadTask.onComplete;
+            var url = await snapshot.ref.getDownloadURL();
+            Navigator.of(context).pop();
+
+            _createNotice(url + ":_:_:" + value, randomkey);
+            return url + ":_:_:" + value;
+          }
+        }
       });
-    });
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) =>
-            UploadDialog(warning: '${percent.toInt()}% Uploaded'),
-      ),
-    );
-    StorageTaskSnapshot snapshot = await storageUploadTask.onComplete;
-    var url = await snapshot.ref.getDownloadURL();
-    Navigator.of(context).pop();
-
-    _createNotice(url+":_:_:"+value, randomkey);
-    return url+":_:_:"+value;
-       }
-       }
-       }
-       );
-       
     }
-    
   }
 
   Future<String> pickImage() async {
     PickedFile selectedImage = await ImagePicker().getImage(
       source: ImageSource.gallery,
     );
-    
+
     final filePath = selectedImage.path;
     final lastIndex = filePath.lastIndexOf(new RegExp(r'.jp'));
     final splitted = filePath.substring(0, (lastIndex));
@@ -387,27 +450,30 @@ class _NoticeBoardState extends State<NoticeBoard>
     );
 
     imageFile = compressedFile;
-    if(selectedImage!=null){
-      Navigator.push(context,MaterialPageRoute(builder: (contex)=>BeforeImageLoading(imageurl: imageFile,)))
-      .then((value)async{
-      
-        if(value!=null){
-    
-    String randomkey = randomNumeric(7);
-    if(randomkey!=null){
-    _storageReference = FirebaseStorage.instance.ref().child('notices/${FireBaseAuth.instance.instituteid}/$randomkey');
-    StorageUploadTask storageUploadTask = _storageReference.putFile(imageFile);
-    var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+    if (selectedImage != null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (contex) => BeforeImageLoading(
+                    imageurl: imageFile,
+                  ))).then((value) async {
+        if (value != null) {
+          String randomkey = randomNumeric(7);
+          if (randomkey != null) {
+            _storageReference = FirebaseStorage.instance.ref().child(
+                'notices/${FireBaseAuth.instance.instituteid}/$randomkey');
+            StorageUploadTask storageUploadTask =
+                _storageReference.putFile(imageFile);
+            var url =
+                await (await storageUploadTask.onComplete).ref.getDownloadURL();
 
-    _createNotice(url+":_:_:"+ value, randomkey);
+            _createNotice(url + ":_:_:" + value, randomkey);
 
-    return url+":_:_:"+ value;
+            return url + ":_:_:" + value;
+          }
         }
-        }
-      }
-      );
+      });
     }
-    
   }
 
   @override
@@ -417,7 +483,8 @@ class _NoticeBoardState extends State<NoticeBoard>
     // });
 
     // _chewieController.dispose();
-     super.dispose();
+    timer?.cancel();
+    super.dispose();
   }
 
   _buildMessageComposer() {
@@ -524,8 +591,7 @@ class _NoticeBoardState extends State<NoticeBoard>
     int _previlagelevel = FireBaseAuth.instance.previlagelevel;
     String _branch = FireBaseAuth.instance.branchid.toString();
     String _branchlist = FireBaseAuth.instance.branchList.toString();
-   
-      
+
     int _senderprevilagelevel = int.parse(_messages.uid.split(":_:_:")[0]);
     String _senderbranch = _messages.uid.split(":_:_:")[1];
     if (_senderprevilagelevel == 4) {
@@ -569,7 +635,7 @@ class _NoticeBoardState extends State<NoticeBoard>
     _query.onChildAdded.listen((Event event) {
       Messages _messages = Messages.fromSnapshot(event.snapshot);
       bool _isMsgshow = false;
-      if (_messages.type != null&& _messages.key != "null" ) {
+      if (_messages.type != null && _messages.key != "null") {
         _isMsgshow = _isshowableMsg(_messages);
         if (_isMsgshow) {
           _allMessages.add(_messages);
@@ -578,7 +644,7 @@ class _NoticeBoardState extends State<NoticeBoard>
       }
 
       return setState(() {
-        if (_messages.type == null&& _messages.key != "null") {
+        if (_messages.type == null && _messages.key != "null") {
           _isDeleting[_messages.key] = false;
           _allMessages.add(_messages);
           _allMessages.sort((a, b) => a.changetime.compareTo(b.changetime));

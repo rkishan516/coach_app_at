@@ -1,8 +1,12 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Dialogs/SucessDialog.dart';
+import 'package:coach_app/Dialogs/languageDialog.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Provider/AdminProvider.dart';
 import 'package:coach_app/Provider/MidAdminProvider.dart';
+import 'package:coach_app/adminSection/getReport.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class StatisticsPage extends StatefulWidget {
@@ -14,8 +18,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
   String filter = "";
   @override
   Widget build(BuildContext context) {
-    Map<String, Branch> branches = Map<String, Branch>.from(
-        (FireBaseAuth.instance.previlagelevel == 4)
+    Map<String, Branch> branches =
+        Map<String, Branch>.from((FireBaseAuth.instance.previlagelevel == 4)
             ? Provider.of<AdminProvider>(context).branch
             : (FireBaseAuth.instance.previlagelevel == 34)
                 ? Provider.of<MidAdminProvider>(context).branches
@@ -52,6 +56,23 @@ class _StatisticsPageState extends State<StatisticsPage> {
           'Admin Statistics',
           style: TextStyle(color: Colors.white),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.print),
+            onPressed: () async {
+              if (await Permission.storage.request().isGranted) {
+                String path = await reportView(branches);
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return SuccessDialog(
+                        success: 'Downloaded at path : $path',
+                      );
+                    });
+              }
+            },
+          )
+        ],
       ),
       body: Container(
         height: MediaQuery.of(context).size.height,

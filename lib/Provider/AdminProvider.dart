@@ -5,23 +5,23 @@ import 'package:flutter/foundation.dart';
 
 class AdminProvider extends ChangeNotifier {
   AdminProvider() {
+    branch = Map<String, Branch>();
+    midAdmins = Map<String, MidAdmin>();
     FirebaseDatabase.instance
         .reference()
         .child('institute/${FireBaseAuth.instance.instituteid}')
-        .onValue
+        .once()
+        .asStream()
         .listen((event) {
-      branch = Map<String, Branch>();
-      midAdmins = Map<String, MidAdmin>();
-      setInstituteDetails(
-          event.snapshot.value['name'], event.snapshot.value['paid']);
-      if (event.snapshot.value != null) {
-        if (event.snapshot.value['branches'] != null) {
-          event.snapshot.value['branches'].forEach((k, v) {
+      setInstituteDetails(event.value['name'], event.value['paid']);
+      if (event.value != null) {
+        if (event.value['branches'] != null) {
+          event.value['branches'].forEach((k, v) {
             setBranch(k, Branch.fromJson(v));
           });
         }
-        if (event.snapshot.value['midAdmin'] != null) {
-          event.snapshot.value['midAdmin'].forEach((k, v) {
+        if (event.value['midAdmin'] != null) {
+          event.value['midAdmin'].forEach((k, v) {
             setMidAdmin(k, MidAdmin.fromJson(v));
           });
         }

@@ -45,8 +45,9 @@ class StudentProfilePage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Color.fromARGB(255, 243, 107, 40),
                 borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(SizeConfig.b * 11.31),
-                    bottomLeft: Radius.circular(SizeConfig.b * 11.31)),
+                  bottomRight: Radius.circular(SizeConfig.b * 11.31),
+                  bottomLeft: Radius.circular(SizeConfig.b * 11.31),
+                ),
               ),
 
               child: Column(
@@ -64,10 +65,7 @@ class StudentProfilePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Divider(
-                    color: Colors.white,
-                    thickness: SizeConfig.v * 0.475,
-                  ),
+                  Divider(color: Colors.white, thickness: SizeConfig.v * 0.475),
                   Row(
                     children: <Widget>[
                       Container(
@@ -81,8 +79,9 @@ class StudentProfilePage extends StatelessWidget {
                                 student.name,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: SizeConfig.b * 6),
+                                  color: Colors.white,
+                                  fontSize: SizeConfig.b * 6,
+                                ),
                                 maxLines: 3,
                               ),
                             ),
@@ -107,8 +106,9 @@ class StudentProfilePage extends StatelessWidget {
                                     student?.phoneNo ?? "Phone No Not given",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: SizeConfig.b * 4.3),
+                                      color: Colors.white,
+                                      fontSize: SizeConfig.b * 4.3,
+                                    ),
                                   ),
                                   SizedBox(width: SizeConfig.b * 0.98),
                                   RaisedButton(
@@ -120,7 +120,8 @@ class StudentProfilePage extends StatelessWidget {
                                     elevation: 1,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
-                                          SizeConfig.v * 2.04),
+                                        SizeConfig.v * 2.04,
+                                      ),
                                     ),
                                     color: Color.fromARGB(255, 243, 106, 38),
                                     onPressed: () async {
@@ -138,16 +139,33 @@ class StudentProfilePage extends StatelessWidget {
                         ),
                       ),
                       Container(
-                          padding: EdgeInsets.fromLTRB(
-                              SizeConfig.b * 3.77,
-                              SizeConfig.v * 1.25,
-                              SizeConfig.b * 7.77,
-                              SizeConfig.v * 1.25),
-                          width: MediaQuery.of(context).size.width * 0.35,
-                          child: CircleAvatar(
-                            radius: SizeConfig.b * 11.1,
-                            backgroundImage: NetworkImage(student.photoURL),
-                          ))
+                        padding: EdgeInsets.fromLTRB(
+                          SizeConfig.b * 3.77,
+                          SizeConfig.v * 1.25,
+                          SizeConfig.b * 7.77,
+                          SizeConfig.v * 1.25,
+                        ),
+                        width: MediaQuery.of(context).size.width * 0.35,
+                        child: student.photoURL != null
+                            ? CircleAvatar(
+                                radius: SizeConfig.b * 11.1,
+                                backgroundImage: NetworkImage(student.photoURL),
+                              )
+                            : Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                    50,
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    student.name[0].toUpperCase(),
+                                  ),
+                                ),
+                              ),
+                      )
                     ],
                   ),
                 ],
@@ -161,7 +179,8 @@ class StudentProfilePage extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,
                   itemCount: student.course.length,
-                  itemBuilder: (context, index) {
+                  itemBuilder: (context, ind) {
+                    String index = student.course.keys.toList()[ind];
                     return InkWell(
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
@@ -323,11 +342,13 @@ class StudentProfilePage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text("Student Status : ",
-                          style: TextStyle(
-                            fontSize: SizeConfig.b * 4.53,
-                            fontWeight: FontWeight.w700,
-                          )),
+                      Text(
+                        "Student Status : ",
+                        style: TextStyle(
+                          fontSize: SizeConfig.b * 4.53,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                       Text(
                         student.status,
                         style: TextStyle(

@@ -14,7 +14,7 @@ class Wrapper2 extends StatelessWidget {
         if(snapshot.connectionState==ConnectionState.done){
           if(snapshot.hasData){
           FirebaseUser user = snapshot.data;
-          if(user.isEmailVerified)
+          if(user.emailVerified)
           return WelcomeNavigation.getPage(context, user.uid);
           else
           return AlertMessage();

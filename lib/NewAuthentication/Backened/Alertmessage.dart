@@ -67,13 +67,13 @@ class _AlertMessageState extends State<AlertMessage> {
               children: [
                 GestureDetector(
                   onTap: () async {
-                    AuthResult credential = await FirebaseAuth.instance
+                    UserCredential credential = await FirebaseAuth.instance
                         .signInWithEmailAndPassword(
                             email: FireBaseAuth.instance.pref.getString("Email"),
                             password: FireBaseAuth.instance.pref.getString("Pass"));
 
                     FirebaseUser currentuser = credential.user;
-                    if (currentuser.isEmailVerified) {
+                    if (currentuser.emailVerified) {
                       //Navigator.of(context).pop();
                       
                       WelcomeNavigation.getPage(context, currentuser.uid);
@@ -106,7 +106,7 @@ class _AlertMessageState extends State<AlertMessage> {
             ),
             GestureDetector(
               onTap: () async {
-                AuthResult credential = await FirebaseAuth.instance
+                UserCredential credential = await FirebaseAuth.instance
                     .signInWithEmailAndPassword(
                         email: FireBaseAuth.instance.pref.getString("Email"),
                         password: FireBaseAuth.instance.pref.getString("Pass"));

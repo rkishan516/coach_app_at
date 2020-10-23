@@ -34,6 +34,11 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      setState(() {
+        showFAB = _tabController.index == 0;
+      });
+    });
 
     super.initState();
   }
@@ -188,7 +193,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                               .push(
                                             CupertinoPageRoute(
                                               builder: (context) => ChapterPage(
-                                                  courseId: widget.courseId, 
+                                                  courseId: widget.courseId,
                                                   title: courses
                                                       .subjects[
                                                           keys.toList()[index]]
@@ -378,7 +383,7 @@ addSubject(BuildContext context, String courseId,
                               } else {
                                 teachers = List<Map<String, dynamic>>();
                                 initialTeachers = List<Map<String, dynamic>>();
-                                snapshot.data.snapshot.value.forEach(
+                                snapshot.data.snapshot.value?.forEach(
                                   (k, v) {
                                     Teacher teacher = Teacher.fromJson(v);
                                     if (mentors.contains(teacher.email)) {
