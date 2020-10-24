@@ -71,21 +71,19 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
 
     _messageController = TextEditingController();
-    getUID().then((user) {
-      setState(() {
-        _senderuid = user.uid;
-        print("sender uid : $_senderuid");
-        getSenderPhotoUrl(_senderuid).then((snapshot) {
-          setState(() {
-            senderPhotoUrl = snapshot['photoUrl'];
-            senderName = snapshot['name'];
-          });
+    setState(() {
+      _senderuid = getUID().uid;
+      print("sender uid : $_senderuid");
+      getSenderPhotoUrl(_senderuid).then((snapshot) {
+        setState(() {
+          senderPhotoUrl = snapshot['photoUrl'];
+          senderName = snapshot['name'];
         });
-        getReceiverPhotoUrl(widget.receiverUid).then((snapshot) {
-          setState(() {
-            receiverPhotoUrl = snapshot['photoUrl'];
-            receiverName = snapshot['name'];
-          });
+      });
+      getReceiverPhotoUrl(widget.receiverUid).then((snapshot) {
+        setState(() {
+          receiverPhotoUrl = snapshot['photoUrl'];
+          receiverName = snapshot['name'];
         });
       });
     });
@@ -310,7 +308,10 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<String> pickVideo() async {
-    File videoFile = await FilePicker.getFile(type: FileType.video);
+    File videoFile = File(
+        (await FilePicker.platform.pickFiles(type: FileType.video))
+            .files[0]
+            .path);
 
     _storageReference = FirebaseStorage.instance
         .ref()
@@ -325,9 +326,9 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<String> pickDoc() async {
-    File docFile = await FilePicker.getFile(
-        type: FileType.custom,
-        allowedExtensions: [
+    File docFile = File((await FilePicker.platform.pickFiles(
+            type: FileType.custom,
+            allowedExtensions: [
           'pdf',
           'doc',
           'docx',
@@ -335,7 +336,9 @@ class _ChatScreenState extends State<ChatScreen> {
           'pptx',
           'ppt',
           'txt'
-        ]);
+        ]))
+        .files[0]
+        .path);
 
     _storageReference = FirebaseStorage.instance
         .ref()
@@ -478,8 +481,8 @@ class _ChatScreenState extends State<ChatScreen> {
     addMessageToDb(_message);
   }
 
-  Future<FirebaseUser> getUID() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
+  User getUID() {
+    User user = _firebaseAuth.currentUser;
     return user;
   }
 

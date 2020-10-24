@@ -18,10 +18,16 @@ class WelcomeNavigation {
   static signInWithGoogleAndGetPage(BuildContext context) {
     print('WelcomeNavigation');
     FireBaseAuth.instance.signInWithGoogle(context).then(
-      (value) async {
-        if (value == null) {
+      (value) async { 
+        if (value == null) { 
           return;
         }
+        getPage(context, value.uid);
+      },
+    );
+  }
+  static getPage(BuildContext context, uid){
+    
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
           builder: (context) {
             if (FireBaseAuth.instance.previlagelevel == 4) {
@@ -47,7 +53,7 @@ class WelcomeNavigation {
                 stream: FirebaseDatabase.instance
                     .reference()
                     .child(
-                        "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${value.uid}")
+                        "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/$uid")
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -81,7 +87,7 @@ class WelcomeNavigation {
                 stream: FirebaseDatabase.instance
                     .reference()
                     .child(
-                        "institute/${FireBaseAuth.instance.prefs.getString('insCode')}/branches/${FireBaseAuth.instance.prefs.getString('branchCode')}/students/${value.uid}/status")
+                        "institute/${FireBaseAuth.instance.prefs.getString('insCode')}/branches/${FireBaseAuth.instance.prefs.getString('branchCode')}/students/$uid/status")
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -107,7 +113,5 @@ class WelcomeNavigation {
             }
           },
         ), (route) => false);
-      },
-    );
   }
 }

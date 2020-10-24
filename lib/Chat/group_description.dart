@@ -76,17 +76,17 @@ class _groupDesState extends State<groupDes> {
 
     subscription =
         collectionReference.orderBy('name').snapshots().listen((snapshot) {
-      tempList = snapshot.documents;
+      tempList = snapshot.docs;
 
       for (int i = 0; i < tempList.length; i++) {
         String name, photo, role, uid, code;
         int rank;
-        name = tempList[i].data['name'];
-        photo = tempList[i].data['photoUrl'];
-        role = tempList[i].data['role'];
+        name = tempList[i].data()['name'];
+        photo = tempList[i].data()['photoUrl'];
+        role = tempList[i].data()['role'];
         rank = i + 1;
-        code = tempList[i].data['code'];
-        uid = tempList[i].data['uid'];
+        code = tempList[i].data()['code'];
+        uid = tempList[i].data()['uid'];
         Item temp = Item(photo, rank, name, uid, role, code);
         setState(() {
           selectedList2.add(temp);
@@ -102,12 +102,12 @@ class _groupDesState extends State<groupDes> {
       for (int i = 0; i < tempList.length; i++) {
         String name, photo, role, uid, code;
         int rank;
-        name = tempList[i].data['name'];
-        photo = tempList[i].data['photoUrl'];
-        role = tempList[i].data['role'];
+        name = tempList[i].data()['name'];
+        photo = tempList[i].data()['photoUrl'];
+        role = tempList[i].data()['role'];
         rank = i + 1;
-        code = tempList[i].data['code'];
-        uid = tempList[i].data['uid'];
+        code = tempList[i].data()['code'];
+        uid = tempList[i].data()['uid'];
         Item temp = Item(photo, rank, name, uid, role, code);
         itemList.add(temp);
       }

@@ -85,7 +85,7 @@ class _ReplaceSubAdminState extends State<ReplaceSubAdmin> {
                       emailTextEditingController.text.hashCode.toString(): {
                         "email": emailTextEditingController.text
                       }
-                    },
+                    }, 
                   });
                   if (emailTextEditingController.text !=
                       FireBaseAuth.instance.user.email) {

@@ -442,7 +442,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                         RaisedButton(
                           color: Colors.white,
                           onPressed: () async {
-                            file = await FilePicker.getFile();
+                            file = await FilePicker.platform.pickFiles();
                           },
                           elevation: 1,
                           child: Text(

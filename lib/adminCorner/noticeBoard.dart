@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:chewie/chewie.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Models/random_string.dart';
 import 'package:coach_app/adminCorner/BeforeImageLoading.dart';
 import 'package:coach_app/adminCorner/BeforeVideoLoading.dart';
 import 'package:coach_app/adminCorner/ShowMedia.dart';
-import 'package:video_player/video_player.dart';
-import 'package:coach_app/Chat/models/video_player.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
@@ -96,35 +93,6 @@ class _NoticeBoardState extends State<NoticeBoard>
   }
 
   Widget _child2(Messages message, bool isMe) {
-    // if (message.type == "video") {
-    //   if (_videoPlayerController[message.key] == null){
-    //     _videoPlayerController[message.key] =
-    //         VideoPlayerController.network(message.textMsg);
-    //   _chewieController = ChewieController(
-    //     videoPlayerController: _videoPlayerController[message.key],
-    //     aspectRatio: 1,
-    //     autoPlay: false,
-    //     looping: false,
-    //     cupertinoProgressColors: ChewieProgressColors(
-    //       playedColor: Color.fromARGB(255, 242, 108, 37),
-    //       handleColor: Color.fromARGB(255, 242, 108, 37),
-    //       backgroundColor: Colors.grey,
-    //       bufferedColor: Color.fromARGB(255, 242, 108, 37),
-    //     ),
-    //     materialProgressColors: ChewieProgressColors(
-    //       playedColor: Color.fromARGB(255, 242, 108, 37),
-    //       handleColor: Color.fromARGB(255, 242, 108, 37),
-    //       backgroundColor: Colors.grey,
-    //       bufferedColor: Color.fromARGB(255, 242, 108, 37),
-    //     ),
-    //     placeholder: Container(
-    //       color: Colors.grey,
-    //     ),
-    //     autoInitialize: true,
-    //   );
-    //   }
-    // }
-
     return Expanded(
       flex: 13,
       child: Container(
@@ -155,6 +123,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                           return ShowMedia(
                             url: message.textMsg.split(":_:_:")[0],
                             type: message.type,
+                            allMessages: _allMessages,
                           );
                         })).then((value) {
                           _scrolleffect = false;
@@ -247,6 +216,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                             return ShowMedia(
                               url: message.textMsg.split(":_:_:")[0],
                               type: message.type,
+                              allMessages: _allMessages,
                             );
                           }));
                         },
@@ -389,7 +359,10 @@ class _NoticeBoardState extends State<NoticeBoard>
   }
 
   Future<String> pickVideo() async {
-    File videoFile = await FilePicker.getFile(type: FileType.video);
+    File videoFile = File(
+        (await FilePicker.platform.pickFiles(type: FileType.video))
+            .files[0]
+            .path);
     if (videoFile != null) {
       Navigator.push(
           context,

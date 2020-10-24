@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
     //String str;
 
     subscribtion = _documentReference2.snapshots().listen((snapshot) {
-      tempSnap = snapshot.data;
+      tempSnap = snapshot.data();
     });
 
     if (tempSnap != null) {

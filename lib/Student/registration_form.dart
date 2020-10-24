@@ -177,7 +177,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           name: nameTextEditingController.text,
                           address: addressTextEditingController.text,
                           phoneNo: phoneTextEditingController.text,
-                          photoURL: FireBaseAuth.instance.user.photoUrl,
+                          photoURL: FireBaseAuth.instance.user.photoURL,
                           email: FireBaseAuth.instance.user.email,
                           status: status);
                       var branchCode =

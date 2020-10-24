@@ -308,7 +308,10 @@ class _groupChatScreenState extends State<groupChatScreen> {
   }
 
   Future<String> pickVideo() async {
-    File videoFile = await FilePicker.getFile(type: FileType.video);
+    File videoFile = File(
+        (await FilePicker.platform.pickFiles(type: FileType.video))
+            .files[0]
+            .path);
 
     _storageReference = FirebaseStorage.instance
         .ref()
@@ -323,9 +326,9 @@ class _groupChatScreenState extends State<groupChatScreen> {
   }
 
   Future<String> pickDoc() async {
-    File docFile = await FilePicker.getFile(
-        type: FileType.custom,
-        allowedExtensions: [
+    File docFile = File((await FilePicker.platform.pickFiles(
+            type: FileType.custom,
+            allowedExtensions: [
           'pdf',
           'doc',
           'docx',
@@ -333,7 +336,9 @@ class _groupChatScreenState extends State<groupChatScreen> {
           'pptx',
           'ppt',
           'txt'
-        ]);
+        ]))
+        .files[0]
+        .path);
 
     _storageReference = FirebaseStorage.instance
         .ref()
@@ -466,8 +471,8 @@ class _groupChatScreenState extends State<groupChatScreen> {
     addMessageToDb(_message);
   }
 
-  Future<FirebaseUser> getUID() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
+  Future<User> getUID() async {
+    User user = _firebaseAuth.currentUser;
     return user;
   }
 

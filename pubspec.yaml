@@ -60,10 +60,10 @@ dependencies:
   http:
   file_picker:
   provider:
-  speech_recognition:
-    git:
-        url: https://github.com/webeverde/speech_recognition.git
-        ref: master
+  # speech_recognition:
+  #   git:
+  #       url: https://github.com/webeverde/speech_recognition.git
+  #       ref: master
   flutter_secure_storage:
   linked_scroll_controller:
   avatar_glow:
@@ -74,6 +74,7 @@ dependencies:
   chewie:
   linkwell:
   pdf:
+  animator:  
   path_provider:
 
 dev_dependencies:
@@ -103,6 +104,7 @@ flutter:
     - assets/Routing.json
     - assets/video_black.jpg
     - assets/icons/Hind-Regular.ttf
+    - assets/splash.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
