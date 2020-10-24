@@ -308,10 +308,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<String> pickVideo() async {
-    File videoFile = File(
-        (await FilePicker.platform.pickFiles(type: FileType.video))
-            .files[0]
-            .path);
+    File videoFile = await FilePicker.getFile(type: FileType.video);
 
     _storageReference = FirebaseStorage.instance
         .ref()
@@ -326,9 +323,9 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<String> pickDoc() async {
-    File docFile = File((await FilePicker.platform.pickFiles(
-            type: FileType.custom,
-            allowedExtensions: [
+    File docFile = await FilePicker.getFile(
+        type: FileType.custom,
+        allowedExtensions: [
           'pdf',
           'doc',
           'docx',
@@ -336,9 +333,7 @@ class _ChatScreenState extends State<ChatScreen> {
           'pptx',
           'ppt',
           'txt'
-        ]))
-        .files[0]
-        .path);
+        ]);
 
     _storageReference = FirebaseStorage.instance
         .ref()

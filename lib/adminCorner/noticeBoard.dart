@@ -359,10 +359,7 @@ class _NoticeBoardState extends State<NoticeBoard>
   }
 
   Future<String> pickVideo() async {
-    File videoFile = File(
-        (await FilePicker.platform.pickFiles(type: FileType.video))
-            .files[0]
-            .path);
+    File videoFile = await FilePicker.getFile(type: FileType.video);
     if (videoFile != null) {
       Navigator.push(
           context,

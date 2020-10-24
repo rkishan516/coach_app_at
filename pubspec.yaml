@@ -33,6 +33,7 @@ dependencies:
   flutter_signin_button:
   firebase_database:
   cloud_firestore:
+  firebase_core:
   firebase_storage:
   # firebase:
   google_fonts:
@@ -58,7 +59,7 @@ dependencies:
   # googleapis:
   # googleapis_auth:
   http:
-  file_picker:
+  file_picker: ^1.13.3
   provider:
   # speech_recognition:
   #   git:
