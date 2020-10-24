@@ -518,9 +518,8 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                   branch1AdminTextEditingController.text) {
                                 Firestore.instance
                                     .collection('institute')
-                                    .document(branch1AdminTextEditingController
-                                        .text
-                                        .split('@')[0])
+                                    .document(
+                                        branch1AdminTextEditingController.text)
                                     .setData({
                                   "value":
                                       "subAdmin_${reference.key}_${branch1CodeTextEditingController.text}"

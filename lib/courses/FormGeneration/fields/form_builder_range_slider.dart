@@ -18,7 +18,7 @@ class FormBuilderRangeSlider extends StatefulWidget {
   final ValueChanged<RangeValues> onChangeStart;
   final ValueChanged<RangeValues> onChangeEnd;
   final RangeLabels labels;
-  final RangeSemanticFormatterCallback semanticFormatterCallback;
+  final String Function(double) semanticFormatterCallback;
   final FormFieldSetter onSaved;
 
   FormBuilderRangeSlider({

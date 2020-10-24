@@ -399,8 +399,8 @@ class _BranchRegisterState extends State<BranchRegister> {
                                 adminEmailTextEditingController.text) {
                               Firestore.instance
                                   .collection('institute')
-                                  .document(adminEmailTextEditingController.text
-                                      .split('@')[0])
+                                  .document(
+                                      adminEmailTextEditingController.text)
                                   .setData({
                                 "value":
                                     "subAdmin_${FireBaseAuth.instance.instituteid}_${branchCodeTextEditingController.text}"

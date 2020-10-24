@@ -62,7 +62,7 @@ class _ContentPageState extends State<ContentPage> {
                     Chapters chapter =
                         Chapters.fromJson(snapshot.data.snapshot.value);
                     var keys;
-                    if (chapter.content != null) { 
+                    if (chapter.content != null) {
                       keys = chapter.content.keys.toList()
                         ..sort((a, b) => chapter.content[a].title
                             .toLowerCase()
@@ -200,8 +200,10 @@ class _ContentPageState extends State<ContentPage> {
                                   description: chapter
                                       .content[keys.toList()[index]]
                                       .description,
-                                  time: chapter.content[keys.toList()[index]].time,
-                                  type: chapter.content[keys.toList()[index]].kind),
+                                  time: chapter
+                                      .content[keys.toList()[index]].time,
+                                  type: chapter
+                                      .content[keys.toList()[index]].kind),
                             ),
                           ),
                         );
@@ -485,8 +487,8 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                                     'Either fill link or select video');
                                 return;
                               }
-                              content.ylink = await YoutubeUpload().uploadVideo(
-                                  file, content.title, content.description);
+                              // content.ylink = await YoutubeUpload().uploadVideo(
+                              //     file, content.title, content.description);
                             } else {
                               content.ylink = linkTextEditingController.text;
                             }

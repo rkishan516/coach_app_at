@@ -234,8 +234,7 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
                         if (widget.keyM == null) {
                           Firestore.instance
                               .collection('institute')
-                              .document(
-                                  emailTextEditingController.text.split('@')[0])
+                              .document(emailTextEditingController.text)
                               .setData({
                             "value":
                                 'midAdmin_${FireBaseAuth.instance.instituteid}_$selectedBranch'
