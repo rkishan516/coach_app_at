@@ -47,14 +47,14 @@ class _groupListState extends State<groupList> {
         .snapshots()
         .listen((snapshot) {
       setState(() {
-        tempList = snapshot.docs;
+        tempList = snapshot.documents;
 
         for (int i = 0; i < tempList.length; i++) {
           bool flag = false;
           for (int j = 0;
-              j < tempList[i].data()['memberList'].toList().length;
+              j < tempList[i].data['memberList'].toList().length;
               j++) {
-            String memberUid = tempList[i].data()['memberList'][j];
+            String memberUid = tempList[i].data['memberList'][j];
             if (memberUid == currentUser.uid) {
               flag = true;
               break;
@@ -62,9 +62,9 @@ class _groupListState extends State<groupList> {
           }
 
           if (flag) {
-            String gName = tempList[i].data()['name'];
-            String gid = tempList[i].data()['gid'];
-            String gPhoto = tempList[i].data()['groupImageUrl'];
+            String gName = tempList[i].data['name'];
+            String gid = tempList[i].data['gid'];
+            String gPhoto = tempList[i].data['groupImageUrl'];
             gList tempGlist = gList(gName, gid, gPhoto);
 
             _gList.add(tempGlist);

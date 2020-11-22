@@ -465,8 +465,8 @@ class _groupChatScreenState extends State<groupChatScreen> {
     addMessageToDb(_message);
   }
 
-  Future<User> getUID() async {
-    User user = _firebaseAuth.currentUser;
+  Future<FirebaseUser> getUID() async {
+    FirebaseUser user = await  _firebaseAuth.currentUser();
     return user;
   }
 

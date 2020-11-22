@@ -232,10 +232,10 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
                         }
                         DatabaseReference refe;
                         if (widget.keyM == null) {
-                          FirebaseFirestore.instance
+                          Firestore.instance
                               .collection('institute')
-                              .doc(emailTextEditingController.text)
-                              .set({
+                              .document(emailTextEditingController.text)
+                              .setData({
                             "value":
                                 'midAdmin_${FireBaseAuth.instance.instituteid}_$selectedBranch'
                           });

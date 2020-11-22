@@ -17,13 +17,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
   // SystemChrome.setEnabledSystemUIOverlays([]);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   FireBaseAuth.instance.packageInfo = packageInfo;
   FireBaseAuth.instance.prefs = await SharedPreferences.getInstance();
-  await Firebase.initializeApp();
   FirebaseDatabase.instance.setPersistenceEnabled(true);
 
   if (packageInfo.packageName != "com.VysionTech.gurucool") {

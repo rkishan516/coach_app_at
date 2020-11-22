@@ -533,25 +533,24 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                     if (res != 'Yes') {
                       return;
                     }
-                    if(FireBaseAuth.instance.providerid!="password"){ 
+                    if (FireBaseAuth.instance.providerid != "password") {
                       FireBaseAuth.instance.signoutWithGoogle().then(
-                      (value) {
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => WelcomePage()),
-                            (route) => false);
-                      },
-                    );
-                    }
-                    else{
+                        (value) {
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => WelcomePage()),
+                              (route) => false);
+                        },
+                      );
+                    } else {
                       FireBaseAuth.instance.signOut().then(
-                      (value) {
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => WelcomePage()),
-                            (route) => false);
-                      },
-                    );
+                        (value) {
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => WelcomePage()),
+                              (route) => false);
+                        },
+                      );
                     }
                   },
                 )

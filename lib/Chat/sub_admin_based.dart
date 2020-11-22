@@ -61,10 +61,10 @@ class _subAdminBasedState extends State<subAdminBased>
         .snapshots()
         .listen((datasnapshot) {
       setState(() {
-        userlist = datasnapshot.docs;
+        userlist = datasnapshot.documents;
 
         for (int i = 0; i < userlist.length; i++) {
-          if (userlist[i].data()['uid'] == currentUser.uid) {
+          if (userlist[i].data['uid'] == currentUser.uid) {
             userlist.removeAt(i);
           }
         }
@@ -139,14 +139,14 @@ class _subAdminBasedState extends State<subAdminBased>
                                   backgroundColor: Colors.grey,
                                   radius: 25,
                                   backgroundImage: NetworkImage(
-                                      userlist[index].data()['photoUrl']),
+                                      userlist[index].data['photoUrl']),
                                 ),
                                 SizedBox(width: SizeConfig.b * 4.07),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(height: SizeConfig.v * 1.08),
-                                    Text(userlist[index].data()['name'],
+                                    Text(userlist[index].data['name'],
                                         style: TextStyle(
                                             fontSize: SizeConfig.b * 4.58,
                                             color: Color.fromARGB(

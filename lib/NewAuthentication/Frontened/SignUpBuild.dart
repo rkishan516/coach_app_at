@@ -1,4 +1,3 @@
-
 import 'package:animator/animator.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
@@ -57,14 +56,11 @@ class _SignUpBuildState extends State<SignUpBuild> {
                         return null;
                       },
                       controller: _fstnameController,
-                      style: TextStyle(
-                        fontSize: 14.0,
-                         color: Color(0xFF868A8F)
-                        
-                      ),
+                      style:
+                          TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
                       decoration: InputDecoration(
-                        contentPadding: new EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                    
+                          contentPadding: new EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 10.0),
                           hintText: "FIRST NAME",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
@@ -85,14 +81,12 @@ class _SignUpBuildState extends State<SignUpBuild> {
                         return null;
                       },
                       controller: _lstnameController,
-                      style: TextStyle(
-                        fontSize: 14.0,
-                         color: Color(0xFF868A8F)
-                      ),
+                      style:
+                          TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
                       onChanged: null,
                       decoration: InputDecoration(
-                          contentPadding: new EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                    
+                          contentPadding: new EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 10.0),
                           hintText: "LAST NAME",
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
@@ -101,7 +95,9 @@ class _SignUpBuildState extends State<SignUpBuild> {
                   ),
                 ],
               ),
-              SizedBox(height: 20.0,),
+              SizedBox(
+                height: 20.0,
+              ),
               TextFormField(
                 validator: (value) {
                   if (value.isEmpty) {
@@ -115,13 +111,11 @@ class _SignUpBuildState extends State<SignUpBuild> {
                   return null;
                 },
                 controller: _emailController,
-                style: TextStyle(
-                  fontSize: 14.0,
-                   color: Color(0xFF868A8F)
-                ),
+                style: TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
                 onChanged: null,
                 decoration: InputDecoration(
-                    contentPadding: new EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                    contentPadding: new EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 10.0),
                     prefixIcon: Icon(
                       Icons.email,
                       color: Colors.grey,
@@ -138,20 +132,17 @@ class _SignUpBuildState extends State<SignUpBuild> {
                   if (value.isEmpty) {
                     return "Password cannot be empty";
                   }
-                  if(value.length<8){
+                  if (value.length < 8) {
                     return "Password must be 8 character long";
                   }
                   return null;
                 },
                 controller: _passController,
-                style: TextStyle(
-                  fontSize: 14.0,
-                   color: Color(0xFF868A8F)
-                ),
+                style: TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
                 onChanged: null,
                 decoration: InputDecoration(
-                  contentPadding: new EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                    
+                    contentPadding: new EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 10.0),
                     prefixIcon: Icon(
                       Icons.lock,
                       color: Colors.grey,
@@ -173,15 +164,12 @@ class _SignUpBuildState extends State<SignUpBuild> {
 
                   return null;
                 },
-                style: TextStyle(
-                  fontSize: 14.0,
-                  color: Color(0xFF868A8F)
-                ),
+                style: TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
                 controller: _confirmpassController,
                 onChanged: null,
                 decoration: InputDecoration(
-                  contentPadding: new EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                    
+                    contentPadding: new EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 10.0),
                     prefixIcon: Icon(
                       Icons.lock,
                       color: Colors.grey,
@@ -198,22 +186,27 @@ class _SignUpBuildState extends State<SignUpBuild> {
                 onTap: () async {
                   final formstate = _formKey.currentState;
                   if (formstate.validate()) {
-                    if(_passController.text==_confirmpassController.text){
-                    formstate.save();
-                    print("Signup");
-                    FireBaseAuth.instance.pref
-                        .setString("Email", _emailController.text.trim());
-                    FireBaseAuth.instance.pref.setString("Pass", _passController.text.trim());
-                    result = await FireBaseAuth.instance
-                        .signUp(_emailController.text.trim(), _passController.text.trim(), 
-                        _fstnameController.text.trim()+" "+ _lstnameController.text.trim(), context);
-                    Provider.of<AuthError>(context, listen: false)
-                        .errorOccured(result, TypeSelection.typeOfPage);
+                    if (_passController.text == _confirmpassController.text) {
+                      formstate.save();
+                      print("Signup");
+                      FireBaseAuth.instance.prefs
+                          .setString("Email", _emailController.text.trim());
+                      FireBaseAuth.instance.prefs
+                          .setString("Pass", _passController.text.trim());
+                      result = await FireBaseAuth.instance.signUp(
+                          _emailController.text.trim(),
+                          _passController.text.trim(),
+                          _fstnameController.text.trim() +
+                              " " +
+                              _lstnameController.text.trim(),
+                          context);
+                      Provider.of<AuthError>(context, listen: false)
+                          .errorOccured(result, TypeSelection.typeOfPage);
+                    } else {
+                      Provider.of<AuthError>(context, listen: false)
+                          .errorOccured(
+                              "Password unmatched", TypeSelection.typeOfPage);
                     }
-                    else{
-                    Provider.of<AuthError>(context, listen: false)
-                        .errorOccured("Password unmatched", TypeSelection.typeOfPage);  
-                    }    
                   }
                 },
                 child: Container(

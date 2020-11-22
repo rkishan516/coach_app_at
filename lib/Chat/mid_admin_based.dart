@@ -47,17 +47,17 @@ class _midAdminBasedState extends State<midAdminBased> {
     super.initState();
     subscription = collectionReference.snapshots().listen((snapshot) {
       setState(() {
-        ulist = snapshot.docs;
+        ulist = snapshot.documents;
 
         for (int i = 0; i < ulist.length; i++) {
           String name, photo, uid, deg, code;
           int rank = 0;
-          name = ulist[i].data()['name'];
-          photo = ulist[i].data()['photoUrl'];
-          uid = ulist[i].data()['uid'];
-          deg = ulist[i].data()['role'];
+          name = ulist[i].data['name'];
+          photo = ulist[i].data['photoUrl'];
+          uid = ulist[i].data['uid'];
+          deg = ulist[i].data['role'];
           rank = i + 1;
-          code = ulist[i].data()['code'];
+          code = ulist[i].data['code'];
 
           if (uid == currentUser.uid) {
             continue;
@@ -76,7 +76,7 @@ class _midAdminBasedState extends State<midAdminBased> {
     selectedList = List();
 
     String name, deg, photourl, uid;
-    name = ulist[1].data()['name'].toString();
+    name = ulist[1].data['name'].toString();
     print("$name");
   }
 

@@ -72,7 +72,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
     _messageController = TextEditingController();
     setState(() {
-      _senderuid = getUID().uid;
+      //TODO: Change to uncomment
+      // _senderuid = getUID().uid;
       print("sender uid : $_senderuid");
       getSenderPhotoUrl(_senderuid).then((snapshot) {
         setState(() {
@@ -476,8 +477,8 @@ class _ChatScreenState extends State<ChatScreen> {
     addMessageToDb(_message);
   }
 
-  User getUID() {
-    User user = _firebaseAuth.currentUser;
+  Future<FirebaseUser> getUID() async {
+    FirebaseUser user = await _firebaseAuth.currentUser();
     return user;
   }
 

@@ -49,24 +49,24 @@ class ChatState extends State<chats> {
   CollectionReference _collectionReference;
 
   void giveback() {
-    _collectionReference = FirebaseFirestore.instance.collection(cat);
+    _collectionReference = Firestore.instance.collection(cat);
   }
 
   @override
   void initState() {
     super.initState();
     //giveback();
-    _collectionReference = FirebaseFirestore.instance.collection(cat);
+    _collectionReference = Firestore.instance.collection(cat);
     _subscription = _collectionReference
         .where('code', isEqualTo: currentUser.code)
         .orderBy('name')
         .snapshots()
         .listen((datasnapshot) {
       setState(() {
-        userlist = datasnapshot.docs;
+        userlist = datasnapshot.documents;
 
         for (int i = 0; i < userlist.length; i++) {
-          if (userlist[i].data()['uid'] == currentUser.uid) {
+          if (userlist[i].data['uid'] == currentUser.uid) {
             userlist.removeAt(i);
             break;
           }
@@ -93,15 +93,15 @@ class ChatState extends State<chats> {
                     children: [
                       ListTile(
                           leading: new CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                userlist[index].data()['photoUrl']),
+                            backgroundImage:
+                                NetworkImage(userlist[index].data['photoUrl']),
                           ),
                           title: Container(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 new Text(
-                                  userlist[index].data()['name'],
+                                  userlist[index].data['name'],
                                   style: new TextStyle(
                                       fontWeight: FontWeight.w600,
                                       color: Color.fromARGB(255, 242, 108, 37),
@@ -126,11 +126,10 @@ class ChatState extends State<chats> {
                           onTap: () => Navigator.of(context).push(
                                   new MaterialPageRoute(builder: (context) {
                                 return new ChatScreen(
-                                    name: userlist[index].data()['name'],
-                                    photoUrl:
-                                        userlist[index].data()['photoUrl'],
-                                    receiverUid: userlist[index].data()['uid'],
-                                    role: userlist[index].data()['role']);
+                                    name: userlist[index].data['name'],
+                                    photoUrl: userlist[index].data['photoUrl'],
+                                    receiverUid: userlist[index].data['uid'],
+                                    role: userlist[index].data['role']);
                               }))),
                     ],
                   ),

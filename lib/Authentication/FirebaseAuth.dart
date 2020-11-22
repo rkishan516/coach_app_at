@@ -9,20 +9,15 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flare_loading/flare_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-// import 'package:googleapis/cloudbuild/v1.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FireBaseAuth {
   static FireBaseAuth instance = FireBaseAuth._();
-  FireBaseAuth._() {
-    _sharedprefinit();
-  }
+  FireBaseAuth._();
 
   FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   FirebaseUser currentuser;
-  SharedPreferences pref;
   String providerid;
 
   GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -51,19 +46,20 @@ class FireBaseAuth {
     }
   }
 
-  Future<User> signInWithGoogle(BuildContext context) async {
+  Future<FirebaseUser> signInWithGoogle(BuildContext context) async {
+    print('here');
     try {
-      User currUser = FirebaseAuth.instance.currentUser;
+      FirebaseUser currUser = await FirebaseAuth.instance.currentUser();
       if (currUser != null) {
         this.user = currUser;
       } else {
         var creds = await getAuthGCredentials();
 
-        final AuthCredential credential = GoogleAuthProvider.credential(
+        final AuthCredential credential = GoogleAuthProvider.getCredential(
           accessToken: creds[0],
           idToken: creds[1],
         );
-        final UserCredential authResult =
+        final AuthResult authResult =
             (await _auth.signInWithCredential(credential));
         this.user = authResult.user;
         if (authResult.additionalUserInfo.isNewUser) {
@@ -89,6 +85,7 @@ class FireBaseAuth {
       //   prefs.setBool('isLoggedIn', true);
       // }
       await updateClaims();
+      print(user);
       return user;
     } catch (e) {
       print(e);
@@ -97,7 +94,7 @@ class FireBaseAuth {
   }
 
   updateClaims() async {
-    IdTokenResult idTokenResult = await user.getIdTokenResult(true);
+    IdTokenResult idTokenResult = await user.getIdToken(refresh: true);
     branchid = idTokenResult.claims['branchid'];
     instituteid = idTokenResult.claims['instituteid'];
     previlagelevel = idTokenResult.claims['previlagelevel'];
@@ -155,19 +152,14 @@ class FireBaseAuth {
     }
   }
 
-  _sharedprefinit() async {
-    pref = await SharedPreferences.getInstance();
-  }
-
-  Future<User> testing(BuildContext context) async {
+  Future<FirebaseUser> testing(BuildContext context) async {
     try {
-      providerid =
-          (FirebaseAuth.instance.currentUser).providerData[0].providerId;
+      providerid = (await FirebaseAuth.instance.currentUser()).providerId;
       if (providerid == "password") {
-        UserCredential credential = await FirebaseAuth.instance
+        AuthResult credential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(
-                email: pref.getString("Email"),
-                password: pref.getString("Pass"));
+                email: prefs.getString("Email"),
+                password: prefs.getString("Pass"));
         await _flareloading(credential, context);
         return credential.user;
       } else {
@@ -179,25 +171,24 @@ class FireBaseAuth {
     }
   }
 
-  _userFromFirebaseuser(User user) {
+  _userFromFirebaseuser(FirebaseUser user) {
     return user != null
         ? AppUser(
             uid: user.uid,
             name: user.displayName,
-            isEmailVerfied: user.emailVerified)
+            isEmailVerfied: user.isEmailVerified)
         : null;
   }
 
   Stream<AppUser> get appuser {
-    return _firebaseAuth.onAuthStateChanged
-        .map((user) => _userFromFirebaseuser(user));
+    return _auth.onAuthStateChanged.map((user) => _userFromFirebaseuser(user));
   }
 
   Future<String> signIn(
       String email, String password, BuildContext context) async {
     try {
-      UserCredential credential = await _firebaseAuth
-          .signInWithEmailAndPassword(email: email, password: password);
+      AuthResult credential = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
 
       currentuser = credential.user;
       await _flareloading(credential, context);
@@ -210,7 +201,7 @@ class FireBaseAuth {
 
   Future<void> signOut() async {
     try {
-      return await _firebaseAuth.signOut();
+      return await _auth.signOut();
     } catch (e) {
       print(e.toString());
       return null;
@@ -220,10 +211,12 @@ class FireBaseAuth {
   Future<String> signUp(
       String email, String password, String name, BuildContext context) async {
     try {
-      UserCredential credential = await _firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
+      AuthResult credential = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
       currentuser = credential.user;
-      await currentuser.updateProfile(displayName: name);
+      UserUpdateInfo info = UserUpdateInfo();
+      info.displayName = name;
+      await currentuser.updateProfile(info);
       await currentuser.reload();
       await _flareloading(credential, context);
     } catch (e) {
@@ -240,7 +233,7 @@ class FireBaseAuth {
     }
   }
 
-  _flareloading(UserCredential credential, BuildContext context) async {
+  _flareloading(AuthResult credential, BuildContext context) async {
     if (credential.additionalUserInfo.isNewUser) {
       await Navigator.of(context).push(
         MaterialPageRoute(

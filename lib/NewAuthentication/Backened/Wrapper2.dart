@@ -12,10 +12,11 @@ class Wrapper2 extends StatelessWidget {
     return FutureBuilder(
         future: FireBaseAuth.instance.testing(context),
         builder: (context, snapshot) {
+          print(snapshot);
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {
-              User user = snapshot.data;
-              if (user.emailVerified)
+              FirebaseUser user = snapshot.data;
+              if (user.isEmailVerified)
                 return WelcomeNavigation.getPage(context, user.uid);
               else
                 return AlertMessage();

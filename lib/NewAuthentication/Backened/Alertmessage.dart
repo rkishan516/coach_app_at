@@ -11,7 +11,6 @@ class AlertMessage extends StatefulWidget {
 class _AlertMessageState extends State<AlertMessage> {
   @override
   void initState() {
-    //_sharedprefinit();
     super.initState();
   }
 
@@ -63,15 +62,15 @@ class _AlertMessageState extends State<AlertMessage> {
               children: [
                 GestureDetector(
                   onTap: () async {
-                    UserCredential credential = await FirebaseAuth.instance
+                    AuthResult credential = await FirebaseAuth.instance
                         .signInWithEmailAndPassword(
                             email:
-                                FireBaseAuth.instance.pref.getString("Email"),
+                                FireBaseAuth.instance.prefs.getString("Email"),
                             password:
-                                FireBaseAuth.instance.pref.getString("Pass"));
+                                FireBaseAuth.instance.prefs.getString("Pass"));
 
-                    User currentuser = credential.user;
-                    if (currentuser.emailVerified) {
+                    FirebaseUser currentuser = credential.user;
+                    if (currentuser.isEmailVerified) {
                       //Navigator.of(context).pop();
 
                       WelcomeNavigation.getPage(context, currentuser.uid);
@@ -106,16 +105,16 @@ class _AlertMessageState extends State<AlertMessage> {
                 ),
                 GestureDetector(
                   onTap: () async {
-                    UserCredential credential = await FirebaseAuth.instance
+                    AuthResult credential = await FirebaseAuth.instance
                         .signInWithEmailAndPassword(
                             email:
-                                FireBaseAuth.instance.pref.getString("Email"),
+                                FireBaseAuth.instance.prefs.getString("Email"),
                             password:
-                                FireBaseAuth.instance.pref.getString("Pass"));
-                    User currentuser = credential.user;
+                                FireBaseAuth.instance.prefs.getString("Pass"));
+                    FirebaseUser currentuser = credential.user;
                     currentuser.delete();
-                    FireBaseAuth.instance.pref.remove("Email");
-                    FireBaseAuth.instance.pref.remove("Pass");
+                    FireBaseAuth.instance.prefs.remove("Email");
+                    FireBaseAuth.instance.prefs.remove("Pass");
                   },
                   child: Container(
                     padding: EdgeInsets.all(4.0),

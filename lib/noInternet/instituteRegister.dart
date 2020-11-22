@@ -516,10 +516,11 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                               );
                               if (value.email !=
                                   branch1AdminTextEditingController.text) {
-                                FirebaseFirestore.instance
+                                Firestore.instance
                                     .collection('institute')
-                                    .doc(branch1AdminTextEditingController.text)
-                                    .set({
+                                    .document(
+                                        branch1AdminTextEditingController.text)
+                                    .setData({
                                   "value":
                                       "subAdmin_${reference.key}_${branch1CodeTextEditingController.text}"
                                 });

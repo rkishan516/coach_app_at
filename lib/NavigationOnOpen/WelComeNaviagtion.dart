@@ -18,100 +18,95 @@ class WelcomeNavigation {
   static signInWithGoogleAndGetPage(BuildContext context) {
     print('WelcomeNavigation');
     FireBaseAuth.instance.signInWithGoogle(context).then(
-      (value) async { 
-        if (value == null) { 
+      (value) async {
+        if (value == null) {
           return;
         }
         getPage(context, value.uid);
       },
     );
   }
-  static getPage(BuildContext context, uid){
-    
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-          builder: (context) {
-            if (FireBaseAuth.instance.previlagelevel == 4) {
-              FirebaseDatabase.instance
-                  .reference()
-                  .child("institute/${FireBaseAuth.instance.instituteid}")
-                  .keepSynced(true);
-              return ChangeNotifierProvider(
-                create: (context) => AdminProvider(),
-                child: BranchList(),
-              );
-            } else if (FireBaseAuth.instance.previlagelevel == 34) {
-              return MidAdminBranchList();
-            } else if (FireBaseAuth.instance.previlagelevel == 3) {
-              FirebaseDatabase.instance
-                  .reference()
-                  .child(
-                      "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}")
-                  .keepSynced(true);
-              return BranchPage();
-            } else if (FireBaseAuth.instance.previlagelevel == 2) {
-              return StreamBuilder<Event>(
-                stream: FirebaseDatabase.instance
-                    .reference()
-                    .child(
-                        "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/$uid")
-                    .onValue,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data.snapshot.value == null) {
-                      FireBaseAuth.instance.signoutWithGoogle();
-                      return WelcomePage();
-                    }
-                    return CoursePage(
-                      teacher: Teacher.fromJson(snapshot.data.snapshot.value),
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
-              );
-            } else if (FireBaseAuth.instance.previlagelevel == 1) {
-              FirebaseDatabase.instance
-                  .reference()
-                  .child(
-                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}')
-                  .keepSynced(true);
-              return st_cp.CoursePage();
-            } else {
-              if (FireBaseAuth.instance.prefs.getString('insCode') == null ||
-                  FireBaseAuth.instance.prefs.getString('branchCode') == null) {
-                return RegistrationPage();
-              }
-              return StreamBuilder<Event>(
-                stream: FirebaseDatabase.instance
-                    .reference()
-                    .child(
-                        "institute/${FireBaseAuth.instance.prefs.getString('insCode')}/branches/${FireBaseAuth.instance.prefs.getString('branchCode')}/students/$uid/status")
-                    .onValue,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data.snapshot.value == null) {
-                      return RegistrationPage();
-                    }
-                    if (snapshot.data.snapshot.value == 'New Student') {
-                      return AllCoursePage(
-                          ref: FirebaseDatabase.instance.reference().child(
-                              'institute/${FireBaseAuth.instance.prefs.getString('insCode')}/branches/${FireBaseAuth.instance.prefs.getString('branchCode')}'));
-                    } else if (snapshot.data.snapshot.value ==
-                        'Existing Student') {
-                      return WaitScreen();
-                    }
-                    return RegistrationPage();
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
-              );
+
+  static getPage(BuildContext context, uid) {
+    if (FireBaseAuth.instance.previlagelevel == 4) {
+      FirebaseDatabase.instance
+          .reference()
+          .child("institute/${FireBaseAuth.instance.instituteid}")
+          .keepSynced(true);
+      return ChangeNotifierProvider(
+        create: (context) => AdminProvider(),
+        child: BranchList(),
+      );
+    } else if (FireBaseAuth.instance.previlagelevel == 34) {
+      return MidAdminBranchList();
+    } else if (FireBaseAuth.instance.previlagelevel == 3) {
+      FirebaseDatabase.instance
+          .reference()
+          .child(
+              "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}")
+          .keepSynced(true);
+      return BranchPage();
+    } else if (FireBaseAuth.instance.previlagelevel == 2) {
+      return StreamBuilder<Event>(
+        stream: FirebaseDatabase.instance
+            .reference()
+            .child(
+                "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/$uid")
+            .onValue,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data.snapshot.value == null) {
+              FireBaseAuth.instance.signoutWithGoogle();
+              return WelcomePage();
             }
-          },
-        ), (route) => false);
+            return CoursePage(
+              teacher: Teacher.fromJson(snapshot.data.snapshot.value),
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      );
+    } else if (FireBaseAuth.instance.previlagelevel == 1) {
+      FirebaseDatabase.instance
+          .reference()
+          .child(
+              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}')
+          .keepSynced(true);
+      return st_cp.CoursePage();
+    } else {
+      if (FireBaseAuth.instance.prefs.getString('insCode') == null ||
+          FireBaseAuth.instance.prefs.getString('branchCode') == null) {
+        return RegistrationPage();
+      }
+      return StreamBuilder<Event>(
+        stream: FirebaseDatabase.instance
+            .reference()
+            .child(
+                "institute/${FireBaseAuth.instance.prefs.getString('insCode')}/branches/${FireBaseAuth.instance.prefs.getString('branchCode')}/students/$uid/status")
+            .onValue,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data.snapshot.value == null) {
+              return RegistrationPage();
+            }
+            if (snapshot.data.snapshot.value == 'New Student') {
+              return AllCoursePage(
+                  ref: FirebaseDatabase.instance.reference().child(
+                      'institute/${FireBaseAuth.instance.prefs.getString('insCode')}/branches/${FireBaseAuth.instance.prefs.getString('branchCode')}'));
+            } else if (snapshot.data.snapshot.value == 'Existing Student') {
+              return WaitScreen();
+            }
+            return RegistrationPage();
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      );
+    }
   }
 }
