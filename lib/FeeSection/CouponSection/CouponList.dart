@@ -2,7 +2,7 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-
+import 'package:coach_app/Utils/Colors.dart';
 import '../CouponSection/CouponModal.dart';
 import '../CouponSection/CreateCoupon.dart';
 
@@ -86,7 +86,7 @@ class _CouponListState extends State<CouponList> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
                       height: MediaQuery.of(context).size.height / 6,
-                      color: Color(0xffF36C24),
+                      color: GuruCoolLightColor.primaryColor,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.values[4],
                         children: [
@@ -94,7 +94,7 @@ class _CouponListState extends State<CouponList> {
                             child: Container(
                               width: MediaQuery.of(context).size.width / 3,
                               height: MediaQuery.of(context).size.height / 6,
-                              color: Colors.white,
+                              color: GuruCoolLightColor.whiteColor,
                               child: Center(
                                   child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -126,7 +126,7 @@ class _CouponListState extends State<CouponList> {
                                     '!',
                                     style: TextStyle(
                                       fontSize: 42,
-                                      color: Color(0xffF36C24),
+                                      color: GuruCoolLightColor.primaryColor,
                                     ),
                                   )
                                 ],
@@ -141,19 +141,19 @@ class _CouponListState extends State<CouponList> {
                               decoration: BoxDecoration(
                                 border: Border(
                                   bottom: BorderSide(
-                                    color: Colors.white,
+                                    color: GuruCoolLightColor.whiteColor,
                                     width: 2,
                                   ),
                                   left: BorderSide(
-                                    color: Colors.white,
+                                    color: GuruCoolLightColor.whiteColor,
                                     width: 2,
                                   ),
                                   right: BorderSide(
-                                    color: Colors.white,
+                                    color: GuruCoolLightColor.whiteColor,
                                     width: 2,
                                   ),
                                   top: BorderSide(
-                                    color: Colors.white,
+                                    color: GuruCoolLightColor.whiteColor,
                                     width: 2,
                                   ),
                                 ),
@@ -164,7 +164,7 @@ class _CouponListState extends State<CouponList> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 26,
-                                    color: Colors.white,
+                                    color: GuruCoolLightColor.whiteColor,
                                   ),
                                 ),
                               ),

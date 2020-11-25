@@ -1,8 +1,9 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/NewAuthentication/Frontened/NewWelcomePage.dart';
 import 'package:coach_app/Student/all_course_view.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -38,18 +39,18 @@ class _RegistrationPageState extends State<RegistrationPage> {
     return Scaffold(
       key: _scKey,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: GuruCoolLightColor.whiteColor,
         elevation: 0.0,
         centerTitle: true,
         leading: IconButton(
             icon: Icon(
               Icons.arrow_back,
-              color: Color(0xffF36C24),
+              color: GuruCoolLightColor.primaryColor,
             ),
             onPressed: () {
               FireBaseAuth.instance.signoutWithGoogle();
               Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => WelcomePage()),
+                  MaterialPageRoute(builder: (context) => NewWelcomePage()),
                   (route) => false);
             }),
         title: Text(
@@ -57,7 +58,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           style: GoogleFonts.portLligatSans(
             fontSize: 30,
             fontWeight: FontWeight.w700,
-            color: Color(0xffF36C24),
+            color: GuruCoolLightColor.primaryColor,
           ),
         ),
       ),
@@ -69,7 +70,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         decoration: BoxDecoration(
             boxShadow: <BoxShadow>[
               BoxShadow(
-                  color: Colors.grey.shade200,
+                  color: GuruCoolLightColor.backgroundShade,
                   offset: Offset(2, 4),
                   blurRadius: 5,
                   spreadRadius: 2)
@@ -77,7 +78,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.white, Color(0xffF36C24)])),
+                colors: [
+                  GuruCoolLightColor.whiteColor,
+                  GuruCoolLightColor.primaryColor
+                ])),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Form(
@@ -164,7 +168,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ),
                 ),
                 RaisedButton(
-                  color: Colors.white,
+                  color: GuruCoolLightColor.whiteColor,
                   elevation: 0.0,
                   onPressed: () async {
                     if (!_formKey.currentState.validate()) {

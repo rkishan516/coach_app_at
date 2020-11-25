@@ -10,21 +10,22 @@ class Wrapper2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: FireBaseAuth.instance.testing(context),
-        builder: (context, snapshot) {
-          print(snapshot);
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              FirebaseUser user = snapshot.data;
-              if (user.isEmailVerified)
-                return WelcomeNavigation.getPage(context, user.uid);
-              else
-                return AlertMessage();
-            }
-            return Wait();
-          } else {
-            return Wait();
+      future: FireBaseAuth.instance.testing(context),
+      builder: (context, snapshot) {
+        print(snapshot);
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
+            FirebaseUser user = snapshot.data;
+            if (user.isEmailVerified)
+              return WelcomeNavigation.getPage(context, user.uid);
+            else
+              return AlertMessage();
           }
-        });
+          return Wait();
+        } else {
+          return Wait();
+        }
+      },
+    );
   }
 }

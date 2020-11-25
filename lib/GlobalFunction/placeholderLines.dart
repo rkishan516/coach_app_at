@@ -176,7 +176,6 @@ class _PlaceholderLinesState extends State<PlaceholderLines>
                   return Container(
                     child: ClipRect(
                       child: Stack(
-                        overflow: Overflow.clip,
                         children: <Widget>[
                           child,
                           Transform.translate(

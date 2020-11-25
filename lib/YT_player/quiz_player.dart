@@ -4,6 +4,7 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/courses/FormGeneration/fields/form_builder_checkbox_list.dart';
 import 'package:coach_app/courses/FormGeneration/fields/form_builder_radio.dart';
 import 'package:coach_app/courses/FormGeneration/fields/form_builder_switch.dart';
@@ -48,7 +49,7 @@ class _QuizState extends State<Quiz> {
             borderRadius: BorderRadius.all(Radius.circular(5)),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                  color: Colors.grey.shade200,
+                  color: GuruCoolLightColor.backgroundShade,
                   offset: Offset(2, 4),
                   blurRadius: 5,
                   spreadRadius: 2)
@@ -56,7 +57,10 @@ class _QuizState extends State<Quiz> {
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.white, Color(0xffF36C24)])),
+                colors: [
+                  GuruCoolLightColor.whiteColor,
+                  GuruCoolLightColor.primaryColor
+                ])),
         child: StreamBuilder<Event>(
             stream: widget.reference.onValue,
             builder: (context, snapshot) {
@@ -153,9 +157,9 @@ class _QuizState extends State<Quiz> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: FlatButton(
-                        color: Colors.white,
+                        color: GuruCoolLightColor.whiteColor,
                         child: Text('Submit'.tr()),
-                        onPressed: () async{
+                        onPressed: () async {
                           String res = await showDialog(
                               context: context,
                               builder: (context) => AreYouSure());

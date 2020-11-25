@@ -1,6 +1,7 @@
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/NewAuthentication/Backened/Wrapper2.dart';
 import 'package:coach_app/NewAuthentication/Frontened/NewWelcomePage.dart';
+import 'package:coach_app/NewUI/books-page1.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,6 +14,7 @@ class Wrapper extends StatelessWidget {
       return ChangeNotifierProvider(
           create: (context) => Counter(), child: NewWelcomePage());
     } else {
+      return Home();
       return Wrapper2();
     }
   }

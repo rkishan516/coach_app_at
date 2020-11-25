@@ -1,9 +1,9 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/InstituteAdmin/branchList.dart';
 import 'package:coach_app/InstituteAdmin/branchPage.dart';
 import 'package:coach_app/InstituteAdmin/midAdminBranchList.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/NewAuthentication/Frontened/NewWelcomePage.dart';
 import 'package:coach_app/Provider/AdminProvider.dart';
 import 'package:coach_app/Student/WaitScreen.dart';
 import 'package:coach_app/Student/all_course_view.dart';
@@ -57,7 +57,7 @@ class WelcomeNavigation {
           if (snapshot.hasData) {
             if (snapshot.data.snapshot.value == null) {
               FireBaseAuth.instance.signoutWithGoogle();
-              return WelcomePage();
+              return NewWelcomePage();
             }
             return CoursePage(
               teacher: Teacher.fromJson(snapshot.data.snapshot.value),

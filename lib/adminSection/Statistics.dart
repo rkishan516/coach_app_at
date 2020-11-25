@@ -4,6 +4,7 @@ import 'package:coach_app/Dialogs/languageDialog.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Provider/AdminProvider.dart';
 import 'package:coach_app/Provider/MidAdminProvider.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/adminSection/getReport.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -54,7 +55,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
       appBar: AppBar(
         title: Text(
           'Admin Statistics',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: GuruCoolLightColor.whiteColor),
         ),
         actions: [
           IconButton(
@@ -80,7 +81,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
@@ -115,7 +116,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                     child: DropdownButton(
                                         icon: Icon(
                                           Icons.keyboard_arrow_down,
-                                          color: Colors.white,
+                                          color: GuruCoolLightColor.whiteColor,
                                         ),
                                         underline: SizedBox(),
                                         selectedItemBuilder: (context) {
@@ -123,7 +124,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                             Text(
                                               'Filter',
                                               style: TextStyle(
-                                                  color: Colors.white),
+                                                  color: GuruCoolLightColor.whiteColor),
                                             )
                                           ];
                                         },
@@ -131,7 +132,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                           child: Text(
                                             'Filter',
                                             style:
-                                                TextStyle(color: Colors.white),
+                                                TextStyle(color: GuruCoolLightColor.whiteColor),
                                           ),
                                         ),
                                         items: ['None', 'Mid - Admins']
@@ -175,7 +176,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                                                   top: 66.0),
                                                           decoration:
                                                               BoxDecoration(
-                                                            color: Colors.white,
+                                                            color: GuruCoolLightColor.whiteColor,
                                                             shape: BoxShape
                                                                 .rectangle,
                                                             borderRadius:
@@ -306,7 +307,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                 10,
                               ),
                             ),
-                            color: Color(0xffF36C24),
+                            color: GuruCoolLightColor.primaryColor,
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -314,25 +315,25 @@ class _StatisticsPageState extends State<StatisticsPage> {
                               Text(
                                 'Branches',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: GuruCoolLightColor.whiteColor,
                                 ),
                               ),
                               Text(
                                 'Courses',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: GuruCoolLightColor.whiteColor,
                                 ),
                               ),
                               Text(
                                 'Teachers',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: GuruCoolLightColor.whiteColor,
                                 ),
                               ),
                               Text(
                                 'Students',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: GuruCoolLightColor.whiteColor,
                                 ),
                               )
                             ],
@@ -377,7 +378,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                                   .name,
                                               style: TextStyle(
                                                 fontSize: 6,
-                                                color: Color(0xffF36C24),
+                                                color: GuruCoolLightColor.primaryColor,
                                               ),
                                               textAlign: TextAlign.center,
                                             ),
@@ -479,7 +480,7 @@ class StatisticsCapsule extends StatelessWidget {
               flex: 19,
               child: Container(
                 decoration: BoxDecoration(
-                    color: Color(0xffF36C24),
+                    color: GuruCoolLightColor.primaryColor,
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10),
                         bottomRight: Radius.circular(10))),
@@ -488,7 +489,7 @@ class StatisticsCapsule extends StatelessWidget {
                   child: Text(
                     count,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: GuruCoolLightColor.whiteColor,
                     ),
                   ),
                 ),

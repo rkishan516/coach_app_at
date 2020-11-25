@@ -4,6 +4,7 @@ import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/YT_player/pdf_player.dart';
 import 'package:coach_app/YT_player/yt_player.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -34,7 +35,7 @@ class _PublicContentPageState extends State<PublicContentPage> {
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
@@ -76,7 +77,7 @@ class _PublicContentPageState extends State<PublicContentPage> {
                                         child: Text(
                                           '${section.content[section.content.keys.toList()[index]].title}',
                                           style: TextStyle(
-                                              color: Color(0xffF36C24)),
+                                              color: GuruCoolLightColor.primaryColor),
                                         ),
                                       ),
                                     ),
@@ -104,15 +105,16 @@ class _PublicContentPageState extends State<PublicContentPage> {
                                       CircleAvatar(
                                           child: Icon(
                                             Icons.library_books,
-                                            color: Colors.white,
+                                            color:
+                                                GuruCoolLightColor.whiteColor,
                                           ),
-                                          backgroundColor: Color(0xffF36C24)),
+                                          backgroundColor: GuruCoolLightColor.primaryColor),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text(
                                         '${section.content[section.content.keys.toList()[index]].description}',
                                         style:
-                                            TextStyle(color: Color(0xffF36C24)),
+                                            TextStyle(color: GuruCoolLightColor.primaryColor),
                                       ),
                                     ),
                                     Align(
@@ -309,7 +311,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
             ),
             margin: EdgeInsets.only(top: 66.0),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: GuruCoolLightColor.whiteColor,
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(16.0),
               boxShadow: [
@@ -470,7 +472,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                                 .update(content.toJson());
                           }
                         },
-                        color: Colors.white,
+                        color: GuruCoolLightColor.whiteColor,
                         child: Text(
                           'Add Content'.tr(),
                           style: TextStyle(

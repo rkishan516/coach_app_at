@@ -1,5 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/QuizResponse/ResponseCheck.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -58,7 +59,7 @@ class _QuizModalState extends State<QuizModalResponse> {
                 ),
                 margin: EdgeInsets.only(top: 66.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: GuruCoolLightColor.whiteColor,
                   shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.circular(16.0),
                   boxShadow: [
@@ -104,13 +105,15 @@ class _QuizModalState extends State<QuizModalResponse> {
                         child: Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20.0),
-                              color: Color(0xffF36C24)),
+                              color: GuruCoolLightColor.primaryColor),
                           width: MediaQuery.of(context).size.width / 3.5,
                           padding: EdgeInsets.symmetric(vertical: 10),
                           alignment: Alignment.center,
                           child: Text(
                             "Save Score".tr(),
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                            style: TextStyle(
+                                color: GuruCoolLightColor.whiteColor,
+                                fontSize: 16),
                           ),
                         ),
                       ),

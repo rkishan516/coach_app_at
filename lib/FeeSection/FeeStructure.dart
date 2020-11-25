@@ -1,4 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'FeeReport.dart';
@@ -39,10 +40,10 @@ class _FeeStructureState extends State<FeeStructure> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Fee Management"),
-        backgroundColor: Color(0xffF36C24),
+        backgroundColor: GuruCoolLightColor.primaryColor,
       ),
       body: Container(
-        color: Color(0xffF36C24),
+        color: GuruCoolLightColor.primaryColor,
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.all(12.0),
@@ -60,7 +61,7 @@ class _FeeStructureState extends State<FeeStructure> {
                         IconButton(
                           icon: Icon(
                             Icons.book,
-                            color: Color(0xffF36C24),
+                            color: GuruCoolLightColor.primaryColor,
                           ),
                           onPressed: () {
                             Navigator.of(context).push(MaterialPageRoute(

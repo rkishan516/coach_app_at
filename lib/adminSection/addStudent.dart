@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
@@ -129,7 +130,7 @@ class _AddStudentState extends State<AddStudent> {
                 ),
                 margin: EdgeInsets.only(top: 66.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: GuruCoolLightColor.whiteColor,
                   shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.circular(16.0),
                   boxShadow: [
@@ -507,7 +508,7 @@ class _AddStudentState extends State<AddStudent> {
                               }
                               Navigator.of(context).pop();
                             },
-                            color: Colors.white,
+                            color: GuruCoolLightColor.whiteColor,
                             child: Text(
                               'Add Student',
                               style: TextStyle(

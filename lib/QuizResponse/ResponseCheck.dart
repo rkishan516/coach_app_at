@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
@@ -176,7 +177,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         RaisedButton(
-                            color: Color(0xffF36C24),
+                            color: GuruCoolLightColor.primaryColor,
                             child: Text('Save Score'.tr()),
                             onPressed: () {
                               saveScore = true;
@@ -185,7 +186,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
                             }),
                         pageNumber + 1 == _allStudentResponse.length
                             ? RaisedButton(
-                                color: Color(0xffF36C24),
+                                color: GuruCoolLightColor.primaryColor,
                                 child: Text('Submit'.tr()),
                                 onPressed: () {
                                   saveScore

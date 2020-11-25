@@ -1,6 +1,7 @@
 import 'package:coach_app/Meeting/Fragmnets/SelectCandidate.dart';
 import 'package:coach_app/Meeting/Fragmnets/TwoStepSelectCandidate.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -253,7 +254,7 @@ class _SessionDetailState extends State<SessionDetail> {
         elevation: 0.0,
         title: Text(
           'Enter Session Detail'.tr(),
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: GuruCoolLightColor.whiteColor),
         ),
       ),
       body: SafeArea(
@@ -265,7 +266,7 @@ class _SessionDetailState extends State<SessionDetail> {
           decoration: BoxDecoration(
             boxShadow: <BoxShadow>[
               BoxShadow(
-                  color: Colors.grey.shade200,
+                  color: GuruCoolLightColor.backgroundShade,
                   offset: Offset(2, 4),
                   blurRadius: 5,
                   spreadRadius: 2)
@@ -305,11 +306,11 @@ class _SessionDetailState extends State<SessionDetail> {
                     height: 20.0,
                   ),
                   Card(
-                    color: Colors.white,
+                    color: GuruCoolLightColor.whiteColor,
                     child: ListTile(
                       trailing: Icon(
                         Icons.alarm,
-                        color: Color(0xffF36C24),
+                        color: GuruCoolLightColor.primaryColor,
                       ),
                       title: Text('Live Session Start Time'.tr()),
                       onTap: () {
@@ -364,7 +365,7 @@ class _SessionDetailState extends State<SessionDetail> {
                             child: Text(
                               "Delete Session".tr(),
                               style: TextStyle(
-                                color: Colors.white,
+                                color: GuruCoolLightColor.whiteColor,
                                 fontSize: 16,
                               ),
                             ),
@@ -389,7 +390,7 @@ class _SessionDetailState extends State<SessionDetail> {
                           child: Text(
                             widget.isedit ? "Update".tr() : "Save".tr(),
                             style: TextStyle(
-                              color: Colors.white,
+                              color: GuruCoolLightColor.whiteColor,
                               fontSize: 16,
                             ),
                           ),

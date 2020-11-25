@@ -1,5 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:flutter/material.dart';
 
 class ToggleButton extends StatefulWidget {
@@ -102,7 +103,7 @@ class _ToggleButtonState extends State<ToggleButton> {
           flex: 3,
           child: Text(
             'Attach Coupon : ',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: GuruCoolLightColor.whiteColor),
           ),
         ),
         Expanded(
@@ -110,8 +111,8 @@ class _ToggleButtonState extends State<ToggleButton> {
           child: Switch(
             onChanged: toggleButton,
             value: toggleValue,
-            inactiveTrackColor: Colors.white,
-            activeColor: Colors.white,
+            inactiveTrackColor: GuruCoolLightColor.whiteColor,
+            activeColor: GuruCoolLightColor.whiteColor,
           ),
         ),
         // Expanded(

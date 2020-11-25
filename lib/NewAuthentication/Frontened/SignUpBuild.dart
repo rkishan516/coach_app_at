@@ -2,6 +2,7 @@ import 'package:animator/animator.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:flutter/material.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:provider/provider.dart';
 
 class SignUpBuild extends StatefulWidget {
@@ -20,6 +21,7 @@ class _SignUpBuildState extends State<SignUpBuild> {
   final TextEditingController _confirmpassController = TextEditingController();
   final TextEditingController _fstnameController = TextEditingController();
   final TextEditingController _lstnameController = TextEditingController();
+  bool showPassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class _SignUpBuildState extends State<SignUpBuild> {
               fontSize: 22.0, color: Colors.grey, fontWeight: FontWeight.bold),
         ),
         SizedBox(
-          height: 40.0,
+          height: 20.0,
         ),
         Form(
           key: _formKey,
@@ -45,52 +47,56 @@ class _SignUpBuildState extends State<SignUpBuild> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    height: 50.0,
-                    width: 170.0,
-                    child: TextFormField(
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return "First Name cannot be empty";
-                        }
-                        return null;
-                      },
-                      controller: _fstnameController,
-                      style:
-                          TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
-                      decoration: InputDecoration(
-                          contentPadding: new EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 10.0),
-                          hintText: "FIRST NAME",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              borderSide: BorderSide(color: Colors.grey))),
+                  Expanded(
+                    child: Container(
+                      height: 50.0,
+                      width: 170.0,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return "First Name cannot be empty";
+                          }
+                          return null;
+                        },
+                        controller: _fstnameController,
+                        style:
+                            TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
+                        decoration: InputDecoration(
+                            contentPadding: new EdgeInsets.symmetric(
+                                vertical: 10.0, horizontal: 10.0),
+                            hintText: "FIRST NAME",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.grey))),
+                      ),
                     ),
                   ),
                   SizedBox(
                     width: 5.0,
                   ),
-                  Container(
-                    height: 50.0,
-                    width: 170.0,
-                    child: TextFormField(
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return "Last name cannot be empty";
-                        }
-                        return null;
-                      },
-                      controller: _lstnameController,
-                      style:
-                          TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
-                      onChanged: null,
-                      decoration: InputDecoration(
-                          contentPadding: new EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 10.0),
-                          hintText: "LAST NAME",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              borderSide: BorderSide(color: Colors.grey))),
+                  Expanded(
+                    child: Container(
+                      height: 50.0,
+                      width: 170.0,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return "Last name cannot be empty";
+                          }
+                          return null;
+                        },
+                        controller: _lstnameController,
+                        style:
+                            TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
+                        onChanged: null,
+                        decoration: InputDecoration(
+                            contentPadding: new EdgeInsets.symmetric(
+                                vertical: 10.0, horizontal: 10.0),
+                            hintText: "LAST NAME",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.grey))),
+                      ),
                     ),
                   ),
                 ],
@@ -127,7 +133,7 @@ class _SignUpBuildState extends State<SignUpBuild> {
               ),
               SizedBox(height: 20.0),
               TextFormField(
-                obscureText: true,
+                obscureText: showPassword,
                 validator: (value) {
                   if (value.isEmpty) {
                     return "Password cannot be empty";
@@ -143,9 +149,16 @@ class _SignUpBuildState extends State<SignUpBuild> {
                 decoration: InputDecoration(
                     contentPadding: new EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 10.0),
-                    prefixIcon: Icon(
-                      Icons.lock,
-                      color: Colors.grey,
+                    prefixIcon: InkWell(
+                      onTap: () {
+                        setState(() {
+                          showPassword = !showPassword;
+                        });
+                      },
+                      child: Icon(
+                        Icons.lock,
+                        color: Colors.grey,
+                      ),
                     ),
                     hintText: "PASSWORD",
                     border: OutlineInputBorder(
@@ -156,7 +169,7 @@ class _SignUpBuildState extends State<SignUpBuild> {
                 height: 20.0,
               ),
               TextFormField(
-                obscureText: true,
+                obscureText: showPassword,
                 validator: (value) {
                   if (value.isEmpty) {
                     return "Password cannot be empty";
@@ -170,9 +183,16 @@ class _SignUpBuildState extends State<SignUpBuild> {
                 decoration: InputDecoration(
                     contentPadding: new EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 10.0),
-                    prefixIcon: Icon(
-                      Icons.lock,
-                      color: Colors.grey,
+                    prefixIcon: InkWell(
+                      onTap: () {
+                        setState(() {
+                          showPassword = !showPassword;
+                        });
+                      },
+                      child: Icon(
+                        Icons.lock,
+                        color: Colors.grey,
+                      ),
                     ),
                     hintText: "CONFIRM-PASSWORD",
                     border: OutlineInputBorder(
@@ -180,7 +200,7 @@ class _SignUpBuildState extends State<SignUpBuild> {
                         borderSide: BorderSide(color: Colors.grey))),
               ),
               SizedBox(
-                height: 35.0,
+                height: 20.0,
               ),
               InkWell(
                 onTap: () async {
@@ -220,7 +240,7 @@ class _SignUpBuildState extends State<SignUpBuild> {
                   child: Center(
                     child: Text(
                       "PROCEED",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: GuruCoolLightColor.whiteColor),
                     ),
                   ),
                 ),
@@ -235,7 +255,7 @@ class _SignUpBuildState extends State<SignUpBuild> {
                 );
               }),
               SizedBox(
-                height: 30.0,
+                height: 20.0,
               ),
               GestureDetector(
                   onTap: () {

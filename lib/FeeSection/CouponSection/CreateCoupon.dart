@@ -1,5 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/random_string.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
@@ -94,7 +95,7 @@ class _CreateCouponState extends State<CreateCoupon> {
               alignment: Alignment.center,
               child: Text(
                 "Save",
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: GuruCoolLightColor.whiteColor),
               ),
             ),
           ),

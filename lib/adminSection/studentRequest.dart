@@ -4,6 +4,7 @@ import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/StudentProfilePage.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -31,7 +32,7 @@ class _StudentsRequestsState extends State<StudentsRequests> {
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
@@ -197,7 +198,7 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
       },
       child: Card(
         elevation: 5.0,
-        color: Colors.white,
+        color: GuruCoolLightColor.whiteColor,
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
         child: Column(
@@ -418,7 +419,7 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                 alignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   FlatButton(
-                    color: Color(0xffF36C24),
+                    color: GuruCoolLightColor.primaryColor,
                     onPressed: () {
                       if (selectedCourseID == null || selectedCourse == null) {
                         Alert.instance.alert(
@@ -482,19 +483,19 @@ class _StudentRequestListTileState extends State<StudentRequestListTile> {
                     child: Text(
                       'ACCEPT',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: GuruCoolLightColor.whiteColor,
                       ),
                     ),
                   ),
                   FlatButton(
-                    color: Color(0xffF36C24),
+                    color: GuruCoolLightColor.primaryColor,
                     onPressed: () {
                       ref.child(widget.keyS).remove();
                     },
                     child: Text(
                       'REJECT',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: GuruCoolLightColor.whiteColor,
                       ),
                     ),
                   ),

@@ -2,18 +2,18 @@ import 'dart:async';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Authentication/welcome_page.dart';
-import 'package:coach_app/Chat/home_page.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Dialogs/languageDialog.dart';
 import 'package:coach_app/Dialogs/replaceSubAdmin.dart';
 import 'package:coach_app/Drawer/CountDot.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/Drawer/my_institute.dart';
 import 'package:coach_app/Drawer/privacyNPolicies.dart';
 import 'package:coach_app/FeeSection/CouponSection/CouponList.dart';
 import 'package:coach_app/FeeSection/FeeReportPages/DueFeeReport.dart';
 import 'package:coach_app/Events/Calender.dart';
 import 'package:coach_app/Meeting/AllMeetingSession.dart';
+import 'package:coach_app/NewAuthentication/Frontened/NewWelcomePage.dart';
 import 'package:coach_app/Plugins/AppIcons.dart';
 import 'package:coach_app/Profile/TeacherProfile.dart';
 import 'package:coach_app/Profile/subAdminProfile.dart';
@@ -23,7 +23,6 @@ import 'package:coach_app/Student/all_course_view.dart';
 import 'package:coach_app/Student/course_page.dart';
 import 'package:coach_app/adminCorner/noticeBoard.dart';
 import 'package:coach_app/adminSection/Statistics.dart';
-import 'package:coach_app/adminSection/UploadContent.dart';
 import 'package:coach_app/adminSection/studentRequest.dart';
 import 'package:coach_app/InstituteAdmin/branchList.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
@@ -538,7 +537,7 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                         (value) {
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
-                                  builder: (context) => WelcomePage()),
+                                  builder: (context) => NewWelcomePage()),
                               (route) => false);
                         },
                       );
@@ -547,7 +546,7 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                         (value) {
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
-                                  builder: (context) => WelcomePage()),
+                                  builder: (context) => NewWelcomePage()),
                               (route) => false);
                         },
                       );
@@ -566,7 +565,7 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
 getAppBar(BuildContext context) {
   Size size = MediaQuery.of(context).size;
   return AppBar(
-    backgroundColor: Color(0xffF36C24),
+    backgroundColor: GuruCoolLightColor.primaryColor,
     title: StreamBuilder<Event>(
       stream: FirebaseDatabase.instance
           .reference()
@@ -580,7 +579,7 @@ getAppBar(BuildContext context) {
             maxLines: 2,
             style: GoogleFonts.portLligatSans(
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: GuruCoolLightColor.whiteColor,
             ),
           );
         }
@@ -618,7 +617,8 @@ getAppBar(BuildContext context) {
                           child: Center(
                             child: Text(
                               snapshot.data.snapshot.value,
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                  color: GuruCoolLightColor.whiteColor),
                             ),
                           ),
                         );
@@ -650,7 +650,8 @@ getAppBar(BuildContext context) {
                       borderRadius: BorderRadius.circular(
                         45.0,
                       ),
-                      border: Border.all(color: Colors.white, width: 3.0)),
+                      border: Border.all(
+                          color: GuruCoolLightColor.whiteColor, width: 3.0)),
                   child: CircleAvatar(
                     radius: 23.0,
                     backgroundImage: NetworkImage(
@@ -667,6 +668,7 @@ getAppBar(BuildContext context) {
       ],
     ),
     elevation: 0.0,
-    iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
+    iconTheme:
+        IconThemeData.fallback().copyWith(color: GuruCoolLightColor.whiteColor),
   );
 }

@@ -8,6 +8,7 @@ import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/InstituteAdmin/teachersPage.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/courses/content_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -67,13 +68,13 @@ class _ChapterPageState extends State<ChapterPage>
               Tab(
                 child: Text(
                   'Chapters',
-                  style: TextStyle(color: Color(0xffF36C24)),
+                  style: TextStyle(color: GuruCoolLightColor.primaryColor),
                 ),
               ),
               if (isAdmin)
                 Tab(
                   child: Text('Teachers',
-                      style: TextStyle(color: Color(0xffF36C24))),
+                      style: TextStyle(color: GuruCoolLightColor.primaryColor)),
                 ),
             ],
           ),
@@ -85,7 +86,7 @@ class _ChapterPageState extends State<ChapterPage>
             decoration: BoxDecoration(
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                    color: Colors.grey.shade200,
+                    color: GuruCoolLightColor.backgroundShade,
                     offset: Offset(2, 4),
                     blurRadius: 5,
                     spreadRadius: 2)
@@ -101,7 +102,7 @@ class _ChapterPageState extends State<ChapterPage>
                       child: Center(
                         child: Text(
                           'Chapters'.tr(),
-                          style: TextStyle(color: Color(0xffF36C24)),
+                          style: TextStyle(color: GuruCoolLightColor.primaryColor),
                         ),
                       ),
                     ),
@@ -158,7 +159,7 @@ class _ChapterPageState extends State<ChapterPage>
                                       title: Text(
                                         '${subjects.chapters[keys.toList()[index]].name}',
                                         style:
-                                            TextStyle(color: Color(0xffF36C24)),
+                                            TextStyle(color: GuruCoolLightColor.primaryColor),
                                       ),
                                       trailing: Container(
                                         height: 40,
@@ -180,7 +181,7 @@ class _ChapterPageState extends State<ChapterPage>
                                             ),
                                             Icon(
                                               Icons.chevron_right,
-                                              color: Color(0xffF36C24),
+                                              color: GuruCoolLightColor.primaryColor,
                                             ),
                                           ],
                                         ),
@@ -342,7 +343,7 @@ addChapter(BuildContext context, DatabaseReference reference,
           ),
           margin: EdgeInsets.only(top: 66.0),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: GuruCoolLightColor.whiteColor,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(16.0),
             boxShadow: [

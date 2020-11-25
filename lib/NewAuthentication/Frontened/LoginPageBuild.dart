@@ -2,6 +2,7 @@ import 'package:animator/animator.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:flutter/material.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:provider/provider.dart';
 
 class LoginPageBuild extends StatefulWidget {
@@ -121,7 +122,7 @@ class _LoginPageBuildState extends State<LoginPageBuild> {
                   child: Center(
                     child: Text(
                       "PROCEED",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: GuruCoolLightColor.whiteColor),
                     ),
                   ),
                 ),
@@ -136,7 +137,7 @@ class _LoginPageBuildState extends State<LoginPageBuild> {
                 );
               }),
               SizedBox(
-                height: 66.0,
+                height: 20.0,
               ),
               GestureDetector(
                   onTap: () {

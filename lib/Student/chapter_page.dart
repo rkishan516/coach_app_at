@@ -4,6 +4,7 @@ import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Student/content_page.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -41,7 +42,7 @@ class _ChapterPageState extends State<ChapterPage> {
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
@@ -54,7 +55,7 @@ class _ChapterPageState extends State<ChapterPage> {
               child: Center(
                 child: Text(
                   'Chapters'.tr(),
-                  style: TextStyle(color: Color(0xffF36C24)),
+                  style: TextStyle(color: GuruCoolLightColor.primaryColor),
                 ),
               ),
             ),
@@ -128,7 +129,8 @@ class _ChapterPageState extends State<ChapterPage> {
                                         ),
                                         Icon(
                                           Icons.chevron_right,
-                                          color: Color(0xffF36C24),
+                                          color:
+                                              GuruCoolLightColor.primaryColor,
                                         ),
                                       ],
                                     ),

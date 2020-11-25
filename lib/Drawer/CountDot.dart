@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:coach_app/Utils/Colors.dart';
 
 class CountDot extends StatelessWidget {
   final int count;
@@ -20,7 +21,7 @@ class CountDot extends StatelessWidget {
               child: Text(
                 count.toString(),
                 style: TextStyle(
-                  color: Colors.white,
+                  color: GuruCoolLightColor.whiteColor,
                   fontSize: 10.0,
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -184,7 +185,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
                       topLeft: Radius.circular(10),
                       topRight: Radius.circular(10),
                     ),
-                    color: Color(0xffF36C24),
+                    color: GuruCoolLightColor.primaryColor,
                   ),
                   child: Row(
                     children: [
@@ -192,7 +193,8 @@ class _TimeTablePageState extends State<TimeTablePage> {
                         child: Center(
                           child: Text(
                             'Timing',
-                            style: TextStyle(color: Colors.white),
+                            style:
+                                TextStyle(color: GuruCoolLightColor.whiteColor),
                           ),
                         ),
                       ),
@@ -210,14 +212,16 @@ class _TimeTablePageState extends State<TimeTablePage> {
                                   },
                                   child: Text(
                                     "<",
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(
+                                        color: GuruCoolLightColor.whiteColor),
                                   ),
                                 ),
                               ),
                             Center(
                               child: Text(
                                 day1,
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.whiteColor),
                               ),
                             ),
                           ],
@@ -229,7 +233,8 @@ class _TimeTablePageState extends State<TimeTablePage> {
                             Center(
                               child: Text(
                                 day2,
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.whiteColor),
                               ),
                             ),
                             if (day2 != "Saturday")
@@ -243,7 +248,8 @@ class _TimeTablePageState extends State<TimeTablePage> {
                                   },
                                   child: Text(
                                     ">",
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(
+                                        color: GuruCoolLightColor.whiteColor),
                                   ),
                                 ),
                               ),
@@ -307,7 +313,8 @@ class _TimeTablePageState extends State<TimeTablePage> {
                                           child: Text(
                                             time,
                                             style: TextStyle(
-                                                color: Color(0xffF36C24)),
+                                                color: GuruCoolLightColor
+                                                    .primaryColor),
                                             textAlign: TextAlign.center,
                                           ),
                                         ),
@@ -359,7 +366,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
           ),
           if (FireBaseAuth.instance.previlagelevel >= 3)
             RaisedButton(
-              color: Color(0xffF36C24),
+              color: GuruCoolLightColor.primaryColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(
                   20,
@@ -373,12 +380,12 @@ class _TimeTablePageState extends State<TimeTablePage> {
               }),
               child: Text(
                 'Add Row',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: GuruCoolLightColor.whiteColor),
               ),
             ),
           if (FireBaseAuth.instance.previlagelevel >= 3)
             RaisedButton(
-              color: Color(0xffF36C24),
+              color: GuruCoolLightColor.primaryColor,
               padding: EdgeInsets.only(left: 40, right: 40),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(
@@ -392,7 +399,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
               }),
               child: Text(
                 'Remove Row',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: GuruCoolLightColor.whiteColor),
               ),
             )
         ],
@@ -695,7 +702,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
               ),
               margin: EdgeInsets.only(top: 66.0),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: GuruCoolLightColor.whiteColor,
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(16.0),
                 boxShadow: [

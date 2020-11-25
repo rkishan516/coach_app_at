@@ -4,6 +4,7 @@ import 'package:coach_app/Drawer/NewBannerShow.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/YT_player/pdf_player.dart';
 import 'package:coach_app/YT_player/quiz_player.dart';
 import 'package:coach_app/YT_player/yt_player.dart';
@@ -38,7 +39,7 @@ class _ContentPageState extends State<ContentPage> {
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
@@ -101,8 +102,9 @@ class _ContentPageState extends State<ContentPage> {
                                 borderRadius: BorderRadius.circular(10)),
                             child: ListTile(
                               leading: CircleAvatar(
-                                backgroundColor:
-                                    isEnabled ? Color(0xffF36C24) : null,
+                                backgroundColor: isEnabled
+                                    ? GuruCoolLightColor.primaryColor
+                                    : null,
                                 child: Icon(
                                   chapter.content[keys.toList()[index]].kind ==
                                           'Youtube Video'
@@ -112,7 +114,7 @@ class _ContentPageState extends State<ContentPage> {
                                               'PDF'
                                           ? Icons.library_books
                                           : Icons.question_answer,
-                                  color: Colors.white,
+                                  color: GuruCoolLightColor.whiteColor,
                                 ),
                               ),
                               enabled: isEnabled,
@@ -132,7 +134,7 @@ class _ContentPageState extends State<ContentPage> {
                                     ),
                                     Icon(
                                       Icons.chevron_right,
-                                      color: Color(0xffF36C24),
+                                      color: GuruCoolLightColor.primaryColor,
                                     ),
                                   ],
                                 ),

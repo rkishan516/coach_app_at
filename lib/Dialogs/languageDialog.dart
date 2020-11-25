@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:coach_app/Dialogs/SucessDialog.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +24,7 @@ class LanguageDialog extends StatelessWidget {
         ),
         margin: EdgeInsets.only(top: 66.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: GuruCoolLightColor.whiteColor,
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.circular(16.0),
           boxShadow: [
@@ -68,7 +69,7 @@ class LanguageDialog extends StatelessWidget {
                     child: Text('हिन्दी'),
                   ),
                   FlatButton(
-                    color: Color(0xffF36C24),
+                    color: GuruCoolLightColor.primaryColor,
                     onPressed: () {
                       EasyLocalization.of(context).locale = Locale('en');
                       showDialog(
@@ -84,7 +85,7 @@ class LanguageDialog extends StatelessWidget {
                     },
                     child: Text(
                       'English',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: GuruCoolLightColor.whiteColor),
                     ),
                   ),
                 ],

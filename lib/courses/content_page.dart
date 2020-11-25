@@ -7,6 +7,7 @@ import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/QuizResponse/quiz_display.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/YT_player/pdf_player.dart';
 import 'package:coach_app/YT_player/quiz_player.dart';
 import 'package:coach_app/YT_player/yt_player.dart';
@@ -45,7 +46,7 @@ class _ContentPageState extends State<ContentPage> {
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
@@ -99,17 +100,17 @@ class _ContentPageState extends State<ContentPage> {
                                               'PDF'
                                           ? Icons.library_books
                                           : Icons.question_answer,
-                                  color: Colors.white,
+                                  color: GuruCoolLightColor.whiteColor,
                                 ),
-                                backgroundColor: Color(0xffF36C24),
+                                backgroundColor: GuruCoolLightColor.primaryColor,
                               ),
                               title: Text(
                                 '${chapter.content[keys.toList()[index]].title}',
-                                style: TextStyle(color: Color(0xffF36C24)),
+                                style: TextStyle(color: GuruCoolLightColor.primaryColor),
                               ),
                               subtitle: Text(
                                 '${chapter.content[keys.toList()[index]].time ?? 'Before 19 July'}',
-                                style: TextStyle(color: Color(0xffF36C24)),
+                                style: TextStyle(color: GuruCoolLightColor.primaryColor),
                               ),
                               trailing: Container(
                                 height: 40,
@@ -123,7 +124,7 @@ class _ContentPageState extends State<ContentPage> {
                                     ),
                                     Icon(
                                       Icons.chevron_right,
-                                      color: Color(0xffF36C24),
+                                      color: GuruCoolLightColor.primaryColor,
                                     ),
                                   ],
                                 ),
@@ -325,7 +326,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
             ),
             margin: EdgeInsets.only(top: 66.0),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: GuruCoolLightColor.whiteColor,
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(16.0),
               boxShadow: [
@@ -440,7 +441,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                     children: <Widget>[
                       if (type == "Youtube Video" && widget.keyC == null)
                         RaisedButton(
-                          color: Colors.white,
+                          color: GuruCoolLightColor.whiteColor,
                           onPressed: () async {
                             file = await FilePicker.getFile();
                           },
@@ -530,11 +531,11 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                                 .update(content.toJson());
                           }
                         },
-                        color: Color(0xffF36C24),
+                        color: GuruCoolLightColor.primaryColor,
                         child: Text(
                           'Add Content'.tr(),
                           style: TextStyle(
-                            color: Colors.white,
+                            color: GuruCoolLightColor.whiteColor,
                           ),
                         ),
                       ),

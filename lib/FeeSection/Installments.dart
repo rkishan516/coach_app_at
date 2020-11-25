@@ -1,6 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:flutter/material.dart';
 
 class Installments extends StatefulWidget {
@@ -84,7 +85,7 @@ class _InstallmentsState extends State<Installments> {
                   borderRadius: BorderRadius.circular(
                     10,
                   ),
-                  color: Color(0xffF36C24),
+                  color: GuruCoolLightColor.primaryColor,
                 ),
                 child: Column(
                   children: [
@@ -93,12 +94,13 @@ class _InstallmentsState extends State<Installments> {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           '${index + 1} Installment',
-                          style: TextStyle(color: Colors.white),
+                          style:
+                              TextStyle(color: GuruCoolLightColor.whiteColor),
                         ),
                       ),
                     ),
                     Divider(
-                      color: Colors.white,
+                      color: GuruCoolLightColor.whiteColor,
                       height: 2,
                       thickness: 4,
                     ),
@@ -112,7 +114,7 @@ class _InstallmentsState extends State<Installments> {
                             child: Text(
                               'Amount',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: GuruCoolLightColor.whiteColor,
                               ),
                             ),
                           )),
@@ -125,7 +127,7 @@ class _InstallmentsState extends State<Installments> {
                                   //TODO
                                 },
                                 controller: _listEditingControllerMoney[index],
-                                style: TextStyle(color: Color(0xffF36C24)),
+                                style: TextStyle(color: GuruCoolLightColor.primaryColor),
                                 textAlign: TextAlign.center,
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
@@ -138,11 +140,12 @@ class _InstallmentsState extends State<Installments> {
                                         borderRadius: BorderRadius.circular(
                                           10,
                                         ),
-                                        borderSide:
-                                            BorderSide(color: Colors.white)),
+                                        borderSide: BorderSide(
+                                            color:
+                                                GuruCoolLightColor.whiteColor)),
                                     contentPadding: EdgeInsets.only(top: 0),
                                     filled: true,
-                                    fillColor: Colors.white,
+                                    fillColor: GuruCoolLightColor.whiteColor,
                                     hintText: "Enter value"),
                               ),
                             ),
@@ -151,8 +154,9 @@ class _InstallmentsState extends State<Installments> {
                             padding: const EdgeInsets.only(right: 8),
                             child: Text(
                               '₹',
-                              style:
-                                  TextStyle(fontSize: 22, color: Colors.white),
+                              style: TextStyle(
+                                  fontSize: 22,
+                                  color: GuruCoolLightColor.whiteColor),
                             ),
                           )
                         ],
@@ -167,7 +171,7 @@ class _InstallmentsState extends State<Installments> {
                             child: Text(
                               'Last Submission Date',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: GuruCoolLightColor.whiteColor,
                               ),
                             ),
                           ),
@@ -181,7 +185,7 @@ class _InstallmentsState extends State<Installments> {
                                 //TODO
                               },
                               controller: _listEditingControllerDD[index],
-                              style: TextStyle(color: Color(0xffF36C24)),
+                              style: TextStyle(color: GuruCoolLightColor.primaryColor),
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
@@ -194,13 +198,14 @@ class _InstallmentsState extends State<Installments> {
                                       borderRadius: BorderRadius.circular(
                                         10,
                                       ),
-                                      borderSide:
-                                          BorderSide(color: Colors.white)),
+                                      borderSide: BorderSide(
+                                          color:
+                                              GuruCoolLightColor.whiteColor)),
                                   contentPadding: EdgeInsets.only(top: 0),
                                   filled: true,
-                                  fillColor: Colors.white,
+                                  fillColor: GuruCoolLightColor.whiteColor,
                                   hintStyle:
-                                      TextStyle(color: Color(0xffF36C24)),
+                                      TextStyle(color: GuruCoolLightColor.primaryColor),
                                   hintText: "DD"),
                             ),
                           ),
@@ -210,15 +215,16 @@ class _InstallmentsState extends State<Installments> {
                           child: Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: DropdownButton<String>(
-                              iconEnabledColor: Colors.white,
-                              dropdownColor: Color(0xffF36C24),
+                              iconEnabledColor: GuruCoolLightColor.whiteColor,
+                              dropdownColor: GuruCoolLightColor.primaryColor,
                               items: durationperiod
                                   .map((String dropDownStringitem) {
                                 return DropdownMenuItem<String>(
                                   value: dropDownStringitem,
                                   child: Text(
                                     dropDownStringitem,
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(
+                                        color: GuruCoolLightColor.whiteColor),
                                   ),
                                 );
                               }).toList(),
@@ -231,7 +237,8 @@ class _InstallmentsState extends State<Installments> {
                               isExpanded: true,
                               hint: Text(
                                 'MM',
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.whiteColor),
                               ),
                               value: _currentDurationSelected[index],
                             ),
@@ -246,7 +253,7 @@ class _InstallmentsState extends State<Installments> {
                                 //TODO
                               },
                               controller: _listEditingControllerYYYY[index],
-                              style: TextStyle(color: Color(0xffF36C24)),
+                              style: TextStyle(color: GuruCoolLightColor.primaryColor),
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
@@ -259,12 +266,12 @@ class _InstallmentsState extends State<Installments> {
                                     borderRadius: BorderRadius.circular(
                                       10,
                                     ),
-                                    borderSide:
-                                        BorderSide(color: Colors.white)),
+                                    borderSide: BorderSide(
+                                        color: GuruCoolLightColor.whiteColor)),
                                 contentPadding: EdgeInsets.only(top: 0),
                                 filled: true,
-                                fillColor: Colors.white,
-                                hintStyle: TextStyle(color: Color(0xffF36C24)),
+                                fillColor: GuruCoolLightColor.whiteColor,
+                                hintStyle: TextStyle(color: GuruCoolLightColor.primaryColor),
                                 hintText: "YYYY",
                               ),
                             ),
@@ -333,13 +340,13 @@ class _InstallmentsState extends State<Installments> {
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.0),
-            color: Color(0xffF36C24)),
+            color: GuruCoolLightColor.primaryColor),
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(vertical: 15),
         alignment: Alignment.center,
         child: Text(
           "Confirm",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: GuruCoolLightColor.whiteColor),
         ),
       ),
     );
@@ -429,19 +436,19 @@ class _InstallmentsState extends State<Installments> {
                   controller: _maxInstallText,
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: GuruCoolLightColor.whiteColor),
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Color(0xffF36C24),
+                    fillColor: GuruCoolLightColor.primaryColor,
                     enabled: !widget.toggleValue,
                     border: OutlineInputBorder(),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(
-                        color: Colors.white,
+                        color: GuruCoolLightColor.whiteColor,
                       ),
                     ),
-                    hintStyle: TextStyle(color: Colors.white),
+                    hintStyle: TextStyle(color: GuruCoolLightColor.whiteColor),
                     hintText: "Enter No. of Installments",
                   ),
                 ),
@@ -452,7 +459,7 @@ class _InstallmentsState extends State<Installments> {
             height: 10.0,
           ),
           Container(
-              color: Colors.white,
+              color: GuruCoolLightColor.whiteColor,
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.66,
               child: _createTextFields(noOfTextFields)),

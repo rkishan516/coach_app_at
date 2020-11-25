@@ -9,6 +9,7 @@ import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/InstituteAdmin/studentList.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/TimeTableSection/TimeTablePage.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/adminSection/teacherRegister.dart';
 import 'package:coach_app/courses/chapter_page.dart';
 import 'package:coach_app/courses/subject_page.dart';
@@ -57,16 +58,16 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
               Tab(
                 child: Text(
                   'Subjects',
-                  style: TextStyle(color: Color(0xffF36C24)),
+                  style: TextStyle(color: GuruCoolLightColor.primaryColor),
                 ),
               ),
               Tab(
                 child: Text('Students',
-                    style: TextStyle(color: Color(0xffF36C24))),
+                    style: TextStyle(color: GuruCoolLightColor.primaryColor)),
               ),
               Tab(
                 child: Text('Time Table',
-                    style: TextStyle(color: Color(0xffF36C24))),
+                    style: TextStyle(color: GuruCoolLightColor.primaryColor)),
               ),
             ],
           ),
@@ -78,7 +79,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
             decoration: BoxDecoration(
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                    color: Colors.grey.shade200,
+                    color: GuruCoolLightColor.backgroundShade,
                     offset: Offset(2, 4),
                     blurRadius: 5,
                     spreadRadius: 2)
@@ -94,7 +95,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                       child: Center(
                         child: Text(
                           'Subjects'.tr(),
-                          style: TextStyle(color: Color(0xffF36C24)),
+                          style: TextStyle(color: GuruCoolLightColor.primaryColor),
                         ),
                       ),
                     ),
@@ -168,7 +169,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                         title: Text(
                                           '${courses.subjects[keys.toList()[index]].name}',
                                           style: TextStyle(
-                                              color: Color(0xffF36C24)),
+                                              color: GuruCoolLightColor.primaryColor),
                                         ),
                                         trailing: Container(
                                           height: 40,
@@ -183,7 +184,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                               ),
                                               Icon(
                                                 Icons.chevron_right,
-                                                color: Color(0xffF36C24),
+                                                color: GuruCoolLightColor.primaryColor,
                                               ),
                                             ],
                                           ),
@@ -297,7 +298,7 @@ addSubject(BuildContext context, String courseId,
           ),
           margin: EdgeInsets.only(top: 66.0),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: GuruCoolLightColor.whiteColor,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(16.0),
             boxShadow: [

@@ -1,3 +1,4 @@
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:flutter/material.dart';
 
 class MalFunctionedAPK extends StatelessWidget {
@@ -16,7 +17,7 @@ class MalFunctionedAPK extends StatelessWidget {
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
@@ -24,7 +25,7 @@ class MalFunctionedAPK extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.white, Color(0xffF36C24)],
+            colors: [GuruCoolLightColor.whiteColor, GuruCoolLightColor.primaryColor],
           ),
         ),
         child: Column(
@@ -35,7 +36,7 @@ class MalFunctionedAPK extends StatelessWidget {
               child: Text(
                 'Please re-download the app from Google Play Store',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: GuruCoolLightColor.whiteColor),
               ),
             ),
             Expanded(child: Container(), flex: 6),

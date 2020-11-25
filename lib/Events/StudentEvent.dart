@@ -4,6 +4,7 @@ import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Events/FirebaseMessaging.dart';
 import 'package:coach_app/Events/videoConferencing.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -101,7 +102,7 @@ class _StudentEventState extends State<StudentEvent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: GuruCoolLightColor.whiteColor,
         title: Text('All Sessions'.tr()),
         elevation: 0.0,
       ),
@@ -113,7 +114,7 @@ class _StudentEventState extends State<StudentEvent> {
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
@@ -121,7 +122,7 @@ class _StudentEventState extends State<StudentEvent> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.white, Color(0xffF36C24)],
+            colors: [GuruCoolLightColor.whiteColor, GuruCoolLightColor.primaryColor],
           ),
         ),
         child: (_allEvent?.length == 0)
@@ -134,14 +135,14 @@ class _StudentEventState extends State<StudentEvent> {
                 itemCount: _allEvent.length,
                 itemBuilder: (BuildContext context, int index) {
                   return Card(
-                    color: Colors.white,
+                    color: GuruCoolLightColor.whiteColor,
                     elevation: 2.0,
                     child: ListTile(
                       leading: CircleAvatar(
                         child: Icon(
                           Icons.video_call,
                           color: _allEvent[index].isStarted == 1
-                              ? Color(0xffF36C24)
+                              ? GuruCoolLightColor.primaryColor
                               : Colors.grey,
                         ),
                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class AreYouSure extends StatelessWidget {
@@ -22,7 +23,7 @@ class AreYouSure extends StatelessWidget {
         ),
         margin: EdgeInsets.only(top: 66.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: GuruCoolLightColor.whiteColor,
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.circular(16.0),
           boxShadow: [
@@ -56,13 +57,13 @@ class AreYouSure extends StatelessWidget {
                     child: Text('No'.tr()),
                   ),
                   FlatButton(
-                    color: Color(0xffF36C24),
+                    color: GuruCoolLightColor.primaryColor,
                     onPressed: () {
                       Navigator.of(context).pop('Yes');
                     },
                     child: Text(
                       'Yes'.tr(),
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: GuruCoolLightColor.whiteColor),
                     ),
                   ),
                 ],

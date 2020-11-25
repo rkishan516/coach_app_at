@@ -7,6 +7,7 @@ import 'package:coach_app/FeeSection/StudentReport/PaymentType.dart';
 import 'package:coach_app/FeeSection/StudentSection/installmentList.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -34,11 +35,12 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
           title: Text(
             'Course Description'.tr(),
             style: TextStyle(
-              color: Colors.white,
+              color: GuruCoolLightColor.whiteColor,
             ),
           ),
           elevation: 0,
-          iconTheme: IconThemeData.fallback().copyWith(color: Colors.white)),
+          iconTheme: IconThemeData.fallback()
+              .copyWith(color: GuruCoolLightColor.whiteColor)),
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
@@ -61,14 +63,14 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                               widget.name,
                               style: TextStyle(
                                 fontSize: 32,
-                                color: Colors.white,
+                                color: GuruCoolLightColor.whiteColor,
                               ),
                             ),
                           ),
                           Text(
                             snapshot.data.snapshot.value,
                             style: TextStyle(
-                              color: Colors.white,
+                              color: GuruCoolLightColor.whiteColor,
                             ),
                           ),
                         ],
@@ -189,9 +191,11 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                         },
                                         child: Text(
                                           'Paid Offline',
-                                          style: TextStyle(color: Colors.white),
+                                          style: TextStyle(
+                                              color: GuruCoolLightColor
+                                                  .whiteColor),
                                         ),
-                                        color: Color(0xffF36C24),
+                                        color: GuruCoolLightColor.primaryColor,
                                       ),
                                     ),
                                   StreamBuilder<Event>(
@@ -213,7 +217,8 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                               borderRadius:
                                                   BorderRadius.circular(10)),
                                           child: FlatButton(
-                                            color: Color(0xffF36C24),
+                                            color:
+                                                GuruCoolLightColor.primaryColor,
                                             child: StreamBuilder<Event>(
                                                 stream: widget.ref
                                                     .child('price')
@@ -226,7 +231,9 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                                       'Buy Course @ Rs.'.tr() +
                                                           ' ${snapshot.data.snapshot.value}',
                                                       style: TextStyle(
-                                                          color: Colors.white),
+                                                          color:
+                                                              GuruCoolLightColor
+                                                                  .whiteColor),
                                                     );
                                                   } else {
                                                     return CircularProgressIndicator();
@@ -239,13 +246,15 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                                   null) {
                                                 FireBaseAuth
                                                         .instance.instituteid =
-                                                    FireBaseAuth.instance.prefs.get('insCode');
+                                                    FireBaseAuth.instance.prefs
+                                                        .get('insCode');
                                               }
                                               if (FireBaseAuth
                                                       .instance.branchid ==
                                                   null) {
                                                 FireBaseAuth.instance.branchid =
-                                                    FireBaseAuth.instance.prefs.get('branchCode');
+                                                    FireBaseAuth.instance.prefs
+                                                        .get('branchCode');
                                               }
 
                                               await Navigator.of(context).push(

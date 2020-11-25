@@ -8,6 +8,7 @@ import 'package:coach_app/Dialogs/multiselectDialogs.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class MidAdminRegister extends StatefulWidget {
@@ -58,7 +59,7 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
         ),
         margin: EdgeInsets.only(top: 66.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: GuruCoolLightColor.whiteColor,
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.circular(16.0),
           boxShadow: [

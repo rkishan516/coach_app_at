@@ -4,6 +4,7 @@ import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/adminSection/addCourse.dart';
 import 'package:coach_app/adminSection/adminSubjectPage.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -32,7 +33,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
@@ -44,7 +45,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
               child: Center(
                 child: Text(
                   'Courses'.tr(),
-                  style: TextStyle(color: Color(0xffF36C24)),
+                  style: TextStyle(color: GuruCoolLightColor.primaryColor),
                 ),
               ),
             ),
@@ -149,7 +150,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                             child: ListTile(
                               title: Text(
                                 '${courses[index].name}',
-                                style: TextStyle(color: Color(0xffF36C24)),
+                                style: TextStyle(color: GuruCoolLightColor.primaryColor),
                               ),
                               trailing: Container(
                                 height: 40,
@@ -163,7 +164,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                     ),
                                     Icon(
                                       Icons.chevron_right,
-                                      color: Color(0xffF36C24),
+                                      color: GuruCoolLightColor.primaryColor,
                                     ),
                                   ],
                                 ),

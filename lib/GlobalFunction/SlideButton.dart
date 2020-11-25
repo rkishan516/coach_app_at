@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:coach_app/Utils/Colors.dart';
 
 class SlideButton extends StatelessWidget {
   final String text;
@@ -22,7 +23,7 @@ class SlideButton extends StatelessWidget {
             borderRadius: BorderRadius.all(
               Radius.circular(50.0),
             ),
-            color: Colors.white),
+            color: GuruCoolLightColor.whiteColor),
         height: height,
         width: width,
         child: Row(
@@ -67,7 +68,7 @@ class SlideButtonR extends StatelessWidget {
             borderRadius: BorderRadius.all(
               Radius.circular(50.0),
             ),
-            color: Colors.white),
+            color: GuruCoolLightColor.whiteColor),
         height: height,
         width: width,
         child: Row(
@@ -124,7 +125,7 @@ class SlideButtonCovered extends StatelessWidget {
               padding: const EdgeInsets.all(2.0),
               child: CircleAvatar(
                 child: icon == null ? Icon(Icons.add) : icon,
-                backgroundColor: Colors.white,
+                backgroundColor: GuruCoolLightColor.whiteColor,
               ),
             ),
             Padding(
@@ -132,7 +133,7 @@ class SlideButtonCovered extends StatelessWidget {
               child: Center(
                 child: Text(
                   text.tr(),
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: GuruCoolLightColor.whiteColor),
                 ),
               ),
             ),

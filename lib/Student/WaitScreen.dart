@@ -1,5 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Authentication/welcome_page.dart';
+import 'package:coach_app/NewAuthentication/Frontened/NewWelcomePage.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class WaitScreen extends StatelessWidget {
           decoration: BoxDecoration(
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  color: Colors.grey.shade200,
+                  color: GuruCoolLightColor.backgroundShade,
                   offset: Offset(2, 4),
                   blurRadius: 5,
                   spreadRadius: 2,
@@ -26,7 +27,7 @@ class WaitScreen extends StatelessWidget {
               gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.white, Color(0xffF36C24)])),
+                  colors: [GuruCoolLightColor.whiteColor, Color(0xffF36C24)])),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Center(
@@ -36,7 +37,7 @@ class WaitScreen extends StatelessWidget {
                   Center(
                     child: Text(
                       'You will get admission in your digital institute as soon as administrator permits you',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      style: TextStyle(color: GuruCoolLightColor.whiteColor, fontSize: 18),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -52,12 +53,12 @@ class WaitScreen extends StatelessWidget {
                       FireBaseAuth.instance.signoutWithGoogle();
                       Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
-                              builder: (context) => WelcomePage()),
+                              builder: (context) => NewWelcomePage()),
                           (route) => false);
                     },
                     child: Text(
                       'Withdraw Request',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: GuruCoolLightColor.whiteColor),
                     ),
                     color: Colors.transparent,
                   ),

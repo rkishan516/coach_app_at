@@ -1,5 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Payment/razorPay.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -80,7 +81,9 @@ class _StuInstallmentState extends State<StuInstallment> {
 
             int durationinDays = period == "Day(s)"
                 ? count
-                : period == "Month(s)" ? count * 30 : count * 365;
+                : period == "Month(s)"
+                    ? count * 30
+                    : count * 365;
 
             if (durationinDays != 0) {
               double val = double.parse(((difference / durationinDays).ceil() *
@@ -200,7 +203,9 @@ class _StuInstallmentState extends State<StuInstallment> {
 
                 int durationinDays = period == "Day(s)"
                     ? count
-                    : period == "Month(s)" ? count * 30 : count * 365;
+                    : period == "Month(s)"
+                        ? count * 30
+                        : count * 365;
 
                 if (durationinDays != 0) {
                   double val = double.parse(
@@ -348,7 +353,7 @@ class _StuInstallmentState extends State<StuInstallment> {
           ),
           Container(
             padding: EdgeInsets.all(3.0),
-            // color: Color(0xffF36C24),
+            // color: GuruCoolLightColor.primaryColor,
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.65,
             child: ListView.builder(
@@ -383,7 +388,7 @@ class _StuInstallmentState extends State<StuInstallment> {
                           Text((index + 1).toString(),
                               style: TextStyle(
                                   fontSize: SizeConfig.b * 12,
-                                  color: Colors.white,
+                                  color: GuruCoolLightColor.whiteColor,
                                   fontWeight: FontWeight.w300)),
                           SizedBox(width: SizeConfig.b * 4.5),
                           Column(
@@ -400,13 +405,13 @@ class _StuInstallmentState extends State<StuInstallment> {
                                   "End Time : ${_listInstallment[index].duration.replaceAll(" ", "/")}",
                                   style: TextStyle(
                                       fontSize: SizeConfig.b * 4,
-                                      color: Colors.white,
+                                      color: GuruCoolLightColor.whiteColor,
                                       fontWeight: FontWeight.w400)),
                               SizedBox(height: SizeConfig.v * 0.2),
                               Text("Status : ${_listInstallment[index].status}",
                                   style: TextStyle(
                                       fontSize: SizeConfig.b * 4,
-                                      color: Colors.white,
+                                      color: GuruCoolLightColor.whiteColor,
                                       fontWeight: FontWeight.w400))
                             ],
                           ),
@@ -415,7 +420,8 @@ class _StuInstallmentState extends State<StuInstallment> {
                             elevation: 10,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(18.0),
-                                side: BorderSide(color: Colors.white)),
+                                side: BorderSide(
+                                    color: GuruCoolLightColor.whiteColor)),
                             onPressed: () async {
                               if (buttonStatus == "Pay Now") {
                                 if (index != 0)
@@ -510,7 +516,7 @@ class _StuInstallmentState extends State<StuInstallment> {
                                 }
                               }
                             },
-                            color: Colors.white,
+                            color: GuruCoolLightColor.whiteColor,
                             textColor: Color.fromARGB(255, 243, 107, 40),
                             child: Text(buttonStatus,
                                 style: TextStyle(fontSize: SizeConfig.b * 3.5)),

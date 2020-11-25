@@ -1,3 +1,4 @@
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:flutter/material.dart';
 
 import 'FullReport.dart';
@@ -26,9 +27,7 @@ class _FineReportState extends State<FineReport> {
           list.add(element);
           _coresspondingmap[element.uid] = index;
         }
-      } catch (e) {
-        
-      }
+      } catch (e) {}
     });
     setState(() {
       _studentList = list;
@@ -75,7 +74,7 @@ class _FineReportState extends State<FineReport> {
                       style: TextStyle(
                         color: _studentList[index]?.paymentType == "Online"
                             ? Colors.green
-                            : Color(0xffF36C24),
+                            : GuruCoolLightColor.primaryColor,
                         fontSize: 16,
                       ),
                     ),

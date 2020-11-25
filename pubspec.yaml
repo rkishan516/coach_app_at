@@ -45,6 +45,7 @@ dependencies:
   esys_flutter_share:
   shared_preferences:
   firebase_messaging:
+  table_calendar:
   flutter_local_notifications:
   fancy_bottom_navigation:
   flutter_inappwebview:

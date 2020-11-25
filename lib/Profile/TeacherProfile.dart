@@ -2,6 +2,7 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +75,7 @@ class TeacherProfilePage extends StatelessWidget {
                                   "${teacher.name}",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: Colors.white,
+                                      color: GuruCoolLightColor.whiteColor,
                                       fontSize: SizeConfig.b * 7.5),
                                   maxLines: 3,
                                 ),
@@ -87,7 +88,7 @@ class TeacherProfilePage extends StatelessWidget {
                                   "${teacher.email}",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: Colors.white,
+                                      color: GuruCoolLightColor.whiteColor,
                                       fontSize: SizeConfig.b * 4.8),
                                   maxLines: 3,
                                 ),
@@ -112,7 +113,7 @@ class TeacherProfilePage extends StatelessWidget {
                                   ? Text(
                                       '${teacher?.name[0].toUpperCase()}',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: GuruCoolLightColor.whiteColor,
                                         fontSize: 22,
                                       ),
                                     )
@@ -165,13 +166,15 @@ class TeacherProfilePage extends StatelessWidget {
                                           Text(course?.name ?? '',
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
-                                                  color: Colors.white,
+                                                  color: GuruCoolLightColor
+                                                      .whiteColor,
                                                   fontSize:
                                                       SizeConfig.b * 5.5)),
                                           SizedBox(
                                               height: SizeConfig.v * 0.271),
                                           Divider(
-                                            color: Colors.white,
+                                            color:
+                                                GuruCoolLightColor.whiteColor,
                                             thickness: SizeConfig.v * 0.475,
                                           ),
                                           SizedBox(
@@ -196,7 +199,8 @@ class TeacherProfilePage extends StatelessWidget {
                                                     style: TextStyle(
                                                       fontSize:
                                                           SizeConfig.b * 9,
-                                                      color: Colors.white,
+                                                      color: GuruCoolLightColor
+                                                          .whiteColor,
                                                     ),
                                                   ),
                                                   SizedBox(
@@ -213,7 +217,8 @@ class TeacherProfilePage extends StatelessWidget {
                                                     style: TextStyle(
                                                       fontSize:
                                                           SizeConfig.b * 5,
-                                                      color: Colors.white,
+                                                      color: GuruCoolLightColor
+                                                          .whiteColor,
                                                     ),
                                                   ),
                                                 ],
@@ -322,7 +327,7 @@ class TeacherProfilePage extends StatelessWidget {
                                   child: RaisedButton(
                                     child: Icon(
                                       Icons.call,
-                                      color: Colors.white,
+                                      color: GuruCoolLightColor.whiteColor,
                                       size: SizeConfig.v * 4.2,
                                     ),
                                     elevation: 10,

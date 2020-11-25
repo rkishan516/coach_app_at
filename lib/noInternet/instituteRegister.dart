@@ -10,6 +10,7 @@ import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/GlobalFunction/VyCode.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -71,12 +72,15 @@ class _InstituteRegisterState extends State<InstituteRegister> {
         title: Text(
           'Institute Registration'.tr(),
           style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 22, color: Colors.white),
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+              color: GuruCoolLightColor.whiteColor),
         ),
-        backgroundColor: Color(0xffF36C24),
+        backgroundColor: GuruCoolLightColor.primaryColor,
         elevation: 0,
         centerTitle: true,
-        iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
+        iconTheme: IconThemeData.fallback()
+            .copyWith(color: GuruCoolLightColor.whiteColor),
       ),
       body: Container(
         padding: EdgeInsets.only(left: 16.0, right: 16.0),
@@ -85,7 +89,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
@@ -93,7 +97,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xffF36C24), Colors.white],
+            colors: [GuruCoolLightColor.primaryColor, GuruCoolLightColor.whiteColor],
           ),
         ),
         child: Form(
@@ -294,7 +298,8 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                           radius: 15,
                           child: Text(
                             '?',
-                            style: TextStyle(color: Colors.white),
+                            style:
+                                TextStyle(color: GuruCoolLightColor.whiteColor),
                           ),
                         ),
                         onTap: () => showDialog(
@@ -376,7 +381,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                       child: FlatButton(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
-                        color: Color(0xffF36C24),
+                        color: GuruCoolLightColor.primaryColor,
                         onPressed: () async {
                           try {
                             await getImage();
@@ -384,7 +389,8 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                         },
                         child: Text(
                           'Institute Logo'.tr(),
-                          style: TextStyle(color: Colors.white),
+                          style:
+                              TextStyle(color: GuruCoolLightColor.whiteColor),
                         ),
                       ),
                     ),
@@ -395,7 +401,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                     child: RaisedButton(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
-                      color: Color(0xffF36C24),
+                      color: GuruCoolLightColor.primaryColor,
                       onPressed: () {
                         if (!_formKey.currentState.validate()) {
                           return;
@@ -564,11 +570,12 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                         children: <Widget>[
                           Text(
                             'Register'.tr(),
-                            style: TextStyle(color: Colors.white),
+                            style:
+                                TextStyle(color: GuruCoolLightColor.whiteColor),
                           ),
                           Icon(
                             Icons.keyboard_arrow_right,
-                            color: Colors.white,
+                            color: GuruCoolLightColor.whiteColor,
                           )
                         ],
                       ),

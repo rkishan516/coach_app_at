@@ -7,6 +7,7 @@ import 'package:coach_app/Events/videoConferencing.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Models/random_string.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -181,7 +182,7 @@ class _CalenderState extends State<Calender> {
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
@@ -192,22 +193,23 @@ class _CalenderState extends State<Calender> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Card(
-              color: Colors.white,
+              color: GuruCoolLightColor.whiteColor,
               child: TableCalendar(
                   events: _events,
                   calendarStyle: CalendarStyle(
-                      todayColor: Color(0xffF36C24),
+                      todayColor: GuruCoolLightColor.primaryColor,
                       todayStyle: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18.0,
-                          color: Colors.white)),
+                          color: GuruCoolLightColor.whiteColor)),
                   headerStyle: HeaderStyle(
                       centerHeaderTitle: true,
                       formatButtonDecoration: BoxDecoration(
-                        color: Color(0xffF36C24),
+                        color: GuruCoolLightColor.primaryColor,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                      formatButtonTextStyle: TextStyle(color: Colors.white),
+                      formatButtonTextStyle:
+                          TextStyle(color: GuruCoolLightColor.whiteColor),
                       formatButtonShowsNext: false),
                   onDaySelected: (date, events) {
                     String _month = date.month.toString();
@@ -238,10 +240,10 @@ class _CalenderState extends State<Calender> {
                       margin: EdgeInsets.all(4.0),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                          color: Color(0xffF36C24), shape: BoxShape.circle),
+                          color: GuruCoolLightColor.primaryColor, shape: BoxShape.circle),
                       child: Text(
                         date.day.toString(),
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: GuruCoolLightColor.whiteColor),
                       ),
                     );
                   }),
@@ -250,7 +252,9 @@ class _CalenderState extends State<Calender> {
             ..._selectedEvents.map((e) {
               int isStarted = e.isStarted;
               return Card(
-                color: isStarted == 1 ? Colors.blue : Colors.white,
+                color: isStarted == 1
+                    ? Colors.blue
+                    : GuruCoolLightColor.whiteColor,
                 elevation: 2.0,
                 child: ListTile(
                   onTap: () async {
@@ -338,7 +342,7 @@ class _CalenderState extends State<Calender> {
                   ),
                   leading: Icon(
                     Icons.video_call,
-                    color: Color(0xffF36C24),
+                    color: GuruCoolLightColor.primaryColor,
                   ),
                 ),
               );

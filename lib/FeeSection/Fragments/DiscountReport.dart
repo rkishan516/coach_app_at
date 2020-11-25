@@ -1,3 +1,4 @@
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:flutter/material.dart';
 
 import 'FullReport.dart';
@@ -59,7 +60,7 @@ class _PayementReportState extends State<DiscountReport> {
                     Text(
                       (index + 1).toString() + ". " + _studentList[index]?.name,
                       style: TextStyle(
-                        color: Color(0xffF36C24),
+                        color: GuruCoolLightColor.primaryColor,
                         fontSize: 16,
                       ),
                     ),

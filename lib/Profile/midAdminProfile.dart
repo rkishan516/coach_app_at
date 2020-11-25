@@ -2,6 +2,7 @@ import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -57,12 +58,12 @@ class MidAdminProfile extends StatelessWidget {
                         child: Text("MID ADMIN PROFILE",
                             textAlign: TextAlign.left,
                             style: TextStyle(
-                              color: Colors.white,
+                              color: GuruCoolLightColor.whiteColor,
                               fontSize: SizeConfig.b * 5.5,
                             )),
                       ),
                       Divider(
-                        color: Colors.white,
+                        color: GuruCoolLightColor.whiteColor,
                         thickness: SizeConfig.v * 0.475,
                       ),
                       Row(
@@ -77,7 +78,7 @@ class MidAdminProfile extends StatelessWidget {
                                     midAdmin.name,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        color: Colors.white,
+                                        color: GuruCoolLightColor.whiteColor,
                                         fontSize: SizeConfig.b * 6),
                                     maxLines: 3,
                                   ),
@@ -90,7 +91,7 @@ class MidAdminProfile extends StatelessWidget {
                                     midAdmin.email,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        color: Colors.white,
+                                        color: GuruCoolLightColor.whiteColor,
                                         fontSize: SizeConfig.b * 4.3),
                                     maxLines: 3,
                                   ),
@@ -114,7 +115,7 @@ class MidAdminProfile extends StatelessWidget {
                                     ? Text(
                                         '${midAdmin?.name[0].toUpperCase()}',
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: GuruCoolLightColor.whiteColor,
                                           fontSize: SizeConfig.b * 5.53,
                                         ),
                                       )
@@ -143,11 +144,11 @@ class MidAdminProfile extends StatelessWidget {
                       Text("Branches",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              color: Colors.white,
+                              color: GuruCoolLightColor.whiteColor,
                               fontSize: SizeConfig.b * 5.5)),
                       SizedBox(height: SizeConfig.v * 0.271),
                       Divider(
-                        color: Colors.white,
+                        color: GuruCoolLightColor.whiteColor,
                         thickness: SizeConfig.v * 0.475,
                       ),
                       SizedBox(
@@ -170,7 +171,7 @@ class MidAdminProfile extends StatelessWidget {
                                 " ${index + 1}",
                                 style: TextStyle(
                                   fontSize: SizeConfig.b * 9,
-                                  color: Colors.white,
+                                  color: GuruCoolLightColor.whiteColor,
                                 ),
                               ),
                               SizedBox(
@@ -198,11 +199,12 @@ class MidAdminProfile extends StatelessWidget {
                                         return Container();
                                       }
                                       return Text(
-                                        snapshot.data.snapshot.value.length < 15 ?
-                                        "${snapshot.data.snapshot.value}" : "${snapshot.data.snapshot.value.replaceAll(',','\nt')}",
+                                        snapshot.data.snapshot.value.length < 15
+                                            ? "${snapshot.data.snapshot.value}"
+                                            : "${snapshot.data.snapshot.value.replaceAll(',', '\nt')}",
                                         style: TextStyle(
                                           fontSize: SizeConfig.b * 3.5,
-                                          color: Colors.white,
+                                          color: GuruCoolLightColor.whiteColor,
                                         ),
                                       );
                                     },

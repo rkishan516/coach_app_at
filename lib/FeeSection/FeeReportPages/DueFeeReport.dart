@@ -5,6 +5,7 @@ import 'package:coach_app/FeeSection/Fragments/DiscountReport.dart';
 import 'package:coach_app/FeeSection/Fragments/DueFeeReport.dart' as dfr;
 import 'package:coach_app/FeeSection/Fragments/FineReport.dart';
 import 'package:coach_app/FeeSection/Fragments/OneTimePaid.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/FeeSection/Fragments/PaidReport.dart';
 import 'package:coach_app/FeeSection/Fragments/PaymentReport.dart';
 import 'package:coach_app/FeeSection/Fragments/StudentModel.dart';
@@ -187,12 +188,14 @@ class FeeReport extends StatelessWidget {
                                                           ),
                                                         );
                                                       },
-                                                      color: Color(0xffF36C24),
+                                                      color: GuruCoolLightColor.primaryColor,
                                                       child: Center(
                                                         child: Text(
                                                           'See Full List',
                                                           style: TextStyle(
-                                                            color: Colors.white,
+                                                            color:
+                                                                GuruCoolLightColor
+                                                                    .whiteColor,
                                                           ),
                                                         ),
                                                       ),

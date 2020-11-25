@@ -1,5 +1,6 @@
 import 'package:coach_app/FeeSection/Fragments/FullReport.dart';
 import 'package:coach_app/FeeSection/Fragments/StudentModel.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:flutter/material.dart';
 
 class DueFeeReport extends StatefulWidget {
@@ -146,7 +147,7 @@ class _DueFeeReportState extends State<DueFeeReport> {
                       style: TextStyle(
                         color: _studentList[index]?.paymentType == "Online"
                             ? Colors.green
-                            : Color(0xffF36C24),
+                            : GuruCoolLightColor.primaryColor,
                         fontSize: 16,
                       ),
                     ),

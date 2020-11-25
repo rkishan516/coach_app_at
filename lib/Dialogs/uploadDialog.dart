@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -8,10 +9,10 @@ class UploadDialog extends StatelessWidget {
   UploadDialog({@required this.warning});
   final List<Widget> waitWidgets = [
     SpinKitRipple(
-      color: Color(0xffF36C24),
+      color: GuruCoolLightColor.primaryColor,
     ),
     SpinKitDoubleBounce(
-      color: Color(0xffF36C24),
+      color: GuruCoolLightColor.primaryColor,
     ),
   ];
   @override
@@ -34,7 +35,7 @@ class UploadDialog extends StatelessWidget {
             ),
             margin: EdgeInsets.only(top: 66.0),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: GuruCoolLightColor.whiteColor,
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(16.0),
               boxShadow: [
@@ -53,7 +54,7 @@ class UploadDialog extends StatelessWidget {
                 Text(
                   'Please Wait!'.tr(),
                   style: TextStyle(
-                    color: Color(0xffF36C24),
+                    color: GuruCoolLightColor.primaryColor,
                     fontSize: 24.0,
                     fontWeight: FontWeight.w700,
                   ),

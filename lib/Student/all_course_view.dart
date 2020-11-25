@@ -1,7 +1,8 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
+import 'package:coach_app/NewAuthentication/Frontened/NewWelcomePage.dart';
 import 'package:coach_app/Student/course_registration_page.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class _AllCoursePageState extends State<AllCoursePage> {
             style: GoogleFonts.portLligatSans(
               fontSize: 30,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: GuruCoolLightColor.whiteColor,
             ),
           ),
         ),
@@ -37,7 +38,7 @@ class _AllCoursePageState extends State<AllCoursePage> {
               onPressed: () {
                 FireBaseAuth.instance.signoutWithGoogle();
                 Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => WelcomePage()),
+                    MaterialPageRoute(builder: (context) => NewWelcomePage()),
                     (route) => false);
               })
         ],
@@ -51,7 +52,7 @@ class _AllCoursePageState extends State<AllCoursePage> {
           decoration: BoxDecoration(
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2,
@@ -76,17 +77,18 @@ class _AllCoursePageState extends State<AllCoursePage> {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Card(
-                              color: Color(0xffF36C24),
+                              color: GuruCoolLightColor.primaryColor,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                               child: ListTile(
                                 title: Text(
                                   '${courses[courses.keys.toList()[index]]}',
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                      color: GuruCoolLightColor.whiteColor),
                                 ),
                                 trailing: Icon(
                                   Icons.chevron_right,
-                                  color: Colors.white,
+                                  color: GuruCoolLightColor.whiteColor,
                                 ),
                                 onTap: () => Navigator.of(context).push(
                                   CupertinoPageRoute(

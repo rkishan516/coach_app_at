@@ -4,6 +4,7 @@ import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/adminSection/teacherRegister.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class _TeachersListState extends State<TeachersList> {
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
@@ -134,16 +135,16 @@ class _TeachersListState extends State<TeachersList> {
                                     title: Text(
                                       '${teachers[teachers.keys.toList()[index]].name}',
                                       style:
-                                          TextStyle(color: Color(0xffF36C24)),
+                                          TextStyle(color: GuruCoolLightColor.primaryColor),
                                     ),
                                     subtitle: Text(
                                       '${teachers[teachers.keys.toList()[index]].email}',
                                       style:
-                                          TextStyle(color: Color(0xffF36C24)),
+                                          TextStyle(color: GuruCoolLightColor.primaryColor),
                                     ),
                                     trailing: Icon(
                                       Icons.chevron_right,
-                                      color: Color(0xffF36C24),
+                                      color: GuruCoolLightColor.primaryColor,
                                     ),
                                     onTap: () {
                                       Navigator.of(context).push(

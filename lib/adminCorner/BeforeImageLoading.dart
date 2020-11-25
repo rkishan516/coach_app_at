@@ -1,5 +1,5 @@
-import 'dart:io';
 
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -42,7 +42,7 @@ class _BeforeImageLoadingState extends State<BeforeImageLoading> {
               padding: EdgeInsets.only(left: 10.0, right: 10.0),
               height: 50.0,
               width: MediaQuery.of(context).size.width,
-              color: Colors.grey.shade200,
+              color: GuruCoolLightColor.backgroundShade,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -60,14 +60,14 @@ class _BeforeImageLoadingState extends State<BeforeImageLoading> {
                       onChanged: (value) {},
                       decoration: InputDecoration(
                         hintText: 'Add a caption...'.tr(),
-                        fillColor: Colors.white,
+                        fillColor: GuruCoolLightColor.whiteColor,
                         filled: true,
                         contentPadding: new EdgeInsets.symmetric(
                             vertical: 6.0, horizontal: 15.0),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(22.0)),
                           borderSide: BorderSide(
-                            color: Colors.white,
+                            color: GuruCoolLightColor.whiteColor,
                           ),
                         ),
                       ),

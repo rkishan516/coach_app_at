@@ -5,6 +5,7 @@ import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/InstituteAdmin/branchPage.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/adminSection/branchRegister.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -29,7 +30,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
     length = branchesKey?.length;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xffF36C24),
+        backgroundColor: GuruCoolLightColor.primaryColor,
         title: StreamBuilder<Event>(
           stream: FirebaseDatabase.instance
               .reference()
@@ -42,7 +43,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
                 maxLines: 2,
                 style: GoogleFonts.portLligatSans(
                   fontWeight: FontWeight.w700,
-                  color: Colors.white,
+                  color: GuruCoolLightColor.whiteColor,
                 ),
               );
             } else {
@@ -67,7 +68,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
                           borderRadius: BorderRadius.circular(
                             45.0,
                           ),
-                          border: Border.all(color: Colors.white, width: 3.0)),
+                          border: Border.all(color: GuruCoolLightColor.whiteColor, width: 3.0)),
                       child: CircleAvatar(
                         radius: 23.0,
                         backgroundImage: NetworkImage(
@@ -84,7 +85,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
           ],
         ),
         elevation: 0.0,
-        iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
+        iconTheme: IconThemeData.fallback().copyWith(color: GuruCoolLightColor.whiteColor),
       ),
       drawer: getDrawer(context, branchListPage: true),
       body: Container(
@@ -95,7 +96,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
@@ -112,7 +113,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
               return Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
-                color: Color(0xffF36C24),
+                color: GuruCoolLightColor.primaryColor,
                 child: StreamBuilder<Event>(
                   stream: FirebaseDatabase.instance
                       .reference()
@@ -143,7 +144,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
                                       child: Text(
                                         branchesKey[index].toString(),
                                         style:
-                                            TextStyle(color: Color(0xffF36C24)),
+                                            TextStyle(color: GuruCoolLightColor.primaryColor),
                                       ),
                                     ),
                                   ),
@@ -157,7 +158,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
                                     overflow: TextOverflow.fade,
                                     textAlign: TextAlign.justify,
                                     style: TextStyle(
-                                        color: Colors.white,
+                                        color: GuruCoolLightColor.whiteColor,
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ),
@@ -169,7 +170,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
                                     '${branch.address}',
                                     overflow: TextOverflow.fade,
                                     textAlign: TextAlign.justify,
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: GuruCoolLightColor.whiteColor),
                                   ),
                                 ),
                               )

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class InfoDialog extends StatelessWidget {
@@ -24,7 +25,7 @@ class InfoDialog extends StatelessWidget {
             ),
             margin: EdgeInsets.only(top: 66.0),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: GuruCoolLightColor.whiteColor,
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(16.0),
               boxShadow: [
@@ -41,7 +42,7 @@ class InfoDialog extends StatelessWidget {
                 Text(
                   'What we will do!'.tr(),
                   style: TextStyle(
-                    color: Color(0xffF36C24),
+                    color: GuruCoolLightColor.primaryColor,
                     fontSize: 24.0,
                     fontWeight: FontWeight.w700,
                   ),
@@ -76,7 +77,7 @@ class InfoDialog extends StatelessWidget {
               child: Icon(
                 Icons.info,
                 size: 66.0,
-                color: Color(0xffF36C24),
+                color: GuruCoolLightColor.primaryColor,
               ),
             ),
           ),

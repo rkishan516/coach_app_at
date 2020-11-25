@@ -3,6 +3,7 @@ import 'package:coach_app/InstituteAdmin/teachersPage.dart';
 import 'package:coach_app/adminSection/adminCoursePage.dart';
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class BranchPage extends StatefulWidget {
@@ -24,13 +25,15 @@ class _BranchPageState extends State<BranchPage>
     return Scaffold(
       body: (_bottomNavIndex == 0)
           ? AdminCoursePage()
-          : (_bottomNavIndex == 1) ? StudentList() : TeachersList(),
+          : (_bottomNavIndex == 1)
+              ? StudentList()
+              : TeachersList(),
       bottomNavigationBar: FancyBottomNavigation(
-        barBackgroundColor: Color(0xffF36C24),
-        circleColor: Colors.white,
-        activeIconColor: Color(0xffF36C24),
-        textColor: Colors.white,
-        inactiveIconColor: Colors.white,
+        barBackgroundColor: GuruCoolLightColor.primaryColor,
+        circleColor: GuruCoolLightColor.whiteColor,
+        activeIconColor: GuruCoolLightColor.primaryColor,
+        textColor: GuruCoolLightColor.whiteColor,
+        inactiveIconColor: GuruCoolLightColor.whiteColor,
         tabs: [
           TabData(iconData: Icons.library_books, title: "Courses".tr()),
           TabData(iconData: Icons.school, title: "Student".tr()),

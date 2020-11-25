@@ -4,6 +4,7 @@ import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/InstituteAdmin/studentList.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/TimeTableSection/TimeTablePage.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/courses/chapter_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -56,16 +57,16 @@ class _SubjectPageState extends State<SubjectPage>
               Tab(
                 child: Text(
                   'Subjects',
-                  style: TextStyle(color: Color(0xffF36C24)),
+                  style: TextStyle(color: GuruCoolLightColor.primaryColor),
                 ),
               ),
               Tab(
                 child: Text('Students',
-                    style: TextStyle(color: Color(0xffF36C24))),
+                    style: TextStyle(color: GuruCoolLightColor.primaryColor)),
               ),
               Tab(
                 child: Text('Time Table',
-                    style: TextStyle(color: Color(0xffF36C24))),
+                    style: TextStyle(color: GuruCoolLightColor.primaryColor)),
               ),
             ],
           ),
@@ -77,7 +78,7 @@ class _SubjectPageState extends State<SubjectPage>
             decoration: BoxDecoration(
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                    color: Colors.grey.shade200,
+                    color: GuruCoolLightColor.backgroundShade,
                     offset: Offset(2, 4),
                     blurRadius: 5,
                     spreadRadius: 2)
@@ -93,7 +94,7 @@ class _SubjectPageState extends State<SubjectPage>
                       child: Center(
                         child: Text(
                           'Subjects'.tr(),
-                          style: TextStyle(color: Color(0xffF36C24)),
+                          style: TextStyle(color: GuruCoolLightColor.primaryColor),
                         ),
                       ),
                     ),
@@ -168,7 +169,7 @@ class _SubjectPageState extends State<SubjectPage>
                                         ),
                                         Icon(
                                           Icons.chevron_right,
-                                          color: Color(0xffF36C24),
+                                          color: GuruCoolLightColor.primaryColor,
                                         ),
                                       ],
                                     ),

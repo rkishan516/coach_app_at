@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:coach_app/Utils/Colors.dart';
 
 class SuccessDialog extends StatelessWidget {
   final String success;
@@ -24,7 +25,7 @@ class SuccessDialog extends StatelessWidget {
             ),
             margin: EdgeInsets.only(top: 66.0),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: GuruCoolLightColor.whiteColor,
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(16.0),
               boxShadow: [
@@ -43,7 +44,7 @@ class SuccessDialog extends StatelessWidget {
                   backgroundColor: Colors.green,
                   child: Icon(
                     Icons.done,
-                    color: Colors.white,
+                    color: GuruCoolLightColor.whiteColor,
                   ),
                 ),
                 Text(

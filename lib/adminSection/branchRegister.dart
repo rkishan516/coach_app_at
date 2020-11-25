@@ -8,6 +8,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:coach_app/Utils/Colors.dart';
 
 class BranchRegister extends StatefulWidget {
   final Branch institute;
@@ -80,7 +81,7 @@ class _BranchRegisterState extends State<BranchRegister> {
             ),
             margin: EdgeInsets.only(top: 66.0),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: GuruCoolLightColor.whiteColor,
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(16.0),
               boxShadow: [
@@ -337,12 +338,12 @@ class _BranchRegisterState extends State<BranchRegister> {
                             setState(() {
                               errorBox = Container(
                                 height: 40,
-                                color: Color(0xffF36C24),
+                                color: GuruCoolLightColor.primaryColor,
                                 child: Center(
                                   child: Text(
                                     'Branch Already Exist'.tr(),
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: GuruCoolLightColor.whiteColor,
                                     ),
                                   ),
                                 ),
@@ -410,7 +411,7 @@ class _BranchRegisterState extends State<BranchRegister> {
                           }
                         });
                       },
-                      color: Colors.white,
+                      color: GuruCoolLightColor.whiteColor,
                       child: Text(
                         'Add Branch'.tr(),
                         style: TextStyle(

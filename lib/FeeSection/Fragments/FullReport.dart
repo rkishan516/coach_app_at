@@ -1,7 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-
+import 'package:coach_app/Utils/Colors.dart';
 import 'StudentModel.dart';
 
 class FullReport extends StatefulWidget {
@@ -66,7 +66,7 @@ class _FullReportState extends State<FullReport> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Full Report"),
-        backgroundColor: Color(0xffF36C24),
+        backgroundColor: GuruCoolLightColor.primaryColor,
         elevation: 0,
       ),
       body: Container(
@@ -80,7 +80,7 @@ class _FullReportState extends State<FullReport> {
           children: [
             ListTile(
               leading: CircleAvatar(
-                backgroundColor: Color(0xffF36C24),
+                backgroundColor: GuruCoolLightColor.primaryColor,
                 child: Image.network(_studentModel.photoURL),
               ),
               title: Text(
@@ -432,7 +432,7 @@ class _FullReportState extends State<FullReport> {
                         : "";
 
                 return Card(
-                  color: Color(0xffF36C24),
+                  color: GuruCoolLightColor.primaryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -444,13 +444,13 @@ class _FullReportState extends State<FullReport> {
                           "\n" +
                           paidtime,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: GuruCoolLightColor.whiteColor,
                       ),
                     ),
                     trailing: Text(
                       _studentModel.listInstallment[index].amount + fineamount,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: GuruCoolLightColor.whiteColor,
                       ),
                     ),
                   ),
@@ -463,14 +463,14 @@ class _FullReportState extends State<FullReport> {
             Padding(
               padding: EdgeInsets.only(left: 42, right: 42),
               child: RaisedButton(
-                color: Color(0xffF36C24),
+                color: GuruCoolLightColor.primaryColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0)),
                 child: Text(
                   "E Receipt",
                   style: TextStyle(
                     fontSize: 18.0,
-                    color: Colors.white,
+                    color: GuruCoolLightColor.whiteColor,
                   ),
                 ),
                 onPressed: () {},

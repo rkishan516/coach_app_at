@@ -6,6 +6,7 @@ import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/StudentProfilePage.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/adminSection/addStudent.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +49,7 @@ class _StudentListState extends State<StudentList> {
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.grey.shade200,
+                color: GuruCoolLightColor.backgroundShade,
                 offset: Offset(2, 4),
                 blurRadius: 5,
                 spreadRadius: 2)
@@ -152,16 +153,16 @@ class _StudentListState extends State<StudentList> {
                                     title: Text(
                                       '${students[students.keys.toList()[index]].name}',
                                       style:
-                                          TextStyle(color: Color(0xffF36C24)),
+                                          TextStyle(color: GuruCoolLightColor.primaryColor),
                                     ),
                                     subtitle: Text(
                                       '${students[students.keys.toList()[index]].email}',
                                       style:
-                                          TextStyle(color: Color(0xffF36C24)),
+                                          TextStyle(color: GuruCoolLightColor.primaryColor),
                                     ),
                                     trailing: Icon(
                                       Icons.chevron_right,
-                                      color: Color(0xffF36C24),
+                                      color: GuruCoolLightColor.primaryColor,
                                     ),
                                     onTap: () {
                                       Navigator.push(
@@ -238,7 +239,7 @@ class _StudentListState extends State<StudentList> {
           ),
           margin: EdgeInsets.only(top: 66.0),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: GuruCoolLightColor.whiteColor,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(16.0),
             boxShadow: [

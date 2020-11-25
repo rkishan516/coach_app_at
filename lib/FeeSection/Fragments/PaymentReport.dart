@@ -1,3 +1,4 @@
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:flutter/material.dart';
 
 import 'FullReport.dart';
@@ -143,7 +144,7 @@ class _PayementReportState extends State<PayementReport> {
                           style: TextStyle(
                             color: _studentList[index]?.paymentType == "Online"
                                 ? Colors.green
-                                : Color(0xffF36C24),
+                                : GuruCoolLightColor.primaryColor,
                             fontSize: 16,
                           ),
                         ),

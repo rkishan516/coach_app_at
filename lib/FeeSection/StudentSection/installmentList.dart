@@ -2,6 +2,7 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Student/WaitScreen.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:flutter/material.dart';
 
 class InstallMentList extends StatefulWidget {
@@ -152,12 +153,12 @@ class _InstallMentListState extends State<InstallMentList> {
                       },
                     ),
                   RaisedButton(
-                    color: Color(0xffF36C24),
+                    color: GuruCoolLightColor.primaryColor,
                     onPressed: registerStudent,
                     child: Text(
                       'Request For Access',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: GuruCoolLightColor.whiteColor,
                       ),
                     ),
                   )

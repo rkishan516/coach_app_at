@@ -6,6 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YTPlayer extends StatefulWidget {
@@ -130,7 +131,7 @@ class _YTPlayerState extends State<YTPlayer> {
         appBar: AppBar(
           title: Text(
             'Video Player'.tr(),
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: GuruCoolLightColor.whiteColor),
           ),
         ),
         body: Column(

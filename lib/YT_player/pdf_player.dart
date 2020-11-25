@@ -1,3 +1,4 @@
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -91,7 +92,7 @@ class _PDFPlayerState extends State<PDFPlayer> {
           ),
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: Colors.grey.shade200,
+              color: GuruCoolLightColor.backgroundShade,
               offset: Offset(
                 2,
                 4,

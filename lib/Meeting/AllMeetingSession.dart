@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Events/FirebaseMessaging.dart';
 import 'package:coach_app/Events/videoConferencing.dart';
@@ -240,7 +240,7 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
-                color: Color(0xffF36C24),
+                color: GuruCoolLightColor.primaryColor,
                 elevation: 2.0,
                 child: ListTile(
                     leading: IconButton(
@@ -249,7 +249,7 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
                       ),
                       color: _allEvent[index].isStarted == 1
                           ? Colors.blue
-                          : Colors.white,
+                          : GuruCoolLightColor.whiteColor,
                       onPressed: () {},
                     ),
                     title: Text(
@@ -265,14 +265,14 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
                       style: TextStyle(
                           fontSize: 13.0,
                           fontWeight: FontWeight.w300,
-                          color: Colors.white),
+                          color: GuruCoolLightColor.whiteColor),
                     ),
                     trailing: Text(
                       eventdate + "\n" + (_allEvent[index].time),
                       style: TextStyle(
                           fontSize: 15.0,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                          color: GuruCoolLightColor.whiteColor),
                     ),
                     onTap: () {
                       if (_allEvent[index].isStarted == 1) {

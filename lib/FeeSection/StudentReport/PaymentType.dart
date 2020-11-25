@@ -1,4 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
@@ -173,7 +174,7 @@ class _PaymentTypeState extends State<PaymentType> {
               ),
               if (_showInstallmenttype)
                 SwitchListTile.adaptive(
-                  activeColor: Color(0xffF36C24),
+                  activeColor: GuruCoolLightColor.primaryColor,
                   title: Text(
                     'Pay in Installments',
                     style:
@@ -192,7 +193,7 @@ class _PaymentTypeState extends State<PaymentType> {
                         width: MediaQuery.of(context).size.width * 0.9,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.0),
-                          color: Color(0xffF36C24),
+                          color: GuruCoolLightColor.primaryColor,
                         ),
                         child: Text(
                           "Amount paid through installments is $_displaySum , Pay rest amount in OneTime as Pay through installments is disabled by the administration",
@@ -207,7 +208,7 @@ class _PaymentTypeState extends State<PaymentType> {
               ),
               if (_showOneTimetype)
                 SwitchListTile.adaptive(
-                  activeColor: Color(0xffF36C24),
+                  activeColor: GuruCoolLightColor.primaryColor,
                   value: toggleValue2,
                   onChanged: (val) {
                     if (!toggleValue1 && !toggleValue2 || _allowonetime)

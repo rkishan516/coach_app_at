@@ -5,6 +5,7 @@ import 'package:coach_app/FeeSection/ToggleButton.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/student_performance.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -59,13 +60,15 @@ class StudentProfilePage extends StatelessWidget {
                     child: Text(
                       "Student Profile",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: GuruCoolLightColor.whiteColor,
                         fontSize: SizeConfig.b * 5.5,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                  Divider(color: Colors.white, thickness: SizeConfig.v * 0.475),
+                  Divider(
+                      color: GuruCoolLightColor.whiteColor,
+                      thickness: SizeConfig.v * 0.475),
                   Row(
                     children: <Widget>[
                       Container(
@@ -79,7 +82,7 @@ class StudentProfilePage extends StatelessWidget {
                                 student.name,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: GuruCoolLightColor.whiteColor,
                                   fontSize: SizeConfig.b * 6,
                                 ),
                                 maxLines: 3,
@@ -91,7 +94,7 @@ class StudentProfilePage extends StatelessWidget {
                                 student.email,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: Colors.white,
+                                    color: GuruCoolLightColor.whiteColor,
                                     fontSize: SizeConfig.b * 4.25),
                                 maxLines: 2,
                               ),
@@ -106,7 +109,7 @@ class StudentProfilePage extends StatelessWidget {
                                     student?.phoneNo ?? "Phone No Not given",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: GuruCoolLightColor.whiteColor,
                                       fontSize: SizeConfig.b * 4.3,
                                     ),
                                   ),
@@ -114,7 +117,7 @@ class StudentProfilePage extends StatelessWidget {
                                   RaisedButton(
                                     child: Icon(
                                       Icons.call,
-                                      color: Colors.white,
+                                      color: GuruCoolLightColor.whiteColor,
                                       size: SizeConfig.v * 2.9,
                                     ),
                                     elevation: 1,
@@ -157,7 +160,7 @@ class StudentProfilePage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(
                                     50,
                                   ),
-                                  color: Colors.white,
+                                  color: GuruCoolLightColor.whiteColor,
                                 ),
                                 child: Center(
                                   child: Text(
@@ -228,7 +231,8 @@ class StudentProfilePage extends StatelessWidget {
                                             "Course : ",
                                             style: TextStyle(
                                                 fontSize: 16,
-                                                color: Colors.white),
+                                                color: GuruCoolLightColor
+                                                    .whiteColor),
                                           ),
                                         ),
                                         Expanded(
@@ -236,7 +240,8 @@ class StudentProfilePage extends StatelessWidget {
                                             "${student.course[index].courseName}",
                                             style: TextStyle(
                                                 fontSize: 16,
-                                                color: Colors.white),
+                                                color: GuruCoolLightColor
+                                                    .whiteColor),
                                           ),
                                         ),
                                       ],
@@ -255,7 +260,8 @@ class StudentProfilePage extends StatelessWidget {
                                             "Academic Year : ",
                                             style: TextStyle(
                                                 fontSize: 16,
-                                                color: Colors.white),
+                                                color: GuruCoolLightColor
+                                                    .whiteColor),
                                           ),
                                         ),
                                         Expanded(
@@ -264,7 +270,8 @@ class StudentProfilePage extends StatelessWidget {
                                             "${student.course[index].academicYear}",
                                             style: TextStyle(
                                                 fontSize: 16,
-                                                color: Colors.white),
+                                                color: GuruCoolLightColor
+                                                    .whiteColor),
                                           ),
                                         ),
                                       ],
@@ -354,7 +361,7 @@ class StudentProfilePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: SizeConfig.b * 4.53,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: GuruCoolLightColor.whiteColor,
                         ),
                         maxLines: 2,
                       ),

@@ -5,6 +5,7 @@ import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/YoutubeAPI/youtubeApi.dart';
 import 'package:coach_app/courses/FormGeneration/form_generator.dart';
 import 'package:file_picker/file_picker.dart';
@@ -195,7 +196,7 @@ class _UploadContentState extends State<UploadContent> {
                           ),
                           margin: EdgeInsets.only(top: 66.0),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: GuruCoolLightColor.whiteColor,
                             shape: BoxShape.rectangle,
                             borderRadius: BorderRadius.circular(16.0),
                             boxShadow: [
@@ -317,7 +318,7 @@ class _UploadContentState extends State<UploadContent> {
                                   children: <Widget>[
                                     if (type == "Youtube Video" && keyC == null)
                                       RaisedButton(
-                                        color: Colors.white,
+                                        color: GuruCoolLightColor.whiteColor,
                                         onPressed: () async {
                                           file = await FilePicker.getFile();
                                         },
@@ -448,11 +449,11 @@ class _UploadContentState extends State<UploadContent> {
                                           keyC = null;
                                         });
                                       },
-                                      color: Color(0xffF36C24),
+                                      color: GuruCoolLightColor.primaryColor,
                                       child: Text(
                                         'Add Content'.tr(),
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: GuruCoolLightColor.whiteColor,
                                         ),
                                       ),
                                     ),

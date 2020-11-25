@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:coach_app/Utils/Colors.dart';
 
 class NewBannerShow extends StatelessWidget {
   @override
@@ -14,7 +15,7 @@ class NewBannerShow extends StatelessWidget {
         child: Text(
           "New",
           style: TextStyle(
-            color: Colors.white,
+            color: GuruCoolLightColor.whiteColor,
             fontSize: 10.0,
           ),
         ),

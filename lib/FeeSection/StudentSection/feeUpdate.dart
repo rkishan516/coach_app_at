@@ -1,6 +1,7 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:flutter/material.dart';
 
 class FeeUpdate extends StatefulWidget {
@@ -221,7 +222,7 @@ class _FeeUpdateState extends State<FeeUpdate> {
                 },
               ),
             RaisedButton(
-              color: Color(0xffF36C24),
+              color: GuruCoolLightColor.primaryColor,
               onPressed: () {
                 DateTime dateTime = DateTime.now();
                 String dd = dateTime.day.toString().length == 1
@@ -255,7 +256,7 @@ class _FeeUpdateState extends State<FeeUpdate> {
               child: Text(
                 'Update Fees',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: GuruCoolLightColor.whiteColor,
                 ),
               ),
             )

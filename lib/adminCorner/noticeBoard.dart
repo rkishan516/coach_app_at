@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Models/random_string.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/adminCorner/BeforeImageLoading.dart';
 import 'package:coach_app/adminCorner/BeforeVideoLoading.dart';
 import 'package:coach_app/adminCorner/ShowMedia.dart';
@@ -82,11 +83,11 @@ class _NoticeBoardState extends State<NoticeBoard>
           child: Center(
               child: Text(
             noticeDate,
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: GuruCoolLightColor.whiteColor),
           )),
         ),
         decoration: BoxDecoration(
-          color: Color(0xffF36C24),
+          color: GuruCoolLightColor.primaryColor,
         ),
       ),
     );
@@ -110,7 +111,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                   message.type != null
                       ? message.uid.split(":_:_:")[3]
                       : "Admin",
-                  style: TextStyle(color: Color(0xffF36C24)),
+                  style: TextStyle(color: GuruCoolLightColor.primaryColor),
                 ),
               ),
             message.type == "image"
@@ -235,7 +236,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                     child: IconButton(
                         icon: Icon(
                           Icons.delete,
-                          color: Color(0xffF36C24),
+                          color: GuruCoolLightColor.primaryColor,
                           size: 30.0,
                         ),
                         onPressed: () async {
@@ -269,7 +270,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                     " " +
                     message.time.split(' ')[2],
                 style: TextStyle(
-                    color: Color(0xffF36C24),
+                    color: GuruCoolLightColor.primaryColor,
                     fontSize: 12.0,
                     fontWeight: FontWeight.w600),
               ),
@@ -305,7 +306,7 @@ class _NoticeBoardState extends State<NoticeBoard>
               EdgeInsets.only(top: 15.0, bottom: 15.0, left: 20.0, right: 20.0),
           width: MediaQuery.of(context).size.width * 0.75,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: GuruCoolLightColor.whiteColor,
           ),
           child: IntrinsicHeight(
             child: Row(
@@ -463,7 +464,7 @@ class _NoticeBoardState extends State<NoticeBoard>
       padding: EdgeInsets.only(left: 10.0, right: 10.0),
       height: 50.0,
       width: MediaQuery.of(context).size.width,
-      color: Colors.grey.shade200,
+      color: GuruCoolLightColor.backgroundShade,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -510,14 +511,14 @@ class _NoticeBoardState extends State<NoticeBoard>
                   ),
                 ),
                 hintText: 'Type a message...'.tr(),
-                fillColor: Colors.white,
+                fillColor: GuruCoolLightColor.whiteColor,
                 filled: true,
                 contentPadding:
                     new EdgeInsets.symmetric(vertical: 6.0, horizontal: 15.0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(22.0)),
                   borderSide: BorderSide(
-                    color: Colors.white,
+                    color: GuruCoolLightColor.whiteColor,
                   ),
                 ),
               ),
@@ -678,7 +679,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
+                      color: GuruCoolLightColor.backgroundShade,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(
                           30.0,
@@ -735,7 +736,7 @@ class _NoticeBoardState extends State<NoticeBoard>
             decoration: BoxDecoration(
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                    color: Colors.grey.shade200,
+                    color: GuruCoolLightColor.backgroundShade,
                     offset: Offset(2, 4),
                     blurRadius: 5,
                     spreadRadius: 2)
@@ -803,7 +804,8 @@ class _NoticeBoardState extends State<NoticeBoard>
                                 child: ListTile(
                                   title: Text(
                                     '${sections[sections.keys.toList()[index]].name}',
-                                    style: TextStyle(color: Color(0xffF36C24)),
+                                    style: TextStyle(
+                                        color: GuruCoolLightColor.primaryColor),
                                   ),
                                   trailing: Container(
                                     height: 40,
@@ -822,7 +824,8 @@ class _NoticeBoardState extends State<NoticeBoard>
                                         ),
                                         Icon(
                                           Icons.chevron_right,
-                                          color: Color(0xffF36C24),
+                                          color:
+                                              GuruCoolLightColor.primaryColor,
                                         ),
                                       ],
                                     ),
@@ -907,7 +910,7 @@ class _NoticeBoardState extends State<NoticeBoard>
             ),
             margin: EdgeInsets.only(top: 66.0),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: GuruCoolLightColor.whiteColor,
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(16.0),
               boxShadow: [

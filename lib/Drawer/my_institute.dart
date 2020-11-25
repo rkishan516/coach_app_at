@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:coach_app/Utils/Colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class MyInstitute extends StatefulWidget {
@@ -21,12 +22,13 @@ class _MyInstituteState extends State<MyInstitute> {
           'My Institute'.tr(),
           style: GoogleFonts.portLligatSans(
             fontWeight: FontWeight.w700,
-            color: Colors.white,
+            color: GuruCoolLightColor.whiteColor,
           ),
         ),
         centerTitle: true,
         elevation: 0.0,
-        iconTheme: IconThemeData.fallback().copyWith(color: Colors.white),
+        iconTheme: IconThemeData.fallback()
+            .copyWith(color: GuruCoolLightColor.whiteColor),
       ),
       body: Column(
         children: <Widget>[
@@ -48,7 +50,7 @@ class _MyInstituteState extends State<MyInstitute> {
                                 50.0,
                               ),
                               border: Border.all(
-                                  color: Color(0xffF36C24), width: 3.0)),
+                                  color: GuruCoolLightColor.primaryColor, width: 3.0)),
                           child: CircleAvatar(
                             radius: 50.0,
                             backgroundImage: NetworkImage(
@@ -65,7 +67,8 @@ class _MyInstituteState extends State<MyInstitute> {
           ),
           Expanded(
             child: StreamBuilder<Event>(
-              stream: FirebaseDatabase.instance.reference()
+              stream: FirebaseDatabase.instance
+                  .reference()
                   .child('/institute/${FireBaseAuth.instance.instituteid}/name')
                   .onValue,
               builder: (BuildContext context, snapshot) {
