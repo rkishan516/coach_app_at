@@ -1,0 +1,24 @@
+name: Basic Build
+
+on:
+  push:
+    branches:
+      - testBranch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v1
+    - uses: actions/setup-java@v1
+      with:
+        channel: beta
+    - run: flutter pub get
+    - run: flutter format --set-exit-if-changed
+    - run: flutter analyze
+    - run: flutter build apk
+    # Authentication of Firebase with token is remaining
+    # For More Details look at this
+    # https://medium.com/flutterdevs/automation-flutter-with-github-actions-firebase-app-distribution-bd7193f0e0e8
+    # Upload to artifact is remaining
