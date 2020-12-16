@@ -37,9 +37,9 @@ class _AllCoursePageState extends State<AllCoursePage> {
               icon: Icon(Icons.exit_to_app),
               onPressed: () {
                 FireBaseAuth.instance.signoutWithGoogle();
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => NewWelcomePage()),
-                    (route) => false);
+                // Navigator.of(context).pushAndRemoveUntil(
+                //     MaterialPageRoute(builder: (context) => NewWelcomePage()),
+                //     (route) => false);
               })
         ],
       ),

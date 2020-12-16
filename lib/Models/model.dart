@@ -1,3 +1,4 @@
+import 'package:animator/animator.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
@@ -1079,7 +1080,8 @@ class GeneralEventsModal {
     hostname = json['hostname'];
   }
 }
-class AppUser{
+
+class AppUser {
   final String uid;
   final String name;
   final bool isEmailVerfied;
@@ -1090,46 +1092,81 @@ class TypeSelection {
   static String typeOfPage;
 }
 
-
-
-class AuthError extends ChangeNotifier{
+class AuthError extends ChangeNotifier {
   String resultLogin = "";
   String resultSignUp = "";
-  void errorOccured(String error, String page){
-    if(page=="LoginPage"){
-    resultLogin = error;
-    resultSignUp="";
-    }
-    else{
+  void errorOccured(String error, String page) {
+    if (page == "LoginPage") {
+      resultLogin = error;
+      resultSignUp = "";
+    } else {
       resultSignUp = error;
       resultLogin = "";
     }
     notifyListeners();
   }
 }
-class Counter extends ChangeNotifier{
-  int flexofCircle =6;
-  int flexofLogo =3;
-  int flexofFields = 7;
+
+class Counter extends ChangeNotifier {
   String page = "FirstPage";
-  void increment(String key){
-    if(key=="FirstPage"){
-    flexofCircle = 6;
-    flexofLogo = 3;
-    flexofFields = 7;
-    page = "FirstPage";
-    }
-    else if(key=="LoginPage"){
-    flexofCircle = 5;
-    flexofLogo = 3;
-    flexofFields = 7;
-    page = "LoginPage";
-    }
-    else if(key == "SignUpPage"){
-    flexofCircle = 3;
-    flexofLogo = 2;
-    flexofFields = 7;
-    page = "SignUpPage";
+  final AnimatorKey animatorKey = AnimatorKey<Offset>();
+  final AnimatorKey logoAnimatorKey = AnimatorKey<Offset>();
+  Size size = Size(250, 250);
+  void increment(String key) {
+    if (key == "FirstPage") {
+      page = "FirstPage";
+      animatorKey.refreshAnimation(
+        tween: Tween<Offset>(
+          begin: Offset(0, 15),
+          end: Offset(0, 12),
+        ),
+      );
+      logoAnimatorKey.refreshAnimation(
+        tween: Tween<Offset>(
+          begin: Offset(0.25, 0.4),
+          end: Offset(
+            0.25,
+            0.4,
+          ),
+        ),
+      );
+      size = Size(250, 250);
+    } else if (key == "LoginPage") {
+      page = "LoginPage";
+      animatorKey.refreshAnimation(
+        tween: Tween<Offset>(
+          begin: Offset(0, 0.7),
+          end: Offset(0, 0.5),
+        ),
+      );
+      logoAnimatorKey.refreshAnimation(
+        tween: Tween<Offset>(
+          begin: Offset(0.45, 0.4),
+          end: Offset(
+            0.45,
+            0.35,
+          ),
+        ),
+      );
+      size = Size(200, 200);
+    } else if (key == "SignUpPage") {
+      page = "SignUpPage";
+      animatorKey.refreshAnimation(
+        tween: Tween<Offset>(
+          begin: Offset(0, 1),
+          end: Offset(0, 0.65),
+        ),
+      );
+      logoAnimatorKey.refreshAnimation(
+        tween: Tween<Offset>(
+          begin: Offset(0.75, 0.35),
+          end: Offset(
+            0.75,
+            0.25,
+          ),
+        ),
+      );
+      size = Size(150, 150);
     }
     notifyListeners();
   }

@@ -6,11 +6,6 @@ import 'package:coach_app/Utils/Colors.dart';
 import 'package:provider/provider.dart';
 
 class LoginPageBuild extends StatefulWidget {
-  final AnimatorKey<Offset> animatorKey;
-  final AnimatorKey<Offset> logoanimatorKey;
-  final AnimatorKey<Offset> circleanimatorKey;
-  LoginPageBuild(
-      {this.animatorKey, this.logoanimatorKey, this.circleanimatorKey});
   @override
   _LoginPageBuildState createState() => _LoginPageBuildState();
 }
@@ -145,22 +140,6 @@ class _LoginPageBuildState extends State<LoginPageBuild> {
                       TypeSelection.typeOfPage = "SignUpPage";
                       Provider.of<Counter>(context, listen: false)
                           .increment(TypeSelection.typeOfPage);
-                      widget.animatorKey.refreshAnimation(
-                          tween: Tween<Offset>(
-                              begin: Offset(0, 0.0), end: Offset(0, -0.03)),
-                          curve: Curves.easeInSine,
-                          duration: Duration(milliseconds: 500));
-                      widget.circleanimatorKey.refreshAnimation(
-                          tween: Tween<Offset>(
-                              begin: Offset(-0.6, -0.25),
-                              end: Offset(-0.6, -0.3)),
-                          curve: Curves.easeInSine,
-                          duration: Duration(milliseconds: 500));
-                      widget.logoanimatorKey.refreshAnimation(
-                          tween: Tween<Offset>(
-                              begin: Offset(0, -0.5), end: Offset(0, -0.6)),
-                          curve: Curves.easeInSine,
-                          duration: Duration(milliseconds: 500));
                     });
                   },
                   child: Center(

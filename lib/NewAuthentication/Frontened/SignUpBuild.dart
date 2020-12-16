@@ -6,10 +6,6 @@ import 'package:coach_app/Utils/Colors.dart';
 import 'package:provider/provider.dart';
 
 class SignUpBuild extends StatefulWidget {
-  final AnimatorKey<Offset> animatorKey;
-  final AnimatorKey<Offset> logoanimatorKey;
-  final AnimatorKey<Offset> circleanimatorKey;
-  SignUpBuild({this.animatorKey, this.logoanimatorKey, this.circleanimatorKey});
   @override
   _SignUpBuildState createState() => _SignUpBuildState();
 }
@@ -49,7 +45,7 @@ class _SignUpBuildState extends State<SignUpBuild> {
                 children: [
                   Expanded(
                     child: Container(
-                      height: 50.0,
+                      height: 40.0,
                       width: 170.0,
                       child: TextFormField(
                         validator: (value) {
@@ -76,7 +72,7 @@ class _SignUpBuildState extends State<SignUpBuild> {
                   ),
                   Expanded(
                     child: Container(
-                      height: 50.0,
+                      height: 40.0,
                       width: 170.0,
                       child: TextFormField(
                         validator: (value) {
@@ -104,100 +100,109 @@ class _SignUpBuildState extends State<SignUpBuild> {
               SizedBox(
                 height: 20.0,
               ),
-              TextFormField(
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Email cannot be empty";
-                  }
-                  if (!RegExp(
-                          r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
-                      .hasMatch(value)) {
-                    return 'Please enter a valid email Address';
-                  }
-                  return null;
-                },
-                controller: _emailController,
-                style: TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
-                onChanged: null,
-                decoration: InputDecoration(
-                    contentPadding: new EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 10.0),
-                    prefixIcon: Icon(
-                      Icons.email,
-                      color: Colors.grey,
-                    ),
-                    hintText: "E-MAIL",
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide(color: Colors.grey))),
-              ),
-              SizedBox(height: 20.0),
-              TextFormField(
-                obscureText: showPassword,
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Password cannot be empty";
-                  }
-                  if (value.length < 8) {
-                    return "Password must be 8 character long";
-                  }
-                  return null;
-                },
-                controller: _passController,
-                style: TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
-                onChanged: null,
-                decoration: InputDecoration(
-                    contentPadding: new EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 10.0),
-                    prefixIcon: InkWell(
-                      onTap: () {
-                        setState(() {
-                          showPassword = !showPassword;
-                        });
-                      },
-                      child: Icon(
-                        Icons.lock,
+              Container(
+                height: 40,
+                child: TextFormField(
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "Email cannot be empty";
+                    }
+                    if (!RegExp(
+                            r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+                        .hasMatch(value)) {
+                      return 'Please enter a valid email Address';
+                    }
+                    return null;
+                  },
+                  controller: _emailController,
+                  style: TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
+                  onChanged: null,
+                  decoration: InputDecoration(
+                      contentPadding: new EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 10.0),
+                      prefixIcon: Icon(
+                        Icons.email,
                         color: Colors.grey,
                       ),
-                    ),
-                    hintText: "PASSWORD",
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide(color: Colors.grey))),
+                      hintText: "E-MAIL",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide(color: Colors.grey))),
+                ),
+              ),
+              SizedBox(height: 20.0),
+              Container(
+                height: 40,
+                child: TextFormField(
+                  obscureText: showPassword,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "Password cannot be empty";
+                    }
+                    if (value.length < 8) {
+                      return "Password must be 8 character long";
+                    }
+                    return null;
+                  },
+                  controller: _passController,
+                  style: TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
+                  onChanged: null,
+                  decoration: InputDecoration(
+                      contentPadding: new EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 10.0),
+                      prefixIcon: InkWell(
+                        onTap: () {
+                          setState(() {
+                            showPassword = !showPassword;
+                          });
+                        },
+                        child: Icon(
+                          Icons.lock,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      hintText: "PASSWORD",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide(color: Colors.grey))),
+                ),
               ),
               SizedBox(
                 height: 20.0,
               ),
-              TextFormField(
-                obscureText: showPassword,
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return "Password cannot be empty";
-                  }
+              Container(
+                height: 40,
+                child: TextFormField(
+                  obscureText: showPassword,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return "Password cannot be empty";
+                    }
 
-                  return null;
-                },
-                style: TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
-                controller: _confirmpassController,
-                onChanged: null,
-                decoration: InputDecoration(
-                    contentPadding: new EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 10.0),
-                    prefixIcon: InkWell(
-                      onTap: () {
-                        setState(() {
-                          showPassword = !showPassword;
-                        });
-                      },
-                      child: Icon(
-                        Icons.lock,
-                        color: Colors.grey,
+                    return null;
+                  },
+                  style: TextStyle(fontSize: 14.0, color: Color(0xFF868A8F)),
+                  controller: _confirmpassController,
+                  onChanged: null,
+                  decoration: InputDecoration(
+                      contentPadding: new EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 10.0),
+                      prefixIcon: InkWell(
+                        onTap: () {
+                          setState(() {
+                            showPassword = !showPassword;
+                          });
+                        },
+                        child: Icon(
+                          Icons.lock,
+                          color: Colors.grey,
+                        ),
                       ),
-                    ),
-                    hintText: "CONFIRM-PASSWORD",
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide(color: Colors.grey))),
+                      hintText: "CONFIRM-PASSWORD",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide(color: Colors.grey))),
+                ),
               ),
               SizedBox(
                 height: 20.0,
@@ -263,21 +268,6 @@ class _SignUpBuildState extends State<SignUpBuild> {
                       TypeSelection.typeOfPage = "FirstPage";
                       Provider.of<Counter>(context, listen: false)
                           .increment(TypeSelection.typeOfPage);
-                      widget.animatorKey.refreshAnimation(
-                          tween: Tween<Offset>(
-                              begin: Offset(0, 0.1), end: Offset(0, 0.2)),
-                          curve: Curves.fastOutSlowIn);
-                      widget.circleanimatorKey.refreshAnimation(
-                          tween: Tween<Offset>(
-                              begin: Offset(-0.6, -0.4),
-                              end: Offset(-0.6, -0.3)),
-                          curve: Curves.easeInSine,
-                          duration: Duration(milliseconds: 500));
-                      widget.logoanimatorKey.refreshAnimation(
-                          tween: Tween<Offset>(
-                              begin: Offset(0, -0.8), end: Offset(0, -0.7)),
-                          curve: Curves.easeInSine,
-                          duration: Duration(milliseconds: 500));
                     });
                   },
                   child: Center(

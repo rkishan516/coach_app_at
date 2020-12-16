@@ -97,7 +97,10 @@ class _InstituteRegisterState extends State<InstituteRegister> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [GuruCoolLightColor.primaryColor, GuruCoolLightColor.whiteColor],
+            colors: [
+              GuruCoolLightColor.primaryColor,
+              GuruCoolLightColor.whiteColor
+            ],
           ),
         ),
         child: Form(
@@ -524,8 +527,9 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                   branch1AdminTextEditingController.text) {
                                 Firestore.instance
                                     .collection('institute')
-                                    .document(
-                                        branch1AdminTextEditingController.text)
+                                    .document(branch1AdminTextEditingController
+                                        .text
+                                        .split('@')[0])
                                     .setData({
                                   "value":
                                       "subAdmin_${reference.key}_${branch1CodeTextEditingController.text}"

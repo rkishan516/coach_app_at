@@ -37,7 +37,8 @@ class WaitScreen extends StatelessWidget {
                   Center(
                     child: Text(
                       'You will get admission in your digital institute as soon as administrator permits you',
-                      style: TextStyle(color: GuruCoolLightColor.whiteColor, fontSize: 18),
+                      style: TextStyle(
+                          color: GuruCoolLightColor.whiteColor, fontSize: 18),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -51,10 +52,10 @@ class WaitScreen extends StatelessWidget {
                                 'instiute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/status')
                             .set("New Student");
                       FireBaseAuth.instance.signoutWithGoogle();
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) => NewWelcomePage()),
-                          (route) => false);
+                      // Navigator.of(context).pushAndRemoveUntil(
+                      //     MaterialPageRoute(
+                      //         builder: (context) => NewWelcomePage()),
+                      //     (route) => false);
                     },
                     child: Text(
                       'Withdraw Request',

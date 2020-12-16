@@ -49,9 +49,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
             ),
             onPressed: () {
               FireBaseAuth.instance.signoutWithGoogle();
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => NewWelcomePage()),
-                  (route) => false);
+              // Navigator.of(context).pushAndRemoveUntil(
+              //     MaterialPageRoute(builder: (context) => NewWelcomePage()),
+              //     (route) => false);
             }),
         title: Text(
           'Registration Form'.tr(),

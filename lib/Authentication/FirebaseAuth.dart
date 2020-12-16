@@ -21,7 +21,10 @@ class FireBaseAuth {
   String providerid;
 
   GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['email'],
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/calendar.events',
+    ],
   );
   PackageInfo packageInfo;
   FirebaseUser user;

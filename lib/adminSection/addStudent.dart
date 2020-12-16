@@ -441,7 +441,8 @@ class _AddStudentState extends State<AddStudent> {
                                   FireBaseAuth.instance.user.email) {
                                 Firestore.instance
                                     .collection('institute')
-                                    .document(emailTextEditingController.text)
+                                    .document(emailTextEditingController.text
+                                        .split('@')[0])
                                     .setData({
                                   "value":
                                       "student_${FireBaseAuth.instance.instituteid}_${FireBaseAuth.instance.branchid}"
