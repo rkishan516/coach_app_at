@@ -68,7 +68,9 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
                           borderRadius: BorderRadius.circular(
                             45.0,
                           ),
-                          border: Border.all(color: GuruCoolLightColor.whiteColor, width: 3.0)),
+                          border: Border.all(
+                              color: GuruCoolLightColor.whiteColor,
+                              width: 3.0)),
                       child: CircleAvatar(
                         radius: 23.0,
                         backgroundImage: NetworkImage(
@@ -85,7 +87,8 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
           ],
         ),
         elevation: 0.0,
-        iconTheme: IconThemeData.fallback().copyWith(color: GuruCoolLightColor.whiteColor),
+        iconTheme: IconThemeData.fallback()
+            .copyWith(color: GuruCoolLightColor.whiteColor),
       ),
       drawer: getDrawer(context, branchListPage: true),
       body: Container(
@@ -143,8 +146,9 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
                                     child: Center(
                                       child: Text(
                                         branchesKey[index].toString(),
-                                        style:
-                                            TextStyle(color: GuruCoolLightColor.primaryColor),
+                                        style: TextStyle(
+                                            color: GuruCoolLightColor
+                                                .primaryColor),
                                       ),
                                     ),
                                   ),
@@ -170,7 +174,8 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
                                     '${branch.address}',
                                     overflow: TextOverflow.fade,
                                     textAlign: TextAlign.justify,
-                                    style: TextStyle(color: GuruCoolLightColor.whiteColor),
+                                    style: TextStyle(
+                                        color: GuruCoolLightColor.whiteColor),
                                   ),
                                 ),
                               )

@@ -188,7 +188,8 @@ class FeeReport extends StatelessWidget {
                                                           ),
                                                         );
                                                       },
-                                                      color: GuruCoolLightColor.primaryColor,
+                                                      color: GuruCoolLightColor
+                                                          .primaryColor,
                                                       child: Center(
                                                         child: Text(
                                                           'See Full List',

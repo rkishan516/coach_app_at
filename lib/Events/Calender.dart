@@ -240,7 +240,8 @@ class _CalenderState extends State<Calender> {
                       margin: EdgeInsets.all(4.0),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                          color: GuruCoolLightColor.primaryColor, shape: BoxShape.circle),
+                          color: GuruCoolLightColor.primaryColor,
+                          shape: BoxShape.circle),
                       child: Text(
                         date.day.toString(),
                         style: TextStyle(color: GuruCoolLightColor.whiteColor),

@@ -77,7 +77,8 @@ class _PublicContentPageState extends State<PublicContentPage> {
                                         child: Text(
                                           '${section.content[section.content.keys.toList()[index]].title}',
                                           style: TextStyle(
-                                              color: GuruCoolLightColor.primaryColor),
+                                              color: GuruCoolLightColor
+                                                  .primaryColor),
                                         ),
                                       ),
                                     ),
@@ -108,13 +109,15 @@ class _PublicContentPageState extends State<PublicContentPage> {
                                             color:
                                                 GuruCoolLightColor.whiteColor,
                                           ),
-                                          backgroundColor: GuruCoolLightColor.primaryColor),
+                                          backgroundColor:
+                                              GuruCoolLightColor.primaryColor),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text(
                                         '${section.content[section.content.keys.toList()[index]].description}',
-                                        style:
-                                            TextStyle(color: GuruCoolLightColor.primaryColor),
+                                        style: TextStyle(
+                                            color: GuruCoolLightColor
+                                                .primaryColor),
                                       ),
                                     ),
                                     Align(

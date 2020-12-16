@@ -67,7 +67,7 @@ class _FormGeneratorState extends State<FormGenerator> {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.only(left:8.0,right: 8.0),
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
           child: ListView(
             children: <Widget>[
               Card(
@@ -173,7 +173,8 @@ class _FormGeneratorState extends State<FormGenerator> {
                           () {
                             dropDownValue = e;
                             label = e + ' label';
-                            if (e == 'Single Choice' || e == 'Multiple Choice') {
+                            if (e == 'Single Choice' ||
+                                e == 'Multiple Choice') {
                               haveChoices = true;
                             } else {
                               haveChoices = false;
@@ -205,7 +206,8 @@ class _FormGeneratorState extends State<FormGenerator> {
                                 return Container(
                                   margin: EdgeInsets.symmetric(vertical: 10),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
                                         'Choice'.tr() + ' $index',
@@ -239,8 +241,8 @@ class _FormGeneratorState extends State<FormGenerator> {
                           bool flag = false;
                           formFieldsModals.forEach((element) {
                             if (element.question == label) {
-                              Alert.instance
-                                  .alert(context, 'Question Already Exist'.tr());
+                              Alert.instance.alert(
+                                  context, 'Question Already Exist'.tr());
                               flag = true;
                               return;
                             }
@@ -274,13 +276,14 @@ class _FormGeneratorState extends State<FormGenerator> {
                         height: 20,
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width/1.2,
+                        width: MediaQuery.of(context).size.width / 1.2,
                         child: RaisedButton(
                           child: Text(
                             'Submit Quiz'.tr(),
                             style: TextStyle(color: Colors.white),
                           ),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5)),
                           color: Color(0xffFF6C24),
                           onPressed: () {
                             QuizModel form = QuizModel(

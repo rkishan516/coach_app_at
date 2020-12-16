@@ -14,7 +14,7 @@ class SubAdminProvider extends ChangeNotifier {
       setBranch(Branch.fromJson(event.snapshot.value));
     });
   }
-  
+
   Branch branch;
 
   setBranch(Branch branch) {

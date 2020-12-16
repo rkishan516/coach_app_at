@@ -25,7 +25,10 @@ class MalFunctionedAPK extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [GuruCoolLightColor.whiteColor, GuruCoolLightColor.primaryColor],
+            colors: [
+              GuruCoolLightColor.whiteColor,
+              GuruCoolLightColor.primaryColor
+            ],
           ),
         ),
         child: Column(

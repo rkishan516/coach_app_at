@@ -181,7 +181,9 @@ List<NoInstallments> _createInstallmentmodel(
 
           int durationinDays = period == "Day(s)"
               ? count
-              : period == "Month(s)" ? count * 30 : count * 365;
+              : period == "Month(s)"
+                  ? count * 30
+                  : count * 365;
 
           if (durationinDays != 0) {
             double val = double.parse(((difference / durationinDays).ceil() *

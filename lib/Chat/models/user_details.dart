@@ -1,6 +1,4 @@
-
 class UserDetails {
-
   String name;
   String emailId;
   String photoUrl;
@@ -44,5 +42,4 @@ class UserDetails {
   set _uid(String uid) {
     this.uid = uid;
   }
-
 }

@@ -97,11 +97,13 @@ class _MidAdminListState extends State<MidAdminList> {
                             child: ListTile(
                               title: Text(
                                 '${midAdmins[midAdmins.keys.toList()[index]].name}',
-                                style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.primaryColor),
                               ),
                               subtitle: Text(
                                 '${midAdmins[midAdmins.keys.toList()[index]].email}',
-                                style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.primaryColor),
                               ),
                               onTap: () {
                                 Navigator.of(context).push(

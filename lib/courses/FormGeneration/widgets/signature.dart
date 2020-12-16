@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+
 class Signature extends StatefulWidget {
   Signature({
     this.key,

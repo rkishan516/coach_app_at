@@ -95,7 +95,8 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                       child: Center(
                         child: Text(
                           'Subjects'.tr(),
-                          style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                          style:
+                              TextStyle(color: GuruCoolLightColor.primaryColor),
                         ),
                       ),
                     ),
@@ -169,7 +170,8 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                         title: Text(
                                           '${courses.subjects[keys.toList()[index]].name}',
                                           style: TextStyle(
-                                              color: GuruCoolLightColor.primaryColor),
+                                              color: GuruCoolLightColor
+                                                  .primaryColor),
                                         ),
                                         trailing: Container(
                                           height: 40,
@@ -184,7 +186,8 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                               ),
                                               Icon(
                                                 Icons.chevron_right,
-                                                color: GuruCoolLightColor.primaryColor,
+                                                color: GuruCoolLightColor
+                                                    .primaryColor,
                                               ),
                                             ],
                                           ),

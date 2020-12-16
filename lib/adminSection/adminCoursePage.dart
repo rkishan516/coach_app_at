@@ -150,7 +150,8 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                             child: ListTile(
                               title: Text(
                                 '${courses[index].name}',
-                                style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.primaryColor),
                               ),
                               trailing: Container(
                                 height: 40,

@@ -152,13 +152,15 @@ class _StudentListState extends State<StudentList> {
                                   child: ListTile(
                                     title: Text(
                                       '${students[students.keys.toList()[index]].name}',
-                                      style:
-                                          TextStyle(color: GuruCoolLightColor.primaryColor),
+                                      style: TextStyle(
+                                          color:
+                                              GuruCoolLightColor.primaryColor),
                                     ),
                                     subtitle: Text(
                                       '${students[students.keys.toList()[index]].email}',
-                                      style:
-                                          TextStyle(color: GuruCoolLightColor.primaryColor),
+                                      style: TextStyle(
+                                          color:
+                                              GuruCoolLightColor.primaryColor),
                                     ),
                                     trailing: Icon(
                                       Icons.chevron_right,

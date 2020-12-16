@@ -224,7 +224,8 @@ class _AddCourseState extends State<AddCourse> {
                           controller: _maxInstallText,
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: GuruCoolLightColor.whiteColor),
+                          style:
+                              TextStyle(color: GuruCoolLightColor.whiteColor),
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: GuruCoolLightColor.primaryColor,
@@ -236,7 +237,8 @@ class _AddCourseState extends State<AddCourse> {
                                 color: GuruCoolLightColor.whiteColor,
                               ),
                             ),
-                            hintStyle: TextStyle(color: GuruCoolLightColor.whiteColor),
+                            hintStyle:
+                                TextStyle(color: GuruCoolLightColor.whiteColor),
                             hintText: "Enter No. of Installments",
                           ),
                         ),
@@ -312,7 +314,8 @@ class _AddCourseState extends State<AddCourse> {
                               value: dropDownStringitem,
                               child: Text(
                                 dropDownStringitem,
-                                style: TextStyle(color: GuruCoolLightColor.whiteColor),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.whiteColor),
                               ),
                             );
                           }).toList(),
@@ -324,7 +327,8 @@ class _AddCourseState extends State<AddCourse> {
                           isExpanded: true,
                           hint: Text(
                             'MM',
-                            style: TextStyle(color: GuruCoolLightColor.whiteColor),
+                            style:
+                                TextStyle(color: GuruCoolLightColor.whiteColor),
                           ),
                           value: _mmSelected,
                         ),
@@ -393,7 +397,8 @@ class _AddCourseState extends State<AddCourse> {
                               child: TextField(
                                 controller: _setFineText,
                                 keyboardType: TextInputType.number,
-                                style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.primaryColor),
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                     borderRadius:
@@ -475,7 +480,8 @@ class _AddCourseState extends State<AddCourse> {
                                   value: dropDownStringitem,
                                   child: Text(
                                     dropDownStringitem,
-                                    style: TextStyle(color: GuruCoolLightColor.whiteColor),
+                                    style: TextStyle(
+                                        color: GuruCoolLightColor.whiteColor),
                                   ),
                                 );
                               }).toList(),
@@ -1306,7 +1312,8 @@ class _AddCourseState extends State<AddCourse> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             '${index + 1} Installment',
-                            style: TextStyle(color: GuruCoolLightColor.whiteColor),
+                            style:
+                                TextStyle(color: GuruCoolLightColor.whiteColor),
                           ),
                         ),
                       ),
@@ -1338,7 +1345,8 @@ class _AddCourseState extends State<AddCourse> {
                                   controller:
                                       _listEditingControllerMoney[index],
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                                  style: TextStyle(
+                                      color: GuruCoolLightColor.primaryColor),
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(
@@ -1350,8 +1358,9 @@ class _AddCourseState extends State<AddCourse> {
                                         borderRadius: BorderRadius.circular(
                                           10,
                                         ),
-                                        borderSide:
-                                            BorderSide(color: GuruCoolLightColor.whiteColor)),
+                                        borderSide: BorderSide(
+                                            color:
+                                                GuruCoolLightColor.whiteColor)),
                                     contentPadding: EdgeInsets.only(top: 0),
                                     filled: true,
                                     fillColor: GuruCoolLightColor.whiteColor,
@@ -1365,7 +1374,8 @@ class _AddCourseState extends State<AddCourse> {
                               child: Text(
                                 '₹',
                                 style: TextStyle(
-                                    fontSize: 22, color: GuruCoolLightColor.whiteColor),
+                                    fontSize: 22,
+                                    color: GuruCoolLightColor.whiteColor),
                               ),
                             )
                           ],
@@ -1392,7 +1402,8 @@ class _AddCourseState extends State<AddCourse> {
                               child: TextFormField(
                                 onChanged: (value) {},
                                 controller: _listEditingControllerDD[index],
-                                style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.primaryColor),
                                 textAlign: TextAlign.center,
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
@@ -1405,13 +1416,14 @@ class _AddCourseState extends State<AddCourse> {
                                         borderRadius: BorderRadius.circular(
                                           10,
                                         ),
-                                        borderSide:
-                                            BorderSide(color: GuruCoolLightColor.whiteColor)),
+                                        borderSide: BorderSide(
+                                            color:
+                                                GuruCoolLightColor.whiteColor)),
                                     contentPadding: EdgeInsets.only(top: 0),
                                     filled: true,
                                     fillColor: GuruCoolLightColor.whiteColor,
-                                    hintStyle:
-                                        TextStyle(color: GuruCoolLightColor.primaryColor),
+                                    hintStyle: TextStyle(
+                                        color: GuruCoolLightColor.primaryColor),
                                     hintText: "DD"),
                               ),
                             ),
@@ -1422,7 +1434,8 @@ class _AddCourseState extends State<AddCourse> {
                               padding: const EdgeInsets.all(2.0),
                               child: TextFormField(
                                 controller: _listEditingControllerMM[index],
-                                style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.primaryColor),
                                 textAlign: TextAlign.center,
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
@@ -1435,13 +1448,14 @@ class _AddCourseState extends State<AddCourse> {
                                         borderRadius: BorderRadius.circular(
                                           10,
                                         ),
-                                        borderSide:
-                                            BorderSide(color: GuruCoolLightColor.whiteColor)),
+                                        borderSide: BorderSide(
+                                            color:
+                                                GuruCoolLightColor.whiteColor)),
                                     contentPadding: EdgeInsets.only(top: 0),
                                     filled: true,
                                     fillColor: GuruCoolLightColor.whiteColor,
-                                    hintStyle:
-                                        TextStyle(color: GuruCoolLightColor.primaryColor),
+                                    hintStyle: TextStyle(
+                                        color: GuruCoolLightColor.primaryColor),
                                     hintText: "MM"),
                               ),
                             ),
@@ -1453,7 +1467,8 @@ class _AddCourseState extends State<AddCourse> {
                               child: TextFormField(
                                 onChanged: (value) {},
                                 controller: _listEditingControllerYYYY[index],
-                                style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.primaryColor),
                                 textAlign: TextAlign.center,
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
@@ -1466,13 +1481,14 @@ class _AddCourseState extends State<AddCourse> {
                                       borderRadius: BorderRadius.circular(
                                         10,
                                       ),
-                                      borderSide:
-                                          BorderSide(color: GuruCoolLightColor.whiteColor)),
+                                      borderSide: BorderSide(
+                                          color:
+                                              GuruCoolLightColor.whiteColor)),
                                   contentPadding: EdgeInsets.only(top: 0),
                                   filled: true,
                                   fillColor: GuruCoolLightColor.whiteColor,
-                                  hintStyle:
-                                      TextStyle(color: GuruCoolLightColor.primaryColor),
+                                  hintStyle: TextStyle(
+                                      color: GuruCoolLightColor.primaryColor),
                                   hintText: "YYYY",
                                 ),
                               ),

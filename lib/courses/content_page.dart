@@ -102,15 +102,18 @@ class _ContentPageState extends State<ContentPage> {
                                           : Icons.question_answer,
                                   color: GuruCoolLightColor.whiteColor,
                                 ),
-                                backgroundColor: GuruCoolLightColor.primaryColor,
+                                backgroundColor:
+                                    GuruCoolLightColor.primaryColor,
                               ),
                               title: Text(
                                 '${chapter.content[keys.toList()[index]].title}',
-                                style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.primaryColor),
                               ),
                               subtitle: Text(
                                 '${chapter.content[keys.toList()[index]].time ?? 'Before 19 July'}',
-                                style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.primaryColor),
                               ),
                               trailing: Container(
                                 height: 40,

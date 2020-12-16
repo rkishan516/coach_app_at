@@ -99,8 +99,6 @@ class FormBuilderValidators {
     };
   }
 
-  
-
   /// [FormFieldValidator] that requires the field's value to match the provided regex pattern.
   static FormFieldValidator pattern(
     Pattern pattern, {

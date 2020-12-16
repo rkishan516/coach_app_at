@@ -176,7 +176,9 @@ class SpinKitDoubleBounce extends StatefulWidget {
     this.itemBuilder,
     this.duration = const Duration(milliseconds: 2000),
     this.controller,
-  })  : assert(!(itemBuilder is IndexedWidgetBuilder && color is Color) && !(itemBuilder == null && color == null),
+  })  : assert(
+            !(itemBuilder is IndexedWidgetBuilder && color is Color) &&
+                !(itemBuilder == null && color == null),
             'You should specify either a itemBuilder or a color'),
         assert(size != null),
         super(key: key);
@@ -191,7 +193,8 @@ class SpinKitDoubleBounce extends StatefulWidget {
   _SpinKitDoubleBounceState createState() => _SpinKitDoubleBounceState();
 }
 
-class _SpinKitDoubleBounceState extends State<SpinKitDoubleBounce> with SingleTickerProviderStateMixin {
+class _SpinKitDoubleBounceState extends State<SpinKitDoubleBounce>
+    with SingleTickerProviderStateMixin {
   AnimationController _controller;
   Animation<double> _animation;
 
@@ -199,10 +202,12 @@ class _SpinKitDoubleBounceState extends State<SpinKitDoubleBounce> with SingleTi
   void initState() {
     super.initState();
 
-    _controller = (widget.controller ?? AnimationController(vsync: this, duration: widget.duration))
+    _controller = (widget.controller ??
+        AnimationController(vsync: this, duration: widget.duration))
       ..addListener(() => setState(() {}))
       ..repeat(reverse: true);
-    _animation = Tween(begin: -1.0, end: 1.0).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _animation = Tween(begin: -1.0, end: 1.0)
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -218,7 +223,8 @@ class _SpinKitDoubleBounceState extends State<SpinKitDoubleBounce> with SingleTi
         children: List.generate(2, (i) {
           return Transform.scale(
             scale: (1.0 - i - _animation.value.abs()).abs(),
-            child: SizedBox.fromSize(size: Size.square(widget.size), child: _itemBuilder(i)),
+            child: SizedBox.fromSize(
+                size: Size.square(widget.size), child: _itemBuilder(i)),
           );
         }),
       ),
@@ -227,5 +233,7 @@ class _SpinKitDoubleBounceState extends State<SpinKitDoubleBounce> with SingleTi
 
   Widget _itemBuilder(int index) => widget.itemBuilder != null
       ? widget.itemBuilder(context, index)
-      : DecoratedBox(decoration: BoxDecoration(shape: BoxShape.circle, color: widget.color.withOpacity(0.6)));
+      : DecoratedBox(
+          decoration: BoxDecoration(
+              shape: BoxShape.circle, color: widget.color.withOpacity(0.6)));
 }

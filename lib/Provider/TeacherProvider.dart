@@ -14,7 +14,7 @@ class TeacherProvider extends ChangeNotifier {
       setTeacher(Teacher.fromJson(event.snapshot.value));
     });
   }
-  
+
   Teacher teacher;
 
   setTeacher(Teacher teacher) {

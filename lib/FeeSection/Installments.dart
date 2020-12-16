@@ -127,7 +127,8 @@ class _InstallmentsState extends State<Installments> {
                                   //TODO
                                 },
                                 controller: _listEditingControllerMoney[index],
-                                style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.primaryColor),
                                 textAlign: TextAlign.center,
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
@@ -185,7 +186,8 @@ class _InstallmentsState extends State<Installments> {
                                 //TODO
                               },
                               controller: _listEditingControllerDD[index],
-                              style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                              style: TextStyle(
+                                  color: GuruCoolLightColor.primaryColor),
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
@@ -204,8 +206,8 @@ class _InstallmentsState extends State<Installments> {
                                   contentPadding: EdgeInsets.only(top: 0),
                                   filled: true,
                                   fillColor: GuruCoolLightColor.whiteColor,
-                                  hintStyle:
-                                      TextStyle(color: GuruCoolLightColor.primaryColor),
+                                  hintStyle: TextStyle(
+                                      color: GuruCoolLightColor.primaryColor),
                                   hintText: "DD"),
                             ),
                           ),
@@ -253,7 +255,8 @@ class _InstallmentsState extends State<Installments> {
                                 //TODO
                               },
                               controller: _listEditingControllerYYYY[index],
-                              style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                              style: TextStyle(
+                                  color: GuruCoolLightColor.primaryColor),
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
@@ -271,7 +274,8 @@ class _InstallmentsState extends State<Installments> {
                                 contentPadding: EdgeInsets.only(top: 0),
                                 filled: true,
                                 fillColor: GuruCoolLightColor.whiteColor,
-                                hintStyle: TextStyle(color: GuruCoolLightColor.primaryColor),
+                                hintStyle: TextStyle(
+                                    color: GuruCoolLightColor.primaryColor),
                                 hintText: "YYYY",
                               ),
                             ),

@@ -94,7 +94,8 @@ class _SubjectPageState extends State<SubjectPage>
                       child: Center(
                         child: Text(
                           'Subjects'.tr(),
-                          style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                          style:
+                              TextStyle(color: GuruCoolLightColor.primaryColor),
                         ),
                       ),
                     ),
@@ -169,7 +170,8 @@ class _SubjectPageState extends State<SubjectPage>
                                         ),
                                         Icon(
                                           Icons.chevron_right,
-                                          color: GuruCoolLightColor.primaryColor,
+                                          color:
+                                              GuruCoolLightColor.primaryColor,
                                         ),
                                       ],
                                     ),

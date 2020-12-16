@@ -124,15 +124,17 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                             Text(
                                               'Filter',
                                               style: TextStyle(
-                                                  color: GuruCoolLightColor.whiteColor),
+                                                  color: GuruCoolLightColor
+                                                      .whiteColor),
                                             )
                                           ];
                                         },
                                         hint: Center(
                                           child: Text(
                                             'Filter',
-                                            style:
-                                                TextStyle(color: GuruCoolLightColor.whiteColor),
+                                            style: TextStyle(
+                                                color: GuruCoolLightColor
+                                                    .whiteColor),
                                           ),
                                         ),
                                         items: ['None', 'Mid - Admins']
@@ -176,7 +178,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                                                   top: 66.0),
                                                           decoration:
                                                               BoxDecoration(
-                                                            color: GuruCoolLightColor.whiteColor,
+                                                            color:
+                                                                GuruCoolLightColor
+                                                                    .whiteColor,
                                                             shape: BoxShape
                                                                 .rectangle,
                                                             borderRadius:
@@ -378,7 +382,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                                   .name,
                                               style: TextStyle(
                                                 fontSize: 6,
-                                                color: GuruCoolLightColor.primaryColor,
+                                                color: GuruCoolLightColor
+                                                    .primaryColor,
                                               ),
                                               textAlign: TextAlign.center,
                                             ),

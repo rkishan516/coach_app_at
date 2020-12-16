@@ -4,7 +4,7 @@ class VyCode {
   static VyCode instance = VyCode._();
   VyCode._();
   String getNextVyCode(String vyCode) {
-    return getDecimalToVy(getVyToDecimal(vyCode)+1);
+    return getDecimalToVy(getVyToDecimal(vyCode) + 1);
   }
 
   int getVyToDecimal(String vyCode) {
@@ -43,6 +43,6 @@ class VyCode {
 
       val ~/= 62;
     }
-    return vyCode.split('').reversed.join().padLeft(4,'0');
+    return vyCode.split('').reversed.join().padLeft(4, '0');
   }
 }

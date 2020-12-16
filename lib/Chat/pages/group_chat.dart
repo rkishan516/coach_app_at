@@ -466,7 +466,7 @@ class _groupChatScreenState extends State<groupChatScreen> {
   }
 
   Future<FirebaseUser> getUID() async {
-    FirebaseUser user = await  _firebaseAuth.currentUser();
+    FirebaseUser user = await _firebaseAuth.currentUser();
     return user;
   }
 

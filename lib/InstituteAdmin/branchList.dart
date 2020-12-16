@@ -95,7 +95,8 @@ class _BranchListState extends State<BranchList> {
                               padding: const EdgeInsets.only(left: 10.0),
                               child: Text(
                                 'Trial',
-                                style: TextStyle(color: GuruCoolLightColor.whiteColor),
+                                style: TextStyle(
+                                    color: GuruCoolLightColor.whiteColor),
                               ),
                             )
                           : Container(),
@@ -117,7 +118,8 @@ class _BranchListState extends State<BranchList> {
                                   45.0,
                                 ),
                                 border: Border.all(
-                                    color: GuruCoolLightColor.whiteColor, width: 3.0)),
+                                    color: GuruCoolLightColor.whiteColor,
+                                    width: 3.0)),
                             child: CircleAvatar(
                               radius: 23.0,
                               backgroundImage: NetworkImage(
@@ -134,7 +136,8 @@ class _BranchListState extends State<BranchList> {
                 ],
               ),
               elevation: 0.0,
-              iconTheme: IconThemeData.fallback().copyWith(color: GuruCoolLightColor.whiteColor),
+              iconTheme: IconThemeData.fallback()
+                  .copyWith(color: GuruCoolLightColor.whiteColor),
             ),
             drawer: getDrawer(context, branchListPage: true),
             body: Container(
@@ -213,7 +216,8 @@ class _BranchListState extends State<BranchList> {
                                             child: Text(
                                               institutes.keys.toList()[index],
                                               style: TextStyle(
-                                                  color: GuruCoolLightColor.primaryColor),
+                                                  color: GuruCoolLightColor
+                                                      .primaryColor),
                                             ),
                                           ),
                                         ),
@@ -228,7 +232,8 @@ class _BranchListState extends State<BranchList> {
                                           maxLines: 2,
                                           textAlign: TextAlign.justify,
                                           style: TextStyle(
-                                              color: GuruCoolLightColor.whiteColor,
+                                              color:
+                                                  GuruCoolLightColor.whiteColor,
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ),
@@ -241,7 +246,9 @@ class _BranchListState extends State<BranchList> {
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 3,
                                           textAlign: TextAlign.justify,
-                                          style: TextStyle(color: GuruCoolLightColor.whiteColor),
+                                          style: TextStyle(
+                                              color: GuruCoolLightColor
+                                                  .whiteColor),
                                         ),
                                       ),
                                     )

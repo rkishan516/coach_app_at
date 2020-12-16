@@ -51,10 +51,14 @@ class _SubAdminProfileState extends State<SubAdminProfile> {
                       ),
                     ),
                   ListTile(
-                    title: Text('Name'.tr() + ' : ' + (snapshot.data.snapshot.value[key]['name'] ?? '')),
+                    title: Text('Name'.tr() +
+                        ' : ' +
+                        (snapshot.data.snapshot.value[key]['name'] ?? '')),
                   ),
                   ListTile(
-                    title: Text('Email'.tr() + ' : ' + snapshot.data.snapshot.value[key]['email']),
+                    title: Text('Email'.tr() +
+                        ' : ' +
+                        snapshot.data.snapshot.value[key]['email']),
                   ),
                 ],
               ),

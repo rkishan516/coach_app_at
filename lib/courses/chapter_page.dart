@@ -102,7 +102,8 @@ class _ChapterPageState extends State<ChapterPage>
                       child: Center(
                         child: Text(
                           'Chapters'.tr(),
-                          style: TextStyle(color: GuruCoolLightColor.primaryColor),
+                          style:
+                              TextStyle(color: GuruCoolLightColor.primaryColor),
                         ),
                       ),
                     ),
@@ -158,8 +159,9 @@ class _ChapterPageState extends State<ChapterPage>
                                     child: ListTile(
                                       title: Text(
                                         '${subjects.chapters[keys.toList()[index]].name}',
-                                        style:
-                                            TextStyle(color: GuruCoolLightColor.primaryColor),
+                                        style: TextStyle(
+                                            color: GuruCoolLightColor
+                                                .primaryColor),
                                       ),
                                       trailing: Container(
                                         height: 40,
@@ -181,7 +183,8 @@ class _ChapterPageState extends State<ChapterPage>
                                             ),
                                             Icon(
                                               Icons.chevron_right,
-                                              color: GuruCoolLightColor.primaryColor,
+                                              color: GuruCoolLightColor
+                                                  .primaryColor,
                                             ),
                                           ],
                                         ),

@@ -50,7 +50,8 @@ class _MyInstituteState extends State<MyInstitute> {
                                 50.0,
                               ),
                               border: Border.all(
-                                  color: GuruCoolLightColor.primaryColor, width: 3.0)),
+                                  color: GuruCoolLightColor.primaryColor,
+                                  width: 3.0)),
                           child: CircleAvatar(
                             radius: 50.0,
                             backgroundImage: NetworkImage(
