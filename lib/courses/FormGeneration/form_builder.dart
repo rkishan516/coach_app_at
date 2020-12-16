@@ -107,7 +107,9 @@ class FormBuilderState extends State<FormBuilder> {
     return Form(
       key: _formKey,
       child: widget.child,
-      autovalidate: widget.autovalidate,
+      autovalidateMode: widget.autovalidate
+          ? AutovalidateMode.always
+          : AutovalidateMode.disabled,
       onWillPop: widget.onWillPop,
       onChanged: () {
         if (widget.onChanged != null) {

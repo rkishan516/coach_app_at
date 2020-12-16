@@ -1,7 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Models/model.dart';
-import 'package:coach_app/NewAuthentication/Frontened/NewWelcomePage.dart';
 import 'package:coach_app/Student/all_course_view.dart';
 import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -227,13 +226,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         );
                       }), (route) => false);
                     } else {
-                      _scKey.currentState.showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Something remains unfilled'.tr(),
-                          ),
-                        ),
-                      );
+                      // _scKey.currentState.showSnackBar(
+                      //   SnackBar(
+                      //     content: Text(
+                      //       'Something remains unfilled'.tr(),
+                      //     ),
+                      //   ),
+                      // );
                     }
                   },
                   child: Text('Register'.tr()),

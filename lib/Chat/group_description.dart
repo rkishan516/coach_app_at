@@ -25,28 +25,28 @@ class SizeConfig {
   }
 }
 
-class groupDes extends StatefulWidget {
+class GroupDes extends StatefulWidget {
   final List<Item> sList;
-  final choose ch;
+  final Choose ch;
   final String catg;
-  final curUser currentUser;
+  final CurUser currentUser;
 
-  groupDes({this.sList, this.catg, this.ch, this.currentUser});
+  GroupDes({this.sList, this.catg, this.ch, this.currentUser});
 
   @override
-  _groupDesState createState() {
-    return new _groupDesState(sList, catg, ch, currentUser);
+  _GroupDesState createState() {
+    return new _GroupDesState(sList, catg, ch, currentUser);
   }
 }
 
-class _groupDesState extends State<groupDes> {
+class _GroupDesState extends State<GroupDes> {
   List<Item> selItem2 = [];
   String catg;
-  choose ch;
-  final curUser currentUser;
+  Choose ch;
+  final CurUser currentUser;
   int counter = 0;
   String groupName = '';
-  _groupDesState(this.selItem2, this.catg, this.ch, this.currentUser);
+  _GroupDesState(this.selItem2, this.catg, this.ch, this.currentUser);
 
   List<Item> itemList = [];
   List<Item> selectedList2 = [];
@@ -117,7 +117,7 @@ class _groupDesState extends State<groupDes> {
   @override
   void dispose() {
     super.dispose();
-    //subscription?.cancel();
+    subscription?.cancel();
   }
 
   @override
@@ -134,13 +134,13 @@ class _groupDesState extends State<groupDes> {
             ),
             onPressed: () {
               if (selectedList2.length < 1) {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text("No participant is selected"),
-                ));
+                // Scaffold.of(context).showSnackBar(SnackBar(
+                //   content: Text("No participant is selected"),
+                // ));
               } else {
                 Navigator.of(context)
                     .push(new MaterialPageRoute(builder: (context) {
-                  return new groupFinal(
+                  return new GroupFinal(
                     preSelectedItem: selectedList2,
                     groupName: groupName,
                     currentUser: currentUser,

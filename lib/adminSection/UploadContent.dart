@@ -1,12 +1,9 @@
-import 'dart:ffi';
-
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Utils/Colors.dart';
-import 'package:coach_app/YoutubeAPI/youtubeApi.dart';
 import 'package:coach_app/courses/FormGeneration/form_generator.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -134,8 +131,8 @@ class _UploadContentState extends State<UploadContent> {
   }
 
   void _showsnackbar(BuildContext context, String message) {
-    final snackBar = SnackBar(content: Text(message));
-    _scaffoldkey.currentState.showSnackBar(snackBar);
+    // final snackBar = SnackBar(content: Text(message));
+    // _scaffoldkey.currentState.showSnackBar(snackBar);
   }
 
   @override

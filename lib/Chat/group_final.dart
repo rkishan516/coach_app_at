@@ -23,21 +23,21 @@ class SizeConfig {
   }
 }
 
-class groupFinal extends StatefulWidget {
+class GroupFinal extends StatefulWidget {
   final List<Item> preSelectedItem;
   final String groupName;
-  final curUser currentUser;
-  groupFinal({this.preSelectedItem, this.groupName, this.currentUser});
+  final CurUser currentUser;
+  GroupFinal({this.preSelectedItem, this.groupName, this.currentUser});
   @override
-  _groupFinalState createState() =>
-      _groupFinalState(preSelectedItem, groupName, currentUser);
+  _GroupFinalState createState() =>
+      _GroupFinalState(preSelectedItem, groupName, currentUser);
 }
 
-class _groupFinalState extends State<groupFinal> {
+class _GroupFinalState extends State<GroupFinal> {
   final List<Item> preSelectedItem;
   final String groupName;
-  final curUser currentUser;
-  _groupFinalState(this.preSelectedItem, this.groupName, this.currentUser);
+  final CurUser currentUser;
+  _GroupFinalState(this.preSelectedItem, this.groupName, this.currentUser);
 
   List<Item> itemList = [];
   List<Item> selectedList = [];
@@ -61,22 +61,22 @@ class _groupFinalState extends State<groupFinal> {
     getList();
     DateFormat dateFormat = DateFormat("dd/MM/yyyy");
     String da = dateFormat.format(DateTime.now());
-    var grid = Flexible(
-        child: ListView(
-      children: [
-        ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: SizeConfig.v * 74.53),
-          child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: itemList.length,
-              itemBuilder: (context, index) {
-                return GridItem(
-                  item: itemList[index],
-                );
-              }),
-        ),
-      ],
-    ));
+    // var grid = Flexible(
+    //     child: ListView(
+    //   children: [
+    //     ConstrainedBox(
+    //       constraints: BoxConstraints(maxHeight: SizeConfig.v * 74.53),
+    //       child: ListView.builder(
+    //           shrinkWrap: true,
+    //           itemCount: itemList.length,
+    //           itemBuilder: (context, index) {
+    //             return GridItem(
+    //               item: itemList[index],
+    //             );
+    //           }),
+    //     ),
+    //   ],
+    // ));
 
     return Scaffold(
         appBar: getAppBar(),
@@ -216,9 +216,9 @@ class _groupFinalState extends State<groupFinal> {
 
     listToName();
 
-    groupData _groupData;
+    GroupData _groupData;
 
-    _groupData = groupData(
+    _groupData = GroupData(
         name: groupName,
         memberList: selectedName,
         groupImageUrl:
@@ -267,7 +267,7 @@ class Item2 {
   Item2(this.imageUrl, this.rank, this.name, this.uid, this.des);
 }
 
-class groupData {
+class GroupData {
   String name;
   List<String> memberList;
   String groupImageUrl;
@@ -275,7 +275,7 @@ class groupData {
   FieldValue timestamp;
   String gid;
 
-  groupData(
+  GroupData(
       {this.name,
       this.memberList,
       this.groupImageUrl,
@@ -294,8 +294,8 @@ class groupData {
     return map;
   }
 
-  groupData fromMap(Map<String, dynamic> map) {
-    groupData _groupData = groupData();
+  GroupData fromMap(Map<String, dynamic> map) {
+    GroupData _groupData = GroupData();
     _groupData.name = map['name'];
     _groupData.memberList = map['memberList'];
     _groupData.groupImageUrl = map['groupImageUrl'];

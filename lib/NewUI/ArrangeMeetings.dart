@@ -28,26 +28,12 @@ class SizeConfig {
 }
 
 class Home extends StatelessWidget {
-  CalendarController _calendarController = CalendarController();
-  Map<DateTime, List> _events;
-  List _selectedEvents;
-  List<MeetingDetails> listitems;
-
-  @override
-  void initState() {
-    // super.initState();
-    _calendarController = CalendarController();
-  }
-
-  @override
-  void dispose() {
-    _calendarController.dispose();
-    loadList();
-  }
-
-  List<Item> itemList; //managers
+  final CalendarController _calendarController = CalendarController();
+  // Map<DateTime, List> _events;
+  // List _selectedEvents;
+  // List<MeetingDetails> listitems;
+  final List<Item> itemList = List<Item>(); //managers
   loadList() {
-    itemList = List();
     itemList.add(
         Item("UI discussion", "to discuss the possibilties of UI", "01:29"));
     itemList.add(

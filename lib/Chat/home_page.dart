@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   UserDetails _userDetails = UserDetails();
   var mapData = Map<String, String>();
   String uid;
-  curUser currentUser;
+  CurUser currentUser;
   StreamSubscription<DocumentSnapshot> subscribtion;
 
   Future<FirebaseUser> signIn() async {
@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
     return user;
   }
 
-  curUser udetail;
+  CurUser udetail;
 
   void addDataToDb(
       FirebaseUser user, ListItem _selectedItem, ListItem _selectedSub, code) {
@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
         uID = _userDetails.uid;
     String selRole = _selectedItem.name, selCourse = _selectedSub.name;
 
-    udetail = curUser(uID, nAME, pHOTO, eMAIL, code, selCourse, selRole);
+    udetail = CurUser(uID, nAME, pHOTO, eMAIL, code, selCourse, selRole);
 
     currentUser = udetail;
 
@@ -87,13 +87,13 @@ class _HomePageState extends State<HomePage> {
         .document(selCourse);
 
     // Adding Member in Course Group
-    CollectionReference collectionCheck = Firestore.instance
-        .collection("Group")
-        .document(code)
-        .collection("Course Group");
+    // CollectionReference collectionCheck = Firestore.instance
+    //     .collection("Group")
+    //     .document(code)
+    //     .collection("Course Group");
 
     Map<String, dynamic> tempSnap;
-    subGroup _subGroup;
+    SubGroup _subGroup;
     List<dynamic> tempMemberList;
     List<String> toAdd = [];
     //String str;
@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
     String photoLink =
         "https://cdn.iconscout.com/icon/premium/png-256-thumb/open-book-1831704-1554648.png";
 
-    _subGroup = subGroup(
+    _subGroup = SubGroup(
         displayName: selCourse,
         memberList: toAdd,
         photoUrl: photoLink,
@@ -230,6 +230,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   String code;
+
+  @override
+  void dispose() {
+    subscribtion?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -353,7 +359,7 @@ class ListItem {
   ListItem(this.value, this.name);
 }
 
-class subGroup {
+class SubGroup {
   String displayName;
   List<String> memberList;
   String photoUrl;
@@ -361,7 +367,7 @@ class subGroup {
   String course;
   String gid;
 
-  subGroup(
+  SubGroup(
       {this.displayName,
       this.memberList,
       this.photoUrl,
@@ -380,8 +386,8 @@ class subGroup {
     return map;
   }
 
-  subGroup fromMap(Map<String, dynamic> map) {
-    subGroup _groupData = subGroup();
+  SubGroup fromMap(Map<String, dynamic> map) {
+    SubGroup _groupData = SubGroup();
     _groupData.displayName = map['name'];
     _groupData.memberList = map['memberList'];
     _groupData.photoUrl = map['photoUrl'];

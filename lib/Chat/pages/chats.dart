@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -25,11 +23,11 @@ class SizeConfig {
   }
 }
 
-class chats extends StatefulWidget {
+class Chats extends StatefulWidget {
   final String cat;
-  final curUser currentUser;
+  final CurUser currentUser;
 
-  chats({this.cat, this.currentUser});
+  Chats({this.cat, this.currentUser});
 
   @override
   State<StatefulWidget> createState() {
@@ -37,13 +35,13 @@ class chats extends StatefulWidget {
   }
 }
 
-class ChatState extends State<chats> {
+class ChatState extends State<Chats> {
   final String cat;
-  final curUser currentUser;
+  final CurUser currentUser;
 
   ChatState(this.cat, this.currentUser);
 
-  StreamSubscription<QuerySnapshot> _subscription;
+  // StreamSubscription<QuerySnapshot> _subscription;
   List<DocumentSnapshot> userlist;
 
   CollectionReference _collectionReference;
@@ -57,7 +55,8 @@ class ChatState extends State<chats> {
     super.initState();
     //giveback();
     _collectionReference = Firestore.instance.collection(cat);
-    _subscription = _collectionReference
+    // _subscription =
+    _collectionReference
         .where('code', isEqualTo: currentUser.code)
         .orderBy('name')
         .snapshots()

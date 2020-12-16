@@ -29,10 +29,10 @@ class SizeConfig {
 }
 
 class ChatScreen extends StatefulWidget {
-  String name;
-  String photoUrl;
-  String receiverUid;
-  String role;
+  final String name;
+  final String photoUrl;
+  final String receiverUid;
+  final String role;
   ChatScreen({this.name, this.photoUrl, this.receiverUid, this.role});
 
   _ChatScreenState createState() => _ChatScreenState();
@@ -44,9 +44,9 @@ class _ChatScreenState extends State<ChatScreen> {
   var _formKey = GlobalKey<FormState>();
   var map = Map<String, dynamic>();
   CollectionReference _collectionReference;
-  DocumentReference _receiverDocumentReference;
-  DocumentReference _senderDocumentReference;
-  DocumentReference _documentReference;
+  // DocumentReference _receiverDocumentReference;
+  // DocumentReference _senderDocumentReference;
+  // DocumentReference _documentReference;
   DocumentSnapshot documentSnapshot;
   bool _autoValidate = false;
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -100,7 +100,7 @@ class _ChatScreenState extends State<ChatScreen> {
     print("Message : ${message.message}");
     map = message.toMap();
 
-    print("Map : ${map}");
+    print("Map : $map");
     _collectionReference = Firestore.instance
         .collection("messages")
         .document(message.senderUid)
@@ -185,18 +185,18 @@ class _ChatScreenState extends State<ChatScreen> {
                         ),
                       ),
                       //new Flexible(child: new Container()),
-                      ChatMessagesListWidget(),
+                      chatMessagesListWidget(),
                       SizedBox(
                         height: SizeConfig.v * 2.035,
                       ),
-                      ChatInputWidget(),
+                      chatInputWidget(),
                     ],
                   ),
                 ),
         ));
   }
 
-  Widget ChatInputWidget() {
+  Widget chatInputWidget() {
     return Container(
       alignment: Alignment.bottomRight,
       padding: EdgeInsets.symmetric(
@@ -206,7 +206,9 @@ class _ChatScreenState extends State<ChatScreen> {
           Flexible(
             child: Container(
               child: TextFormField(
-                autovalidate: _autoValidate,
+                autovalidateMode: (_autoValidate)
+                    ? AutovalidateMode.always
+                    : AutovalidateMode.disabled,
                 validator: (String input) {
                   if (input.isEmpty) {
                     return "Please enter message";
@@ -283,9 +285,11 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<String> pickImage() async {
-    var selectedImage = await ImagePicker.pickImage(
+    // ignore: invalid_use_of_visible_for_testing_member
+    var selectedImag = await ImagePicker.platform.pickImage(
       source: ImageSource.gallery,
     );
+    File selectedImage = File(selectedImag.path);
 
     print("Original Size: ${selectedImage.lengthSync()}");
 
@@ -367,7 +371,7 @@ class _ChatScreenState extends State<ChatScreen> {
     map['mediaUrl'] = _message.mediaUrl;
     map['message'] = _message.message;
 
-    print("Map : ${map}");
+    print("Map : $map");
     _collectionReference = Firestore.instance
         .collection("messages")
         .document(_message.senderUid)
@@ -406,7 +410,7 @@ class _ChatScreenState extends State<ChatScreen> {
     map['timestamp'] = _message.timestamp;
     map['mediaUrl'] = _message.mediaUrl;
 
-    print("Map : ${map}");
+    print("Map : $map");
     _collectionReference = Firestore.instance
         .collection("messages")
         .document(_message.senderUid)
@@ -440,7 +444,7 @@ class _ChatScreenState extends State<ChatScreen> {
     map['timestamp'] = _message.timestamp;
     map['mediaUrl'] = _message.mediaUrl;
 
-    print("Map : ${map}");
+    print("Map : $map");
     _collectionReference = Firestore.instance
         .collection("messages")
         .document(_message.senderUid)
@@ -471,7 +475,7 @@ class _ChatScreenState extends State<ChatScreen> {
         timestamp: FieldValue.serverTimestamp(),
         type: 'text');
     print(
-        "receiverUid: ${widget.receiverUid} , senderUid : ${_senderuid} , message: ${text}");
+        "receiverUid: ${widget.receiverUid} , senderUid : $_senderuid , message: $text");
     print(
         "timestamp: ${DateTime.now().millisecond}, type: ${text != null ? 'text' : 'image'}");
     addMessageToDb(_message);
@@ -494,7 +498,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return receiverDocumentSnapshot;
   }
 
-  Widget ChatMessagesListWidget() {
+  Widget chatMessagesListWidget() {
     print("SENDERUID : $_senderuid");
     return Flexible(
       child: StreamBuilder(

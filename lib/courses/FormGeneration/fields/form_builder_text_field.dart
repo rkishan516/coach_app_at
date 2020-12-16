@@ -153,7 +153,9 @@ class FormBuilderTextFieldState extends State<FormBuilderTextField> {
       decoration: widget.decoration.copyWith(
         enabled: !_readOnly,
       ),
-      autovalidate: widget.autovalidate ?? false,
+      autovalidateMode: widget.autovalidate
+          ? AutovalidateMode.always
+          : AutovalidateMode.disabled,
       // initialValue: "${_initialValue ?? ''}",
       maxLines: widget.maxLines,
       keyboardType: widget.keyboardType,

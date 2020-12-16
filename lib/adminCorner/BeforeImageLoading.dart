@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class BeforeImageLoading extends StatefulWidget {
-  var imageurl;
+  final imageurl;
   BeforeImageLoading({this.imageurl});
 
   @override

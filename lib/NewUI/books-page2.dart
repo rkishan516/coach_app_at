@@ -3,7 +3,6 @@ import 'package:coach_app/TimeTableSection/TimeTablePage.dart';
 import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/Utils/SizeConfig.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
 
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 

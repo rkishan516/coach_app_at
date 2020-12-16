@@ -1,5 +1,4 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Chat/group_list.dart';
 import 'package:coach_app/NewAuthentication/Frontened/NewWelcomePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,7 +25,7 @@ class SizeConfig {
 }
 
 class AllUsersScreen extends StatefulWidget {
-  final curUser currentUser;
+  final CurUser currentUser;
   AllUsersScreen({this.currentUser});
 
   _AllUsersScreenState createState() => _AllUsersScreenState(currentUser);
@@ -34,7 +33,7 @@ class AllUsersScreen extends StatefulWidget {
 
 class _AllUsersScreenState extends State<AllUsersScreen>
     with SingleTickerProviderStateMixin {
-  final curUser currentUser;
+  final CurUser currentUser;
   _AllUsersScreenState(this.currentUser);
 
   TabController _tabController;
@@ -84,23 +83,23 @@ class _AllUsersScreenState extends State<AllUsersScreen>
     if (des == "Admin") {
       //_chats.clear();
 
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Mid Admin",
         currentUser: currentUser,
       )); //to call different chat screens
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Sub Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Teacher",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Student",
         currentUser: currentUser,
       ));
-      _chats.add(groupList(currentUser: currentUser));
+      _chats.add(GroupList(currentUser: currentUser));
 
       _tabs.clear();
 
@@ -133,27 +132,27 @@ class _AllUsersScreenState extends State<AllUsersScreen>
     if (des == "Mid Admin") {
       //_chats.clear();
 
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Mid Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Sub Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Teacher",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Student",
         currentUser: currentUser,
       ));
-      _chats.add(groupList(currentUser: currentUser));
+      _chats.add(GroupList(currentUser: currentUser));
 
       _tabs.clear();
 
@@ -191,27 +190,27 @@ class _AllUsersScreenState extends State<AllUsersScreen>
     if (des == "Sub Admin") {
       //_chats.clear();
 
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Mid Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Sub Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Teacher",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Student",
         currentUser: currentUser,
       ));
-      _chats.add(groupList(
+      _chats.add(GroupList(
         currentUser: currentUser,
       ));
 
@@ -251,19 +250,19 @@ class _AllUsersScreenState extends State<AllUsersScreen>
     if (des == "Teacher") {
       //_chats.clear();
 
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Sub Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Teacher",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Student",
         currentUser: currentUser,
       ));
-      _chats.add(groupList(
+      _chats.add(GroupList(
         currentUser: currentUser,
       ));
 
@@ -291,7 +290,7 @@ class _AllUsersScreenState extends State<AllUsersScreen>
                   fontSize: SizeConfig.b * 3.7))));
     }
     if (des == "Student") {
-      _chats.add(groupList(
+      _chats.add(GroupList(
         currentUser: currentUser,
       ));
 
@@ -335,7 +334,7 @@ class _AllUsersScreenState extends State<AllUsersScreen>
         onPressed: () {
           print("Pressed Button");
           Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
-            return new participants(
+            return new Participants(
               currentUser: currentUser,
             );
           }));

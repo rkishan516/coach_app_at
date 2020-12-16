@@ -2,7 +2,6 @@ import 'package:coach_app/Chat/models/item_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:async';
 
 class SizeConfig {
   static MediaQueryData _mediaQueryData;
@@ -20,11 +19,11 @@ class SizeConfig {
   }
 }
 
-class subAdminBased extends StatefulWidget {
-  final curUser currentUser;
-  subAdminBased({this.currentUser});
+class SubAdminBased extends StatefulWidget {
+  final CurUser currentUser;
+  SubAdminBased({this.currentUser});
   @override
-  _subAdminBasedState createState() => new _subAdminBasedState(currentUser);
+  _SubAdminBasedState createState() => new _SubAdminBasedState(currentUser);
 }
 
 List<String> litems = [
@@ -43,12 +42,12 @@ List<String> litems = [
   "25"
 ];
 
-class _subAdminBasedState extends State<subAdminBased>
+class _SubAdminBasedState extends State<SubAdminBased>
     with TickerProviderStateMixin {
-  final curUser currentUser;
-  _subAdminBasedState(this.currentUser);
+  final CurUser currentUser;
+  _SubAdminBasedState(this.currentUser);
 
-  StreamSubscription<QuerySnapshot> _subscription;
+  // StreamSubscription<QuerySnapshot> _subscription;
   List<DocumentSnapshot> userlist;
   CollectionReference _collectionReference =
       Firestore.instance.collection('Sub Admin');
@@ -56,7 +55,8 @@ class _subAdminBasedState extends State<subAdminBased>
   @override
   void initState() {
     super.initState();
-    _subscription = _collectionReference
+    // _subscription =
+    _collectionReference
         .where('code', isEqualTo: currentUser.code)
         .snapshots()
         .listen((datasnapshot) {

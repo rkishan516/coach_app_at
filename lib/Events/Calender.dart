@@ -133,8 +133,8 @@ class _CalenderState extends State<Calender> {
   }
 
   void _showsnackbar(BuildContext context, String message) {
-    final snackBar = SnackBar(content: Text(message));
-    _scaffoldkey.currentState.showSnackBar(snackBar);
+    // final snackBar = SnackBar(content: Text(message));
+    // _scaffoldkey.currentState.showSnackBar(snackBar);
   }
 
   @override

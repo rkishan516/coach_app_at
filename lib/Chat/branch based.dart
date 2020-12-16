@@ -21,17 +21,17 @@ class SizeConfig {
   }
 }
 
-class branchBased extends StatefulWidget {
-  final curUser currentUser;
+class BranchBased extends StatefulWidget {
+  final CurUser currentUser;
 
-  branchBased({this.currentUser});
+  BranchBased({this.currentUser});
   @override
-  _branchBased createState() => new _branchBased(currentUser);
+  _BranchBased createState() => new _BranchBased(currentUser);
 }
 
-class _branchBased extends State<branchBased> with TickerProviderStateMixin {
-  final curUser currentUser;
-  _branchBased(this.currentUser);
+class _BranchBased extends State<BranchBased> with TickerProviderStateMixin {
+  final CurUser currentUser;
+  _BranchBased(this.currentUser);
 
   CollectionReference collectionSubAdmin =
       Firestore.instance.collection("Sub Admin");
@@ -53,7 +53,9 @@ class _branchBased extends State<branchBased> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    subscriptionStudent?.cancel();
+    subscriptionSubAdmin?.cancel();
+    subscriptionTeacher?.cancel();
     super.dispose();
 
     /* subscriptionTeacher?.cancel();

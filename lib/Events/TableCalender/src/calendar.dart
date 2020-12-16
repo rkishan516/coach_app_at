@@ -658,9 +658,9 @@ class _TableCalendarState extends State<TableCalendar>
         content = Stack(
           alignment: widget.calendarStyle.markersAlignment,
           children: children,
-          overflow: widget.calendarStyle.canEventMarkersOverflow
-              ? Overflow.visible
-              : Overflow.clip,
+          // overflow: widget.calendarStyle.canEventMarkersOverflow
+          //     ? Overflow.visible
+          //     : Overflow.clip,
         );
       }
     }

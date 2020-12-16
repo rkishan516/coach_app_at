@@ -18,19 +18,19 @@ class SizeConfig {
   }
 }
 
-class independent extends StatefulWidget {
-  final curUser currentUser;
-  independent({this.currentUser});
+class Independent extends StatefulWidget {
+  final CurUser currentUser;
+  Independent({this.currentUser});
   @override
-  _independentState createState() => new _independentState(currentUser);
+  _IndependentState createState() => new _IndependentState(currentUser);
 }
 
 List<String> litems = ["1", "2", "Third", "4"];
 
-class _independentState extends State<independent>
+class _IndependentState extends State<Independent>
     with TickerProviderStateMixin {
-  final curUser currentUser;
-  _independentState(this.currentUser);
+  final CurUser currentUser;
+  _IndependentState(this.currentUser);
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -62,25 +62,27 @@ class _independentState extends State<independent>
               showDialog(
                 barrierDismissible: false,
                 context: context,
-                child: new CupertinoAlertDialog(
-                  title: new Column(
-                    children: <Widget>[
-                      new Text("GridView"),
-                      new Icon(
-                        Icons.favorite,
-                        color: Colors.green,
-                      ),
+                builder: (context) {
+                  return new CupertinoAlertDialog(
+                    title: new Column(
+                      children: <Widget>[
+                        new Text("GridView"),
+                        new Icon(
+                          Icons.favorite,
+                          color: Colors.green,
+                        ),
+                      ],
+                    ),
+                    content: new Text("Selected Item $index"),
+                    actions: <Widget>[
+                      new FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: new Text("OK"))
                     ],
-                  ),
-                  content: new Text("Selected Item $index"),
-                  actions: <Widget>[
-                    new FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: new Text("OK"))
-                  ],
-                ),
+                  );
+                },
               );
             },
           );

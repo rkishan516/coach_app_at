@@ -359,9 +359,9 @@ class _StuInstallmentState extends State<StuInstallment> {
             child: ListView.builder(
               itemCount: _listInstallment.length,
               itemBuilder: (context, index) {
-                String amountstr = _listInstallment[index].fine != ""
-                    ? "+ ${_listInstallment[index].fine}"
-                    : "";
+                // String amountstr = _listInstallment[index].fine != ""
+                //     ? "+ ${_listInstallment[index].fine}"
+                //     : "";
                 String buttonStatus = _listInstallment[index].status == "Due"
                     ? "Pay Now"
                     : _listInstallment[index].status == "Fine"

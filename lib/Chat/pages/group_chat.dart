@@ -29,21 +29,21 @@ class SizeConfig {
   }
 }
 
-class groupChatScreen extends StatefulWidget {
-  String name;
-  String photoUrl;
-  String gid;
-  curUser currentUser;
-  groupChatScreen({this.name, this.photoUrl, this.gid, this.currentUser});
+class GroupChatScreen extends StatefulWidget {
+  final String name;
+  final String photoUrl;
+  final String gid;
+  final CurUser currentUser;
+  GroupChatScreen({this.name, this.photoUrl, this.gid, this.currentUser});
 
-  _groupChatScreenState createState() =>
-      _groupChatScreenState(name, photoUrl, gid, currentUser);
+  _GroupChatScreenState createState() =>
+      _GroupChatScreenState(name, photoUrl, gid, currentUser);
 }
 
-class _groupChatScreenState extends State<groupChatScreen> {
+class _GroupChatScreenState extends State<GroupChatScreen> {
   String groupname, groupphotoUrl, gid;
-  curUser currentUser;
-  _groupChatScreenState(
+  CurUser currentUser;
+  _GroupChatScreenState(
       this.groupname, this.groupphotoUrl, this.gid, this.currentUser);
 
   GroupMessage _message;
@@ -51,9 +51,9 @@ class _groupChatScreenState extends State<groupChatScreen> {
   var _formKey = GlobalKey<FormState>();
   var map = Map<String, dynamic>();
   CollectionReference _collectionReference;
-  DocumentReference _receiverDocumentReference;
-  DocumentReference _senderDocumentReference;
-  DocumentReference _documentReference;
+  // DocumentReference _receiverDocumentReference;
+  // DocumentReference _senderDocumentReference;
+  // DocumentReference _documentReference;
   DocumentSnapshot documentSnapshot;
   bool _autoValidate = false;
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -102,7 +102,7 @@ class _groupChatScreenState extends State<groupChatScreen> {
     print("Message : ${message.message}");
     map = message.toMap();
 
-    print("Map : ${map}");
+    print("Map : $map");
     _collectionReference = Firestore.instance
         .collection("groupMessages")
         .document(currentUser.code)
@@ -184,18 +184,18 @@ class _groupChatScreenState extends State<groupChatScreen> {
                           ],
                         ),
                       ),
-                      ChatMessagesListWidget(),
+                      chatMessagesListWidget(),
                       SizedBox(
                         height: SizeConfig.v * 2.035,
                       ),
-                      ChatInputWidget(),
+                      chatInputWidget(),
                     ],
                   ),
                 ),
         ));
   }
 
-  Widget ChatInputWidget() {
+  Widget chatInputWidget() {
     return Container(
       alignment: Alignment.bottomRight,
       padding: EdgeInsets.symmetric(
@@ -205,7 +205,9 @@ class _groupChatScreenState extends State<groupChatScreen> {
           Flexible(
             child: Container(
               child: TextFormField(
-                autovalidate: _autoValidate,
+                autovalidateMode: _autoValidate
+                    ? AutovalidateMode.always
+                    : AutovalidateMode.disabled,
                 validator: (String input) {
                   if (input.isEmpty) {
                     return "Please enter message";
@@ -282,9 +284,11 @@ class _groupChatScreenState extends State<groupChatScreen> {
   }
 
   Future<String> pickImage() async {
-    var selectedFile = await ImagePicker.pickImage(
+    // ignore: invalid_use_of_visible_for_testing_member
+    PickedFile selectedFil = await ImagePicker.platform.pickImage(
       source: ImageSource.gallery,
     );
+    File selectedFile = File(selectedFil.path);
     //imagefile = selectedImage;
     print("Original Size: ${selectedFile.lengthSync()}");
 
@@ -367,7 +371,7 @@ class _groupChatScreenState extends State<groupChatScreen> {
     map['mediaUrl'] = _message.mediaUrl;
     map['message'] = _message.message;
 
-    print("Map : ${map}");
+    print("Map : $map");
     _collectionReference = Firestore.instance
         .collection("groupMessages")
         .document(currentUser.code)
@@ -408,7 +412,7 @@ class _groupChatScreenState extends State<groupChatScreen> {
     map['mediaUrl'] = _message.mediaUrl;
     map['message'] = _message.message;
 
-    print("Map : ${map}");
+    print("Map : $map");
     _collectionReference = Firestore.instance
         .collection("groupMessages")
         .document(currentUser.code)
@@ -436,7 +440,7 @@ class _groupChatScreenState extends State<groupChatScreen> {
     map['timestamp'] = _message.timestamp;
     map['mediaUrl'] = _message.mediaUrl;
 
-    print("Map : ${map}");
+    print("Map : $map");
     _collectionReference = Firestore.instance
         .collection("groupMessages")
         .document(currentUser.code)
@@ -470,7 +474,7 @@ class _groupChatScreenState extends State<groupChatScreen> {
     return user;
   }
 
-  Widget ChatMessagesListWidget() {
+  Widget chatMessagesListWidget() {
     print("SENDERUID : $_senderuid");
     return Flexible(
       child: StreamBuilder(

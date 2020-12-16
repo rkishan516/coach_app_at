@@ -11,7 +11,6 @@ import 'package:coach_app/Utils/Colors.dart';
 import 'package:coach_app/YT_player/pdf_player.dart';
 import 'package:coach_app/YT_player/quiz_player.dart';
 import 'package:coach_app/YT_player/yt_player.dart';
-import 'package:coach_app/YoutubeAPI/youtubeApi.dart';
 import 'package:coach_app/courses/FormGeneration/form_generator.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';

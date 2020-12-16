@@ -560,13 +560,13 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                               WelcomeNavigation.signInWithGoogleAndGetPage(
                                   context);
                             } else {
-                              _scKey.currentState.showSnackBar(
-                                  SnackBar(content: Text('Login Failed'.tr())));
+                              // _scKey.currentState.showSnackBar(
+                              //     SnackBar(content: Text('Login Failed'.tr())));
                             }
                           });
                         } else {
-                          _scKey.currentState.showSnackBar(SnackBar(
-                              content: Text('Something is wrong'.tr())));
+                          // _scKey.currentState.showSnackBar(SnackBar(
+                          //     content: Text('Something is wrong'.tr())));
                         }
                       },
                       child: Row(

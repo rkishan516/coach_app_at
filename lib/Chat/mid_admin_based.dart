@@ -7,11 +7,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coach_app/Chat/models/item_class.dart';
 import 'package:coach_app/Chat/participants.dart';
 
-class midAdminBased extends StatefulWidget {
-  final curUser currentUser;
-  midAdminBased({this.currentUser});
+class MidAdminBased extends StatefulWidget {
+  final CurUser currentUser;
+  MidAdminBased({this.currentUser});
   @override
-  _midAdminBasedState createState() => _midAdminBasedState(currentUser);
+  _MidAdminBasedState createState() => _MidAdminBasedState(currentUser);
 }
 
 class SizeConfig {
@@ -30,9 +30,9 @@ class SizeConfig {
   }
 }
 
-class _midAdminBasedState extends State<midAdminBased> {
-  final curUser currentUser;
-  _midAdminBasedState(this.currentUser);
+class _MidAdminBasedState extends State<MidAdminBased> {
+  final CurUser currentUser;
+  _MidAdminBasedState(this.currentUser);
 
   List<Item> itemList = [], tempList = [];
   List<Item> selectedList = [];
@@ -40,6 +40,12 @@ class _midAdminBasedState extends State<midAdminBased> {
   StreamSubscription<QuerySnapshot> subscription;
   CollectionReference collectionReference =
       Firestore.instance.collection("Mid Admin");
+
+  @override
+  void dispose() {
+    subscription?.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -72,10 +78,11 @@ class _midAdminBasedState extends State<midAdminBased> {
 
   loadList() {
     //itemList = List();
-    List<Item> itemList;
+    // List<Item> itemList;
     selectedList = List();
 
-    String name, deg, photourl, uid;
+    // String name, deg, photourl, uid;
+    String name;
     name = ulist[1].data['name'].toString();
     print("$name");
   }
@@ -96,10 +103,10 @@ class _midAdminBasedState extends State<midAdminBased> {
                 onPressed: () {
                   Navigator.of(context)
                       .push(new MaterialPageRoute(builder: (context) {
-                    return new groupDes(
+                    return new GroupDes(
                       currentUser: currentUser,
                       //sList: selectedList,
-                      ch: choose(true, false, false, false, false, false),
+                      ch: Choose(true, false, false, false, false, false),
                       catg: "Mid Admin",
                     );
                   }));
@@ -179,7 +186,7 @@ class _midAdminBasedState extends State<midAdminBased> {
                                       Navigator.of(context).push(
                                           new MaterialPageRoute(
                                               builder: (context) {
-                                        return new groupDes(
+                                        return new GroupDes(
                                           currentUser: currentUser,
                                         );
                                       }));

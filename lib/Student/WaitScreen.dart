@@ -1,5 +1,4 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/NewAuthentication/Frontened/NewWelcomePage.dart';
 import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';

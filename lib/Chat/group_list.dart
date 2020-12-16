@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:coach_app/Chat/home_page.dart';
 import 'package:coach_app/Chat/models/item_class.dart';
 import 'package:coach_app/Chat/pages/group_chat.dart';
 import 'dart:async';
-import 'chat_screen.dart';
 
 class SizeConfig {
   static MediaQueryData _mediaQueryData;
@@ -22,21 +20,27 @@ class SizeConfig {
   }
 }
 
-class groupList extends StatefulWidget {
-  final curUser currentUser;
-  groupList({this.currentUser});
+class GroupList extends StatefulWidget {
+  final CurUser currentUser;
+  GroupList({this.currentUser});
   @override
-  _groupListState createState() => _groupListState(currentUser);
+  _GroupListState createState() => _GroupListState(currentUser);
 }
 
-class _groupListState extends State<groupList> {
-  final curUser currentUser;
-  _groupListState(this.currentUser);
+class _GroupListState extends State<GroupList> {
+  final CurUser currentUser;
+  _GroupListState(this.currentUser);
   StreamSubscription subscription;
   CollectionReference collectionReference =
       Firestore.instance.collection("Group");
   List<DocumentSnapshot> groupList, tempList;
-  List<gList> _gList = [];
+  List<GList> _gList = [];
+
+  @override
+  void dispose() {
+    subscription?.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -65,7 +69,7 @@ class _groupListState extends State<groupList> {
             String gName = tempList[i].data['name'];
             String gid = tempList[i].data['gid'];
             String gPhoto = tempList[i].data['groupImageUrl'];
-            gList tempGlist = gList(gName, gid, gPhoto);
+            GList tempGlist = GList(gName, gid, gPhoto);
 
             _gList.add(tempGlist);
           }
@@ -90,7 +94,7 @@ class _groupListState extends State<groupList> {
     SizeConfig().init(context);
     //getGroupList();
     return ListView.builder(
-      itemCount: _gList.length, //groupList.length,
+      itemCount: _gList.length, //GroupList.length,
       itemBuilder: (context, index) => new Column(
         children: <Widget>[
           Container(
@@ -106,7 +110,7 @@ class _groupListState extends State<groupList> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           new Text(
-                            _gList[index].name, //groupList[index].data['name'],
+                            _gList[index].name, //GroupList[index].data['name'],
                             style: new TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Color.fromARGB(255, 242, 108, 37),
@@ -130,7 +134,7 @@ class _groupListState extends State<groupList> {
                     ),
                     onTap: () => Navigator.of(context)
                             .push(new MaterialPageRoute(builder: (context) {
-                          return new groupChatScreen(
+                          return new GroupChatScreen(
                             name: _gList[index].name,
                             photoUrl: _gList[index].gid,
                             gid: _gList[index].gid,
@@ -146,10 +150,10 @@ class _groupListState extends State<groupList> {
   }
 }
 
-class gList {
+class GList {
   String gid;
   String name;
   String photoUrl;
 
-  gList(this.gid, this.name, this.photoUrl);
+  GList(this.gid, this.name, this.photoUrl);
 }

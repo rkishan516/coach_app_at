@@ -22,24 +22,24 @@ class UserDetails {
     this.uid = mapData['uid'];
   }
 
-  String get _name => name;
-  String get _emailId => emailId;
-  String get _photoUrl => photoUrl;
-  String get _uid => uid;
+  // String get _name => name;
+  // String get _emailId => emailId;
+  // String get _photoUrl => photoUrl;
+  // String get _uid => uid;
 
-  set _photoUrl(String photoUrl) {
-    this.photoUrl = photoUrl;
-  }
+  // set _photoUrl(String photoUrl) {
+  //   this.photoUrl = photoUrl;
+  // }
 
-  set _name(String name) {
-    this.name = name;
-  }
+  // set _name(String name) {
+  //   this.name = name;
+  // }
 
-  set _emailId(String emailId) {
-    this.emailId = emailId;
-  }
+  // set _emailId(String emailId) {
+  //   this.emailId = emailId;
+  // }
 
-  set _uid(String uid) {
-    this.uid = uid;
-  }
+  // set _uid(String uid) {
+  //   this.uid = uid;
+  // }
 }

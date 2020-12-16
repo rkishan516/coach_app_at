@@ -22,16 +22,16 @@ class SizeConfig {
   }
 }
 
-class participants extends StatefulWidget {
-  final curUser currentUser;
-  participants({this.currentUser});
-  _participantState createState() => new _participantState(currentUser);
+class Participants extends StatefulWidget {
+  final CurUser currentUser;
+  Participants({this.currentUser});
+  _Participantstate createState() => new _Participantstate(currentUser);
 }
 
-class _participantState extends State<participants>
+class _Participantstate extends State<Participants>
     with TickerProviderStateMixin {
-  final curUser currentUser;
-  _participantState(this.currentUser);
+  final CurUser currentUser;
+  _Participantstate(this.currentUser);
 
   bool monVal = false;
   bool tonVal = false;
@@ -40,7 +40,7 @@ class _participantState extends State<participants>
   bool fonVal = false;
   bool sonVal = false;
   int count = 0;
-  choose ch = choose(false, false, false, false, false, false);
+  Choose ch = Choose(false, false, false, false, false, false);
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -69,11 +69,11 @@ class _participantState extends State<participants>
               (currentUser.role == 'Admin' || currentUser.role == 'Mid Admin')
                   ? InkWell(
                       onTap: () {
-                        choose ch1 =
-                            choose(true, false, false, false, false, false);
+                        Choose ch1 =
+                            Choose(true, false, false, false, false, false);
                         Navigator.of(context)
                             .push(new MaterialPageRoute(builder: (context) {
-                          return new groupDes(
+                          return new GroupDes(
                               currentUser: currentUser,
                               catg: "Mid Admin",
                               ch: ch1);
@@ -141,11 +141,11 @@ class _participantState extends State<participants>
                       currentUser.role == 'Sub Admin')
                   ? InkWell(
                       onTap: () {
-                        choose ch1 =
-                            choose(false, true, false, false, false, false);
+                        Choose ch1 =
+                            Choose(false, true, false, false, false, false);
                         Navigator.of(context)
                             .push(new MaterialPageRoute(builder: (context) {
-                          return new groupDes(
+                          return new GroupDes(
                               currentUser: currentUser,
                               catg: "Sub Admin",
                               ch: ch1);
@@ -216,7 +216,7 @@ class _participantState extends State<participants>
                         print("Mid-ADmin Based");
                         Navigator.of(context)
                             .push(new MaterialPageRoute(builder: (context) {
-                          return new midAdminBased(
+                          return new MidAdminBased(
                             currentUser: currentUser,
                           );
                         }));
@@ -346,11 +346,11 @@ class _participantState extends State<participants>
                       currentUser.role == 'Teacher')
                   ? InkWell(
                       onTap: () {
-                        choose ch1 =
-                            choose(false, false, false, false, true, false);
+                        Choose ch1 =
+                            Choose(false, false, false, false, true, false);
                         Navigator.of(context)
                             .push(new MaterialPageRoute(builder: (context) {
-                          return new groupDes(
+                          return new GroupDes(
                               currentUser: currentUser,
                               catg: "Teacher",
                               ch: ch1);
@@ -420,7 +420,7 @@ class _participantState extends State<participants>
                 onTap: () {
                   Navigator.of(context)
                       .push(new MaterialPageRoute(builder: (context) {
-                    return new independent(currentUser: currentUser);
+                    return new Independent(currentUser: currentUser);
                   }));
                 },
                 child: Container(
@@ -485,7 +485,7 @@ class _participantState extends State<participants>
 
                 Navigator.of(context)
                     .push(new MaterialPageRoute(builder: (context) {
-                  return new groupDes(
+                  return new GroupDes(
                     catg: catg,
                     ch: ch,
                     currentUser: currentUser,
@@ -496,9 +496,9 @@ class _participantState extends State<participants>
   }
 }
 
-class choose {
+class Choose {
   bool mid, subBased, midBased, branch, ind, teacher;
 
-  choose(this.mid, this.subBased, this.midBased, this.branch, this.teacher,
+  Choose(this.mid, this.subBased, this.midBased, this.branch, this.teacher,
       this.ind);
 }

@@ -1,7 +1,5 @@
-import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class FirstPageBuild extends StatefulWidget {
   @override

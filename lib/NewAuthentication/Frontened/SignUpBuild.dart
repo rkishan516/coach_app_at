@@ -1,4 +1,3 @@
-import 'package:animator/animator.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:flutter/material.dart';

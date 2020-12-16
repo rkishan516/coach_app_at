@@ -1,6 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/SucessDialog.dart';
-import 'package:coach_app/Dialogs/languageDialog.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Provider/AdminProvider.dart';
 import 'package:coach_app/Provider/MidAdminProvider.dart';

@@ -402,6 +402,7 @@ class _NoticeBoardState extends State<NoticeBoard>
         }
       });
     }
+    return null;
   }
 
   Future<String> pickImage() async {
@@ -446,6 +447,7 @@ class _NoticeBoardState extends State<NoticeBoard>
         }
       });
     }
+    return null;
   }
 
   @override
@@ -578,6 +580,7 @@ class _NoticeBoardState extends State<NoticeBoard>
         return true;
       else if (_previlagelevel == 4) return false;
     }
+    return false;
   }
 
   @override

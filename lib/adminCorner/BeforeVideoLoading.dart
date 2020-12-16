@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class BeforeVideoLoading extends StatefulWidget {
-  var videourl;
+  final videourl;
   BeforeVideoLoading({this.videourl});
 
   @override

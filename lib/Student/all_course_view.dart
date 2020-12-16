@@ -1,6 +1,5 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
-import 'package:coach_app/NewAuthentication/Frontened/NewWelcomePage.dart';
 import 'package:coach_app/Student/course_registration_page.dart';
 import 'package:coach_app/Utils/Colors.dart';
 import 'package:firebase_database/firebase_database.dart';

@@ -1,7 +1,4 @@
-import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SizeConfig {
   MediaQueryData _mediaQueryData;
@@ -314,7 +311,7 @@ class _HomeState extends State<Home> {
                                         '${itemlist[index].adminType}',
                                       ),
                                       onChanged: (value) {
-                                        itemlist[index].value;
+                                        // itemlist[index].value;
                                       },
                                       secondary: CircleAvatar(
                                         radius: SizeConfig.b * 5.3,

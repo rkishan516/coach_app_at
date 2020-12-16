@@ -1,4 +1,3 @@
-import 'package:coach_app/Profile/TeacherProfile.dart';
 import 'package:flutter/material.dart';
 
 class SizeConfig {

@@ -9,10 +9,10 @@ class Item {
   Item(this.imageUrl, this.rank, this.name, this.uid, this.des, this.code);
 }
 
-class curUser {
+class CurUser {
   String name, uid, photourl, course, role, code, email;
 
-  curUser(this.uid, this.name, this.photourl, this.email, this.code,
+  CurUser(this.uid, this.name, this.photourl, this.email, this.code,
       this.course, this.role);
 
   Map<String, String> toMap() {
