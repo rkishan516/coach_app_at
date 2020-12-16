@@ -18,7 +18,7 @@ jobs:
       with:
         channel: 'beta'
     - run: flutter pub get
-    - run: flutter format --set-exit-if-changed
+    - run: flutter format --set-exit-if-changed .
     - run: flutter analyze
     - run: flutter build apk
     # Authentication of Firebase with token is remaining
