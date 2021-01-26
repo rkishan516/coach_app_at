@@ -357,7 +357,9 @@ class StudentProfilePage extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        student.status,
+                        student.photoURL == null
+                            ? 'Not Logged In'
+                            : student.status,
                         style: TextStyle(
                           fontSize: SizeConfig.b * 4.53,
                           fontWeight: FontWeight.w700,
