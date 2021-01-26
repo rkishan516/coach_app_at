@@ -1,125 +1,201 @@
-import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
-import 'package:coach_app/Student/course_registration_page.dart';
+import 'package:coach_app/Student/Old/course_registration_page.dart';
 import 'package:coach_app/Utils/Colors.dart';
+import 'package:coach_app/Utils/SizeConfig.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:easy_localization/easy_localization.dart';
 
-class AllCoursePage extends StatefulWidget {
+class AllCoursePage extends StatelessWidget {
   final DatabaseReference ref;
   AllCoursePage({@required this.ref});
-  @override
-  _AllCoursePageState createState() => _AllCoursePageState();
-}
 
-class _AllCoursePageState extends State<AllCoursePage> {
   @override
   Widget build(BuildContext context) {
+    SizeConfig sizeConfig = SizeConfig(context);
     return Scaffold(
       appBar: AppBar(
-        title: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            text: 'All Courses'.tr(),
-            style: GoogleFonts.portLligatSans(
-              fontSize: 30,
-              fontWeight: FontWeight.w700,
-              color: GuruCoolLightColor.whiteColor,
-            ),
-          ),
+        elevation: 8,
+        backgroundColor: Colors.white,
+        // leading: IconButton(
+        //     icon: Icon(
+        //       Icons.menu,
+        //       color: GuruCoolLightColor.primaryColor,
+        //     ),
+        //     onPressed: () {}),
+        title: Transform(
+          transform:
+              Matrix4.translationValues(-sizeConfig.screenWidth * 0.06, 0, 0),
+          child: StreamBuilder<Event>(
+              stream: ref.child('/name').onValue,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return PlaceholderLines(
+                    count: 0,
+                  );
+                } else {
+                  return Text(
+                    snapshot.data.snapshot.value,
+                    style: TextStyle(
+                      color: GuruCoolLightColor.primaryColor,
+                      fontWeight: FontWeight.w400,
+                      fontSize: sizeConfig.screenWidth * 0.045,
+                    ),
+                  );
+                }
+              }),
         ),
         actions: [
-          IconButton(
-              icon: Icon(Icons.exit_to_app),
-              onPressed: () {
-                FireBaseAuth.instance.signoutWithGoogle();
-                // Navigator.of(context).pushAndRemoveUntil(
-                //     MaterialPageRoute(builder: (context) => NewWelcomePage()),
-                //     (route) => false);
-              })
+          Row(children: [
+            IconButton(
+                icon: Icon(Icons.notifications_none,
+                    color: GuruCoolLightColor.primaryColor),
+                onPressed: () {}),
+            CircleAvatar(
+                backgroundColor: Color(0xffA4A4A4),
+//backgroundImage: (),
+                radius:
+                    sizeConfig.screenWidth * 0.0862 / 2), //to pass the imageUrl
+            SizedBox(width: sizeConfig.screenWidth * 0.025)
+          ])
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(
-              vertical: MediaQuery.of(context).size.height / 20),
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: GuruCoolLightColor.backgroundShade,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2,
-              )
-            ],
-          ),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                flex: 12,
+      body: Container(
+        padding:
+            EdgeInsets.symmetric(horizontal: sizeConfig.screenWidth * 0.08611),
+        color: Color(0xffE5E5E5),
+        child: Column(
+          children: [
+            SizedBox(height: sizeConfig.screenHeight * 0.05),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
                 child: StreamBuilder<Event>(
-                  stream: widget.ref.child('/coursesList').onValue,
+                  stream: ref.child('/coursesList').onValue,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       Map<String, String> courses = Map<String, String>();
                       snapshot.data.snapshot.value?.forEach((k, v) {
                         courses[k] = v;
                       });
-                      return ListView.builder(
+                      return GridView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisSpacing: sizeConfig.screenWidth * 0.07,
+                          mainAxisSpacing: sizeConfig.screenHeight * 0.034375,
+                          crossAxisCount: 2,
+                        ),
                         itemCount: courses.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Card(
-                              color: GuruCoolLightColor.primaryColor,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: ListTile(
-                                title: Text(
-                                  '${courses[courses.keys.toList()[index]]}',
+                        itemBuilder: (BuildContext ctxt, int ind) {
+                          String index = courses.keys.toList()[ind];
+                          return Container(
+                            padding: EdgeInsets.only(left: sizeConfig.b * 3),
+                            height: sizeConfig.screenHeight * 0.215625,
+                            width: sizeConfig.screenWidth * 0.3833,
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  offset: Offset(0.0, 2),
+                                  spreadRadius: sizeConfig.b * 0.4,
+                                  blurRadius: sizeConfig.b * 0.5,
+                                ),
+                              ],
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.circular(sizeConfig.b * 5),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+//Image.asset('images/buk.png'),
+                                    ]),
+                                Spacer(),
+                                Text(
+                                  courses[index],
                                   style: TextStyle(
-                                      color: GuruCoolLightColor.whiteColor),
-                                ),
-                                trailing: Icon(
-                                  Icons.chevron_right,
-                                  color: GuruCoolLightColor.whiteColor,
-                                ),
-                                onTap: () => Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) =>
-                                        CourseRegistrationPage(
-                                      courseID: courses.keys.toList()[index],
-                                      name:
-                                          courses[courses.keys.toList()[index]],
-                                      ref: widget.ref.child(
-                                          'courses/${courses.keys.toList()[index]}'),
-                                    ),
+                                    fontSize: sizeConfig.screenWidth * 0.056,
+                                    fontWeight: FontWeight.w300,
                                   ),
                                 ),
-                              ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Transform(
+                                      transform: Matrix4.translationValues(0,
+                                          -sizeConfig.screenHeight * 0.025, 0),
+                                      child: IconButton(
+                                        icon: Icon(Icons.arrow_right,
+                                            color: GuruCoolLightColor
+                                                .primaryColor),
+                                        padding: EdgeInsets.zero,
+                                        iconSize: sizeConfig.b * 6,
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CourseRegistrationPage(
+                                                courseID: index,
+                                                name: courses[index],
+                                                ref:
+                                                    ref.child('courses/$index'),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
                             ),
                           );
                         },
                       );
                     } else {
-                      return ListView.builder(
+                      return GridView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisSpacing: sizeConfig.screenWidth * 0.07,
+                          mainAxisSpacing: sizeConfig.screenHeight * 0.034375,
+                          crossAxisCount: 2,
+                        ),
                         itemCount: 5,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Card(
-                            child: ListTile(
-                              title: PlaceholderLines(
-                                count: 1,
-                                animate: true,
-                              ),
-                              subtitle: PlaceholderLines(
-                                count: 1,
-                                animate: true,
-                              ),
+                        itemBuilder: (BuildContext ctxt, int index) {
+                          return Container(
+                            padding: EdgeInsets.only(left: sizeConfig.b * 3),
+                            height: sizeConfig.screenHeight * 0.215625,
+                            width: sizeConfig.screenWidth * 0.3833,
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  offset: Offset(0.0, 2),
+                                  spreadRadius: sizeConfig.b * 0.4,
+                                  blurRadius: sizeConfig.b * 0.5,
+                                ),
+                              ],
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.circular(sizeConfig.b * 5),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+//Image.asset('images/buk.png'),
+                                    ]),
+                                Spacer(),
+                                PlaceholderLines(
+                                  count: 2,
+                                )
+                              ],
                             ),
                           );
                         },
@@ -128,8 +204,8 @@ class _AllCoursePageState extends State<AllCoursePage> {
                   },
                 ),
               ),
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );

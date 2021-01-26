@@ -1,5 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Chat/group_list.dart';
+import 'package:coach_app/NewAuthentication/Frontened/LoginFirstPage.dart';
 import 'package:coach_app/NewAuthentication/Frontened/NewWelcomePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -318,7 +319,7 @@ class _AllUsersScreenState extends State<AllUsersScreen>
             onPressed: () async {
               FireBaseAuth.instance.signoutWithGoogle();
               Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => NewWelcomePage()),
+                  MaterialPageRoute(builder: (context) => LoginPage()),
                   (Route<dynamic> route) => false);
             },
           ),

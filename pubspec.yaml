@@ -59,7 +59,7 @@ dependencies:
   # in_app_update:
   # googleapis:
   # googleapis_auth:
-  get:
+  # get:
   http:
   file_picker: ^1.13.3
   provider:

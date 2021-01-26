@@ -63,7 +63,7 @@ void main() async {
         Locale('hi'),
       ],
       saveLocale: true,
-      startLocale: Locale('en'),
+      // startLocale: Locale('en'),
       fallbackLocale: Locale('en'),
       child: MyApp(),
     ),

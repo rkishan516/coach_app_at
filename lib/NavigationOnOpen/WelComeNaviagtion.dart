@@ -3,11 +3,13 @@ import 'package:coach_app/InstituteAdmin/branchList.dart';
 import 'package:coach_app/InstituteAdmin/branchPage.dart';
 import 'package:coach_app/InstituteAdmin/midAdminBranchList.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/NewAuthentication/Frontened/LoginFirstPage.dart';
 import 'package:coach_app/NewAuthentication/Frontened/NewWelcomePage.dart';
 import 'package:coach_app/Provider/AdminProvider.dart';
 import 'package:coach_app/Student/WaitScreen.dart';
+import 'package:coach_app/Student/Old/all_course_view.dart';
 import 'package:coach_app/Student/all_course_view.dart';
-import 'package:coach_app/Student/registration_form.dart';
+import 'package:coach_app/Student/registrationForm.dart';
 import 'package:coach_app/courses/course_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +59,7 @@ class WelcomeNavigation {
           if (snapshot.hasData) {
             if (snapshot.data.snapshot.value == null) {
               FireBaseAuth.instance.signoutWithGoogle();
-              return NewWelcomePage();
+              return LoginPage();
             }
             return CoursePage(
               teacher: Teacher.fromJson(snapshot.data.snapshot.value),
