@@ -10,6 +10,7 @@ List<RouteBase> get $appRoutes => [
       $homePageRoute,
       $splashPageRoute,
       $developerMenuPageRoute,
+      $welcomeViewRoute,
     ];
 
 RouteBase get $homePageRoute => GoRouteData.$route(
@@ -71,6 +72,30 @@ extension $DeveloperMenuPageRouteExtension on DeveloperMenuPageRoute {
 
   String get location => GoRouteData.$location(
         '/developerMenu',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $welcomeViewRoute => GoRouteData.$route(
+      path: '/welcomeView',
+      name: 'welcomeView',
+      factory: $WelcomeViewRouteExtension._fromState,
+    );
+
+extension $WelcomeViewRouteExtension on WelcomeViewRoute {
+  static WelcomeViewRoute _fromState(GoRouterState state) =>
+      const WelcomeViewRoute();
+
+  String get location => GoRouteData.$location(
+        '/welcomeView',
       );
 
   void go(BuildContext context) => context.go(location);

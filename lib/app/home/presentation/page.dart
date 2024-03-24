@@ -11,6 +11,14 @@ class HomePage extends ConsumerWidget {
     final notifier = ref.watch(homePageNotifierProvider.notifier);
 
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: notifier.logout,
+            icon: const Icon(Icons.add),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Center(
           child: Column(

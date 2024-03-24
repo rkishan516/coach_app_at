@@ -1,3 +1,4 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +12,10 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      theme: FlexThemeData.light(scheme: FlexScheme.verdunHemlock),
+      darkTheme: FlexThemeData.dark(scheme: FlexScheme.verdunHemlock),
+      themeMode: ThemeMode.system,
       routerConfig: ref.watch(navigatorProvider),
       builder: (context, child) {
         return _VersionOverlay(
@@ -65,7 +70,7 @@ class _VersionOverlay extends ConsumerWidget {
                           ),
                           child: Text(
                             'Dev',
-                            style: TextStyle(fontSize: 11),
+                            style: TextStyle(fontSize: 11, color: Colors.white),
                           ),
                         ),
                       ),

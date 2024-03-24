@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shiksha_dhra/app/auth/presentation/welcome_view.dart';
 import 'package:shiksha_dhra/app/developer_menu/presentation/page.dart';
 import 'package:shiksha_dhra/app/home/presentation/page.dart';
 import 'package:shiksha_dhra/app/splash/presentation/page.dart';
@@ -47,4 +48,18 @@ class DeveloperMenuPageRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const DeveloperMenuPage();
+}
+
+@TypedGoRoute<WelcomeViewRoute>(
+  path: WelcomeViewRoute.path,
+  name: WelcomeViewRoute.name,
+)
+class WelcomeViewRoute extends GoRouteData {
+  static const path = '/welcomeView';
+  static const name = 'welcomeView';
+  const WelcomeViewRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const WelcomeView();
 }
