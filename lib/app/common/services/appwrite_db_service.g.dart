@@ -1,26 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'page_notifier.dart';
+part of 'appwrite_db_service.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$homePageNotifierHash() => r'6f735a6006e19556b652718a7a8e5bcbd4fb80de';
+String _$appwriteDbServiceHash() => r'86201eb7ef39d24fbf265d39ba3ba239fe310348';
 
-/// See also [HomePageNotifier].
-@ProviderFor(HomePageNotifier)
-final homePageNotifierProvider =
-    AutoDisposeNotifierProvider<HomePageNotifier, HomePageState>.internal(
-  HomePageNotifier.new,
-  name: r'homePageNotifierProvider',
+/// See also [appwriteDbService].
+@ProviderFor(appwriteDbService)
+final appwriteDbServiceProvider =
+    AutoDisposeProvider<AppwriteDbService>.internal(
+  appwriteDbService,
+  name: r'appwriteDbServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$homePageNotifierHash,
+      : _$appwriteDbServiceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$HomePageNotifier = AutoDisposeNotifier<HomePageState>;
+typedef AppwriteDbServiceRef = AutoDisposeProviderRef<AppwriteDbService>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

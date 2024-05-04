@@ -6,7 +6,7 @@ part of 'welcome_view_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$welcomeNotifierHash() => r'0908e9680239f6bb77c6cfd4976df1073c5cd60a';
+String _$welcomeNotifierHash() => r'8aa1ce73d2c0d9b31e6ab617c4483cc5dd614788';
 
 /// See also [WelcomeNotifier].
 @ProviderFor(WelcomeNotifier)
