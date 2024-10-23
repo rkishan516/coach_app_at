@@ -12,26 +12,25 @@ import 'package:coach_app/YT_player/quiz_player.dart';
 import 'package:coach_app/YT_player/yt_player.dart';
 import 'package:coach_app/YoutubeAPI/youtubeApi.dart';
 import 'package:coach_app/courses/FormGeneration/form_generator.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class ContentPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;
   final String passKey;
   ContentPage(
-      {@required this.title, @required this.reference, @required this.passKey});
+      {required this.title, required this.reference, required this.passKey});
   @override
   _ContentPageState createState() => _ContentPageState();
 }
 
 class _ContentPageState extends State<ContentPage> {
-  int length;
-
-  List<bool> _showCountDot;
+  late int length;
+  late List<bool> _showCountDot;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,33 +54,32 @@ class _ContentPageState extends State<ContentPage> {
           children: <Widget>[
             Expanded(
               flex: 12,
-              child: StreamBuilder<Event>(
+              child: StreamBuilder<DatabaseEvent>(
                 stream: widget.reference.onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     Chapters chapter =
-                        Chapters.fromJson(snapshot.data.snapshot.value);
+                        Chapters.fromJson(snapshot.data!.snapshot.value as Map);
                     var keys;
-                    if (chapter.content != null) { 
-                      keys = chapter.content.keys.toList()
-                        ..sort((a, b) => chapter.content[a].title
+                    if (chapter.content != null) {
+                      keys = chapter.content!.keys.toList()
+                        ..sort((a, b) => chapter.content![a]!.title
                             .toLowerCase()
-                            .compareTo(chapter.content[b].title.toLowerCase()));
+                            .compareTo(
+                                chapter.content![b]!.title.toLowerCase()));
                     }
                     length = chapter.content?.length ?? 0;
-                    _showCountDot = List(length);
-                    for (int i = 0; i < length; i++) {
-                      _showCountDot[i] = false;
-                    }
+                    _showCountDot = List.filled(length, false);
                     return ListView.builder(
                       itemCount: length,
                       itemBuilder: (BuildContext context, int index) {
                         String checkkey = widget.passKey +
                             "__" +
-                            '${chapter.content[keys.toList()[index]].title}';
-                        if (FireBaseAuth.instance.prefs.getInt(checkkey) != 1) {
+                            '${chapter.content![keys.toList()[index]]!.title}';
+                        if (AppwriteAuth.instance.prefs!.getInt(checkkey) !=
+                            1) {
                           _showCountDot[index] = true;
-                          FireBaseAuth.instance.prefs.setInt(checkkey, 1);
+                          AppwriteAuth.instance.prefs!.setInt(checkkey, 1);
                         }
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -91,10 +89,11 @@ class _ContentPageState extends State<ContentPage> {
                             child: ListTile(
                               leading: CircleAvatar(
                                 child: Icon(
-                                  chapter.content[keys.toList()[index]].kind ==
+                                  chapter.content![keys.toList()[index]]!
+                                              .kind ==
                                           'Youtube Video'
                                       ? Icons.videocam
-                                      : chapter.content[keys.toList()[index]]
+                                      : chapter.content![keys.toList()[index]]!
                                                   .kind ==
                                               'PDF'
                                           ? Icons.library_books
@@ -104,11 +103,11 @@ class _ContentPageState extends State<ContentPage> {
                                 backgroundColor: Color(0xffF36C24),
                               ),
                               title: Text(
-                                '${chapter.content[keys.toList()[index]].title}',
+                                '${chapter.content![keys.toList()[index]]!.title}',
                                 style: TextStyle(color: Color(0xffF36C24)),
                               ),
                               subtitle: Text(
-                                '${chapter.content[keys.toList()[index]].time ?? 'Before 19 July'}',
+                                '${chapter.content![keys.toList()[index]]!.time ?? 'Before 19 July'}',
                                 style: TextStyle(color: Color(0xffF36C24)),
                               ),
                               trailing: Container(
@@ -130,7 +129,7 @@ class _ContentPageState extends State<ContentPage> {
                               ),
                               onTap: () {
                                 if (chapter
-                                        .content[keys.toList()[index]].kind ==
+                                        .content![keys.toList()[index]]!.kind ==
                                     'Youtube Video') {
                                   Navigator.of(context).push(
                                     CupertinoPageRoute(
@@ -138,25 +137,26 @@ class _ContentPageState extends State<ContentPage> {
                                           reference: widget.reference.child(
                                               'content/${keys.toList()[index]}'),
                                           link: chapter
-                                              .content[keys.toList()[index]]
+                                              .content![keys.toList()[index]]!
                                               .ylink),
                                     ),
                                   );
                                 } else if (chapter
-                                        .content[keys.toList()[index]].kind ==
+                                        .content![keys.toList()[index]]!.kind ==
                                     'PDF') {
                                   Navigator.of(context).push(
                                     CupertinoPageRoute(
                                       builder: (context) => PDFPlayer(
                                         link: chapter
-                                            .content[keys.toList()[index]].link,
+                                            .content![keys.toList()[index]]!
+                                            .link,
                                       ),
                                     ),
                                   );
                                 } else if (chapter
-                                        .content[keys.toList()[index]].kind ==
+                                        .content![keys.toList()[index]]!.kind ==
                                     'Quiz') {
-                                  if (FireBaseAuth.instance.previlagelevel >
+                                  if (AppwriteAuth.instance.previlagelevel >
                                       1) {
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
@@ -182,26 +182,29 @@ class _ContentPageState extends State<ContentPage> {
                                   context, widget.reference, widget.passKey,
                                   key: keys.toList()[index],
                                   title: chapter
-                                      .content[keys.toList()[index]].title,
-                                  link: chapter.content[keys.toList()[index]]
+                                      .content![keys.toList()[index]]!.title,
+                                  link: chapter.content![keys.toList()[index]]!
                                               .kind ==
                                           'Youtube Video'
                                       ? chapter
-                                          .content[keys.toList()[index]].ylink
-                                      : chapter.content[keys.toList()[index]]
+                                          .content![keys.toList()[index]]!.ylink
+                                      : chapter.content![keys.toList()[index]]!
                                                   .kind ==
                                               'PDF'
                                           ? chapter
-                                              .content[keys.toList()[index]]
+                                              .content![keys.toList()[index]]!
                                               .link
                                           : '',
                                   quizModel: chapter
-                                      .content[keys.toList()[index]].quizModel,
+                                      .content![keys.toList()[index]]!
+                                      .quizModel,
                                   description: chapter
-                                      .content[keys.toList()[index]]
+                                      .content![keys.toList()[index]]!
                                       .description,
-                                  time: chapter.content[keys.toList()[index]].time,
-                                  type: chapter.content[keys.toList()[index]].kind),
+                                  time: chapter
+                                      .content![keys.toList()[index]]!.time,
+                                  type: chapter
+                                      .content![keys.toList()[index]]!.kind),
                             ),
                           ),
                         );
@@ -242,13 +245,13 @@ class _ContentPageState extends State<ContentPage> {
   }
 
   addContent(BuildContext context, DatabaseReference reference, String passKey,
-      {String key,
+      {String? key,
       String title = '',
       String description = '',
       String link = '',
       String type = 'Youtube Video',
       String time = '',
-      QuizModel quizModel}) async {
+      QuizModel? quizModel}) async {
     await showDialog(
       context: context,
       builder: (context) => ContentUploadDialog(
@@ -271,21 +274,21 @@ class ContentUploadDialog extends StatefulWidget {
   final String description;
   final String link;
   final DatabaseReference reference;
-  final String keyC;
+  final String? keyC;
   final String type;
   final String time;
-  final QuizModel quizModel;
+  final QuizModel? quizModel;
   final String passKey;
   ContentUploadDialog(
-      {@required this.title,
-      @required this.description,
-      @required this.reference,
-      @required this.link,
-      @required this.keyC,
-      @required this.type,
-      @required this.time,
-      @required this.quizModel,
-      @required this.passKey});
+      {required this.title,
+      required this.description,
+      required this.reference,
+      required this.link,
+      required this.keyC,
+      required this.type,
+      required this.time,
+      required this.quizModel,
+      required this.passKey});
   @override
   _ContentUploadDialogState createState() => _ContentUploadDialogState();
 }
@@ -295,7 +298,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
   TextEditingController descriptionTextEditingController =
       TextEditingController();
   TextEditingController linkTextEditingController = TextEditingController();
-  String type;
+  late String type;
   var file;
   @override
   void initState() {
@@ -363,6 +366,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                             )
                             .toList(),
                         onChanged: (value) {
+                          if (value == null) return;
                           setState(() {
                             type = value;
                           });
@@ -437,10 +441,10 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       if (type == "Youtube Video" && widget.keyC == null)
-                        RaisedButton(
+                        MaterialButton(
                           color: Colors.white,
                           onPressed: () async {
-                            file = await FilePicker.getFile();
+                            file = await FilePicker.platform.pickFiles();
                           },
                           elevation: 1,
                           child: Text(
@@ -452,7 +456,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                         ),
                       (widget.keyC == null)
                           ? Container()
-                          : FlatButton(
+                          : MaterialButton(
                               onPressed: () async {
                                 String res = await showDialog(
                                     context: context,
@@ -469,13 +473,17 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                                 'Remove'.tr(),
                               ),
                             ),
-                      RaisedButton(
+                      MaterialButton(
                         onPressed: () async {
-                          Content content = Content()
-                            ..kind = type
-                            ..title = titleTextEditingController.text
-                            ..description =
-                                descriptionTextEditingController.text;
+                          Content content = Content(
+                            kind: type,
+                            title: titleTextEditingController.text,
+                            description: descriptionTextEditingController.text,
+                            link: linkTextEditingController.text,
+                            ylink: '',
+                            time: '',
+                            quizModel: null,
+                          );
 
                           Navigator.of(context).pop();
                           if (type == 'Youtube Video') {
@@ -520,7 +528,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                                 .child('content/')
                                 .push()
                                 .update(content.toJson());
-                            FireBaseAuth.instance.prefs
+                            AppwriteAuth.instance.prefs!
                                 .setInt(widget.passKey + widget.title, 1);
                           } else {
                             widget.reference

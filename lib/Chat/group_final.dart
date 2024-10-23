@@ -1,43 +1,32 @@
 //for the last of group description page where we get the info about the group
 
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coach_app/Chat/all_users_screen.dart';
 import 'package:coach_app/Chat/group_final_grid.dart';
-import 'package:intl/intl.dart';
 import 'package:coach_app/Chat/models/item_class.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
-}
-
-class groupFinal extends StatefulWidget {
+class GroupFinal extends StatefulWidget {
   final List<Item> preSelectedItem;
   final String groupName;
-  final curUser currentUser;
-  groupFinal({this.preSelectedItem, this.groupName, this.currentUser});
+  final CurrUser currentUser;
+  GroupFinal({
+    required this.preSelectedItem,
+    required this.groupName,
+    required this.currentUser,
+  });
   @override
-  _groupFinalState createState() =>
-      _groupFinalState(preSelectedItem, groupName, currentUser);
+  _GroupFinalState createState() =>
+      _GroupFinalState(preSelectedItem, groupName, currentUser);
 }
 
-class _groupFinalState extends State<groupFinal> {
+class _GroupFinalState extends State<GroupFinal> {
   final List<Item> preSelectedItem;
   final String groupName;
-  final curUser currentUser;
-  _groupFinalState(this.preSelectedItem, this.groupName, this.currentUser);
+  final CurrUser currentUser;
+  _GroupFinalState(this.preSelectedItem, this.groupName, this.currentUser);
 
   List<Item> itemList = [];
   List<Item> selectedList = [];
@@ -115,7 +104,8 @@ class _groupFinalState extends State<groupFinal> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircleAvatar(
-                            foregroundColor: Theme.of(context).accentColor,
+                            foregroundColor:
+                                Theme.of(context).colorScheme.secondary,
                             backgroundColor: Colors.grey,
                             radius: SizeConfig.b * 10,
                             backgroundImage:
@@ -208,17 +198,17 @@ class _groupFinalState extends State<groupFinal> {
   void addGroupToDb() {
     String gid = currentUser.code + "custom" + groupName;
 
-    DocumentReference documentReference = Firestore.instance
+    DocumentReference documentReference = FirebaseFirestore.instance
         .collection("Group")
-        .document("1")
+        .doc("1")
         .collection("Custom Groups")
-        .document(gid);
+        .doc(gid);
 
     listToName();
 
-    groupData _groupData;
+    GroupData _groupData;
 
-    _groupData = groupData(
+    _groupData = GroupData(
         name: groupName,
         memberList: selectedName,
         groupImageUrl:
@@ -234,7 +224,7 @@ class _groupFinalState extends State<groupFinal> {
         .whenComplete(() => print("Group Added to DB : $groupName")); */
 
     documentReference
-        .setData(map)
+        .set(map)
         .whenComplete(() => print("Group Added to DB with Doc Reference"));
 
     Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
@@ -267,21 +257,22 @@ class Item2 {
   Item2(this.imageUrl, this.rank, this.name, this.uid, this.des);
 }
 
-class groupData {
-  String name;
-  List<String> memberList;
-  String groupImageUrl;
-  String groupMaker;
-  FieldValue timestamp;
-  String gid;
+class GroupData {
+  late String name;
+  late List<String> memberList;
+  late String groupImageUrl;
+  late String groupMaker;
+  late FieldValue timestamp;
+  late String gid;
 
-  groupData(
-      {this.name,
-      this.memberList,
-      this.groupImageUrl,
-      this.groupMaker,
-      this.timestamp,
-      this.gid});
+  GroupData({
+    required this.name,
+    required this.memberList,
+    required this.groupImageUrl,
+    required this.groupMaker,
+    required this.timestamp,
+    required this.gid,
+  });
 
   Map toMap() {
     var map = Map<String, dynamic>();
@@ -294,14 +285,15 @@ class groupData {
     return map;
   }
 
-  groupData fromMap(Map<String, dynamic> map) {
-    groupData _groupData = groupData();
-    _groupData.name = map['name'];
-    _groupData.memberList = map['memberList'];
-    _groupData.groupImageUrl = map['groupImageUrl'];
-    _groupData.groupMaker = map['groupMaker'];
-    _groupData.timestamp = map['timestamp'];
-    _groupData.gid = map['gid'];
+  GroupData fromMap(Map<String, dynamic> map) {
+    GroupData _groupData = GroupData(
+      name: map['name'],
+      memberList: map['memberList'],
+      groupImageUrl: map['groupImageUrl'],
+      groupMaker: map['groupMaker'],
+      timestamp: map['timestamp'],
+      gid: map['gid'],
+    );
     return _groupData;
   }
 }

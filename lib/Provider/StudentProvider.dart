@@ -6,16 +6,16 @@ import 'package:flutter/foundation.dart';
 class StudentProvider extends ChangeNotifier {
   StudentProvider() {
     FirebaseDatabase.instance
-        .reference()
+        .ref()
         .child(
-            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}')
+            'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}')
         .onValue
         .listen((event) {
-      setStudent(Student.fromJson(event.snapshot.value));
+      setStudent(Student.fromJson(event.snapshot.value as Map));
     });
   }
 
-  Student student;
+  late Student student;
 
   setStudent(Student student) {
     this.student = student;

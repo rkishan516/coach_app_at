@@ -1,9 +1,9 @@
 import 'package:coach_app/InstituteAdmin/studentList.dart';
 import 'package:coach_app/InstituteAdmin/teachersPage.dart';
 import 'package:coach_app/adminSection/adminCoursePage.dart';
-import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fancy_bottom_navigation_2/fancy_bottom_navigation.dart';
+import 'package:flutter/material.dart';
 
 class BranchPage extends StatefulWidget {
   @override
@@ -24,7 +24,9 @@ class _BranchPageState extends State<BranchPage>
     return Scaffold(
       body: (_bottomNavIndex == 0)
           ? AdminCoursePage()
-          : (_bottomNavIndex == 1) ? StudentList() : TeachersList(),
+          : (_bottomNavIndex == 1)
+              ? StudentList()
+              : TeachersList(),
       bottomNavigationBar: FancyBottomNavigation(
         barBackgroundColor: Color(0xffF36C24),
         circleColor: Colors.white,

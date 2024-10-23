@@ -14,11 +14,11 @@ class Installments extends StatefulWidget {
 
 class _InstallmentsState extends State<Installments> {
   int noOfTextFields = 0;
-  List<String> _currentDurationSelected = List(25);
-  List<TextEditingController> _listEditingControllerDD;
-  List<TextEditingController> _listEditingControllerYYYY;
-  List<TextEditingController> _listEditingControllerMoney;
-  Map map;
+  List<String> _currentDurationSelected = List.filled(25, '');
+  late List<TextEditingController> _listEditingControllerDD;
+  late List<TextEditingController> _listEditingControllerYYYY;
+  late List<TextEditingController> _listEditingControllerMoney;
+  late Map map;
   bool editValue = false;
   final dbRef = FirebaseDatabase.instance;
   final TextEditingController _maxInstallText = TextEditingController();
@@ -67,9 +67,9 @@ class _InstallmentsState extends State<Installments> {
                 }
                 setState(() {
                   dbRef
-                      .reference()
+                      .ref()
                       .child(
-                          "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/fees")
+                          "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}/fees")
                       .child(
                           "MaxInstallment/Installments/${(index + 1).toString() + "Installment"}")
                       .remove();
@@ -222,7 +222,8 @@ class _InstallmentsState extends State<Installments> {
                                   ),
                                 );
                               }).toList(),
-                              onChanged: (String newValueSelected) {
+                              onChanged: (String? newValueSelected) {
+                                if (newValueSelected == null) return;
                                 setState(() {
                                   _currentDurationSelected[index] =
                                       newValueSelected;
@@ -289,9 +290,9 @@ class _InstallmentsState extends State<Installments> {
   _saveintodatabase() {
     for (int i = 0; i < noOfTextFields; i++) {
       dbRef
-          .reference()
+          .ref()
           .child(
-              "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/fees")
+              "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}/fees")
           .child("MaxInstallment/Installments")
           .update({
         ((i + 1)).toString() + "Installment": {
@@ -305,9 +306,9 @@ class _InstallmentsState extends State<Installments> {
       });
     }
     dbRef
-        .reference()
+        .ref()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/fees")
+            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}/fees")
         .child("MaxInstallment")
         .update({
       "IsMaxAllowed": true,
@@ -347,21 +348,24 @@ class _InstallmentsState extends State<Installments> {
 
   _loadFromDatabase() async {
     dbRef
-        .reference()
+        .ref()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/fees")
+            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}/fees")
         .child("MaxInstallment")
         .once()
         .then((snapshot) {
-      map = snapshot.value;
+      map = snapshot.snapshot.value as Map;
       setState(() {
         noOfTextFields = int.parse(map["MaxAllowedInstallment"]);
         _maxInstallText.text = noOfTextFields.toString();
-        _listEditingControllerDD =
-            new List<TextEditingController>(noOfTextFields);
-        _listEditingControllerYYYY =
-            new List<TextEditingController>(noOfTextFields);
-        _listEditingControllerMoney = new List(noOfTextFields);
+        _listEditingControllerDD = new List<TextEditingController>.filled(
+            noOfTextFields, TextEditingController());
+        _listEditingControllerYYYY = new List<TextEditingController>.filled(
+            noOfTextFields, TextEditingController());
+        _listEditingControllerMoney = List.filled(
+          noOfTextFields,
+          TextEditingController(),
+        );
         for (int i = 0; i < noOfTextFields; i++) {
           _listEditingControllerMoney[i] = TextEditingController(
               text: !editValue
@@ -408,10 +412,13 @@ class _InstallmentsState extends State<Installments> {
                     setState(() {
                       noOfTextFields = int.parse(value != "" ? value : "0");
                       _listEditingControllerDD =
-                          new List<TextEditingController>(noOfTextFields);
+                          new List<TextEditingController>.filled(
+                              noOfTextFields, TextEditingController());
                       _listEditingControllerYYYY =
-                          new List<TextEditingController>(noOfTextFields);
-                      _listEditingControllerMoney = new List(noOfTextFields);
+                          new List<TextEditingController>.filled(
+                              noOfTextFields, TextEditingController());
+                      _listEditingControllerMoney = new List.filled(
+                          noOfTextFields, TextEditingController());
                       for (int i = 0; i < noOfTextFields; i++) {
                         _listEditingControllerMoney[i] = TextEditingController(
                             text: !editValue

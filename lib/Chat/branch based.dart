@@ -1,46 +1,30 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:coach_app/Chat/models/item_class.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:flutter/material.dart';
 
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
+class BranchBased extends StatefulWidget {
+  final CurrUser currentUser;
 
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
-}
-
-class branchBased extends StatefulWidget {
-  final curUser currentUser;
-
-  branchBased({this.currentUser});
+  BranchBased({required this.currentUser});
   @override
-  _branchBased createState() => new _branchBased(currentUser);
+  _BranchBased createState() => new _BranchBased(currentUser);
 }
 
-class _branchBased extends State<branchBased> with TickerProviderStateMixin {
-  final curUser currentUser;
-  _branchBased(this.currentUser);
+class _BranchBased extends State<BranchBased> with TickerProviderStateMixin {
+  final CurrUser currentUser;
+  _BranchBased(this.currentUser);
 
   CollectionReference collectionSubAdmin =
-      Firestore.instance.collection("Sub Admin");
+      FirebaseFirestore.instance.collection("Sub Admin");
   CollectionReference collectionTeacher =
-      Firestore.instance.collection("Teacher");
+      FirebaseFirestore.instance.collection("Teacher");
   CollectionReference collectionStudent =
-      Firestore.instance.collection("Student");
+      FirebaseFirestore.instance.collection("Student");
 
-  StreamSubscription<QuerySnapshot> subscriptionSubAdmin,
+  late StreamSubscription<QuerySnapshot> subscriptionSubAdmin,
       subscriptionTeacher,
       subscriptionStudent;
 
@@ -122,7 +106,7 @@ class _branchBased extends State<branchBased> with TickerProviderStateMixin {
                                 SizedBox(width: SizeConfig.b * 2.54),
                                 CircleAvatar(
                                   foregroundColor:
-                                      Theme.of(context).accentColor,
+                                      Theme.of(context).colorScheme.secondary,
                                   backgroundColor: Colors.grey,
                                   radius: SizeConfig.b * 6.36,
                                   backgroundImage: AssetImage('images/f.jpg'),

@@ -60,7 +60,7 @@ class Alert {
                       SizedBox(height: 24.0),
                       Align(
                         alignment: Alignment.bottomRight,
-                        child: FlatButton(
+                        child: MaterialButton(
                           onPressed: () {
                             Navigator.of(context).pop();
                           },

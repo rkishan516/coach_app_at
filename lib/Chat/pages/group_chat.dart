@@ -1,69 +1,56 @@
+import 'dart:async';
 import 'dart:io';
+
+import 'package:appwrite/models.dart' show User;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
+import 'package:coach_app/Chat/full_screen_image.dart';
+import 'package:coach_app/Chat/models/group_message.dart';
 import 'package:coach_app/Chat/models/item_class.dart';
 import 'package:coach_app/Chat/models/message_ui.dart';
-import 'package:coach_app/Chat/full_screen_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:async';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:coach_app/Chat/models/video_player.dart';
-import 'package:coach_app/Chat/models/group_message.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_picker/image_picker.dart';
 
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
+class GroupChatScreen extends StatefulWidget {
+  final String name;
+  final String photoUrl;
+  final String gid;
+  final CurrUser currentUser;
+  GroupChatScreen({
+    required this.name,
+    required this.photoUrl,
+    required this.gid,
+    required this.currentUser,
+  });
 
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
+  _GroupChatScreenState createState() =>
+      _GroupChatScreenState(name, photoUrl, gid, currentUser);
 }
 
-class groupChatScreen extends StatefulWidget {
-  String name;
-  String photoUrl;
-  String gid;
-  curUser currentUser;
-  groupChatScreen({this.name, this.photoUrl, this.gid, this.currentUser});
-
-  _groupChatScreenState createState() =>
-      _groupChatScreenState(name, photoUrl, gid, currentUser);
-}
-
-class _groupChatScreenState extends State<groupChatScreen> {
+class _GroupChatScreenState extends State<GroupChatScreen> {
   String groupname, groupphotoUrl, gid;
-  curUser currentUser;
-  _groupChatScreenState(
-      this.groupname, this.groupphotoUrl, this.gid, this.currentUser);
+  CurrUser currentUser;
+  _GroupChatScreenState(
+    this.groupname,
+    this.groupphotoUrl,
+    this.gid,
+    this.currentUser,
+  );
 
-  GroupMessage _message;
+  late GroupMessage _message;
   ScrollController _scrollController = new ScrollController();
   var _formKey = GlobalKey<FormState>();
   var map = Map<String, dynamic>();
-  CollectionReference _collectionReference;
-  DocumentReference _receiverDocumentReference;
-  DocumentReference _senderDocumentReference;
-  DocumentReference _documentReference;
-  DocumentSnapshot documentSnapshot;
-  bool _autoValidate = false;
-  FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  String _senderuid;
+  late CollectionReference _collectionReference;
+  String? _senderuid;
   var listItem;
-  String receiverPhotoUrl, senderPhotoUrl, receiverName, senderName;
-  StreamSubscription<DocumentSnapshot> subscription;
-  File imagefile;
-  StorageReference _storageReference;
-  TextEditingController _messageController;
+  String? senderName;
+  late TextEditingController _messageController;
   void tolast() //to call list the other way
   {
     _scrollController.animateTo(
@@ -80,14 +67,7 @@ class _groupChatScreenState extends State<groupChatScreen> {
     _messageController = TextEditingController();
     getUID().then((user) {
       setState(() {
-        _senderuid = user.uid;
-        print("sender uid : $_senderuid");
-        /* getReceiverPhotoUrl(widget.receiverUid).then((snapshot) {
-          setState(() {
-            receiverPhotoUrl = snapshot['photoUrl'];
-            receiverName = snapshot['name'];
-          });
-        }); */
+        _senderuid = user!.$id;
       });
     });
   }
@@ -95,7 +75,6 @@ class _groupChatScreenState extends State<groupChatScreen> {
   @override
   void dispose() {
     super.dispose();
-    subscription?.cancel();
   }
 
   void addMessageToDb(GroupMessage message) async {
@@ -103,18 +82,18 @@ class _groupChatScreenState extends State<groupChatScreen> {
     map = message.toMap();
 
     print("Map : ${map}");
-    _collectionReference = Firestore.instance
+    _collectionReference = FirebaseFirestore.instance
         .collection("groupMessages")
-        .document(currentUser.code)
+        .doc(currentUser.code)
         .collection(gid);
 
     _collectionReference.add(map).whenComplete(() {
       print("Messages added to db");
     });
 
-    /* _collectionReference = Firestore.instance
+    /* _collectionReference = FirebaseFirestore.instance
         .collection("messages")
-        .document(widget.receiverUid)
+        .doc(widget.receiverUid)
         .collection(message.senderUid); */
 
     /* _collectionReference.add(map).whenComplete(() {
@@ -205,9 +184,8 @@ class _groupChatScreenState extends State<groupChatScreen> {
           Flexible(
             child: Container(
               child: TextFormField(
-                autovalidate: _autoValidate,
-                validator: (String input) {
-                  if (input.isEmpty) {
+                validator: (String? input) {
+                  if (input != null && input.isEmpty) {
                     return "Please enter message";
                   }
                   return null;
@@ -232,7 +210,7 @@ class _groupChatScreenState extends State<groupChatScreen> {
                     ),
                     onPressed: () {
                       tolast();
-                      if (_formKey.currentState.validate()) {
+                      if (_formKey.currentState!.validate()) {
                         sendMessage();
                       }
                     },
@@ -281,26 +259,22 @@ class _groupChatScreenState extends State<groupChatScreen> {
     );
   }
 
-  Future<String> pickImage() async {
-    var selectedFile = await ImagePicker.pickImage(
+  Future<String?> pickImage() async {
+    var selectedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
     );
-    //imagefile = selectedImage;
-    print("Original Size: ${selectedFile.lengthSync()}");
+    if (selectedFile == null) return null;
 
-    File compressedImageFile = await FlutterImageCompress.compressAndGetFile(
-        selectedFile.path, imagefile.path,
+    final compressedImageFile = await FlutterImageCompress.compressAndGetFile(
+        selectedFile.path, selectedFile.path,
         quality: 50, minWidth: 720, minHeight: 1280);
 
-    imagefile = compressedImageFile;
-
-    print("Comressed Size: ${imagefile.lengthSync()}");
-
-    _storageReference = FirebaseStorage.instance
+    final _storageReference = FirebaseStorage.instance
         .ref()
         .child('${DateTime.now().millisecondsSinceEpoch}');
-    StorageUploadTask storageUploadTask = _storageReference.putFile(imagefile);
-    var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+    final storageUploadTask =
+        _storageReference.putFile(File(compressedImageFile!.path));
+    var url = await (await storageUploadTask).ref.getDownloadURL();
 
     print("URL: $url");
     uploadImageToDb(url);
@@ -308,14 +282,17 @@ class _groupChatScreenState extends State<groupChatScreen> {
   }
 
   Future<String> pickVideo() async {
-    File videoFile = await FilePicker.getFile(type: FileType.video);
+    final videoFile = await FilePicker.platform.pickFiles(type: FileType.video);
+    if (videoFile == null) return "";
 
-    _storageReference = FirebaseStorage.instance
+    final _storageReference = FirebaseStorage.instance
         .ref()
         .child('${DateTime.now().millisecondsSinceEpoch}');
 
-    StorageUploadTask storageUploadTask = _storageReference.putFile(videoFile);
-    var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+    final storageUploadTask = _storageReference.putFile(
+      File(videoFile.files.single.path!),
+    );
+    var url = await (await storageUploadTask).ref.getDownloadURL();
 
     print("Video URL : $url");
     uploadVideoToDB(url);
@@ -323,7 +300,7 @@ class _groupChatScreenState extends State<groupChatScreen> {
   }
 
   Future<String> pickDoc() async {
-    File docFile = await FilePicker.getFile(
+    final docFile = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: [
           'pdf',
@@ -335,12 +312,16 @@ class _groupChatScreenState extends State<groupChatScreen> {
           'txt'
         ]);
 
-    _storageReference = FirebaseStorage.instance
+    if (docFile == null) return "";
+
+    final _storageReference = FirebaseStorage.instance
         .ref()
         .child('${DateTime.now().millisecondsSinceEpoch}');
 
-    StorageUploadTask storageUploadTask = _storageReference.putFile(docFile);
-    var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+    final storageUploadTask = _storageReference.putFile(
+      File(docFile.files.single.path!),
+    );
+    var url = await (await storageUploadTask).ref.getDownloadURL();
 
     print("Document URl : $url");
     uploadDoctoDb(url);
@@ -353,7 +334,7 @@ class _groupChatScreenState extends State<groupChatScreen> {
     _message = GroupMessage.withoutMessage(
         message: 'Doc Title',
         gid: gid,
-        senderUid: _senderuid,
+        senderUid: _senderuid!,
         senderName: currentUser.name,
         mediaUrl: downloadUrl,
         timestamp: FieldValue.serverTimestamp(),
@@ -369,18 +350,18 @@ class _groupChatScreenState extends State<groupChatScreen> {
     map['message'] = _message.message;
 
     print("Map : ${map}");
-    _collectionReference = Firestore.instance
+    _collectionReference = FirebaseFirestore.instance
         .collection("groupMessages")
-        .document(currentUser.code)
+        .doc(currentUser.code)
         .collection(gid);
 
     _collectionReference.add(map).whenComplete(() {
       print("Doc added to db");
     });
 
-    /* _collectionReference = Firestore.instance
+    /* _collectionReference = FirebaseFirestore.instance
         .collection("messages")
-        .document(widget.receiverUid)
+        .doc(widget.receiverUid)
         .collection(_message.senderUid);
 
     _collectionReference.add(map).whenComplete(() {
@@ -394,7 +375,7 @@ class _groupChatScreenState extends State<groupChatScreen> {
     _message = GroupMessage.withoutMessage(
         message: "Dummy Video Title",
         gid: gid,
-        senderUid: _senderuid,
+        senderUid: _senderuid!,
         senderName: currentUser.name,
         mediaUrl: downloadUrl,
         timestamp: FieldValue.serverTimestamp(),
@@ -410,9 +391,9 @@ class _groupChatScreenState extends State<groupChatScreen> {
     map['message'] = _message.message;
 
     print("Map : ${map}");
-    _collectionReference = Firestore.instance
+    _collectionReference = FirebaseFirestore.instance
         .collection("groupMessages")
-        .document(currentUser.code)
+        .doc(currentUser.code)
         .collection(gid);
 
     _collectionReference.add(map).whenComplete(() {
@@ -423,7 +404,7 @@ class _groupChatScreenState extends State<groupChatScreen> {
   void uploadImageToDb(String downloadUrl) {
     _message = GroupMessage.withoutMessage(
         gid: gid,
-        senderUid: _senderuid,
+        senderUid: _senderuid!,
         senderName: currentUser.name,
         mediaUrl: downloadUrl,
         timestamp: FieldValue.serverTimestamp(),
@@ -438,9 +419,9 @@ class _groupChatScreenState extends State<groupChatScreen> {
     map['mediaUrl'] = _message.mediaUrl;
 
     print("Map : ${map}");
-    _collectionReference = Firestore.instance
+    _collectionReference = FirebaseFirestore.instance
         .collection("groupMessages")
-        .document(currentUser.code)
+        .doc(currentUser.code)
         .collection(gid);
 
     _collectionReference.add(map).whenComplete(() {
@@ -454,30 +435,28 @@ class _groupChatScreenState extends State<groupChatScreen> {
     print(text);
     _message = GroupMessage(
         senderName: currentUser.name,
-        senderUid: _senderuid,
+        senderUid: _senderuid!,
         gid: gid,
         message: text,
         timestamp: FieldValue.serverTimestamp(),
         type: 'text');
     /* print(
         "receiverUid: ${widget.receiverUid} , senderUid : ${_senderuid} , message: ${text}"); */
-    print(
-        "timestamp: ${DateTime.now().millisecond}, type: ${text != null ? 'text' : 'image'}");
+    print("timestamp: ${DateTime.now().millisecond}, type: ${'text'}");
     addMessageToDb(_message);
   }
 
-  Future<FirebaseUser> getUID() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
-    return user;
+  Future<User?> getUID() async {
+    return AppwriteAuth.instance.user;
   }
 
   Widget ChatMessagesListWidget() {
     print("SENDERUID : $_senderuid");
     return Flexible(
       child: StreamBuilder(
-        stream: Firestore.instance
+        stream: FirebaseFirestore.instance
             .collection('groupMessages')
-            .document(currentUser.code)
+            .doc(currentUser.code)
             .collection(gid)
             .orderBy('timestamp', descending: false) //to be reviewed
             .snapshots(),
@@ -486,18 +465,17 @@ class _groupChatScreenState extends State<groupChatScreen> {
             return Center(
               child: CircularProgressIndicator(),
             );
-          } else {
-            int rev = snapshot.data.documents.length - 1;
-            listItem = snapshot.data.documents;
-            return ListView.builder(
-              controller: _scrollController,
-              padding: EdgeInsets.all(SizeConfig.b * 2.54),
-              reverse: true, //reviewed
-              itemBuilder: (context, index) =>
-                  chatMessageItem(snapshot.data.documents[rev - index]),
-              itemCount: snapshot.data.documents.length,
-            );
           }
+          int rev = snapshot.data!.docs.length - 1;
+          listItem = snapshot.data!.docs;
+          return ListView.builder(
+            controller: _scrollController,
+            padding: EdgeInsets.all(SizeConfig.b * 2.54),
+            reverse: true, //reviewed
+            itemBuilder: (context, index) =>
+                chatMessageItem(snapshot.data!.docs[rev - index]),
+            itemCount: snapshot.data!.docs.length,
+          );
         },
       ),
     );
@@ -790,6 +768,7 @@ class _groupChatScreenState extends State<groupChatScreen> {
                                   Navigator.of(context).push(
                                       new MaterialPageRoute(builder: (context) {
                                     return new ChewieDemo(
+                                      title: '',
                                       dataSource: snapshot['mediaUrl'],
                                     );
                                   }));

@@ -1,5 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Payment/razorPay.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -9,7 +10,7 @@ class StuInstallment extends StatefulWidget {
   final String courseId;
   final String courseName;
   StuInstallment(this.toogleValue,
-      {@required this.courseId, @required this.courseName});
+      {required this.courseId, required this.courseName});
   @override
   _StuInstallmentState createState() => _StuInstallmentState(toogleValue);
 }
@@ -18,18 +19,18 @@ class _StuInstallmentState extends State<StuInstallment> {
   bool toggleValue;
   _StuInstallmentState(this.toggleValue);
   final dbref = FirebaseDatabase.instance;
-  int noofInstallments;
-  String discount;
-  double totalfees;
+  late int noofInstallments;
+  late String? discount;
+  late double totalfees;
   double minusValue = 0.0;
   List<NoofInstallment> _listInstallment = [];
   _loadFromDatabase() async {
-    DataSnapshot discountsnap = await dbref
-        .reference()
+    final discountsnap = await dbref
+        .ref()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/discount")
+            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}/course/${widget.courseId}/discount")
         .once();
-    discount = discountsnap.value;
+    discount = discountsnap.snapshot.value.toString();
     DateTime dateTime = DateTime.now();
     int dd = int.parse(dateTime.day.toString().length == 1
         ? "0" + dateTime.day.toString()
@@ -41,12 +42,12 @@ class _StuInstallmentState extends State<StuInstallment> {
 
     if (!toggleValue) {
       dbref
-          .reference()
+          .ref()
           .child(
-              "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/fees")
+              "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}/fees")
           .once()
           .then((snapshot) {
-        Map map = snapshot.value;
+        Map map = snapshot.snapshot.value as Map;
         Map installments = map["MaxInstallment"]["Installments"];
         double fees = double.parse(map["FeeSection"]["TotalFees"]);
 
@@ -54,7 +55,7 @@ class _StuInstallmentState extends State<StuInstallment> {
         if (discount != null) {
           if (discount != "none") {
             minusValue = double.parse(
-                ((fees * (double.parse(discount) / 100)) / installments.length)
+                ((fees * (double.parse(discount!) / 100)) / installments.length)
                     .toStringAsFixed(2));
           }
         }
@@ -80,7 +81,9 @@ class _StuInstallmentState extends State<StuInstallment> {
 
             int durationinDays = period == "Day(s)"
                 ? count
-                : period == "Month(s)" ? count * 30 : count * 365;
+                : period == "Month(s)"
+                    ? count * 30
+                    : count * 365;
 
             if (durationinDays != 0) {
               double val = double.parse(((difference / durationinDays).ceil() *
@@ -109,29 +112,30 @@ class _StuInstallmentState extends State<StuInstallment> {
         });
       });
     } else {
-      DataSnapshot changesnapshot = await dbref
-          .reference()
+      final changesnapshot = await dbref
+          .ref()
           .child(
-              "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/fees")
+              "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}/fees")
           .once();
-      Map fineMap = changesnapshot.value["SetFine"];
-      Map changeAmountMap = changesnapshot.value["MaxInstallment"];
-      double fees =
-          double.parse(changesnapshot.value["FeeSection"]["TotalFees"]);
+      Map fineMap = (changesnapshot.snapshot.value as Map)["SetFine"];
+      Map changeAmountMap =
+          (changesnapshot.snapshot.value as Map)["MaxInstallment"];
+      double fees = double.parse(
+          (changesnapshot.snapshot.value as Map)["FeeSection"]["TotalFees"]);
 
       dbref
-          .reference()
+          .ref()
           .child(
-              "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees")
+              "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}/course/${widget.courseId}/fees")
           .once()
           .then((snapshot) {
-        Map map = snapshot.value;
+        Map map = snapshot.snapshot.value as Map;
 
         Map installments = map["Installments"];
         int count = 0;
         double unpaidSum = 0.0;
         double minusSum = 0.0;
-        installments?.forEach(
+        installments.forEach(
           (key, value) {
             if (key != "AllowedThrough" && key != "LastPaidInstallment") {
               if (value["Status"].toString() != "Paid") {
@@ -145,7 +149,7 @@ class _StuInstallmentState extends State<StuInstallment> {
         );
         if (discount != null && count != 0)
           minusValue = double.parse(((fees *
-                      (double.parse(discount == "none" ? "0" : discount) /
+                      (double.parse(discount! == "none" ? "0" : discount!) /
                           100)) /
                   count)
               .toStringAsFixed(2));
@@ -200,7 +204,9 @@ class _StuInstallmentState extends State<StuInstallment> {
 
                 int durationinDays = period == "Day(s)"
                     ? count
-                    : period == "Month(s)" ? count * 30 : count * 365;
+                    : period == "Month(s)"
+                        ? count * 30
+                        : count * 365;
 
                 if (durationinDays != 0) {
                   double val = double.parse(
@@ -212,9 +218,9 @@ class _StuInstallmentState extends State<StuInstallment> {
                 }
 
                 dbref
-                    .reference()
+                    .ref()
                     .child(
-                        "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees/Installments/$key")
+                        "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}/course/${widget.courseId}/fees/Installments/$key")
                     .update({"Fine": fine});
               }
               String amountPass = (double.parse(
@@ -248,9 +254,9 @@ class _StuInstallmentState extends State<StuInstallment> {
       for (int i = 0; i < _listInstallment.length; i++) {
         if (_listInstallment[i].sequence != paidInstallment) {
           dbref
-              .reference()
+              .ref()
               .child(
-                  "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees/Installments")
+                  "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}/course/${widget.courseId}/fees/Installments")
               .update({
             _listInstallment[i].sequence: {
               "Amount": (double.parse(_listInstallment[i].amount) + minusValue)
@@ -335,7 +341,7 @@ class _StuInstallmentState extends State<StuInstallment> {
                     "$discount" +
                         "%\n" +
                         "Fees After Discount: " +
-                        (totalfees * (1 - (double.parse(discount) / 100)))
+                        (totalfees * (1 - (double.parse(discount!) / 100)))
                             .toString(),
                     style: TextStyle(
                         color: Color.fromARGB(255, 243, 107, 40),
@@ -354,9 +360,9 @@ class _StuInstallmentState extends State<StuInstallment> {
             child: ListView.builder(
               itemCount: _listInstallment.length,
               itemBuilder: (context, index) {
-                String amountstr = _listInstallment[index].fine != ""
-                    ? "+ ${_listInstallment[index].fine}"
-                    : "";
+                // String amountstr = _listInstallment[index].fine != ""
+                //     ? "+ ${_listInstallment[index].fine}"
+                //     : "";
                 String buttonStatus = _listInstallment[index].status == "Due"
                     ? "Pay Now"
                     : _listInstallment[index].status == "Fine"
@@ -411,7 +417,7 @@ class _StuInstallmentState extends State<StuInstallment> {
                             ],
                           ),
                           SizedBox(width: SizeConfig.b * 6),
-                          RaisedButton(
+                          MaterialButton(
                             elevation: 10,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(18.0),
@@ -443,10 +449,9 @@ class _StuInstallmentState extends State<StuInstallment> {
                                   void _handlePaymentSuccess(
                                       PaymentSuccessResponse response) async {
                                     await FirebaseDatabase.instance
-                                        .reference()
-                                        .reference()
+                                        .ref()
                                         .child(
-                                            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees/Installments")
+                                            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}/course/${widget.courseId}/fees/Installments")
                                         .update(
                                       {
                                         _listInstallment[index].sequence: {
@@ -485,27 +490,27 @@ class _StuInstallmentState extends State<StuInstallment> {
                                     _handleExternalWallet,
                                   );
                                   double payment = double.parse(
-                                          _listInstallment[index]?.amount) +
+                                          _listInstallment[index].amount) +
                                       double.parse(
-                                          _listInstallment[index]?.fine == ''
+                                          _listInstallment[index].fine == ''
                                               ? '0'
-                                              : _listInstallment[index]?.fine);
+                                              : _listInstallment[index].fine);
 
                                   String accountId;
                                   var value = await FirebaseDatabase.instance
-                                      .reference()
+                                      .ref()
                                       .child(
-                                          '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/')
+                                          '/institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/')
                                       .child('accountId')
                                       .once();
-                                  accountId = value.value;
+                                  accountId = value.snapshot.value.toString();
 
                                   _razorPay.checkoutPayment(
                                       (payment * 100).toInt(),
-                                      FireBaseAuth.instance.user.displayName,
+                                      AppwriteAuth.instance.user!.name,
                                       'You are purchaing the course ${widget.courseName}.',
-                                      FireBaseAuth.instance.user.phoneNumber,
-                                      FireBaseAuth.instance.user.email,
+                                      AppwriteAuth.instance.user!.phone,
+                                      AppwriteAuth.instance.user!.email,
                                       accountId);
                                 }
                               }
@@ -539,25 +544,9 @@ class NoofInstallment {
       this.sequence, this.amount, this.duration, this.fine, this.status);
 
   NoofInstallment.fromJSON(DataSnapshot snapshot)
-      : sequence = snapshot.key,
-        amount = snapshot.value["Amount"],
-        duration = snapshot.value["Duration"],
-        fine = snapshot.value["Fine"],
-        status = snapshot.value["Status"];
-}
-
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
+      : sequence = snapshot.key!,
+        amount = (snapshot.value as Map)["Amount"],
+        duration = (snapshot.value as Map)["Duration"],
+        fine = (snapshot.value as Map)["Fine"],
+        status = (snapshot.value as Map)["Status"];
 }

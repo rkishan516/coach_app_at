@@ -1,11 +1,9 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Authentication/malfunctionedApk.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
 import 'package:coach_app/SpeechRouting/RouteMap.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,27 +13,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setEnabledSystemUIOverlays([]);
+  await EasyLocalization.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  FireBaseAuth.instance.packageInfo = packageInfo;
-  FireBaseAuth.instance.prefs = await SharedPreferences.getInstance();
-  FirebaseDatabase.instance.setPersistenceEnabled(true);
-
-  if (packageInfo.packageName != "com.VysionTech.gurucool") {
-    runApp(MaterialApp(
-      title: 'Guru Cool',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        textTheme: GoogleFonts.portLligatSansTextTheme(),
-        primarySwatch: Colors.deepOrange,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MalFunctionedAPK(),
-    ));
-    return;
-  }
+  AppwriteAuth.instance.packageInfo = packageInfo;
+  AppwriteAuth.instance.prefs = await SharedPreferences.getInstance();
 
   runApp(
     EasyLocalization(
@@ -53,10 +36,10 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  SharedPreferences prefs;
-  _getPrefs() async {
-    prefs = FireBaseAuth.instance.prefs;
-    return prefs;
+  Future<SharedPreferences> _getPrefs() async {
+    AppwriteAuth.instance.prefs = await SharedPreferences.getInstance();
+    final prefs = AppwriteAuth.instance.prefs;
+    return prefs!;
   }
 
   @override
@@ -85,11 +68,11 @@ class MyApp extends StatelessWidget {
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: FutureBuilder(
+      home: FutureBuilder<SharedPreferences>(
         future: _getPrefs(),
         builder: (context, snap) {
           if (snap.hasData) {
-            if (prefs?.getBool('isLoggedIn') == true) {
+            if (snap.data!.getBool('isLoggedIn') == true) {
               WelcomeNavigation.signInWithGoogleAndGetPage(context);
               return UploadDialog(warning: 'Logging In'.tr());
             }

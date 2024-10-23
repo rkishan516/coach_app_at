@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CountDot extends StatelessWidget {
   final int count;
-  CountDot({@required this.count});
+  CountDot({required this.count});
 
   @override
   Widget build(BuildContext context) {

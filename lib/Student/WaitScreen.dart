@@ -1,7 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class WaitScreen extends StatelessWidget {
@@ -40,16 +39,16 @@ class WaitScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  RaisedButton(
+                  MaterialButton(
                     onPressed: () {
-                      if (FireBaseAuth.instance.instituteid != null &&
-                          FireBaseAuth.instance.branchid != null)
+                      if (AppwriteAuth.instance.instituteid != null &&
+                          AppwriteAuth.instance.branchid != null)
                         FirebaseDatabase.instance
-                            .reference()
+                            .ref()
                             .child(
-                                'instiute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/status')
+                                'instiute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}/status')
                             .set("New Student");
-                      FireBaseAuth.instance.signoutWithGoogle();
+                      AppwriteAuth.instance.signoutWithGoogle();
                       Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(
                               builder: (context) => WelcomePage()),

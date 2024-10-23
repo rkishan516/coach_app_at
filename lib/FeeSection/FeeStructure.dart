@@ -20,13 +20,13 @@ class _FeeStructureState extends State<FeeStructure> {
 
   _loadFromDatabase() async {
     dbRef
-        .reference()
+        .ref()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}")
+            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}")
         .child("coursesList")
         .once()
         .then((snapshot) {
-      snapshot.value.forEach((key, value) {
+      (snapshot.snapshot.value as Map).forEach((key, value) {
         setState(() {
           _list.add(Courses(key, value));
         });

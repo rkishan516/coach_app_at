@@ -1,11 +1,11 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 
 class UploadDialog extends StatelessWidget {
   final String warning;
-  UploadDialog({@required this.warning});
+  UploadDialog({required this.warning});
   final List<Widget> waitWidgets = [
     SpinKitRipple(
       color: Color(0xffF36C24),
@@ -78,27 +78,22 @@ class UploadDialog extends StatelessWidget {
 
 class SpinKitRipple extends StatefulWidget {
   const SpinKitRipple({
-    Key key,
+    super.key,
     this.color,
     this.size = 50.0,
     this.borderWidth = 6.0,
     this.itemBuilder,
     this.duration = const Duration(milliseconds: 1800),
     this.controller,
-  })  : assert(
-            !(itemBuilder is IndexedWidgetBuilder && color is Color) &&
-                !(itemBuilder == null && color == null),
-            'You should specify either a itemBuilder or a color'),
-        assert(size != null),
-        assert(borderWidth != null),
-        super(key: key);
+  }) : assert(!(color is Color) && !(itemBuilder == null && color == null),
+            'You should specify either a itemBuilder or a color');
 
-  final Color color;
+  final Color? color;
   final double size;
   final double borderWidth;
-  final IndexedWidgetBuilder itemBuilder;
+  final IndexedWidgetBuilder? itemBuilder;
   final Duration duration;
-  final AnimationController controller;
+  final AnimationController? controller;
 
   @override
   _SpinKitRippleState createState() => _SpinKitRippleState();
@@ -106,8 +101,8 @@ class SpinKitRipple extends StatefulWidget {
 
 class _SpinKitRippleState extends State<SpinKitRipple>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _animation1, _animation2;
+  late AnimationController _controller;
+  late Animation<double> _animation1, _animation2;
 
   @override
   void initState() {
@@ -155,12 +150,14 @@ class _SpinKitRippleState extends State<SpinKitRipple>
     return SizedBox.fromSize(
       size: Size.square(widget.size),
       child: widget.itemBuilder != null
-          ? widget.itemBuilder(context, index)
+          ? widget.itemBuilder!(context, index)
           : DecoratedBox(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border:
-                    Border.all(color: widget.color, width: widget.borderWidth),
+                border: Border.all(
+                  color: widget.color ?? Colors.white,
+                  width: widget.borderWidth,
+                ),
               ),
             ),
     );
@@ -169,39 +166,40 @@ class _SpinKitRippleState extends State<SpinKitRipple>
 
 class SpinKitDoubleBounce extends StatefulWidget {
   const SpinKitDoubleBounce({
-    Key key,
+    super.key,
     this.color,
     this.size = 50.0,
     this.itemBuilder,
     this.duration = const Duration(milliseconds: 2000),
     this.controller,
-  })  : assert(!(itemBuilder is IndexedWidgetBuilder && color is Color) && !(itemBuilder == null && color == null),
-            'You should specify either a itemBuilder or a color'),
-        assert(size != null),
-        super(key: key);
+  }) : assert(!(color is Color) && !(itemBuilder == null && color == null),
+            'You should specify either a itemBuilder or a color');
 
-  final Color color;
+  final Color? color;
   final double size;
-  final IndexedWidgetBuilder itemBuilder;
+  final IndexedWidgetBuilder? itemBuilder;
   final Duration duration;
-  final AnimationController controller;
+  final AnimationController? controller;
 
   @override
   _SpinKitDoubleBounceState createState() => _SpinKitDoubleBounceState();
 }
 
-class _SpinKitDoubleBounceState extends State<SpinKitDoubleBounce> with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _animation;
+class _SpinKitDoubleBounceState extends State<SpinKitDoubleBounce>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = (widget.controller ?? AnimationController(vsync: this, duration: widget.duration))
+    _controller = (widget.controller ??
+        AnimationController(vsync: this, duration: widget.duration))
       ..addListener(() => setState(() {}))
       ..repeat(reverse: true);
-    _animation = Tween(begin: -1.0, end: 1.0).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _animation = Tween(begin: -1.0, end: 1.0)
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -217,7 +215,8 @@ class _SpinKitDoubleBounceState extends State<SpinKitDoubleBounce> with SingleTi
         children: List.generate(2, (i) {
           return Transform.scale(
             scale: (1.0 - i - _animation.value.abs()).abs(),
-            child: SizedBox.fromSize(size: Size.square(widget.size), child: _itemBuilder(i)),
+            child: SizedBox.fromSize(
+                size: Size.square(widget.size), child: _itemBuilder(i)),
           );
         }),
       ),
@@ -225,6 +224,11 @@ class _SpinKitDoubleBounceState extends State<SpinKitDoubleBounce> with SingleTi
   }
 
   Widget _itemBuilder(int index) => widget.itemBuilder != null
-      ? widget.itemBuilder(context, index)
-      : DecoratedBox(decoration: BoxDecoration(shape: BoxShape.circle, color: widget.color.withOpacity(0.6)));
+      ? widget.itemBuilder!.call(context, index)
+      : DecoratedBox(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: widget.color?.withOpacity(0.6),
+          ),
+        );
 }

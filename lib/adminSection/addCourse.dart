@@ -5,22 +5,22 @@ import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Plugins/flutter_switch.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:coach_app/courses/subject_page.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 
 class AddCourse extends StatefulWidget {
   final bool isEdit;
-  final Courses course;
-  AddCourse({this.isEdit, this.course});
+  final Courses? course;
+  AddCourse({this.isEdit = false, this.course});
   @override
   _AddCourseState createState() => _AddCourseState();
 }
 
 class _AddCourseState extends State<AddCourse> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController nameTextEditingController,
+  late TextEditingController nameTextEditingController,
       descriptionTextEditingController,
       mediumTextEditingController,
       _admissionText,
@@ -31,7 +31,7 @@ class _AddCourseState extends State<AddCourse> {
       _totalText,
       _setFineText,
       _fineDurationText;
-  var _currentFineDurationSelected;
+  late var _currentFineDurationSelected;
 
   final TextEditingController _ddText = TextEditingController();
   final TextEditingController _yyText = TextEditingController();
@@ -102,7 +102,7 @@ class _AddCourseState extends State<AddCourse> {
                   children: <Widget>[
                     TextFormField(
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value == null || value.isEmpty) {
                           return 'Please enter some text';
                         }
                         return null;
@@ -133,7 +133,7 @@ class _AddCourseState extends State<AddCourse> {
                 children: <Widget>[
                   TextFormField(
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter some text';
                       }
                       return null;
@@ -163,7 +163,7 @@ class _AddCourseState extends State<AddCourse> {
                 children: <Widget>[
                   TextFormField(
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Please enter some text';
                       }
                       return null;
@@ -315,7 +315,8 @@ class _AddCourseState extends State<AddCourse> {
                               ),
                             );
                           }).toList(),
-                          onChanged: (String newValueSelected) {
+                          onChanged: (String? newValueSelected) {
+                            if (newValueSelected == null) return;
                             setState(() {
                               _mmSelected = newValueSelected;
                             });
@@ -478,7 +479,8 @@ class _AddCourseState extends State<AddCourse> {
                                   ),
                                 );
                               }).toList(),
-                              onChanged: (String newValueSelected) {
+                              onChanged: (String? newValueSelected) {
+                                if (newValueSelected == null) return;
                                 setState(() {
                                   this._currentFineDurationSelected =
                                       newValueSelected;
@@ -505,9 +507,9 @@ class _AddCourseState extends State<AddCourse> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  (widget.course.id == null)
+                  (widget.course?.id == null)
                       ? Container()
-                      : FlatButton(
+                      : MaterialButton(
                           onPressed: () async {
                             String res = await showDialog(
                                 context: context,
@@ -516,14 +518,14 @@ class _AddCourseState extends State<AddCourse> {
                               return;
                             }
                             FirebaseDatabase.instance
-                                .reference()
+                                .ref()
                                 .child(
-                                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.course.id}')
+                                    'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.course?.id}')
                                 .remove();
                             FirebaseDatabase.instance
-                                .reference()
+                                .ref()
                                 .child(
-                                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList/${widget.course.id}')
+                                    'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/coursesList/${widget.course?.id}')
                                 .remove();
                             Navigator.of(context).pop();
                           },
@@ -611,10 +613,10 @@ class _AddCourseState extends State<AddCourse> {
       description: descriptionTextEditingController.text.capitalize().trim(),
       date: DateTime.now().toIso8601String(),
       medium: mediumTextEditingController.text.capitalize().trim(),
-      subjects: widget.course.subjects,
-      id: (widget.course.id == null)
+      subjects: widget.course?.subjects,
+      id: (widget.course?.id == null)
           ? nameTextEditingController.text.hashCode.toString()
-          : widget.course.id,
+          : widget.course!.id,
       price: double.parse(_totalText.text).toInt(),
       fees: Fees(
         feeSection: FeeSection(
@@ -641,21 +643,21 @@ class _AddCourseState extends State<AddCourse> {
         ),
       ),
     );
-    widget.course.id = course.id;
+    widget.course?.id = course.id;
     FirebaseDatabase.instance
-        .reference()
+        .ref()
         .child(
-            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${course.id}')
+            'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${course.id}')
         .update(course.toJson());
 
     FirebaseDatabase.instance
-        .reference()
+        .ref()
         .child(
-            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList/')
+            'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/coursesList/')
         .update({course.id: course.name});
 
-    FireBaseAuth.instance.prefs
-        .setString("${widget.course.id}", _totalText.text);
+    AppwriteAuth.instance.prefs!
+        .setString("${widget.course?.id}", _totalText.text);
     Navigator.of(context).pop();
   }
 
@@ -1150,12 +1152,12 @@ class _AddCourseState extends State<AddCourse> {
   }
 
   _loadFromDatabase() {
-    toggleValue1 = widget.course.fees?.maxInstallment?.isMaxAllowed ?? false;
-    toggleValue2 = widget.course.fees?.fine?.isFineAllowed ?? false;
-    toggleValue3 = widget.course.fees?.oneTime?.isOneTimeAllowed ?? false;
+    toggleValue1 = widget.course?.fees?.maxInstallment.isMaxAllowed ?? false;
+    toggleValue2 = widget.course?.fees?.fine.isFineAllowed ?? false;
+    toggleValue3 = widget.course?.fees?.oneTime.isOneTimeAllowed ?? false;
 
-    List<String> durationOneTime =
-        widget.course.fees?.oneTime?.duration?.split(" ");
+    List<String>? durationOneTime =
+        widget.course?.fees?.oneTime.duration.split(" ");
 
     if (durationOneTime != null) {
       if (durationOneTime.length > 2) {
@@ -1166,16 +1168,19 @@ class _AddCourseState extends State<AddCourse> {
     }
 
     noOfTextFields = int.parse(
-        widget.course.fees?.maxInstallment?.maxAllowedInstallment == ''
+        widget.course?.fees?.maxInstallment?.maxAllowedInstallment == ''
             ? "0"
-            : widget.course.fees?.maxInstallment?.maxAllowedInstallment ?? "0");
+            : widget.course?.fees?.maxInstallment?.maxAllowedInstallment ??
+                "0");
     _maxInstallText.text = noOfTextFields.toString();
-    _listEditingControllerDD = new List<TextEditingController>(noOfTextFields);
-    _listEditingControllerYYYY =
-        new List<TextEditingController>(noOfTextFields);
-    _listEditingControllerMM = List<TextEditingController>(noOfTextFields);
-    _listEditingControllerMoney =
-        new List<TextEditingController>(noOfTextFields);
+    _listEditingControllerDD = new List<TextEditingController>.filled(
+        noOfTextFields, TextEditingController());
+    _listEditingControllerYYYY = new List<TextEditingController>.filled(
+        noOfTextFields, TextEditingController());
+    _listEditingControllerMM = List<TextEditingController>.filled(
+        noOfTextFields, TextEditingController());
+    _listEditingControllerMoney = new List<TextEditingController>.filled(
+        noOfTextFields, TextEditingController());
     for (int i = 0; i < noOfTextFields; i++) {
       _listEditingControllerMoney[i] = TextEditingController(
           text: !toggleValue1
@@ -1189,15 +1194,15 @@ class _AddCourseState extends State<AddCourse> {
     }
   }
 
-  String checkinstallment;
+  late String checkinstallment;
 
   //From Installment Page
   int noOfTextFields = 0;
-  List<TextEditingController> _listEditingControllerMM;
-  List<TextEditingController> _listEditingControllerDD;
-  List<TextEditingController> _listEditingControllerYYYY;
-  List<TextEditingController> _listEditingControllerMoney;
-  Map map;
+  late List<TextEditingController> _listEditingControllerMM;
+  late List<TextEditingController> _listEditingControllerDD;
+  late List<TextEditingController> _listEditingControllerYYYY;
+  late List<TextEditingController> _listEditingControllerMoney;
+  late Map map;
   bool editValue = false;
   final TextEditingController _maxInstallText = TextEditingController();
   int prevValue = 0;
@@ -1207,33 +1212,42 @@ class _AddCourseState extends State<AddCourse> {
       if (toggleValue1) {
         if (_listEditingControllerMM == null || prevValue != value) {
           prevValue = value;
-          _listEditingControllerMM =
-              List<TextEditingController>(noOfTextFields);
-          _listEditingControllerMoney =
-              List<TextEditingController>(noOfTextFields);
-          _listEditingControllerYYYY =
-              List<TextEditingController>(noOfTextFields);
-          _listEditingControllerDD =
-              List<TextEditingController>(noOfTextFields);
+          _listEditingControllerMM = List<TextEditingController>.filled(
+            noOfTextFields,
+            TextEditingController(),
+          );
+          _listEditingControllerMoney = List<TextEditingController>.filled(
+            noOfTextFields,
+            TextEditingController(),
+          );
+          _listEditingControllerYYYY = List<TextEditingController>.filled(
+            noOfTextFields,
+            TextEditingController(),
+          );
+          _listEditingControllerDD = List<TextEditingController>.filled(
+            noOfTextFields,
+            TextEditingController(),
+          );
         }
         for (int i = 0; i < noOfTextFields; i++) {
           String pass = (i + 1).toString() + "Installment";
           if (editValue) {
-            if (widget.course.fees?.maxInstallment?.installment != null) {
+            if (widget.course?.fees?.maxInstallment?.installment != null) {
               _listEditingControllerMoney[i] = TextEditingController()
-                ..text = widget.course.fees?.maxInstallment?.installment[pass]
+                ..text = widget.course!.fees!.maxInstallment!.installment![pass]
                         ?.amount ??
                     double.parse(
-                        (double.parse(_totalText.text) / noOfTextFields)
-                            .toStringAsFixed(
-                              2,
-                            )
-                            .toString());
+                            (double.parse(_totalText.text) / noOfTextFields)
+                                .toStringAsFixed(
+                                  2,
+                                )
+                                .toString())
+                        .toString();
 
-              List<String> duration = widget
-                  .course.fees?.maxInstallment?.installment[pass]?.duration
+              List<String>? duration = widget
+                  .course?.fees?.maxInstallment?.installment[pass]?.duration
                   ?.split(" ");
-              if (duration.length > 2) {
+              if (duration!.length > 2) {
                 _listEditingControllerDD[i] = TextEditingController()
                   ..text = duration[0];
                 _listEditingControllerMM[i] = TextEditingController()
@@ -1279,9 +1293,9 @@ class _AddCourseState extends State<AddCourse> {
                   }
                   setState(() {
                     dbRef
-                        .reference()
+                        .ref()
                         .child(
-                            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.course.id}/fees")
+                            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.course?.id}/fees")
                         .child(
                             "MaxInstallment/Installments/${(index + 1).toString() + "Installment"}")
                         .remove();
@@ -1497,26 +1511,26 @@ class _AddCourseState extends State<AddCourse> {
   @override
   void initState() {
     nameTextEditingController = TextEditingController()
-      ..text = widget.course.name;
+      ..text = widget.course?.name ?? '';
     descriptionTextEditingController = TextEditingController()
-      ..text = widget.course.description;
+      ..text = widget.course?.description ?? '';
     mediumTextEditingController = TextEditingController()
-      ..text = widget.course.medium;
+      ..text = widget.course?.medium ?? '';
     _admissionText = TextEditingController()
-      ..text = widget.course.fees?.feeSection?.admissionFees ?? "0";
+      ..text = widget.course?.fees?.feeSection?.admissionFees ?? "0";
     _tutionText = TextEditingController()
-      ..text = widget.course.fees?.feeSection?.tutionFees ?? "0";
+      ..text = widget.course?.fees?.feeSection?.tutionFees ?? "0";
     _libraryText = TextEditingController()
-      ..text = widget.course.fees?.feeSection?.libraryFees ?? "0";
+      ..text = widget.course?.fees?.feeSection?.libraryFees ?? "0";
     _labText = TextEditingController()
-      ..text = widget.course.fees?.feeSection?.labFees ?? "0";
+      ..text = widget.course?.fees?.feeSection?.labFees ?? "0";
     _extraText = TextEditingController()
-      ..text = widget.course.fees?.feeSection?.extraFees ?? "0";
+      ..text = widget.course?.fees?.feeSection?.extraFees ?? "0";
     _totalText = TextEditingController()
-      ..text = widget.course.fees?.feeSection?.totalFees ?? "0";
+      ..text = widget.course?.fees?.feeSection?.totalFees ?? "0";
     if (widget.isEdit) {
-      List<String> fineDuration =
-          widget.course.fees?.fine?.duration?.split(" ");
+      List<String>? fineDuration =
+          widget.course?.fees?.fine?.duration?.split(" ");
       if (fineDuration != null) {
         _fineDurationText = TextEditingController()
           ..text = (fineDuration.length > 1) ? fineDuration[0] : "0";
@@ -1527,7 +1541,7 @@ class _AddCourseState extends State<AddCourse> {
         _currentFineDurationSelected = "Day(s)";
       }
       _setFineText = TextEditingController()
-        ..text = widget.course.fees?.fine?.fineAmount ?? "0";
+        ..text = widget.course?.fees?.fine?.fineAmount ?? "0";
     } else {
       _fineDurationText = TextEditingController()..text = "0";
       _currentFineDurationSelected = "Day(s)";
@@ -1538,7 +1552,7 @@ class _AddCourseState extends State<AddCourse> {
     if (widget.isEdit) _loadFromDatabase();
     if (widget.isEdit)
       checkinstallment =
-          widget.course.fees?.maxInstallment?.maxAllowedInstallment;
+          widget.course?.fees?.maxInstallment?.maxAllowedInstallment ?? '';
 
     super.initState();
   }

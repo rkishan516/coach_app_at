@@ -15,13 +15,12 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 class PublicContentPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;
-  PublicContentPage({@required this.title, @required this.reference});
+  PublicContentPage({required this.title, required this.reference});
   @override
   _PublicContentPageState createState() => _PublicContentPageState();
 }
 
 class _PublicContentPageState extends State<PublicContentPage> {
-  int length;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,13 +43,13 @@ class _PublicContentPageState extends State<PublicContentPage> {
           children: <Widget>[
             Expanded(
               flex: 12,
-              child: StreamBuilder<Event>(
+              child: StreamBuilder<DatabaseEvent>(
                 stream: widget.reference.onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     Section section =
-                        Section.fromJson(snapshot.data.snapshot.value);
-                    length = section.content?.length ?? 0;
+                        Section.fromJson(snapshot.data?.snapshot.value as Map);
+                    final length = section.content?.length ?? 0;
                     if (length == 0) {
                       return Center(
                         child: Text('No Content Yet'),
@@ -74,15 +73,15 @@ class _PublicContentPageState extends State<PublicContentPage> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: Center(
                                         child: Text(
-                                          '${section.content[section.content.keys.toList()[index]].title}',
+                                          '${section.content![section.content!.keys.toList()[index]]?.title}',
                                           style: TextStyle(
                                               color: Color(0xffF36C24)),
                                         ),
                                       ),
                                     ),
                                     if (section
-                                            .content[section.content.keys
-                                                .toList()[index]]
+                                            .content![section.content!.keys
+                                                .toList()[index]]!
                                             .kind ==
                                         'Youtube Video')
                                       ClipRRect(
@@ -92,10 +91,11 @@ class _PublicContentPageState extends State<PublicContentPage> {
                                             videoId:
                                                 YoutubePlayer.convertUrlToId(
                                               section
-                                                  .content[section.content.keys
-                                                      .toList()[index]]
+                                                  .content![section
+                                                      .content!.keys
+                                                      .toList()[index]]!
                                                   .ylink,
-                                            ),
+                                            )!,
                                           ),
                                           height: 120,
                                         ),
@@ -110,7 +110,7 @@ class _PublicContentPageState extends State<PublicContentPage> {
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text(
-                                        '${section.content[section.content.keys.toList()[index]].description}',
+                                        '${section.content![section.content!.keys.toList()[index]]!.description}',
                                         style:
                                             TextStyle(color: Color(0xffF36C24)),
                                       ),
@@ -118,7 +118,7 @@ class _PublicContentPageState extends State<PublicContentPage> {
                                     Align(
                                       alignment: AlignmentDirectional.bottomEnd,
                                       child: Text(
-                                          '${section.content[section.content.keys.toList()[index]].time.split(" ")[0].split("-").reversed.join("-")}'),
+                                          '${section.content![section.content!.keys.toList()[index]]!.time.split(" ")[0].split("-").reversed.join("-")}'),
                                     )
                                   ],
                                 ),
@@ -127,32 +127,32 @@ class _PublicContentPageState extends State<PublicContentPage> {
                           ),
                           onTap: () {
                             if (section
-                                    .content[
-                                        section.content.keys.toList()[index]]
+                                    .content![
+                                        section.content!.keys.toList()[index]]!
                                     .kind ==
                                 'Youtube Video') {
                               Navigator.of(context).push(
                                 CupertinoPageRoute(
                                   builder: (context) => YTPlayer(
                                       reference: widget.reference.child(
-                                          'content/${section.content.keys.toList()[index]}'),
+                                          'content/${section.content!.keys.toList()[index]}'),
                                       link: section
-                                          .content[section.content.keys
-                                              .toList()[index]]
+                                          .content![section.content!.keys
+                                              .toList()[index]]!
                                           .ylink),
                                 ),
                               );
                             } else if (section
-                                    .content[
-                                        section.content.keys.toList()[index]]
+                                    .content![
+                                        section.content!.keys.toList()[index]]!
                                     .kind ==
                                 'PDF') {
                               Navigator.of(context).push(
                                 CupertinoPageRoute(
                                   builder: (context) => PDFPlayer(
                                     link: section
-                                        .content[section.content.keys
-                                            .toList()[index]]
+                                        .content![section.content!.keys
+                                            .toList()[index]]!
                                         .link,
                                   ),
                                 ),
@@ -162,37 +162,41 @@ class _PublicContentPageState extends State<PublicContentPage> {
                           onLongPress: () => addContent(
                             context,
                             widget.reference,
-                            key: section.content.keys.toList()[index],
+                            key: section.content!.keys.toList()[index],
                             title: section
-                                .content[section.content.keys.toList()[index]]
+                                .content![
+                                    section.content!.keys.toList()[index]]!
                                 .title,
                             link: section
-                                        .content[section.content.keys
-                                            .toList()[index]]
+                                        .content![section.content!.keys
+                                            .toList()[index]]!
                                         .kind ==
                                     'Youtube Video'
                                 ? section
-                                    .content[
-                                        section.content.keys.toList()[index]]
+                                    .content![
+                                        section.content!.keys.toList()[index]]!
                                     .ylink
                                 : section
-                                            .content[section.content.keys
-                                                .toList()[index]]
+                                            .content![section.content!.keys
+                                                .toList()[index]]!
                                             .kind ==
                                         'PDF'
                                     ? section
-                                        .content[section.content.keys
-                                            .toList()[index]]
+                                        .content![section.content!.keys
+                                            .toList()[index]]!
                                         .link
                                     : '',
                             description: section
-                                .content[section.content.keys.toList()[index]]
+                                .content![
+                                    section.content!.keys.toList()[index]]!
                                 .description,
                             type: section
-                                .content[section.content.keys.toList()[index]]
+                                .content![
+                                    section.content!.keys.toList()[index]]!
                                 .kind,
                             time: section
-                                .content[section.content.keys.toList()[index]]
+                                .content![
+                                    section.content!.keys.toList()[index]]!
                                 .time,
                           ),
                         );
@@ -223,7 +227,7 @@ class _PublicContentPageState extends State<PublicContentPage> {
           ],
         ),
       ),
-      floatingActionButton: (FireBaseAuth.instance.previlagelevel == 4)
+      floatingActionButton: (AppwriteAuth.instance.previlagelevel == 4)
           ? SlideButtonR(
               text: 'Add Content'.tr(),
               onTap: () => addContent(context, widget.reference),
@@ -235,7 +239,7 @@ class _PublicContentPageState extends State<PublicContentPage> {
   }
 
   addContent(BuildContext context, DatabaseReference reference,
-      {String key,
+      {String? key,
       String title = '',
       String description = '',
       String link = '',
@@ -262,16 +266,16 @@ class ContentUploadDialog extends StatefulWidget {
   final String link;
   final String time;
   final DatabaseReference reference;
-  final String keyC;
+  final String? keyC;
   final String type;
   ContentUploadDialog({
-    @required this.title,
-    @required this.description,
-    @required this.reference,
-    @required this.time,
-    @required this.link,
-    @required this.keyC,
-    @required this.type,
+    required this.title,
+    required this.description,
+    required this.reference,
+    required this.time,
+    required this.link,
+    required this.keyC,
+    required this.type,
   });
   @override
   _ContentUploadDialogState createState() => _ContentUploadDialogState();
@@ -282,7 +286,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
   TextEditingController descriptionTextEditingController =
       TextEditingController();
   TextEditingController linkTextEditingController = TextEditingController();
-  String type;
+  late String type;
   @override
   void initState() {
     type = widget.type;
@@ -349,6 +353,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                             )
                             .toList(),
                         onChanged: (value) {
+                          if (value == null) return;
                           setState(() {
                             type = value;
                           });
@@ -425,7 +430,7 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                     children: <Widget>[
                       (widget.keyC == null)
                           ? Container()
-                          : FlatButton(
+                          : MaterialButton(
                               onPressed: () async {
                                 String res = await showDialog(
                                     context: context,
@@ -442,23 +447,26 @@ class _ContentUploadDialogState extends State<ContentUploadDialog> {
                                 'Remove'.tr(),
                               ),
                             ),
-                      FlatButton(
+                      MaterialButton(
                         onPressed: () async {
-                          Content content = Content()
-                            ..kind = type
-                            ..title = titleTextEditingController.text
-                            ..time = ((widget.time == '')
+                          Content content = Content(
+                            kind: type,
+                            title: titleTextEditingController.text,
+                            time: ((widget.time == '')
                                 ? DateTime.now().toString()
-                                : widget.time)
-                            ..description =
-                                descriptionTextEditingController.text;
+                                : widget.time),
+                            description: descriptionTextEditingController.text,
+                            ylink: type == 'Youtube Video'
+                                ? linkTextEditingController.text
+                                : '',
+                            link: type == 'PDF'
+                                ? linkTextEditingController.text
+                                : '',
+                            quizModel: null,
+                          );
 
                           Navigator.of(context).pop();
-                          if (type == 'Youtube Video') {
-                            content.ylink = linkTextEditingController.text;
-                          } else if (type == 'PDF') {
-                            content.link = linkTextEditingController.text;
-                          }
+
                           if (widget.keyC == null) {
                             widget.reference
                                 .child('content/')

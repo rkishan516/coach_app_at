@@ -13,8 +13,8 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
   Map<dynamic, dynamic> _hashMap = Map<dynamic, dynamic>();
   List<PrivacyModal> _list = [];
   _loadFromDatabase() {
-    dbRef.reference().child('privacyPolicy').orderByKey().once().then((value) {
-      _hashMap = value.value;
+    dbRef.ref().child('privacyPolicy').orderByKey().once().then((value) {
+      _hashMap = value.snapshot.value! as Map;
       _hashMap.forEach((key, value) {
         _list.add(PrivacyModal(key, value['heading'], value['subTitle']));
       });

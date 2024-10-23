@@ -16,7 +16,7 @@ class _PaidReportState extends State<PaidReport> {
     List<StudentModel> list = [];
     try {
       widget._listStudentModel.forEach((element) {
-        if (element.lastpaidInstallment != null &&
+        if (element.lastpaidInstallment.isEmpty &&
             element.lastpaidInstallment != "OneTime") {
           list.add(element);
         }
@@ -85,9 +85,9 @@ class _PaidReportState extends State<PaidReport> {
                   shrinkWrap: true,
                   children: [
                     Text(
-                      (index + 1).toString() + ". " + _studentList[index]?.name,
+                      (index + 1).toString() + ". " + _studentList[index].name,
                       style: TextStyle(
-                        color: _studentList[index]?.paymentType == "Online"
+                        color: _studentList[index].paymentType == "Online"
                             ? Colors.green
                             : Color(0xffF36C24),
                         fontSize: 16,

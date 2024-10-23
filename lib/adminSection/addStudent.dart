@@ -6,30 +6,30 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class AddStudent extends StatefulWidget {
-  final String courseId;
+  final String? courseId;
   AddStudent({this.courseId});
   @override
   _AddStudentState createState() => _AddStudentState();
 }
 
 class _AddStudentState extends State<AddStudent> {
-  TextEditingController emailTextEditingController,
+  late TextEditingController emailTextEditingController,
       nameTextEditingController,
       addressTextEditingController,
       phoneTextEditingController;
-  String courseName;
-  String courseId;
-  bool isPaidOneTime;
-  Courses selectedCourse;
-  List<bool> installments;
-  GlobalKey<FormState> _formKey;
+  late String courseName;
+  String? courseId;
+  late bool isPaidOneTime;
+  late Courses selectedCourse;
+  late List<bool> installments;
+  late GlobalKey<FormState> _formKey;
 
   paidOneTime(double totalfees, String duration, String date, String courseId,
       String studentUid) async {
     await FirebaseDatabase.instance
-        .reference()
+        .ref()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/")
+            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/")
         .update({
       "Installments": {
         "OneTime": {
@@ -48,26 +48,27 @@ class _AddStudentState extends State<AddStudent> {
   }
 
   _updateList(
-      List<bool> paidInstallment,
-      Map<String, Installment> _listInstallment,
-      String courseId,
-      String studentUid,
-      String date) async {
+    List<bool> paidInstallment,
+    Map<String, Installment> _listInstallment,
+    String courseId,
+    String studentUid,
+    String date,
+  ) async {
     var keys = _listInstallment.keys.toList()..sort();
     String lastPaid = "";
 
     for (int i = 0; i < _listInstallment.length; i++) {
       if (i < paidInstallment.length ? !paidInstallment[i] : false) {
         FirebaseDatabase.instance
-            .reference()
+            .ref()
             .child(
-                "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/Installments")
+                "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/Installments")
             .update(
           {
             keys[i]: {
               "Amount":
-                  (double.parse(_listInstallment[keys[i]].amount)).toString(),
-              "Duration": _listInstallment[keys[i]].duration,
+                  (double.parse(_listInstallment[keys[i]]!.amount)).toString(),
+              "Duration": _listInstallment[keys[i]]!.duration,
               "Status": "Due",
               "PaidTime": "",
               "Fine": ""
@@ -79,14 +80,14 @@ class _AddStudentState extends State<AddStudent> {
       } else {
         lastPaid = keys[i];
         FirebaseDatabase.instance
-            .reference()
+            .ref()
             .child(
-                "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/Installments")
+                "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/Installments")
             .update(
           {
             keys[i]: {
-              "Amount": _listInstallment[keys[i]].amount,
-              "Duration": _listInstallment[keys[i]].duration,
+              "Amount": _listInstallment[keys[i]]!.amount,
+              "Duration": _listInstallment[keys[i]]!.duration,
               "Status": "Paid",
               "PaidTime": date,
               "Fine": ""
@@ -190,7 +191,7 @@ class _AddStudentState extends State<AddStudent> {
                         children: <Widget>[
                           TextFormField(
                             validator: (value) {
-                              if (value.length != 10) {
+                              if (value == null || value.length != 10) {
                                 return "Invalid Mobile No.";
                               }
                               return null;
@@ -229,11 +230,11 @@ class _AddStudentState extends State<AddStudent> {
                       ),
                     ),
                     if (widget.courseId == null)
-                      StreamBuilder<Event>(
+                      StreamBuilder<DatabaseEvent>(
                           stream: FirebaseDatabase.instance
-                              .reference()
+                              .ref()
                               .child(
-                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses')
+                                  'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses')
                               .onValue,
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
@@ -241,7 +242,8 @@ class _AddStudentState extends State<AddStudent> {
                             }
                             Map<String, Courses> courses =
                                 Map<String, Courses>();
-                            snapshot.data.snapshot.value?.forEach((k, v) {
+                            (snapshot.data!.snapshot.value as Map?)
+                                ?.forEach((k, v) {
                               courses[k] = Courses.fromJson(v);
                             });
                             return Container(
@@ -258,10 +260,11 @@ class _AddStudentState extends State<AddStudent> {
                                       icon: Icon(Icons.arrow_drop_down),
                                       iconSize: 42,
                                       underline: SizedBox(),
-                                      onChanged: (String newValue) {
+                                      onChanged: (String? newValue) {
+                                        if (newValue == null) return;
                                         setState(() {
                                           courseId = newValue;
-                                          courseName = courses[courseId].name;
+                                          courseName = courses[courseId]!.name;
                                         });
                                       },
                                       hint: Text(
@@ -283,44 +286,33 @@ class _AddStudentState extends State<AddStudent> {
                             );
                           }),
                     if (widget.courseId != null || courseId != null)
-                      StreamBuilder<Event>(
+                      StreamBuilder<DatabaseEvent>(
                           stream: FirebaseDatabase.instance
-                              .reference()
+                              .ref()
                               .child(
-                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId ?? courseId}')
+                                  'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId ?? courseId}')
                               .onValue,
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
                               return Container();
                             }
-                            selectedCourse =
-                                Courses.fromJson(snapshot.data.snapshot.value);
-                            if (isPaidOneTime == null) {
-                              if (selectedCourse
-                                      ?.fees?.maxInstallment?.isMaxAllowed ==
-                                  true) {
-                                isPaidOneTime = false;
-                              } else {
-                                isPaidOneTime = true;
-                              }
-                            }
+                            selectedCourse = Courses.fromJson(
+                                snapshot.data!.snapshot.value as Map);
                             return ListView(
                               shrinkWrap: true,
                               controller: ScrollController(),
                               children: [
                                 if (selectedCourse
-                                        ?.fees?.oneTime?.isOneTimeAllowed ??
+                                        .fees?.oneTime.isOneTimeAllowed ??
                                     false)
                                   SwitchListTile.adaptive(
                                     title: Text('Paid One Time'),
                                     value: isPaidOneTime,
-                                    onChanged: ((selectedCourse?.fees?.oneTime
-                                                    ?.isOneTimeAllowed ??
+                                    onChanged: ((selectedCourse.fees?.oneTime
+                                                    .isOneTimeAllowed ??
                                                 false) &&
-                                            (selectedCourse
-                                                    ?.fees
-                                                    ?.maxInstallment
-                                                    ?.isMaxAllowed ??
+                                            (selectedCourse.fees?.maxInstallment
+                                                    .isMaxAllowed ??
                                                 false))
                                         ? (val) {
                                             setState(() {
@@ -330,18 +322,16 @@ class _AddStudentState extends State<AddStudent> {
                                         : null,
                                   ),
                                 if (selectedCourse
-                                        ?.fees?.maxInstallment?.isMaxAllowed ??
+                                        .fees?.maxInstallment.isMaxAllowed ??
                                     false)
                                   SwitchListTile.adaptive(
                                     title: Text('Paid In Installments'),
                                     value: !isPaidOneTime,
-                                    onChanged: ((selectedCourse?.fees?.oneTime
-                                                    ?.isOneTimeAllowed ??
+                                    onChanged: ((selectedCourse.fees?.oneTime
+                                                    .isOneTimeAllowed ??
                                                 false) &&
-                                            (selectedCourse
-                                                    ?.fees
-                                                    ?.maxInstallment
-                                                    ?.isMaxAllowed ??
+                                            (selectedCourse.fees?.maxInstallment
+                                                    .isMaxAllowed ??
                                                 false))
                                         ? (val) {
                                             setState(() {
@@ -350,28 +340,18 @@ class _AddStudentState extends State<AddStudent> {
                                           }
                                         : null,
                                   ),
-                                if (!(isPaidOneTime ?? true) &&
-                                    (selectedCourse?.fees?.maxInstallment
-                                            ?.isMaxAllowed ??
+                                if (!(isPaidOneTime) &&
+                                    (selectedCourse.fees?.maxInstallment
+                                            .isMaxAllowed ??
                                         false))
                                   ListView.builder(
                                     shrinkWrap: true,
                                     itemCount: int.parse(selectedCourse
-                                            ?.fees
+                                            .fees
                                             ?.maxInstallment
-                                            ?.maxAllowedInstallment ??
+                                            .maxAllowedInstallment ??
                                         "0"),
                                     itemBuilder: (context, index) {
-                                      if (installments == null) {
-                                        installments = List<bool>.filled(
-                                            int.parse(selectedCourse
-                                                    ?.fees
-                                                    ?.maxInstallment
-                                                    ?.maxAllowedInstallment ??
-                                                "0"),
-                                            false,
-                                            growable: true);
-                                      }
                                       return CheckboxListTile(
                                         title: Text('Installment ${index + 1}'),
                                         value: installments[index],
@@ -405,7 +385,7 @@ class _AddStudentState extends State<AddStudent> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          FlatButton(
+                          MaterialButton(
                             onPressed: () async {
                               if (emailTextEditingController.text == '' ||
                                   nameTextEditingController.text == '' ||
@@ -417,17 +397,16 @@ class _AddStudentState extends State<AddStudent> {
                                     .alert(context, 'Something is wrong');
                                 return;
                               }
-                              if (!_formKey.currentState.validate()) {
+                              if (!_formKey.currentState!.validate()) {
                                 return;
                               }
                               if (widget.courseId != null) {
-                                DataSnapshot snapShot = await FirebaseDatabase
-                                    .instance
-                                    .reference()
+                                final snapShot = await FirebaseDatabase.instance
+                                    .ref()
                                     .child(
-                                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/name')
+                                        'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}/name')
                                     .once();
-                                courseName = snapShot.value;
+                                courseName = snapShot.snapshot.value.toString();
                               }
                               if (!emailTextEditingController.text
                                   .endsWith('@gmail.com')) {
@@ -437,43 +416,43 @@ class _AddStudentState extends State<AddStudent> {
                               }
 
                               if (emailTextEditingController.text !=
-                                  FireBaseAuth.instance.user.email) {
-                                Firestore.instance
+                                  AppwriteAuth.instance.user!.email) {
+                                FirebaseFirestore.instance
                                     .collection('institute')
-                                    .document(emailTextEditingController.text
+                                    .doc(emailTextEditingController.text
                                         .split('@')[0])
-                                    .setData({
+                                    .set({
                                   "value":
-                                      "student_${FireBaseAuth.instance.instituteid}_${FireBaseAuth.instance.branchid}"
+                                      "student_${AppwriteAuth.instance.instituteid}_${AppwriteAuth.instance.branchid}"
                                 });
                               }
                               DatabaseReference databaseReference = FirebaseDatabase
                                   .instance
-                                  .reference()
+                                  .ref()
                                   .child(
-                                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students')
+                                      'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students')
                                   .push();
                               databaseReference.update(Student(
-                                      name: nameTextEditingController.text,
-                                      email: emailTextEditingController.text,
-                                      phoneNo: phoneTextEditingController.text,
-                                      address:
-                                          addressTextEditingController.text,
-                                      course: {
-                                        widget.courseId ?? courseId: Course(
-                                            academicYear:
-                                                DateTime.now().year.toString() +
-                                                    " - " +
-                                                    (DateTime.now().year + 1)
-                                                        .toString(),
-                                            courseID:
-                                                widget.courseId ?? courseId,
-                                            courseName: courseName,
-                                            paymentToken:
-                                                "Registered By ${FireBaseAuth.instance.user.displayName}"),
-                                      },
-                                      status: 'Registered')
-                                  .toJson());
+                                name: nameTextEditingController.text,
+                                email: emailTextEditingController.text,
+                                phoneNo: phoneTextEditingController.text,
+                                address: addressTextEditingController.text,
+                                photoURL: '',
+                                course: {
+                                  (widget.courseId ?? courseId)!: Course(
+                                    academicYear: DateTime.now()
+                                            .year
+                                            .toString() +
+                                        " - " +
+                                        (DateTime.now().year + 1).toString(),
+                                    courseID: (widget.courseId ?? courseId)!,
+                                    courseName: courseName,
+                                    paymentToken:
+                                        "Registered By ${AppwriteAuth.instance.user!.name}",
+                                  ),
+                                },
+                                status: 'Registered',
+                              ).toJson());
                               DateTime dateTime = DateTime.now();
                               String dd = dateTime.day.toString().length == 1
                                   ? "0" + dateTime.day.toString()
@@ -484,26 +463,26 @@ class _AddStudentState extends State<AddStudent> {
                               String yyyy = dateTime.year.toString();
                               String date = dd + " " + mm + " " + yyyy;
                               if ((selectedCourse
-                                          ?.fees?.oneTime?.isOneTimeAllowed ??
+                                          .fees?.oneTime.isOneTimeAllowed ??
                                       false) &&
-                                  (isPaidOneTime ?? false)) {
+                                  (isPaidOneTime)) {
                                 paidOneTime(
                                     double.parse(selectedCourse
-                                        .fees.feeSection.totalFees),
-                                    (selectedCourse.fees.oneTime.duration),
+                                        .fees!.feeSection.totalFees),
+                                    (selectedCourse.fees!.oneTime.duration),
                                     (date),
                                     selectedCourse.id,
-                                    databaseReference.key);
-                              } else if (!(isPaidOneTime ?? true) &&
-                                  (selectedCourse?.fees?.maxInstallment
-                                          ?.isMaxAllowed ??
+                                    databaseReference.key!);
+                              } else if (!(isPaidOneTime) &&
+                                  (selectedCourse
+                                          .fees?.maxInstallment.isMaxAllowed ??
                                       false)) {
                                 _updateList(
                                     installments,
                                     selectedCourse
-                                        .fees.maxInstallment.installment,
+                                        .fees!.maxInstallment.installment,
                                     selectedCourse.id,
-                                    databaseReference.key,
+                                    databaseReference.key!,
                                     date);
                               }
                               Navigator.of(context).pop();

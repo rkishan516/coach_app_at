@@ -1,18 +1,19 @@
 import 'dart:async';
 
+import 'package:appwrite/models.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
-import 'package:coach_app/Chat/home_page.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Dialogs/languageDialog.dart';
 import 'package:coach_app/Dialogs/replaceSubAdmin.dart';
 import 'package:coach_app/Drawer/CountDot.dart';
 import 'package:coach_app/Drawer/my_institute.dart';
 import 'package:coach_app/Drawer/privacyNPolicies.dart';
+import 'package:coach_app/Events/Calender.dart';
 import 'package:coach_app/FeeSection/CouponSection/CouponList.dart';
 import 'package:coach_app/FeeSection/FeeReportPages/DueFeeReport.dart';
-import 'package:coach_app/Events/Calender.dart';
+import 'package:coach_app/InstituteAdmin/branchList.dart';
 import 'package:coach_app/Meeting/AllMeetingSession.dart';
 import 'package:coach_app/Plugins/AppIcons.dart';
 import 'package:coach_app/Profile/TeacherProfile.dart';
@@ -23,16 +24,13 @@ import 'package:coach_app/Student/all_course_view.dart';
 import 'package:coach_app/Student/course_page.dart';
 import 'package:coach_app/adminCorner/noticeBoard.dart';
 import 'package:coach_app/adminSection/Statistics.dart';
-import 'package:coach_app/adminSection/UploadContent.dart';
 import 'package:coach_app/adminSection/studentRequest.dart';
-import 'package:coach_app/InstituteAdmin/branchList.dart';
-import 'package:esys_flutter_share/esys_flutter_share.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:esys_flutter_share_plus/esys_flutter_share_plus.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -40,7 +38,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 getDrawer(BuildContext context, {bool branchListPage = false}) {
-  FirebaseUser user = FireBaseAuth.instance.user;
+  User? user = AppwriteAuth.instance.user;
   return GuruCoolDrawer(
     user: user,
     branchListPage: branchListPage,
@@ -48,11 +46,13 @@ getDrawer(BuildContext context, {bool branchListPage = false}) {
 }
 
 class GuruCoolDrawer extends StatefulWidget {
-  const GuruCoolDrawer(
-      {Key key, @required this.user, @required this.branchListPage})
-      : super(key: key);
+  const GuruCoolDrawer({
+    super.key,
+    required this.user,
+    required this.branchListPage,
+  });
 
-  final FirebaseUser user;
+  final User? user;
   final bool branchListPage;
 
   @override
@@ -62,51 +62,52 @@ class GuruCoolDrawer extends StatefulWidget {
 class GuruCoolDrawerState extends State<GuruCoolDrawer> {
   bool isExpandedSS = false, isExpandedFS = false;
   final dbref = FirebaseDatabase.instance;
-  SharedPreferences _pref;
-  StreamSubscription<Event> _onStudentRequestSubscription;
-  StreamSubscription<Event> _onNoticeSubscription;
-  StreamSubscription<Event> _onPublicContentSubscription;
+  late SharedPreferences _pref;
+  late StreamSubscription<DatabaseEvent> _onStudentRequestSubscription;
+  late StreamSubscription<DatabaseEvent> _onNoticeSubscription;
+  late StreamSubscription<DatabaseEvent> _onPublicContentSubscription;
 
   int _totalStudentReq = 0, totalNotice = 0, totalPublicContent = 0;
   _loadFromDatabase() async {
-    if (FireBaseAuth.instance.previlagelevel >= 3)
+    if (AppwriteAuth.instance.previlagelevel >= 3)
       _onStudentRequestSubscription = dbref
-          .reference()
+          .ref()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students')
+              'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students')
           .orderByChild('status')
           .equalTo('Existing Student')
           .onValue
           .listen(_onStudentRequest);
 
-    if (FireBaseAuth.instance.previlagelevel != 4) {
+    if (AppwriteAuth.instance.previlagelevel != 4) {
       _onNoticeSubscription = dbref
-          .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/notices')
+          .ref()
+          .child('institute/${AppwriteAuth.instance.instituteid}/notices')
           .onValue
           .listen(_onNotice);
       _onPublicContentSubscription = dbref
-          .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/publicContent')
+          .ref()
+          .child('institute/${AppwriteAuth.instance.instituteid}/publicContent')
           .onValue
           .listen(_onPublicContent);
     }
   }
 
-  _onStudentRequest(Event event) {
-    Map map = event.snapshot.value;
+  _onStudentRequest(DatabaseEvent event) {
+    Map? map = event.snapshot.value as Map?;
     if (map != null) {
       setState(() {
-        _totalStudentReq = map?.length;
+        _totalStudentReq = map.length;
       });
     }
   }
 
-  _onNotice(Event event) {
-    Map map = event.snapshot.value;
+  _onNotice(DatabaseEvent event) {
+    Map? map = event.snapshot.value as Map?;
     if (map != null) {
-      int _prevtotalnotice =
-          _pref.getInt("TotalNotice") == null ? 0 : _pref.getInt("TotalNotice");
+      int _prevtotalnotice = _pref.getInt("TotalNotice") == null
+          ? 0
+          : _pref.getInt("TotalNotice")!;
       if (_prevtotalnotice < map.length)
         setState(() {
           totalNotice = map.length - _prevtotalnotice;
@@ -115,12 +116,12 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
     }
   }
 
-  _onPublicContent(Event event) {
-    Map map = event.snapshot.value;
+  _onPublicContent(DatabaseEvent event) {
+    Map? map = event.snapshot.value as Map?;
     if (map != null) {
       int _prevtotalPublicContent = _pref.getInt("TotalPublicContent") == null
           ? 0
-          : _pref.getInt("TotalPublicContent");
+          : _pref.getInt("TotalPublicContent")!;
       if (_prevtotalPublicContent < map.length)
         setState(() {
           totalPublicContent = map.length - _prevtotalPublicContent;
@@ -143,9 +144,9 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
   @override
   void dispose() {
     super.dispose();
-    _onStudentRequestSubscription?.cancel();
-    _onNoticeSubscription?.cancel();
-    _onPublicContentSubscription?.cancel();
+    _onStudentRequestSubscription.cancel();
+    _onNoticeSubscription.cancel();
+    _onPublicContentSubscription.cancel();
   }
 
   @override
@@ -154,20 +155,20 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
       child: Column(
         children: [
           UserAccountsDrawerHeader(
-            accountName: Text(widget.user.displayName),
+            accountName: Text(widget.user!.name),
             accountEmail: Text(
-              widget.user.email,
+              widget.user!.email,
             ),
             currentAccountPicture: CircleAvatar(
-              backgroundImage: NetworkImage(widget.user.photoUrl),
+              backgroundImage: NetworkImage(''),
             ),
-            onDetailsPressed: (FireBaseAuth.instance.previlagelevel == 2)
+            onDetailsPressed: (AppwriteAuth.instance.previlagelevel == 2)
                 ? () {
                     Navigator.of(context).push(
                       CupertinoPageRoute(
                         builder: (context) => TeacherProfilePage(
-                          reference: FirebaseDatabase.instance.reference().child(
-                              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${FireBaseAuth.instance.user.uid}'),
+                          reference: FirebaseDatabase.instance.ref().child(
+                              'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/teachers/${AppwriteAuth.instance.user!.$id}'),
                         ),
                       ),
                     );
@@ -185,19 +186,24 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                     onPressed: () async {
                       var key;
                       await FirebaseDatabase.instance
-                          .reference()
+                          .ref()
                           .child('/instituteList/')
                           .orderByValue()
-                          .equalTo(FireBaseAuth.instance.instituteid)
+                          .equalTo(AppwriteAuth.instance.instituteid)
                           .once()
-                          .then((value) => key = value.value.keys.toList()[0]);
+                          .then((value) => key =
+                              (value.snapshot.value as Map).keys.toList()[0]);
                       try {
                         final ByteData bytes =
                             await rootBundle.load('assets/images/logo.png');
-                        await Share.file('Share The Institute', 'esys.jpg',
-                            bytes.buffer.asUint8List(), 'logo/png',
-                            text:
-                                'Hello, Our digital institute is on GuruCool, Download GuruCool from Following link:\n\n https://play.google.com/store/apps/details?id=com.VysionTech.gurucool\n\n and register with our Institute Code: $key${FireBaseAuth.instance.branchid}');
+                        await Share.file(
+                          'Share The Institute',
+                          'esys.jpg',
+                          bytes.buffer.asUint8List(),
+                          'logo/png',
+                          text:
+                              'Hello, Our digital institute is on GuruCool, Download GuruCool from Following link:\n\n https://play.google.com/store/apps/details?id=com.VysionTech.gurucool\n\n and register with our Institute Code: $key${AppwriteAuth.instance.branchid}',
+                        );
                       } catch (e) {
                         print('error: $e');
                       }
@@ -218,7 +224,7 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                     onTap: () => Navigator.of(context).push(
                       CupertinoPageRoute(
                         builder: (context) => MultiProvider(providers: [
-                          if (FireBaseAuth.instance.previlagelevel == 4)
+                          if (AppwriteAuth.instance.previlagelevel == 4)
                             ChangeNotifierProvider(
                               create: (context) => AdminProvider(),
                             ),
@@ -229,20 +235,20 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                       ),
                     ),
                   ),
-                if (FireBaseAuth.instance.previlagelevel == 1)
+                if (AppwriteAuth.instance.previlagelevel == 1)
                   ListTile(
                     title: Text('All Courses'.tr()),
                     leading: Icon(Icons.book),
                     onTap: () => Navigator.of(context).push(
                       CupertinoPageRoute(
                         builder: (context) => AllCoursePage(
-                          ref: FirebaseDatabase.instance.reference().child(
-                              '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}'),
+                          ref: FirebaseDatabase.instance.ref().child(
+                              '/institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}'),
                         ),
                       ),
                     ),
                   ),
-                if (FireBaseAuth.instance.previlagelevel == 1)
+                if (AppwriteAuth.instance.previlagelevel == 1)
                   ListTile(
                     title: Text('My Courses'.tr()),
                     leading: Icon(Icons.book),
@@ -252,7 +258,7 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                         ),
                         (route) => false),
                   ),
-                if (FireBaseAuth.instance.previlagelevel == 1)
+                if (AppwriteAuth.instance.previlagelevel == 1)
                   ListTile(
                     title: Text('Fee Section'),
                     leading: Icon(Icons.attach_money),
@@ -292,7 +298,7 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                 //     );
                 //                      },
                 // ),
-                if (FireBaseAuth.instance.previlagelevel == 4 &&
+                if (AppwriteAuth.instance.previlagelevel == 4 &&
                     !widget.branchListPage)
                   ListTile(
                     title: Text(
@@ -306,7 +312,7 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                           (route) => false);
                     },
                   ),
-                if (FireBaseAuth.instance.previlagelevel >= 4 &&
+                if (AppwriteAuth.instance.previlagelevel >= 4 &&
                     !widget.branchListPage)
                   ExpansionTile(
                     title: Text(
@@ -345,8 +351,8 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                       ),
                     ],
                   ),
-                if (FireBaseAuth.instance.previlagelevel != 4 &&
-                    FireBaseAuth.instance.previlagelevel != 1)
+                if (AppwriteAuth.instance.previlagelevel != 4 &&
+                    AppwriteAuth.instance.previlagelevel != 1)
                   ListTile(
                     title: Text('Show Meeting'),
                     leading: Icon(Icons.video_call),
@@ -358,7 +364,7 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                       );
                     },
                   ),
-                if (FireBaseAuth.instance.previlagelevel >= 3)
+                if (AppwriteAuth.instance.previlagelevel >= 3)
                   ListView(
                     controller: ScrollController(),
                     shrinkWrap: true,
@@ -386,7 +392,7 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                             trailing: CountDot(
                               count: _totalStudentReq,
                             )),
-                      if (FireBaseAuth.instance.previlagelevel >= 3 &&
+                      if (AppwriteAuth.instance.previlagelevel >= 3 &&
                           !widget.branchListPage)
                         ExpansionTile(
                           title: Text(
@@ -529,7 +535,7 @@ class GuruCoolDrawerState extends State<GuruCoolDrawer> {
                     if (res != 'Yes') {
                       return;
                     }
-                    FireBaseAuth.instance.signoutWithGoogle().then(
+                    AppwriteAuth.instance.signoutWithGoogle().then(
                       (value) {
                         Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
@@ -552,16 +558,16 @@ getAppBar(BuildContext context) {
   Size size = MediaQuery.of(context).size;
   return AppBar(
     backgroundColor: Color(0xffF36C24),
-    title: StreamBuilder<Event>(
+    title: StreamBuilder<DatabaseEvent>(
       stream: FirebaseDatabase.instance
-          .reference()
+          .ref()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/name')
+              'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/name')
           .onValue,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return AutoSizeText(
-            snapshot.data.snapshot.value,
+            snapshot.data!.snapshot.value.toString(),
             maxLines: 2,
             style: GoogleFonts.portLligatSans(
               fontWeight: FontWeight.w700,
@@ -576,33 +582,31 @@ getAppBar(BuildContext context) {
       children: <Widget>[
         Transform.translate(
           offset: Offset(0, kToolbarHeight + 24.0),
-          child: StreamBuilder<Event>(
-            stream: FirebaseDatabase.instance
-                .reference()
-                .child('latestVersion')
-                .onValue,
+          child: StreamBuilder<DatabaseEvent>(
+            stream:
+                FirebaseDatabase.instance.ref().child('latestVersion').onValue,
             builder: (context, snap) {
               if (snap.hasData) {
-                return StreamBuilder<Event>(
+                return StreamBuilder<DatabaseEvent>(
                   stream: FirebaseDatabase.instance
-                      .reference()
+                      .ref()
                       .child('publicNotice')
                       .onValue,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      if (snapshot.data.snapshot.value == '') {
+                      if (snapshot.data!.snapshot.value == '') {
                         return Container();
                       }
-                      if (snap.data.snapshot.value >
+                      if ((snap.data!.snapshot.value as int) >
                           int.parse(
-                              FireBaseAuth.instance.packageInfo.buildNumber)) {
+                              AppwriteAuth.instance.packageInfo!.buildNumber)) {
                         return Container(
                           height: 30.0,
                           width: size.width,
                           color: Colors.red,
                           child: Center(
                             child: Text(
-                              snapshot.data.snapshot.value,
+                              snapshot.data!.snapshot.value.toString(),
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -626,7 +630,7 @@ getAppBar(BuildContext context) {
           child: FutureBuilder<dynamic>(
             future: FirebaseStorage.instance
                 .ref()
-                .child('/instituteLogo/${FireBaseAuth.instance.instituteid}')
+                .child('/instituteLogo/${AppwriteAuth.instance.instituteid}')
                 .getDownloadURL(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {

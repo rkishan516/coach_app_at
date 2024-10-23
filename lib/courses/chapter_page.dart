@@ -9,10 +9,10 @@ import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/InstituteAdmin/teachersPage.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/courses/content_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class ChapterPage extends StatefulWidget {
   final DatabaseReference reference;
@@ -20,25 +20,23 @@ class ChapterPage extends StatefulWidget {
   final String courseId;
   final String passKey;
   ChapterPage(
-      {@required this.title,
-      @required this.reference,
-      @required this.courseId,
-      @required this.passKey});
+      {required this.title,
+      required this.reference,
+      required this.courseId,
+      required this.passKey});
   @override
   _ChapterPageState createState() => _ChapterPageState();
 }
 
 class _ChapterPageState extends State<ChapterPage>
     with SingleTickerProviderStateMixin {
-  int length;
-  TabController _tabController;
-  bool isAdmin;
-  List _list;
+  late TabController _tabController;
+  late bool isAdmin;
   bool showFAB = true;
 
   @override
   void initState() {
-    isAdmin = FireBaseAuth.instance.previlagelevel != 2;
+    isAdmin = AppwriteAuth.instance.previlagelevel != 2;
     _tabController = TabController(length: isAdmin ? 2 : 1, vsync: this);
 
     _tabController.addListener(() {
@@ -107,43 +105,40 @@ class _ChapterPageState extends State<ChapterPage>
                     ),
                     Expanded(
                       flex: 12,
-                      child: StreamBuilder<Event>(
+                      child: StreamBuilder<DatabaseEvent>(
                         stream: widget.reference.onValue,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            Subjects subjects =
-                                Subjects.fromJson(snapshot.data.snapshot.value);
+                            Subjects subjects = Subjects.fromJson(
+                                snapshot.data!.snapshot.value as Map);
                             var keys;
                             if (subjects.chapters != null) {
-                              keys = subjects.chapters.keys.toList()
-                                ..sort((a, b) => subjects.chapters[a].name
-                                    .compareTo(subjects.chapters[b].name));
+                              keys = subjects.chapters!.keys.toList()
+                                ..sort((a, b) => subjects.chapters![a]!.name
+                                    .compareTo(subjects.chapters![b]!.name));
                             }
                             var length = subjects.chapters?.length ?? 0;
-                            List<bool> _showCountDot = List(length);
-                            for (int i = 0; i < _showCountDot.length; i++) {
-                              _showCountDot[i] = false;
-                            }
+                            List<bool> _showCountDot =
+                                List.filled(length, false);
 
                             return ListView.builder(
                               itemCount: length,
                               itemBuilder: (BuildContext context, int index) {
                                 String searchkey = widget.passKey +
                                     "__" +
-                                    '${subjects.chapters[keys.toList()[index]].name}';
-                                _list = FireBaseAuth.instance.prefs
+                                    '${subjects.chapters![keys.toList()[index]]!.name}';
+                                final _list = AppwriteAuth.instance.prefs!
                                     .getKeys()
                                     .where((element) =>
                                         element.startsWith(searchkey))
                                     .toList();
 
                                 int _totalContent = subjects
-                                        .chapters[keys.toList()[index]]
+                                        .chapters![keys.toList()[index]]!
                                         .content
                                         ?.length ??
                                     0;
-                                int _prevtotalContent =
-                                    _list.length ?? _totalContent;
+                                int _prevtotalContent = _list.length;
                                 if (_prevtotalContent <= _totalContent) {
                                   _showCountDot[index] = true;
                                 }
@@ -156,7 +151,7 @@ class _ChapterPageState extends State<ChapterPage>
                                             BorderRadius.circular(10)),
                                     child: ListTile(
                                       title: Text(
-                                        '${subjects.chapters[keys.toList()[index]].name}',
+                                        '${subjects.chapters![keys.toList()[index]]!.name}',
                                         style:
                                             TextStyle(color: Color(0xffF36C24)),
                                       ),
@@ -186,13 +181,13 @@ class _ChapterPageState extends State<ChapterPage>
                                         ),
                                       ),
                                       onTap: () {
-                                        return Navigator.of(context)
+                                        Navigator.of(context)
                                             .push(
                                           CupertinoPageRoute(
                                               builder: (context) => ContentPage(
                                                   title: subjects
-                                                      .chapters[
-                                                          keys.toList()[index]]
+                                                      .chapters![
+                                                          keys.toList()[index]]!
                                                       .name,
                                                   reference: widget.reference.child(
                                                       'chapters/${keys.toList()[index]}'),
@@ -203,17 +198,19 @@ class _ChapterPageState extends State<ChapterPage>
                                         });
                                       },
                                       onLongPress: () => addChapter(
-                                          context, widget.reference,
-                                          key: keys.toList()[index],
-                                          name: subjects
-                                              .chapters[keys.toList()[index]]
-                                              .name,
-                                          description: subjects
-                                              .chapters[keys.toList()[index]]
-                                              .description,
-                                          content: subjects
-                                              .chapters[keys.toList()[index]]
-                                              .content),
+                                        context,
+                                        widget.reference,
+                                        key: keys.toList()[index],
+                                        name: subjects
+                                            .chapters![keys.toList()[index]]!
+                                            .name,
+                                        description: subjects
+                                            .chapters![keys.toList()[index]]!
+                                            .description,
+                                        content: subjects
+                                            .chapters![keys.toList()[index]]!
+                                            .content!,
+                                      ),
                                     ),
                                   ),
                                 );
@@ -255,14 +252,9 @@ class _ChapterPageState extends State<ChapterPage>
       ),
       bottomNavigationBar: (!showFAB)
           ? null
-          : StreamBuilder<Event>(
-              stream: widget.reference
-                  .parent()
-                  .parent()
-                  .parent()
-                  .parent()
-                  .parent()
-                  .parent()
+          : StreamBuilder<DatabaseEvent>(
+              stream: widget
+                  .reference.parent!.parent!.parent!.parent!.parent!.parent!
                   .child('/paid')
                   .onValue,
               builder: (context, snapshot) {
@@ -275,8 +267,8 @@ class _ChapterPageState extends State<ChapterPage>
                         SlideButton(
                           text: 'Live Session'.tr(),
                           onTap: () {
-                            if (snapshot.data.snapshot.value != 'Trial' &&
-                                snapshot.data.snapshot.value != 'Paid') {
+                            if (snapshot.data!.snapshot.value != 'Trial' &&
+                                snapshot.data!.snapshot.value != 'Paid') {
                               Alert.instance.alert(
                                   context,
                                   "Your Institue doesn't have premium access"
@@ -313,11 +305,14 @@ class _ChapterPageState extends State<ChapterPage>
   }
 }
 
-addChapter(BuildContext context, DatabaseReference reference,
-    {String key,
-    String name = '',
-    String description = '',
-    Map<String, Content> content}) {
+addChapter(
+  BuildContext context,
+  DatabaseReference reference, {
+  String? key,
+  String name = '',
+  String description = '',
+  Map<String, Content>? content,
+}) {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController nameTextEditingController = TextEditingController()
     ..text = name;
@@ -365,7 +360,7 @@ addChapter(BuildContext context, DatabaseReference reference,
                     children: <Widget>[
                       TextFormField(
                         validator: (value) {
-                          if (value.isEmpty) {
+                          if (value == null || value.isEmpty) {
                             return 'Please enter the chapter name';
                           }
                           return null;
@@ -390,7 +385,7 @@ addChapter(BuildContext context, DatabaseReference reference,
                     children: <Widget>[
                       TextFormField(
                         validator: (value) {
-                          if (value.isEmpty) {
+                          if (value == null || value.isEmpty) {
                             return 'Please enter the chapter description';
                           }
                           return null;
@@ -415,7 +410,7 @@ addChapter(BuildContext context, DatabaseReference reference,
                     children: <Widget>[
                       (key == null)
                           ? Container()
-                          : FlatButton(
+                          : MaterialButton(
                               onPressed: () async {
                                 String res = await showDialog(
                                     context: context,
@@ -430,9 +425,9 @@ addChapter(BuildContext context, DatabaseReference reference,
                                 'Remove'.tr(),
                               ),
                             ),
-                      FlatButton(
+                      MaterialButton(
                         onPressed: () {
-                          if (!_formKey.currentState.validate()) {
+                          if (!_formKey.currentState!.validate()) {
                             return;
                           }
                           if (nameTextEditingController.text != '' &&
@@ -442,16 +437,9 @@ addChapter(BuildContext context, DatabaseReference reference,
                                 description:
                                     descriptionTextEditingController.text,
                                 content: content);
-                            if (key == null) {
-                              reference
-                                  .child('chapters/')
-                                  .push()
-                                  .update(chapter.toJson());
-                            } else {
-                              reference
-                                  .child('chapters/$key')
-                                  .update(chapter.toJson());
-                            }
+                            reference
+                                .child('chapters/$key')
+                                .update(chapter.toJson());
                           }
                           Navigator.of(context).pop();
                         },

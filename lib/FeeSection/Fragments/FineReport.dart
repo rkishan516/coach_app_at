@@ -22,13 +22,9 @@ class _FineReportState extends State<FineReport> {
             element.fine != "" &&
             element.fine != "0.0" &&
             element.status == "Fine");
-        if (index != null) {
-          list.add(element);
-          _coresspondingmap[element.uid] = index;
-        }
-      } catch (e) {
-        
-      }
+        list.add(element);
+        _coresspondingmap[element.uid] = index;
+      } catch (e) {}
     });
     setState(() {
       _studentList = list;
@@ -48,7 +44,7 @@ class _FineReportState extends State<FineReport> {
         itemBuilder: (context, index) {
           String _type = _studentList[index].allowedthrough == "OneTime"
               ? _studentList[index].allowedthrough
-              : _coresspondingmap[_studentList[index].uid].sequence;
+              : _coresspondingmap[_studentList[index].uid]!.sequence;
           return Card(
             elevation: 20,
             child: GestureDetector(
@@ -71,9 +67,9 @@ class _FineReportState extends State<FineReport> {
                   shrinkWrap: true,
                   children: [
                     Text(
-                      (index + 1).toString() + ". " + _studentList[index]?.name,
+                      (index + 1).toString() + ". " + _studentList[index].name,
                       style: TextStyle(
-                        color: _studentList[index]?.paymentType == "Online"
+                        color: _studentList[index].paymentType == "Online"
                             ? Colors.green
                             : Color(0xffF36C24),
                         fontSize: 16,
@@ -84,15 +80,15 @@ class _FineReportState extends State<FineReport> {
                           _type +
                           "\n" +
                           "Fine: " +
-                          _coresspondingmap[_studentList[index].uid].fine +
+                          _coresspondingmap[_studentList[index].uid]!.fine +
                           "\n"
                               "Total Amount: " +
-                          (double.parse(
-                                      _coresspondingmap[_studentList[index].uid]
-                                          .amount) +
-                                  double.parse(
-                                      _coresspondingmap[_studentList[index].uid]
-                                          .fine))
+                          (double.parse(_coresspondingmap[
+                                          _studentList[index].uid]!
+                                      .amount) +
+                                  double.parse(_coresspondingmap[
+                                          _studentList[index].uid]!
+                                      .fine))
                               .toStringAsFixed(2),
                       style: TextStyle(fontSize: 12.0),
                     )

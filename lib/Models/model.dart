@@ -2,24 +2,25 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class Branch {
-  String name;
-  String address;
-  String upiId;
-  AccountDetails accountDetails;
-  String accountId;
-  Map<String, Admin> admin;
-  Map<String, Student> students;
-  Map<String, Teacher> teachers;
-  List<Courses> courses;
+  late String name;
+  late String address;
+  late String upiId;
+  late AccountDetails accountDetails;
+  late String accountId;
+  late Map<String, Admin> admin;
+  late Map<String, Student> students;
+  late Map<String, Teacher> teachers;
+  late List<Courses>? courses;
 
-  Branch(
-      {this.name,
-      this.courses,
-      this.address,
-      this.admin,
-      this.upiId,
-      this.accountDetails,
-      this.accountId});
+  Branch({
+    required this.name,
+    required this.courses,
+    required this.address,
+    required this.admin,
+    required this.upiId,
+    required this.accountDetails,
+    required this.accountId,
+  });
 
   Branch.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
@@ -30,9 +31,9 @@ class Branch {
       accountDetails = AccountDetails.fromJson(json['AccountDetails']);
     }
     if (json['courses'] != null) {
-      courses = new List<Courses>();
+      courses = <Courses>[];
       json['courses'].forEach((k, v) {
-        courses.add(new Courses.fromJson(v));
+        courses!.add(new Courses.fromJson(v));
       });
     }
     if (json['admin'] != null) {
@@ -63,25 +64,23 @@ class Branch {
     data["accountId"] = this.accountId;
     data['AccountDetails'] = this.accountDetails.toJson();
     if (this.courses != null) {
-      data['courses'] = this.courses.map((v) => v.toJson()).toList();
+      data['courses'] = this.courses!.map((v) => v.toJson()).toList();
     }
-    if (this.admin != null) {
-      data['admin'] =
-          this.admin.map((key, value) => MapEntry(key, value.toJson()));
-    }
+    data['admin'] =
+        this.admin.map((key, value) => MapEntry(key, value.toJson()));
     return data;
   }
 }
 
 class AccountDetails {
-  String accountHolderName;
-  String accountNo;
-  String accountIFSC;
+  late String accountHolderName;
+  late String accountNo;
+  late String accountIFSC;
 
   AccountDetails({
-    this.accountHolderName,
-    this.accountNo,
-    this.accountIFSC,
+    required this.accountHolderName,
+    required this.accountNo,
+    required this.accountIFSC,
   });
 
   AccountDetails.fromJson(Map<dynamic, dynamic> json) {
@@ -99,10 +98,14 @@ class AccountDetails {
 }
 
 class Admin {
-  String name;
-  String email;
-  String tokenid;
-  Admin({this.name, this.email, this.tokenid});
+  late String name;
+  late String email;
+  String? tokenid;
+  Admin({
+    required this.name,
+    required this.email,
+    this.tokenid,
+  });
 
   Admin.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
@@ -120,19 +123,20 @@ class Admin {
 }
 
 class MidAdmin {
-  String name;
-  String email;
-  String tokenid;
-  String district;
-  String branches;
-  String photoUrl;
-  MidAdmin(
-      {this.name,
-      this.email,
-      this.tokenid,
-      this.branches,
-      this.district,
-      this.photoUrl});
+  late String name;
+  late String email;
+  String? tokenid;
+  late String district;
+  late String branches;
+  String? photoUrl;
+  MidAdmin({
+    required this.name,
+    required this.email,
+    this.tokenid,
+    required this.branches,
+    required this.district,
+    this.photoUrl,
+  });
 
   MidAdmin.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
@@ -156,23 +160,23 @@ class MidAdmin {
 }
 
 class Courses {
-  String id;
-  String name;
-  String description;
-  int price;
-  String date;
-  String medium;
-  Map<String, Subjects> subjects;
-  Fees fees;
-  TimeTable timeTable;
+  late String id;
+  late String name;
+  late String description;
+  late int price;
+  late String date;
+  late String medium;
+  late Map<String, Subjects>? subjects;
+  late Fees? fees;
+  late TimeTable? timeTable;
 
   Courses(
-      {this.id,
-      this.name,
-      this.description,
-      this.price,
-      this.date,
-      this.medium,
+      {required this.id,
+      required this.name,
+      required this.description,
+      required this.price,
+      required this.date,
+      required this.medium,
       this.subjects,
       this.fees,
       this.timeTable});
@@ -187,7 +191,7 @@ class Courses {
     if (json['subjects'] != null) {
       subjects = new Map<String, Subjects>();
       json['subjects'].forEach((k, v) {
-        subjects[k] = Subjects.fromJson(v);
+        subjects![k] = Subjects.fromJson(v);
       });
     }
     if (json['fees'] != null) {
@@ -207,37 +211,37 @@ class Courses {
     data['date'] = this.date;
     data['medium'] = this.medium;
     if (this.subjects != null) {
-      data['subjects'] = this.subjects.map((k, v) => MapEntry(k, v.toJson()));
+      data['subjects'] = this.subjects?.map((k, v) => MapEntry(k, v.toJson()));
     }
-    data['fees'] = this.fees.toJson();
+    data['fees'] = this.fees?.toJson();
     return data;
   }
 }
 
 class TimeTable {
-  List<TimeTableClass> monday;
-  List<TimeTableClass> tuesday;
-  List<TimeTableClass> wednesday;
-  List<TimeTableClass> thursday;
-  List<TimeTableClass> friday;
-  List<TimeTableClass> saturday;
+  late List<TimeTableClass> monday;
+  late List<TimeTableClass> tuesday;
+  late List<TimeTableClass> wednesday;
+  late List<TimeTableClass> thursday;
+  late List<TimeTableClass> friday;
+  late List<TimeTableClass> saturday;
 
   TimeTable({
-    this.monday,
-    this.tuesday,
-    this.wednesday,
-    this.thursday,
-    this.friday,
-    this.saturday,
+    required this.monday,
+    required this.tuesday,
+    required this.wednesday,
+    required this.thursday,
+    required this.friday,
+    required this.saturday,
   });
 
   TimeTable.fromJson(Map<dynamic, dynamic> json) {
-    monday = List<TimeTableClass>();
-    tuesday = List<TimeTableClass>();
-    wednesday = List<TimeTableClass>();
-    thursday = List<TimeTableClass>();
-    friday = List<TimeTableClass>();
-    saturday = List<TimeTableClass>();
+    monday = <TimeTableClass>[];
+    tuesday = <TimeTableClass>[];
+    wednesday = <TimeTableClass>[];
+    thursday = <TimeTableClass>[];
+    friday = <TimeTableClass>[];
+    saturday = <TimeTableClass>[];
 
     if (json['monday'] != null) {
       json['monday'].forEach((v) {
@@ -273,24 +277,12 @@ class TimeTable {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.monday != null) {
-      data['monday'] = this.monday.map((v) => v.toJson()).toList();
-    }
-    if (this.tuesday != null) {
-      data['tuesday'] = this.tuesday.map((v) => v.toJson()).toList();
-    }
-    if (this.wednesday != null) {
-      data['wednesday'] = this.wednesday.map((v) => v.toJson()).toList();
-    }
-    if (this.thursday != null) {
-      data['thursday'] = this.thursday.map((v) => v.toJson()).toList();
-    }
-    if (this.friday != null) {
-      data['friday'] = this.friday.map((v) => v.toJson()).toList();
-    }
-    if (this.saturday != null) {
-      data['saturday'] = this.saturday.map((v) => v.toJson()).toList();
-    }
+    data['monday'] = this.monday.map((v) => v.toJson()).toList();
+    data['tuesday'] = this.tuesday.map((v) => v.toJson()).toList();
+    data['wednesday'] = this.wednesday.map((v) => v.toJson()).toList();
+    data['thursday'] = this.thursday.map((v) => v.toJson()).toList();
+    data['friday'] = this.friday.map((v) => v.toJson()).toList();
+    data['saturday'] = this.saturday.map((v) => v.toJson()).toList();
     return data;
   }
 }
@@ -305,21 +297,22 @@ TimeOfDay stringToTod(String val) {
 }
 
 class TimeTableClass {
-  TimeOfDay startTime;
-  TimeOfDay endTime;
-  String subjectName;
-  String subjectKey;
-  String teacherName;
-  String teacherKey;
-  String classType;
-  TimeTableClass(
-      {this.subjectKey,
-      this.subjectName,
-      this.classType,
-      this.teacherKey,
-      this.teacherName,
-      this.startTime,
-      this.endTime});
+  late TimeOfDay startTime;
+  late TimeOfDay endTime;
+  late String subjectName;
+  late String subjectKey;
+  late String teacherName;
+  late String teacherKey;
+  late String classType;
+  TimeTableClass({
+    required this.subjectKey,
+    required this.subjectName,
+    required this.classType,
+    required this.teacherKey,
+    required this.teacherName,
+    required this.startTime,
+    required this.endTime,
+  });
   TimeTableClass.fromJson(Map<dynamic, dynamic> json) {
     subjectName = json['subjectName'];
     subjectKey = json['subjectKey'];
@@ -348,16 +341,16 @@ class TimeTableClass {
 }
 
 class Fees {
-  FeeSection feeSection;
-  MaxInstallment maxInstallment;
-  OneTime oneTime;
-  Fine fine;
+  late FeeSection feeSection;
+  late MaxInstallment maxInstallment;
+  late OneTime oneTime;
+  late Fine fine;
 
   Fees({
-    this.feeSection,
-    this.maxInstallment,
-    this.oneTime,
-    this.fine,
+    required this.feeSection,
+    required this.maxInstallment,
+    required this.oneTime,
+    required this.fine,
   });
 
   Fees.fromJson(Map<dynamic, dynamic> json) {
@@ -386,14 +379,14 @@ class Fees {
 }
 
 class MaxInstallment {
-  String maxAllowedInstallment;
-  bool isMaxAllowed;
-  Map<String, Installment> installment;
+  late String maxAllowedInstallment;
+  late bool isMaxAllowed;
+  late Map<String, Installment> installment;
 
   MaxInstallment({
-    this.installment,
-    this.isMaxAllowed,
-    this.maxAllowedInstallment,
+    required this.installment,
+    required this.isMaxAllowed,
+    required this.maxAllowedInstallment,
   });
 
   MaxInstallment.fromJson(Map<dynamic, dynamic> json) {
@@ -412,18 +405,18 @@ class MaxInstallment {
     data['MaxAllowedInstallment'] = this.maxAllowedInstallment;
     data['IsMaxAllowed'] = this.isMaxAllowed;
     data['Installments'] =
-        this.installment?.map((k, v) => MapEntry(k, v.toJson()));
+        this.installment.map((k, v) => MapEntry(k, v.toJson()));
     return data;
   }
 }
 
 class Installment {
-  String duration;
-  String amount;
+  late String duration;
+  late String amount;
 
   Installment({
-    this.duration,
-    this.amount,
+    required this.duration,
+    required this.amount,
   });
 
   Installment.fromJson(Map<dynamic, dynamic> json) {
@@ -440,10 +433,13 @@ class Installment {
 }
 
 class OneTime {
-  String duration;
-  bool isOneTimeAllowed;
+  late String duration;
+  late bool isOneTimeAllowed;
 
-  OneTime({this.duration, this.isOneTimeAllowed});
+  OneTime({
+    required this.duration,
+    required this.isOneTimeAllowed,
+  });
 
   OneTime.fromJson(Map<dynamic, dynamic> json) {
     duration = json['Duration'];
@@ -459,13 +455,13 @@ class OneTime {
 }
 
 class Fine {
-  String duration;
-  String fineAmount;
-  bool isFineAllowed;
+  late String duration;
+  late String fineAmount;
+  late bool isFineAllowed;
   Fine({
-    this.duration,
-    this.isFineAllowed,
-    this.fineAmount,
+    required this.duration,
+    required this.isFineAllowed,
+    required this.fineAmount,
   });
 
   Fine.fromJson(Map<dynamic, dynamic> json) {
@@ -484,20 +480,20 @@ class Fine {
 }
 
 class FeeSection {
-  String admissionFees;
-  String extraFees;
-  String labFees;
-  String libraryFees;
-  String tutionFees;
-  String totalFees;
+  late String admissionFees;
+  late String extraFees;
+  late String labFees;
+  late String libraryFees;
+  late String tutionFees;
+  late String totalFees;
 
   FeeSection({
-    this.totalFees,
-    this.tutionFees,
-    this.libraryFees,
-    this.labFees,
-    this.extraFees,
-    this.admissionFees,
+    required this.totalFees,
+    required this.tutionFees,
+    required this.libraryFees,
+    required this.labFees,
+    required this.extraFees,
+    required this.admissionFees,
   });
 
   FeeSection.fromJson(Map<dynamic, dynamic> json) {
@@ -522,11 +518,11 @@ class FeeSection {
 }
 
 class Subjects {
-  String name;
-  Map<dynamic, dynamic> mentor;
-  Map<String, Chapters> chapters;
+  late String name;
+  late Map<dynamic, dynamic>? mentor;
+  late Map<String, Chapters>? chapters;
 
-  Subjects({this.name, this.mentor, this.chapters});
+  Subjects({required this.name, this.mentor, this.chapters});
 
   Subjects.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
@@ -534,7 +530,7 @@ class Subjects {
     if (json['chapters'] != null) {
       chapters = new Map<String, Chapters>();
       json['chapters']?.forEach((k, v) {
-        chapters[k] = Chapters.fromJson(v);
+        chapters![k] = Chapters.fromJson(v);
       });
     }
   }
@@ -543,19 +539,21 @@ class Subjects {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
     data['mentor'] = this.mentor;
-    if (this.chapters != null) {
-      data['chapters'] = this.chapters.map((k, v) => MapEntry(k, v.toJson()));
-    }
+    data['chapters'] = this.chapters?.map((k, v) => MapEntry(k, v.toJson()));
     return data;
   }
 }
 
 class Chapters {
-  String name;
-  String description;
-  Map<String, Content> content;
+  late String name;
+  late String description;
+  late Map<String, Content>? content;
 
-  Chapters({this.name, this.description, this.content});
+  Chapters({
+    required this.name,
+    required this.description,
+    required this.content,
+  });
 
   Chapters.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
@@ -563,7 +561,7 @@ class Chapters {
     if (json['content'] != null) {
       content = new Map<String, Content>();
       json['content'].forEach((k, v) {
-        content[k] = Content.fromJson(v);
+        content![k] = Content.fromJson(v);
       });
     }
   }
@@ -572,30 +570,29 @@ class Chapters {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
     data['description'] = this.description;
-    if (this.content != null) {
-      data['content'] = this.content.map((k, v) => MapEntry(k, v.toJson()));
-    }
+    data['content'] = this.content?.map((k, v) => MapEntry(k, v.toJson()));
     return data;
   }
 }
 
 class Content {
-  String kind;
-  String link;
-  String ylink;
-  String title;
-  String time;
-  String description;
-  QuizModel quizModel;
+  late String kind;
+  late String link;
+  late String ylink;
+  late String title;
+  late String time;
+  late String description;
+  late QuizModel? quizModel;
 
-  Content(
-      {this.ylink,
-      this.kind,
-      this.link,
-      this.title,
-      this.time,
-      this.description,
-      this.quizModel});
+  Content({
+    required this.ylink,
+    required this.kind,
+    required this.link,
+    required this.title,
+    required this.time,
+    required this.description,
+    required this.quizModel,
+  });
 
   Content.fromJson(Map<dynamic, dynamic> json) {
     ylink = json['ylink'];
@@ -623,27 +620,28 @@ class Content {
 }
 
 class Teacher {
-  List<TCourses> courses;
-  String email;
-  String name;
-  int experience;
-  String qualification;
-  String photoURL;
-  String phoneNo;
+  late List<TCourses>? courses;
+  late String email;
+  late String name;
+  late int experience;
+  late String qualification;
+  late String photoURL;
+  late String phoneNo;
 
-  Teacher(
-      {this.courses,
-      this.email,
-      this.name,
-      this.experience,
-      this.qualification,
-      this.phoneNo});
+  Teacher({
+    required this.courses,
+    required this.email,
+    required this.name,
+    required this.experience,
+    required this.qualification,
+    required this.phoneNo,
+  });
 
   Teacher.fromJson(Map<dynamic, dynamic> json) {
     if (json['courses'] != null) {
-      courses = new List<TCourses>();
+      courses = <TCourses>[];
       json['courses'].forEach((v) {
-        courses.add(new TCourses.fromJson(v));
+        courses!.add(new TCourses.fromJson(v));
       });
     }
     experience = json['experience'];
@@ -656,9 +654,7 @@ class Teacher {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.courses != null) {
-      data['courses'] = this.courses.map((v) => v.toJson()).toList();
-    }
+    data['courses'] = this.courses?.map((v) => v.toJson()).toList();
     data['email'] = this.email;
     data['name'] = this.name;
     data['experience'] = this.experience;
@@ -670,10 +666,13 @@ class Teacher {
 }
 
 class TCourses {
-  String id;
-  List<String> subjects;
+  late String id;
+  late List<String>? subjects;
 
-  TCourses({this.id, this.subjects});
+  TCourses({
+    required this.id,
+    required this.subjects,
+  });
 
   TCourses.fromJson(Map<dynamic, dynamic> json) {
     id = json['id'];
@@ -690,30 +689,32 @@ class TCourses {
 }
 
 class Student {
-  String address;
-  Map<String, Course> course;
-  String email;
-  String classs;
-  RequestedCourseFee requestedCourseFee;
-  String name;
-  String phoneNo;
-  String photoURL;
-  String rollNo;
-  String fatherName;
-  String status;
+  late String name;
+  late String address;
+  late String phoneNo;
+  late String photoURL;
+  late String email;
+  late String status;
 
-  Student(
-      {this.address,
-      this.course,
-      this.email,
-      this.name,
-      this.phoneNo,
-      this.photoURL,
-      this.rollNo,
-      this.status,
-      this.requestedCourseFee,
-      this.fatherName,
-      this.classs});
+  late String? classs;
+  late RequestedCourseFee? requestedCourseFee;
+  late Map<String, Course>? course;
+  late String? rollNo;
+  late String? fatherName;
+
+  Student({
+    required this.address,
+    required this.email,
+    required this.name,
+    required this.phoneNo,
+    required this.photoURL,
+    required this.status,
+    this.requestedCourseFee,
+    this.fatherName,
+    this.rollNo,
+    this.classs,
+    this.course,
+  });
 
   Student.fromJson(Map<dynamic, dynamic> json) {
     address = json['address'];
@@ -725,7 +726,7 @@ class Student {
     if (json['course'] != null) {
       course = new Map<String, Course>();
       json['course'].forEach((k, v) {
-        course[k] = new Course.fromJson(v);
+        course![k] = new Course.fromJson(v);
       });
     }
 
@@ -741,14 +742,10 @@ class Student {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['class'] = this.classs;
-    if (this.requestedCourseFee != null) {
-      data['requestedCourseFee'] = this.requestedCourseFee.toJson();
-    }
+    data['requestedCourseFee'] = this.requestedCourseFee?.toJson();
     data['address'] = this.address;
-    if (this.course != null) {
-      data['course'] =
-          this.course.map((key, value) => MapEntry(key, value.toJson()));
-    }
+    data['course'] =
+        this.course?.map((key, value) => MapEntry(key, value.toJson()));
     data['email'] = this.email;
     data['name'] = this.name;
     data['phone No'] = this.phoneNo;
@@ -761,17 +758,20 @@ class Student {
 }
 
 class RequestedCourseFee {
-  bool isPaidOneTime;
-  List<bool> installments;
+  late bool isPaidOneTime;
+  late List<bool>? installments;
 
-  RequestedCourseFee({this.isPaidOneTime, this.installments});
+  RequestedCourseFee({
+    required this.isPaidOneTime,
+    required this.installments,
+  });
 
   RequestedCourseFee.fromJson(Map<dynamic, dynamic> json) {
     isPaidOneTime = json['isPaidOneTime'];
     if (json['installments'] != null) {
-      installments = List<bool>();
+      installments = <bool>[];
       json['installments'].forEach((v) {
-        installments.add(v);
+        installments!.add(v);
       });
     }
   }
@@ -787,17 +787,17 @@ class RequestedCourseFee {
 }
 
 class Course {
-  String academicYear;
-  String courseID;
-  String courseName;
-  String paymentToken;
-  String paymentType;
+  late String academicYear;
+  late String courseID;
+  late String courseName;
+  late String paymentToken;
+  String? paymentType;
 
   Course({
-    this.academicYear,
-    this.courseID,
-    this.courseName,
-    this.paymentToken,
+    required this.academicYear,
+    required this.courseID,
+    required this.courseName,
+    required this.paymentToken,
     this.paymentType,
   });
 
@@ -821,18 +821,18 @@ class Course {
 }
 
 class QuizModel {
-  String title;
-  String description;
-  DateTime startTime;
-  Duration testTime;
-  List<QuestionModel> questions;
+  late String title;
+  late String description;
+  late DateTime startTime;
+  late Duration testTime;
+  late List<QuestionModel>? questions;
 
   QuizModel({
-    this.title,
-    this.description,
-    this.questions,
-    this.testTime,
-    this.startTime,
+    required this.title,
+    required this.description,
+    required this.questions,
+    required this.testTime,
+    required this.startTime,
   });
 
   Duration parseDuration(String s) {
@@ -855,10 +855,10 @@ class QuizModel {
     description = json['description'];
     testTime = parseDuration(json['testTime']);
     startTime = DateTime.parse(json['startTime'] ?? DateTime.now().toString());
-    questions = List<QuestionModel>();
+    questions = <QuestionModel>[];
     if (json['questions'] != null) {
       json['questions'].forEach((v) {
-        questions.add(new QuestionModel.fromJson(v));
+        questions!.add(new QuestionModel.fromJson(v));
       });
     }
   }
@@ -868,10 +868,8 @@ class QuizModel {
     data['title'] = this.title;
     data['description'] = this.description;
     data['startTime'] = this.startTime.toString();
-    data['testTime'] = this.testTime?.toString();
-    if (this.questions != null) {
-      data['questions'] = this.questions.map((v) => v.toJson()).toList();
-    }
+    data['testTime'] = this.testTime.toString();
+    data['questions'] = this.questions?.map((v) => v.toJson()).toList();
     return data;
   }
 }
@@ -886,18 +884,23 @@ class Response {
 }
 
 class QuestionModel {
-  String type;
-  String question;
-  List<String> choices;
-  String answer;
+  late String type;
+  late String question;
+  late List<String> choices;
+  String? answer;
 
-  QuestionModel({this.type, this.question, this.choices, this.answer});
+  QuestionModel({
+    required this.type,
+    required this.question,
+    required this.choices,
+    this.answer,
+  });
 
   QuestionModel.fromJson(Map<dynamic, dynamic> json) {
     type = json['type'];
     question = json['labelText'];
     answer = json['answer'];
-    choices = List<String>();
+    choices = <String>[];
     if (json['choices'] != null) {
       json['choices'].forEach((v) {
         choices.add(v);
@@ -909,9 +912,7 @@ class QuestionModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['type'] = this.type;
     data['labelText'] = this.question;
-    if (this.choices != null) {
-      data['choices'] = this.choices;
-    }
+    data['choices'] = this.choices;
     data['answer'] = this.answer;
     return data;
   }
@@ -926,24 +927,27 @@ class PrivacyModal {
 }
 
 class Messages {
-  String key;
-  String textMsg;
-  String uid;
-  String time;
-  String changetime;
-  String type;
+  late String key;
+  late String textMsg;
+  late String uid;
+  late String time;
+  late String changetime;
+  late String type;
+
   Messages(this.key, this.textMsg, this.uid, this.time, this.type);
 
   Messages.fromSnapshot(DataSnapshot snapshot) {
-    key = snapshot.key;
-    textMsg = snapshot.value["textMsg"];
-    uid = snapshot.value["selfId"];
-    time = snapshot.value["time"];
+    key = snapshot.key!;
+    final dataMap = snapshot.value as Map<String, String>;
+    textMsg = dataMap["textMsg"]!;
+    uid = dataMap["selfId"]!;
+    time = dataMap["time"]!;
     changetime = changeTime(time);
-    type = snapshot.value["type"];
+    type = dataMap["type"]!;
   }
+
   String changeTime(String time) {
-    String midtime;
+    String midtime = '';
     int hh = int.parse(time.split(" ")[1].split(":")[0]);
     if (time.split(" ")[2] == "PM") {
       midtime = (hh + 12).toString();
@@ -957,8 +961,6 @@ class Messages {
         }
       }
     }
-    print(">>>>>>>>>>");
-    print(midtime);
     return time.split(" ")[0] +
         "T" +
         midtime +
@@ -970,16 +972,16 @@ class Messages {
 }
 
 class Section {
-  String name;
-  Map<String, Content> content;
-  Section({this.name, this.content});
+  late String name;
+  Map<String, Content>? content;
+  Section({required this.name, this.content});
 
   Section.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
     if (json['content'] != null) {
       content = Map<String, Content>();
       json['content'].forEach((k, v) {
-        content[k] = Content.fromJson(v);
+        content![k] = Content.fromJson(v);
       });
     }
   }
@@ -989,31 +991,32 @@ class Section {
     data['name'] = this.name;
     if (this.content != null) {
       data['content'] =
-          this.content.map((key, value) => MapEntry(key, value.toJson()));
+          this.content!.map((key, value) => MapEntry(key, value.toJson()));
     }
     return data;
   }
 }
 
 class EventsModal {
-  String meetingkey;
-  String title;
-  String description;
-  String eventKey;
-  String time;
-  String courseid;
-  String teacheruid;
-  String subject;
-  int isStarted;
-  EventsModal(
-      {this.title,
-      this.description,
-      this.time,
-      this.eventKey,
-      this.isStarted,
-      this.courseid,
-      this.teacheruid,
-      this.subject});
+  late String meetingkey;
+  late String title;
+  late String description;
+  late String eventKey;
+  late String time;
+  late String courseid;
+  late String teacheruid;
+  late String subject;
+  late int isStarted;
+  EventsModal({
+    required this.title,
+    required this.description,
+    required this.time,
+    required this.eventKey,
+    required this.isStarted,
+    required this.courseid,
+    required this.teacheruid,
+    required this.subject,
+  });
 
   EventsModal.fromJson(String key, Map<dynamic, dynamic> json) {
     meetingkey = key;
@@ -1043,28 +1046,29 @@ class EventsModal {
 }
 
 class GeneralEventsModal {
-  String meetingkey;
-  String title;
-  String description;
-  String eventKey;
-  String time;
-  String hostuid;
-  String type;
-  int isStarted;
-  int hostPrevilage;
-  String hostname;
+  late String meetingkey;
+  late String title;
+  late String description;
+  late String eventKey;
+  late String time;
+  late String hostuid;
+  late String type;
+  late int isStarted;
+  late int hostPrevilage;
+  late String hostname;
 
-  GeneralEventsModal(
-      this.meetingkey,
-      this.title,
-      this.description,
-      this.time,
-      this.eventKey,
-      this.isStarted,
-      this.hostuid,
-      this.type,
-      this.hostPrevilage,
-      this.hostname);
+  GeneralEventsModal({
+    required this.meetingkey,
+    required this.title,
+    required this.description,
+    required this.time,
+    required this.eventKey,
+    required this.isStarted,
+    required this.hostuid,
+    required this.type,
+    required this.hostPrevilage,
+    required this.hostname,
+  });
 
   GeneralEventsModal.fromJson(String key, Map<dynamic, dynamic> json) {
     meetingkey = key;

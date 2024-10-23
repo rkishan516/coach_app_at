@@ -1,60 +1,40 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:coach_app/Chat/home_page.dart';
 import 'package:coach_app/Chat/models/item_class.dart';
 import 'package:coach_app/Chat/pages/group_chat.dart';
-import 'dart:async';
-import 'chat_screen.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:flutter/material.dart';
 
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
-}
-
-class groupList extends StatefulWidget {
-  final curUser currentUser;
-  groupList({this.currentUser});
+class GroupList extends StatefulWidget {
+  final CurrUser currentUser;
+  GroupList({required this.currentUser});
   @override
-  _groupListState createState() => _groupListState(currentUser);
+  _GroupListState createState() => _GroupListState();
 }
 
-class _groupListState extends State<groupList> {
-  final curUser currentUser;
-  _groupListState(this.currentUser);
-  StreamSubscription subscription;
+class _GroupListState extends State<GroupList> {
+  late CurrUser currentUser;
   CollectionReference collectionReference =
-      Firestore.instance.collection("Group");
-  List<DocumentSnapshot> groupList, tempList;
+      FirebaseFirestore.instance.collection("Group");
   List<gList> _gList = [];
 
   @override
   void initState() {
     super.initState();
-    subscription = collectionReference
-        .document(currentUser.code)
+    currentUser = widget.currentUser;
+    collectionReference
+        .doc(currentUser.code)
         .collection('Custom Groups')
         .snapshots()
         .listen((snapshot) {
       setState(() {
-        tempList = snapshot.documents;
+        final tempList = snapshot.docs;
 
         for (int i = 0; i < tempList.length; i++) {
           bool flag = false;
           for (int j = 0;
-              j < tempList[i].data['memberList'].toList().length;
+              j < (tempList[i].data as Map)['memberList'].toList().length;
               j++) {
-            String memberUid = tempList[i].data['memberList'][j];
+            String memberUid = (tempList[i].data as Map)['memberList'][j];
             if (memberUid == currentUser.uid) {
               flag = true;
               break;
@@ -62,9 +42,9 @@ class _groupListState extends State<groupList> {
           }
 
           if (flag) {
-            String gName = tempList[i].data['name'];
-            String gid = tempList[i].data['gid'];
-            String gPhoto = tempList[i].data['groupImageUrl'];
+            String gName = (tempList[i].data as Map)['name'];
+            String gid = (tempList[i].data as Map)['gid'];
+            String gPhoto = (tempList[i].data as Map)['groupImageUrl'];
             gList tempGlist = gList(gName, gid, gPhoto);
 
             _gList.add(tempGlist);
@@ -74,21 +54,9 @@ class _groupListState extends State<groupList> {
     });
   }
 
-  String role;
   @override
   Widget build(BuildContext context) {
-    /* subscription = collectionReference
-        .document(currentUser.code)
-        .collection('Custom Groups')
-        .snapshots()
-        .listen((snapshot) {
-      setState(() {
-        tempList = snapshot.documents;
-      });
-    });
- */
     SizeConfig().init(context);
-    //getGroupList();
     return ListView.builder(
       itemCount: _gList.length, //groupList.length,
       itemBuilder: (context, index) => new Column(
@@ -130,7 +98,7 @@ class _groupListState extends State<groupList> {
                     ),
                     onTap: () => Navigator.of(context)
                             .push(new MaterialPageRoute(builder: (context) {
-                          return new groupChatScreen(
+                          return new GroupChatScreen(
                             name: _gList[index].name,
                             photoUrl: _gList[index].gid,
                             gid: _gList[index].gid,

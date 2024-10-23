@@ -3,16 +3,16 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class TeacherRegister extends StatefulWidget {
   final bool isEdit;
-  final String keyT;
-  final Teacher teacher;
-  final String courseId;
-  final String subjectId;
+  final String? keyT;
+  final Teacher? teacher;
+  final String? courseId;
+  final String? subjectId;
   TeacherRegister({
     this.isEdit = false,
     this.teacher,
@@ -25,7 +25,7 @@ class TeacherRegister extends StatefulWidget {
 }
 
 class _TeacherRegisterState extends State<TeacherRegister> {
-  TextEditingController emailTextEditingController,
+  late TextEditingController emailTextEditingController,
       nameTextEditingController,
       experienceTextEditingController,
       qualificationTextEditingController,
@@ -38,7 +38,7 @@ class _TeacherRegisterState extends State<TeacherRegister> {
     nameTextEditingController = TextEditingController()
       ..text = widget.teacher?.name ?? '';
     experienceTextEditingController = TextEditingController()
-      ..text = widget.teacher?.experience?.toString() ?? '';
+      ..text = widget.teacher?.experience.toString() ?? '';
     qualificationTextEditingController = TextEditingController()
       ..text = widget.teacher?.qualification ?? '';
     phoneTextEditingController = TextEditingController()
@@ -200,7 +200,7 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       (widget.isEdit == true)
-                          ? FlatButton(
+                          ? MaterialButton(
                               onPressed: () async {
                                 String res = await showDialog(
                                     context: context,
@@ -209,16 +209,16 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                                   return;
                                 }
                                 FirebaseDatabase.instance
-                                    .reference()
+                                    .ref()
                                     .child(
-                                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers')
+                                        'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/teachers')
                                     .child('${widget.keyT}')
                                     .remove();
                                 Navigator.of(context).pop();
                               },
                               child: Text('Remove'.tr()))
                           : Container(),
-                      FlatButton(
+                      MaterialButton(
                         onPressed: () {
                           if (emailTextEditingController.text == '' ||
                               nameTextEditingController.text == '' ||
@@ -252,9 +252,9 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                           }
                           if (widget.isEdit == true) {
                             FirebaseDatabase.instance
-                                .reference()
+                                .ref()
                                 .child(
-                                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers')
+                                    'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/teachers')
                                 .child('${widget.keyT}')
                                 .update(Teacher(
                                   name: nameTextEditingController.text,
@@ -269,24 +269,24 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                                         .replaceAll(' ', '')
                                         .replaceAll('-', ''),
                                   ),
-                                  courses: widget.teacher.courses,
+                                  courses: widget.teacher!.courses,
                                 ).toJson());
                           } else {
                             if (emailTextEditingController.text !=
-                                FireBaseAuth.instance.user.email) {
-                              Firestore.instance
+                                AppwriteAuth.instance.user!.email) {
+                              FirebaseFirestore.instance
                                   .collection('institute')
-                                  .document(emailTextEditingController.text
+                                  .doc(emailTextEditingController.text
                                       .split('@')[0])
-                                  .setData({
+                                  .set({
                                 "value":
-                                    "teacher_${FireBaseAuth.instance.instituteid}_${FireBaseAuth.instance.branchid}"
+                                    "teacher_${AppwriteAuth.instance.instituteid}_${AppwriteAuth.instance.branchid}"
                               });
                             }
                             FirebaseDatabase.instance
-                                .reference()
+                                .ref()
                                 .child(
-                                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers')
+                                    'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/teachers')
                                 .push()
                                 .update(Teacher(
                                   name: nameTextEditingController.text,
@@ -296,9 +296,9 @@ class _TeacherRegisterState extends State<TeacherRegister> {
                                       qualificationTextEditingController.text,
                                   courses: [
                                     TCourses(
-                                      id: widget.courseId,
+                                      id: widget.courseId!,
                                       subjects: [
-                                        widget.subjectId,
+                                        widget.subjectId!,
                                       ],
                                     ),
                                   ],

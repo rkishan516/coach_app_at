@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 class SelectCandidate extends StatefulWidget {
   final String type;
   final String leftuids;
-  SelectCandidate({this.type, this.leftuids});
+  SelectCandidate({
+    required this.type,
+    required this.leftuids,
+  });
   @override
   _SelectCandidateState createState() => _SelectCandidateState();
 }
@@ -14,16 +17,16 @@ class _SelectCandidateState extends State<SelectCandidate> {
   final dbref = FirebaseDatabase.instance;
   List<SelectedCandidateModel> _list = [];
   Map<String, bool> _correspondingmap = {};
-  int previlagelevel = FireBaseAuth.instance.previlagelevel;
+  int previlagelevel = AppwriteAuth.instance.previlagelevel;
   String leftuids = "";
 
   _loadFromDatabase() async {
     if (widget.type == "SubAdmins" && previlagelevel != 34) {
-      DataSnapshot snapshot = await dbref
-          .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/branches')
+      final snapshot = await dbref
+          .ref()
+          .child('institute/${AppwriteAuth.instance.instituteid}/branches')
           .once();
-      Map map = snapshot.value;
+      Map map = snapshot.snapshot.value as Map;
       map.forEach((key, value) {
         Map emailmap = value["admin"];
         emailmap.forEach((emailkey, emailvalue) {
@@ -42,11 +45,11 @@ class _SelectCandidateState extends State<SelectCandidate> {
         });
       });
     } else if (widget.type == "MidAdmins") {
-      DataSnapshot snapshot = await dbref
-          .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/midAdmin')
+      final snapshot = await dbref
+          .ref()
+          .child('institute/${AppwriteAuth.instance.instituteid}/midAdmin')
           .once();
-      Map map = snapshot.value;
+      Map map = snapshot.snapshot.value as Map;
       map.forEach((key, value) {
         if (key.toString().length >= 25) {
           _list.add(SelectedCandidateModel(
@@ -58,12 +61,12 @@ class _SelectCandidateState extends State<SelectCandidate> {
         }
       });
     } else if (widget.type == "Teachers") {
-      DataSnapshot snapshot = await dbref
-          .reference()
+      final snapshot = await dbref
+          .ref()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers')
+              'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/teachers')
           .once();
-      Map map = snapshot.value;
+      Map map = snapshot.snapshot.value as Map;
       map.forEach((key, value) {
         if (key.toString().length >= 25) {
           _list.add(SelectedCandidateModel("", value["qualification"],
@@ -75,12 +78,12 @@ class _SelectCandidateState extends State<SelectCandidate> {
         }
       });
     } else if (widget.type == "All students") {
-      DataSnapshot snapshot = await dbref
-          .reference()
+      final snapshot = await dbref
+          .ref()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students')
+              'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students')
           .once();
-      Map map = snapshot.value;
+      Map map = snapshot.snapshot.value as Map;
       map.forEach((key, value) {
         if (key.toString().length >= 25) {
           _list.add(SelectedCandidateModel(
@@ -92,14 +95,14 @@ class _SelectCandidateState extends State<SelectCandidate> {
         }
       });
     } else if (widget.type == "Other MidAdmins") {
-      DataSnapshot snapshot = await dbref
-          .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/midAdmin')
+      final snapshot = await dbref
+          .ref()
+          .child('institute/${AppwriteAuth.instance.instituteid}/midAdmin')
           .once();
-      Map map = snapshot.value;
+      Map map = snapshot.snapshot.value as Map;
       map.forEach((key, value) {
         if (key.toString().length >= 25 &&
-            key.toString() != FireBaseAuth.instance.user.uid) {
+            key.toString() != AppwriteAuth.instance.user!.$id) {
           _list.add(SelectedCandidateModel(
               "", value["district"], value["name"], value["photoUrl"], key));
           if (widget.leftuids.contains(key))
@@ -110,27 +113,27 @@ class _SelectCandidateState extends State<SelectCandidate> {
       });
     } else if (widget.type == "SubAdmins" && previlagelevel == 34) {
       //String _branches="[1515, 1901, 1902, 1404, 1301, 1215, 1101, 1704, 1812, 2014, 2101, 2201, 2301]";
-      String _branches = FireBaseAuth.instance.branchList.toString();
+      String _branches = AppwriteAuth.instance.branchList.toString();
       List<String> _branchlist =
           _branches.replaceAll("[", "").replaceAll("]", "").split(",");
 
       _branchlist.forEach((element) async {
-        DataSnapshot snapshot = await dbref
-            .reference()
+        final snapshot = await dbref
+            .ref()
             .child(
-                'institute/${FireBaseAuth.instance.instituteid}/branches/${element.trim()}/admin')
+                'institute/${AppwriteAuth.instance.instituteid}/branches/${element.trim()}/admin')
             .once();
-        DataSnapshot namesnapshot = await dbref
-            .reference()
+        final namesnapshot = await dbref
+            .ref()
             .child(
-                'institute/${FireBaseAuth.instance.instituteid}/branches/${element.trim()}/name')
+                'institute/${AppwriteAuth.instance.instituteid}/branches/${element.trim()}/name')
             .once();
-        Map emailmap = snapshot.value;
+        Map emailmap = snapshot.snapshot.value as Map;
         emailmap.forEach((emailkey, emailvalue) {
           if (emailvalue["name"] != null) {
             _list.add(SelectedCandidateModel(
                 "",
-                namesnapshot.value,
+                namesnapshot.snapshot.value as String,
                 emailvalue["name"],
                 "https://www.leafstudio.co.uk/wp-content/uploads/2019/11/person-icon-silhouette-png-0.png",
                 emailkey));
@@ -185,7 +188,8 @@ class _SelectCandidateState extends State<SelectCandidate> {
                 ),
                 trailing: Checkbox(
                     value: _correspondingmap[_list[index].uid] ?? true,
-                    onChanged: (bool value) {
+                    onChanged: (bool? value) {
+                      if (value == null) return;
                       setState(() {
                         _correspondingmap[_list[index].uid] = value;
                         if (value) {

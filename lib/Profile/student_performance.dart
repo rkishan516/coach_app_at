@@ -8,7 +8,7 @@ import 'package:easy_localization/easy_localization.dart';
 class StudentPerformance extends StatelessWidget {
   final String uid;
   final String courseId;
-  StudentPerformance({@required this.uid, @required this.courseId});
+  StudentPerformance({required this.uid, required this.courseId});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,50 +19,45 @@ class StudentPerformance extends StatelessWidget {
         ),
         elevation: 0,
       ),
-      body: StreamBuilder<Event>(
+      body: StreamBuilder<DatabaseEvent>(
           stream: FirebaseDatabase.instance
-              .reference()
+              .ref()
               .child(
-                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/')
+                  'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/')
               .onValue,
           builder: (context, snap) {
             if (snap.hasData) {
-              Branch branch = Branch.fromJson(snap.data.snapshot.value);
+              Branch branch = Branch.fromJson(snap.data!.snapshot.value as Map);
               Map<String, int> subjectPerformance = Map<String, int>();
-              if (snap.data.snapshot.value != null) {
-                if (snap.data.snapshot.value['students'] != null) {
-                  if (snap.data.snapshot.value['students']['$uid'] != null) {
-                    if (snap.data.snapshot.value['students']['$uid']
-                            ['courses'] !=
-                        null) {
-                      if (snap.data.snapshot.value['students']['$uid']
-                              ['courses']['$courseId'] !=
+              final data = snap.data!.snapshot.value as Map?;
+              if (data != null) {
+                if (data['students'] != null) {
+                  if (data['students']['$uid'] != null) {
+                    if (data['students']['$uid']['courses'] != null) {
+                      if (data['students']['$uid']['courses']['$courseId'] !=
                           null) {
-                        if (snap.data.snapshot.value['students']['$uid']
-                                ['courses']['$courseId']['subjects'] !=
+                        if (data['students']['$uid']['courses']['$courseId']
+                                ['subjects'] !=
                             null) {
-                          snap
-                              .data
-                              .snapshot
-                              .value['students']['$uid']['courses']['$courseId']
+                          data['students']['$uid']['courses']['$courseId']
                                   ['subjects']
                               ?.forEach((k, v) {
                             double score = 0;
                             int count = 0;
-                            String name;
+                            String? name;
                             v['chapters']?.forEach((k, v) {
                               v['content']?.forEach((k, v) {
                                 score += v['score'];
                                 count++;
                               });
                             });
-                            branch.courses.forEach((element) {
+                            branch.courses?.forEach((element) {
                               if (element.id == courseId) {
-                                name = element.subjects[k].name;
+                                name = element.subjects![k]!.name;
                               }
                             });
 
-                            subjectPerformance[name] = score * 100 ~/ count;
+                            subjectPerformance[name!] = score * 100 ~/ count;
                           });
                         }
                       }

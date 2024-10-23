@@ -1,34 +1,32 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:chewie/chewie.dart';
+
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:coach_app/Dialogs/uploadDialog.dart';
-import 'package:coach_app/Models/random_string.dart';
-import 'package:coach_app/adminCorner/BeforeImageLoading.dart';
-import 'package:coach_app/adminCorner/BeforeVideoLoading.dart';
-import 'package:coach_app/adminCorner/ShowMedia.dart';
-import 'package:video_player/video_player.dart';
-import 'package:coach_app/Chat/models/video_player.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
+import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Drawer/CountDot.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Models/random_string.dart';
+import 'package:coach_app/adminCorner/BeforeImageLoading.dart';
+import 'package:coach_app/adminCorner/BeforeVideoLoading.dart';
+import 'package:coach_app/adminCorner/ShowMedia.dart';
 import 'package:coach_app/adminCorner/publicContentPage.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
-import 'package:linkwell/linkwell.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:linkwell/linkwell.dart';
 
 class NoticeBoard extends StatefulWidget {
   final int totalNotice;
   final totalPublicContent;
-  NoticeBoard({@required this.totalNotice, this.totalPublicContent});
+  NoticeBoard({required this.totalNotice, this.totalPublicContent});
   @override
   _NoticeBoardState createState() => _NoticeBoardState();
 }
@@ -39,14 +37,13 @@ class _NoticeBoardState extends State<NoticeBoard>
   TextEditingController _textController = TextEditingController();
   List<Messages> _allMessages = [];
   bool _scrolleffect = true;
-  String _selfId, type = "Text";
+  late String _selfId, type = "Text";
   final dbRef = FirebaseDatabase.instance;
-  Query _query;
+  late Query _query;
   Map<String, bool> _isDeleting = {};
-  int previlagelevel = FireBaseAuth.instance.previlagelevel;
-  TabController _controller;
-  File imageFile;
-  StorageReference _storageReference;
+  int previlagelevel = AppwriteAuth.instance.previlagelevel;
+  late TabController _controller;
+  late Reference _storageReference;
   int items = 2;
   Map<String, String> _months = {
     "01": "Jan",
@@ -64,13 +61,13 @@ class _NoticeBoardState extends State<NoticeBoard>
   };
   // Map<String, VideoPlayerController> _videoPlayerController = {};
   // ChewieController _chewieController;
-  Timer timer;
+  Timer? timer;
 
   Widget _child1(Messages message, bool isMe) {
     String splitDate = message.time.split(' ')[0];
     String noticeDate = splitDate.split("-")[2] +
         " " +
-        _months[splitDate.split("-")[1]] +
+        _months[splitDate.split("-")[1]]! +
         " " +
         splitDate.split("-")[0];
 
@@ -134,7 +131,7 @@ class _NoticeBoardState extends State<NoticeBoard>
           fit: StackFit.loose,
           alignment: Alignment.center,
           children: <Widget>[
-            if (!isMe && FireBaseAuth.instance.previlagelevel != 4)
+            if (!isMe && AppwriteAuth.instance.previlagelevel != 4)
               Positioned(
                 left: 8.0,
                 top: 3.0,
@@ -241,15 +238,14 @@ class _NoticeBoardState extends State<NoticeBoard>
                         },
                       )
                     : Container(
-                      padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
-                    
-                      child: LinkWell(message.textMsg,
-                          style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600)),
-                    ),
-            _isDeleting[message.key]
+                        padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                        child: LinkWell(message.textMsg,
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600)),
+                      ),
+            _isDeleting[message.key]!
                 ? Align(
                     alignment: isMe ? Alignment.topLeft : Alignment.topRight,
                     child: IconButton(
@@ -303,11 +299,11 @@ class _NoticeBoardState extends State<NoticeBoard>
   _buildMessage(Messages message, bool isMe) {
     final GestureDetector msg = GestureDetector(
         onLongPress: () async {
-          if ((isMe && FireBaseAuth.instance.previlagelevel >= 3) ||
-              FireBaseAuth.instance.previlagelevel == 4) {
+          if ((isMe && AppwriteAuth.instance.previlagelevel >= 3) ||
+              AppwriteAuth.instance.previlagelevel == 4) {
             setState(() {
               _scrolleffect = false;
-              if (!_isDeleting[message.key])
+              if (!_isDeleting[message.key]!)
                 _isDeleting[message.key] = true;
               else
                 _isDeleting[message.key] = false;
@@ -341,7 +337,7 @@ class _NoticeBoardState extends State<NoticeBoard>
     return msg;
   }
 
-  _createNotice(String url, String randomKey) async {
+  _createNotice(String url, String? randomKey) async {
     String msg = _textController.text;
     if (url.toString() != "none") {
       msg = url;
@@ -352,111 +348,120 @@ class _NoticeBoardState extends State<NoticeBoard>
         DateFormat('jms').format(new DateTime.now());
     if (type == "Text")
       await dbRef
-          .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/notices')
+          .ref()
+          .child('institute/${AppwriteAuth.instance.instituteid}/notices')
           .push()
           .update(
               {'textMsg': msg, 'time': time, 'selfId': _selfId, 'type': type});
     else
       await dbRef
-          .reference()
+          .ref()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/notices/$randomKey')
+              'institute/${AppwriteAuth.instance.instituteid}/notices/$randomKey')
           .update(
               {'textMsg': msg, 'time': time, 'selfId': _selfId, 'type': type});
   }
 
   _deleteNotice(String key) async {
     await dbRef
-        .reference()
-        .child('institute/${FireBaseAuth.instance.instituteid}/notices/$key')
+        .ref()
+        .child('institute/${AppwriteAuth.instance.instituteid}/notices/$key')
         .remove();
     if (key.length == 7)
       await FirebaseStorage.instance
           .ref()
-          .child('notices/${FireBaseAuth.instance.instituteid}/$key')
+          .child('notices/${AppwriteAuth.instance.instituteid}/$key')
           .delete();
   }
 
-  Future<String> pickVideo() async {
-    File videoFile = await FilePicker.getFile(type: FileType.video);
-    if(videoFile!=null){
-       Navigator.push(context,MaterialPageRoute(builder: (contex)=>BeforeVideoLoading(videourl: videoFile,)))
-       .then((value) async{
-         if(value!=null){
-         String randomkey = randomNumeric(7);
-    if(randomkey!=null){     
-       _storageReference = FirebaseStorage.instance.ref().child('notices/${FireBaseAuth.instance.instituteid}/$randomkey');
-
-    StorageUploadTask storageUploadTask = _storageReference.putFile(videoFile);
-    double percent = 0;
-    storageUploadTask.events.listen((event) {
-      setState(() {
-        percent = event.snapshot.bytesTransferred *
-            100 /
-            event.snapshot.totalByteCount;
-      });
-    });
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) =>
-            UploadDialog(warning: '${percent.toInt()}% Uploaded'),
+  Future<String?> pickVideo() async {
+    File? videoFile = (await FilePicker.platform.pickFiles(
+      type: FileType.video,
+    ))
+        ?.paths
+        .map((e) => File(e!))
+        .firstOrNull;
+    if (videoFile == null) return null;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (contex) => BeforeVideoLoading(
+          videourl: videoFile.path,
+        ),
       ),
-    );
-    StorageTaskSnapshot snapshot = await storageUploadTask.onComplete;
-    var url = await snapshot.ref.getDownloadURL();
-    Navigator.of(context).pop();
+    ).then((value) async {
+      if (value != null) {
+        String randomkey = randomNumeric(7);
+        _storageReference = FirebaseStorage.instance
+            .ref()
+            .child('notices/${AppwriteAuth.instance.instituteid}/$randomkey');
 
-    _createNotice(url+":_:_:"+value, randomkey);
-    return url+":_:_:"+value;
-       }
-       }
-       }
-       );
-       
-    }
+        final storageUploadTask = _storageReference.putFile(videoFile);
+        double percent = 0;
+        storageUploadTask.snapshotEvents.listen((event) {
+          setState(() {
+            percent = event.bytesTransferred * 100 / event.totalBytes;
+          });
+        });
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => StatefulBuilder(
+            builder: (context, setState) =>
+                UploadDialog(warning: '${percent.toInt()}% Uploaded'),
+          ),
+        );
+        final snapshot = await storageUploadTask;
+        var url = await snapshot.ref.getDownloadURL();
+        Navigator.of(context).pop();
+
+        _createNotice(url + ":_:_:" + value, randomkey);
+        return url + ":_:_:" + value;
+      }
+    });
+    return null;
   }
 
-  Future<String> pickImage() async {
-    PickedFile selectedImage = await ImagePicker().getImage(
+  Future<String?> pickImage() async {
+    XFile? selectedImage = await ImagePicker().pickImage(
       source: ImageSource.gallery,
     );
+
+    if (selectedImage == null) return null;
 
     final filePath = selectedImage.path;
     final lastIndex = filePath.lastIndexOf(new RegExp(r'.jp'));
     final splitted = filePath.substring(0, (lastIndex));
     final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
     var compressedFile = await FlutterImageCompress.compressAndGetFile(
-      selectedImage?.path,
+      selectedImage.path,
       outPath,
       quality: 50,
       minWidth: 720,
       minHeight: 1280,
     );
 
-    imageFile = compressedFile;
-    if(selectedImage!=null){
-      Navigator.push(context,MaterialPageRoute(builder: (contex)=>BeforeImageLoading(imageurl: imageFile,)))
-      .then((value)async{
-      
-        if(value!=null){
-    
-    String randomkey = randomNumeric(7);
-    if(randomkey!=null){
-    _storageReference = FirebaseStorage.instance.ref().child('notices/${FireBaseAuth.instance.instituteid}/$randomkey');
-    StorageUploadTask storageUploadTask = _storageReference.putFile(imageFile);
-    var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (contex) => BeforeImageLoading(
+                  imageurl: selectedImage.path,
+                ))).then((value) async {
+      if (value != null) {
+        String randomkey = randomNumeric(7);
+        _storageReference = FirebaseStorage.instance
+            .ref()
+            .child('notices/${AppwriteAuth.instance.instituteid}/$randomkey');
+        final storageUploadTask =
+            _storageReference.putFile(File(compressedFile!.path));
+        var url = await (await storageUploadTask).ref.getDownloadURL();
 
-    _createNotice(url+":_:_:"+ value, randomkey);
+        _createNotice(url + ":_:_:" + value, randomkey);
 
-    return url+":_:_:"+ value;
-        }
-        }
+        return url + ":_:_:" + value;
       }
-      );
-    }
+    });
+    return null;
   }
 
   @override
@@ -557,7 +562,7 @@ class _NoticeBoardState extends State<NoticeBoard>
     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
   }
 
-  onEventRemoved(Event event) {
+  onEventRemoved(DatabaseEvent event) {
     _scrolleffect = true;
     var index;
     _allMessages.forEach((element) {
@@ -571,11 +576,10 @@ class _NoticeBoardState extends State<NoticeBoard>
   }
 
   bool _isshowableMsg(Messages _messages) {
-    int _previlagelevel = FireBaseAuth.instance.previlagelevel;
-    String _branch = FireBaseAuth.instance.branchid.toString();
-    String _branchlist = FireBaseAuth.instance.branchList.toString();
-   
-      
+    int _previlagelevel = AppwriteAuth.instance.previlagelevel;
+    String _branch = AppwriteAuth.instance.branchid.toString();
+    String _branchlist = AppwriteAuth.instance.branchList.toString();
+
     int _senderprevilagelevel = int.parse(_messages.uid.split(":_:_:")[0]);
     String _senderbranch = _messages.uid.split(":_:_:")[1];
     if (_senderprevilagelevel == 4) {
@@ -590,36 +594,37 @@ class _NoticeBoardState extends State<NoticeBoard>
         return true;
       else if (_previlagelevel == 4) return false;
     }
+    return false;
   }
 
   @override
   void initState() {
     _controller = new TabController(length: items, vsync: this);
     super.initState();
-    if (FireBaseAuth.instance.previlagelevel == 34)
-      _selfId = FireBaseAuth.instance.previlagelevel.toString() +
+    if (AppwriteAuth.instance.previlagelevel == 34)
+      _selfId = AppwriteAuth.instance.previlagelevel.toString() +
           ":_:_:" +
-          FireBaseAuth.instance.branchList.toString() +
+          AppwriteAuth.instance.branchList.toString() +
           ":_:_:" +
-          FireBaseAuth.instance.user.uid +
+          AppwriteAuth.instance.user!.$id +
           ":_:_:" +
-          FireBaseAuth.instance.user.displayName;
-    else if (FireBaseAuth.instance.previlagelevel == 4 ||
-        FireBaseAuth.instance.previlagelevel == 3)
-      _selfId = FireBaseAuth.instance.previlagelevel.toString() +
+          AppwriteAuth.instance.user!.name;
+    else if (AppwriteAuth.instance.previlagelevel == 4 ||
+        AppwriteAuth.instance.previlagelevel == 3)
+      _selfId = AppwriteAuth.instance.previlagelevel.toString() +
           ":_:_:" +
-          FireBaseAuth.instance.branchid.toString() +
+          AppwriteAuth.instance.branchid.toString() +
           ":_:_:" +
-          FireBaseAuth.instance.user.uid +
+          AppwriteAuth.instance.user!.$id +
           ":_:_:" +
-          FireBaseAuth.instance.user.displayName;
+          AppwriteAuth.instance.user!.name;
     _query = dbRef
-        .reference()
-        .child('institute/${FireBaseAuth.instance.instituteid}/notices');
-    _query.onChildAdded.listen((Event event) {
+        .ref()
+        .child('institute/${AppwriteAuth.instance.instituteid}/notices');
+    _query.onChildAdded.listen((DatabaseEvent event) {
       Messages _messages = Messages.fromSnapshot(event.snapshot);
       bool _isMsgshow = false;
-      if (_messages.type != null&& _messages.key != "null" ) {
+      if (_messages.key != "null") {
         _isMsgshow = _isshowableMsg(_messages);
         if (_isMsgshow) {
           _allMessages.add(_messages);
@@ -628,7 +633,7 @@ class _NoticeBoardState extends State<NoticeBoard>
       }
 
       return setState(() {
-        if (_messages.type == null&& _messages.key != "null") {
+        if (_messages.type == null && _messages.key != "null") {
           _isDeleting[_messages.key] = false;
           _allMessages.add(_messages);
           _allMessages.sort((a, b) => a.changetime.compareTo(b.changetime));
@@ -720,14 +725,10 @@ class _NoticeBoardState extends State<NoticeBoard>
                         itemBuilder: (BuildContext context, int index) {
                           final message = _allMessages[index];
                           bool isMe;
-                          if (message.type == null) {
-                            isMe = false;
-                          } else {
-                            isMe = message.uid.split(":_:_:")[2] ==
-                                FireBaseAuth.instance.user.uid;
-                          }
-                          if (FireBaseAuth.instance.previlagelevel <= 2 ||
-                              FireBaseAuth.instance.previlagelevel == 4)
+                          isMe = message.uid.split(":_:_:")[2] ==
+                              AppwriteAuth.instance.user!.$id;
+                          if (AppwriteAuth.instance.previlagelevel <= 2 ||
+                              AppwriteAuth.instance.previlagelevel == 4)
                             isMe = false;
 
                           return _buildMessage(message, isMe);
@@ -756,7 +757,7 @@ class _NoticeBoardState extends State<NoticeBoard>
             ),
             child: Column(
               children: <Widget>[
-                if (FireBaseAuth.instance.previlagelevel == 4)
+                if (AppwriteAuth.instance.previlagelevel == 4)
                   SlideButtonR(
                       text: 'Add Section',
                       onTap: () => addSection(),
@@ -764,30 +765,28 @@ class _NoticeBoardState extends State<NoticeBoard>
                       height: 50),
                 Expanded(
                   flex: 12,
-                  child: StreamBuilder<Event>(
+                  child: StreamBuilder<DatabaseEvent>(
                     stream: FirebaseDatabase.instance
-                        .reference()
+                        .ref()
                         .child(
-                            'institute/${FireBaseAuth.instance.instituteid}/publicContent')
+                            'institute/${AppwriteAuth.instance.instituteid}/publicContent')
                         .onValue,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        if (snapshot.data.snapshot.value == null) {
+                        if (snapshot.data!.snapshot.value == null) {
                           return Center(
                             child: Text('No content shared yet'),
                           );
                         }
                         Map<String, Section> sections = Map<String, Section>();
-                        snapshot.data.snapshot.value.forEach((k, v) {
+                        (snapshot.data!.snapshot.value as Map).forEach((k, v) {
                           sections[k] = Section.fromJson(v);
                         });
-                        List<bool> _showCountDot = List(sections?.length);
-                        for (int i = 0; i < _showCountDot.length; i++) {
-                          _showCountDot[i] = false;
-                        }
+                        List<bool> _showCountDot =
+                            List.filled(sections.length, false);
 
                         return ListView.builder(
-                          itemCount: sections?.length,
+                          itemCount: sections.length,
                           itemBuilder: (BuildContext context, int index) {
                             int _totalContent =
                                 sections[sections.keys.toList()[index]]
@@ -795,17 +794,17 @@ class _NoticeBoardState extends State<NoticeBoard>
                                         ?.length ??
                                     0;
                             int _duptotalContent = _totalContent;
-                            int _prevtotalContent = FireBaseAuth.instance.prefs
+                            int _prevtotalContent = AppwriteAuth.instance.prefs!
                                     .getInt(
-                                        "${sections[sections.keys.toList()[index]].name}") ??
+                                        "${sections[sections.keys.toList()[index]]?.name}") ??
                                 0;
                             if (_prevtotalContent < _totalContent) {
                               _showCountDot[index] = true;
 
                               _totalContent = _totalContent - _prevtotalContent;
                             } else {
-                              FireBaseAuth.instance.prefs.setInt(
-                                  "${sections[sections.keys.toList()[index]].name}",
+                              AppwriteAuth.instance.prefs!.setInt(
+                                  "${sections[sections.keys.toList()[index]]?.name}",
                                   _duptotalContent);
                             }
                             return Padding(
@@ -815,7 +814,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                                     borderRadius: BorderRadius.circular(10)),
                                 child: ListTile(
                                   title: Text(
-                                    '${sections[sections.keys.toList()[index]].name}',
+                                    '${sections[sections.keys.toList()[index]]?.name}',
                                     style: TextStyle(color: Color(0xffF36C24)),
                                   ),
                                   trailing: Container(
@@ -825,7 +824,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        if (FireBaseAuth
+                                        if (AppwriteAuth
                                                     .instance.previlagelevel !=
                                                 4 &&
                                             _showCountDot[index])
@@ -841,20 +840,20 @@ class _NoticeBoardState extends State<NoticeBoard>
                                     ),
                                   ),
                                   onTap: () {
-                                    FireBaseAuth.instance.prefs.setInt(
-                                        "${sections[sections.keys.toList()[index]].name}",
+                                    AppwriteAuth.instance.prefs!.setInt(
+                                        "${sections[sections.keys.toList()[index]]?.name}",
                                         _duptotalContent);
 
                                     Navigator.of(context).push(
                                         MaterialPageRoute(builder: (context) {
                                       return PublicContentPage(
-                                          title: sections[
-                                                  sections.keys.toList()[index]]
+                                          title: sections[sections.keys
+                                                  .toList()[index]]!
                                               .name,
                                           reference: FirebaseDatabase.instance
-                                              .reference()
+                                              .ref()
                                               .child(
-                                                  'institute/${FireBaseAuth.instance.instituteid}/publicContent/${sections.keys.toList()[index]}'));
+                                                  'institute/${AppwriteAuth.instance.instituteid}/publicContent/${sections.keys.toList()[index]}'));
                                     })).then((value) {
                                       setState(() {
                                         _showCountDot[index] = false;
@@ -863,7 +862,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                                   },
                                   onLongPress: () => addSection(
                                     name:
-                                        sections[sections.keys.toList()[index]]
+                                        sections[sections.keys.toList()[index]]!
                                             .name,
                                     id: sections.keys.toList()[index],
                                   ),
@@ -960,7 +959,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                     children: <Widget>[
                       (id == '')
                           ? Container()
-                          : FlatButton(
+                          : MaterialButton(
                               onPressed: () async {
                                 String res = await showDialog(
                                     context: context,
@@ -969,9 +968,9 @@ class _NoticeBoardState extends State<NoticeBoard>
                                   return;
                                 }
                                 FirebaseDatabase.instance
-                                    .reference()
+                                    .ref()
                                     .child(
-                                        'institute/${FireBaseAuth.instance.instituteid}/publicContent/$id')
+                                        'institute/${AppwriteAuth.instance.instituteid}/publicContent/$id')
                                     .remove();
                                 Navigator.of(context).pop();
                               },
@@ -979,7 +978,7 @@ class _NoticeBoardState extends State<NoticeBoard>
                                 'Remove'.tr(),
                               ),
                             ),
-                      FlatButton(
+                      MaterialButton(
                         onPressed: () {
                           if (nameTextEditingController.text == '') {
                             Alert.instance
@@ -989,18 +988,18 @@ class _NoticeBoardState extends State<NoticeBoard>
 
                           if (id == '') {
                             FirebaseDatabase.instance
-                                .reference()
+                                .ref()
                                 .child(
-                                    'institute/${FireBaseAuth.instance.instituteid}/publicContent')
+                                    'institute/${AppwriteAuth.instance.instituteid}/publicContent')
                                 .push()
                                 .update(Section(
                                         name: nameTextEditingController.text)
                                     .toJson());
                           } else {
                             FirebaseDatabase.instance
-                                .reference()
+                                .ref()
                                 .child(
-                                    'institute/${FireBaseAuth.instance.instituteid}/publicContent/$id')
+                                    'institute/${AppwriteAuth.instance.instituteid}/publicContent/$id')
                                 .update(Section(
                                         name: nameTextEditingController.text)
                                     .toJson());

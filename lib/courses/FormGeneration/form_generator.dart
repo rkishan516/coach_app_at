@@ -2,25 +2,20 @@ import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/Models/model.dart';
-import 'package:coach_app/courses/FormGeneration/fields/form_builder_checkbox_list.dart';
-import 'package:coach_app/courses/FormGeneration/fields/form_builder_radio.dart';
-import 'package:coach_app/courses/FormGeneration/fields/form_builder_switch.dart';
-import 'package:coach_app/courses/FormGeneration/fields/form_builder_text_field.dart';
-import 'package:coach_app/courses/FormGeneration/form_builder.dart';
-import 'package:coach_app/courses/FormGeneration/form_builder_field_option.dart';
-import 'package:coach_app/courses/FormGeneration/form_builder_validators.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 class FormGenerator extends StatefulWidget {
   final String title;
   final String description;
-  final QuizModel quizModel;
+  final QuizModel? quizModel;
   FormGenerator(
-      {@required this.title,
-      @required this.description,
-      @required this.quizModel});
+      {required this.title,
+      required this.description,
+      required this.quizModel});
   @override
   _FormGeneratorState createState() => _FormGeneratorState();
 }
@@ -29,12 +24,12 @@ class _FormGeneratorState extends State<FormGenerator> {
   String dropDownValue = 'Short Paragraph';
   String label = 'Short Paragraph';
   bool haveChoices = false;
-  List<TextEditingController> choices = List<TextEditingController>();
+  List<TextEditingController> choices = <TextEditingController>[];
   TextEditingController _textEditingController = TextEditingController();
   bool isError = false;
-  List<QuestionModel> formFieldsModals;
-  Duration testTime;
-  DateTime startTime;
+  late List<QuestionModel> formFieldsModals;
+  late Duration testTime;
+  late DateTime startTime;
 
   @override
   void initState() {
@@ -43,7 +38,7 @@ class _FormGeneratorState extends State<FormGenerator> {
     }
     testTime = widget.quizModel?.testTime ?? Duration();
     startTime = widget.quizModel?.startTime ?? DateTime.now();
-    formFieldsModals = widget.quizModel?.questions ?? List<QuestionModel>();
+    formFieldsModals = widget.quizModel?.questions ?? <QuestionModel>[];
     super.initState();
   }
 
@@ -67,7 +62,7 @@ class _FormGeneratorState extends State<FormGenerator> {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.only(left:8.0,right: 8.0),
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
           child: ListView(
             children: <Widget>[
               Card(
@@ -119,7 +114,6 @@ class _FormGeneratorState extends State<FormGenerator> {
                 ),
               ),
               FormBuilder(
-                autovalidate: true,
                 child: ListView.builder(
                   shrinkWrap: true,
                   controller: ScrollController(),
@@ -169,17 +163,21 @@ class _FormGeneratorState extends State<FormGenerator> {
                             child: Text(value.tr()),
                           );
                         }).toList(),
-                        onChanged: (e) => setState(
-                          () {
-                            dropDownValue = e;
-                            label = e + ' label';
-                            if (e == 'Single Choice' || e == 'Multiple Choice') {
-                              haveChoices = true;
-                            } else {
-                              haveChoices = false;
-                            }
-                          },
-                        ),
+                        onChanged: (e) {
+                          if (e == null) return;
+                          setState(
+                            () {
+                              dropDownValue = e;
+                              label = e + ' label';
+                              if (e == 'Single Choice' ||
+                                  e == 'Multiple Choice') {
+                                haveChoices = true;
+                              } else {
+                                haveChoices = false;
+                              }
+                            },
+                          );
+                        },
                       ),
                       TextField(
                         controller: _textEditingController,
@@ -205,7 +203,8 @@ class _FormGeneratorState extends State<FormGenerator> {
                                 return Container(
                                   margin: EdgeInsets.symmetric(vertical: 10),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
                                         'Choice'.tr() + ' $index',
@@ -239,8 +238,8 @@ class _FormGeneratorState extends State<FormGenerator> {
                           bool flag = false;
                           formFieldsModals.forEach((element) {
                             if (element.question == label) {
-                              Alert.instance
-                                  .alert(context, 'Question Already Exist'.tr());
+                              Alert.instance.alert(
+                                  context, 'Question Already Exist'.tr());
                               flag = true;
                               return;
                             }
@@ -254,16 +253,17 @@ class _FormGeneratorState extends State<FormGenerator> {
                           }
 
                           var choice =
-                              choices.map((e) => e?.text).toSet().toList();
+                              choices.map((e) => e.text).toSet().toList();
                           choice.remove('');
                           setState(
                             () => _textEditingController.text = '',
                           );
                           formFieldsModals.add(
                             QuestionModel(
-                                question: label,
-                                type: dropDownValue,
-                                choices: choice),
+                              question: label,
+                              type: dropDownValue,
+                              choices: choice,
+                            ),
                           );
                           choices.forEach((element) {
                             element.text = '';
@@ -274,16 +274,19 @@ class _FormGeneratorState extends State<FormGenerator> {
                         height: 20,
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width/1.2,
-                        child: RaisedButton(
+                        width: MediaQuery.of(context).size.width / 1.2,
+                        child: MaterialButton(
                           child: Text(
                             'Submit Quiz'.tr(),
                             style: TextStyle(color: Colors.white),
                           ),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5)),
                           color: Color(0xffFF6C24),
                           onPressed: () {
                             QuizModel form = QuizModel(
+                              title: '',
+                              description: '',
                               questions: formFieldsModals,
                               testTime: testTime,
                               startTime: startTime,
@@ -303,37 +306,39 @@ class _FormGeneratorState extends State<FormGenerator> {
     );
   }
 
-  getRequiredFormWidget(String value, String labelText,
-      {List<String> choices}) {
+  getRequiredFormWidget(
+    String value,
+    String labelText, {
+    required List<String> choices,
+  }) {
     switch (value) {
       case 'Short Paragraph':
       case 'Fill In the Blank':
         return FormBuilderTextField(
-          attribute: "text" + labelText,
+          name: "text" + labelText,
           decoration: InputDecoration(labelText: labelText),
           maxLength: 100,
         );
       case 'Long Paragraph':
         return FormBuilderTextField(
-          attribute: "text" + labelText,
+          name: "text" + labelText,
           decoration: InputDecoration(labelText: labelText),
         );
       case 'Multiple Choice':
-        return FormBuilderCheckboxList(
-          attribute: 'Multiple Choice' + labelText,
+        return FormBuilderCheckboxGroup(
+          name: 'Multiple Choice' + labelText,
           decoration: InputDecoration(labelText: labelText),
           options: choices
               .map((e) => FormBuilderFieldOption(
                     value: e,
                   ))
               .toList(),
-          validators: [],
         );
       case 'Single Choice':
-        return FormBuilderRadio(
-          attribute: "Single Choice" + labelText,
+        return FormBuilderRadioGroup(
+          name: "Single Choice" + labelText,
           decoration: InputDecoration(labelText: labelText),
-          validators: [FormBuilderValidators.required()],
+          validator: FormBuilderValidators.required(),
           options: choices
               .map((choice) =>
                   FormBuilderFieldOption(value: choice, child: Text("$choice")))
@@ -341,8 +346,8 @@ class _FormGeneratorState extends State<FormGenerator> {
         );
       case 'True False':
         return FormBuilderSwitch(
-          label: Text(labelText),
-          attribute: "True False" + labelText,
+          title: Text(labelText),
+          name: "True False" + labelText,
           initialValue: false,
         );
       default:

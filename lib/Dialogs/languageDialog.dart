@@ -50,9 +50,9 @@ class LanguageDialog extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  FlatButton(
+                  MaterialButton(
                     onPressed: () {
-                      EasyLocalization.of(context).locale = Locale('hi');
+                      EasyLocalization.of(context)?.setLocale(Locale('hi'));
                       showDialog(
                           context: context,
                           builder: (context) => SuccessDialog(
@@ -67,10 +67,10 @@ class LanguageDialog extends StatelessWidget {
                     },
                     child: Text('हिन्दी'),
                   ),
-                  FlatButton(
+                  MaterialButton(
                     color: Color(0xffF36C24),
                     onPressed: () {
-                      EasyLocalization.of(context).locale = Locale('en');
+                      EasyLocalization.of(context)?.setLocale(Locale('en'));
                       showDialog(
                           context: context,
                           builder: (context) => SuccessDialog(

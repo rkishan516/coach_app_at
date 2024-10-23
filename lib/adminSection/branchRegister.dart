@@ -4,22 +4,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Models/model.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 
 class BranchRegister extends StatefulWidget {
-  final Branch institute;
-  final String branchCode;
+  final Branch? institute;
+  final String? branchCode;
   BranchRegister({this.institute, this.branchCode});
   @override
   _BranchRegisterState createState() => _BranchRegisterState();
 }
 
 class _BranchRegisterState extends State<BranchRegister> {
-  GlobalKey<FormState> _formKey;
-  TextEditingController nameTextEditingController,
+  late GlobalKey<FormState> _formKey;
+  late TextEditingController nameTextEditingController,
       branchCodeTextEditingController,
       adminEmailTextEditingController,
       addressTextEditingController,
@@ -27,8 +26,8 @@ class _BranchRegisterState extends State<BranchRegister> {
       accoundHolderNameTextEditingController,
       accountNoTextEditingController,
       accountIFSCTextEditingController;
-  Widget errorBox;
-  bool isEnable;
+  late Widget errorBox;
+  late bool isEnable;
 
   @override
   void initState() {
@@ -37,18 +36,18 @@ class _BranchRegisterState extends State<BranchRegister> {
     nameTextEditingController = TextEditingController()
       ..text = widget.institute?.name ?? '';
     branchCodeTextEditingController = TextEditingController()
-      ..text = widget?.branchCode ?? '';
+      ..text = widget.branchCode ?? '';
     addressTextEditingController = TextEditingController()
       ..text = widget.institute?.address ?? '';
     adminEmailTextEditingController = TextEditingController();
     upiTextEditingController = TextEditingController()
       ..text = widget.institute?.upiId ?? '';
     accoundHolderNameTextEditingController = TextEditingController()
-      ..text = widget.institute?.accountDetails?.accountHolderName ?? '';
+      ..text = widget.institute?.accountDetails.accountHolderName ?? '';
     accountNoTextEditingController = TextEditingController()
-      ..text = widget.institute?.accountDetails?.accountNo ?? '';
+      ..text = widget.institute?.accountDetails.accountNo ?? '';
     accountIFSCTextEditingController = TextEditingController()
-      ..text = widget.institute?.accountDetails?.accountIFSC ?? '';
+      ..text = widget.institute?.accountDetails.accountIFSC ?? '';
     if (widget.institute?.name == null &&
         widget.institute?.address == null &&
         widget.institute?.admin == null &&
@@ -57,7 +56,7 @@ class _BranchRegisterState extends State<BranchRegister> {
       isEnable = true;
     } else {
       adminEmailTextEditingController.text =
-          widget.institute.admin.values.toList()[0].email;
+          widget.institute?.admin.values.toList()[0].email ?? '';
       isEnable = false;
     }
     super.initState();
@@ -255,7 +254,7 @@ class _BranchRegisterState extends State<BranchRegister> {
                   errorBox,
                   Align(
                     alignment: Alignment.bottomRight,
-                    child: FlatButton(
+                    child: MaterialButton(
                       onPressed: () {
                         if (adminEmailTextEditingController.text == '' ||
                             upiTextEditingController.text == '' ||
@@ -302,38 +301,32 @@ class _BranchRegisterState extends State<BranchRegister> {
                           }
                         }
                         DatabaseReference ref = FirebaseDatabase.instance
-                            .reference()
+                            .ref()
                             .child(
-                                'institute/${FireBaseAuth.instance.instituteid}/branches/${branchCodeTextEditingController.text}');
+                                'institute/${AppwriteAuth.instance.instituteid}/branches/${branchCodeTextEditingController.text}');
                         if (widget.branchCode != null) {
                           Branch branch = Branch(
-                              name: nameTextEditingController.text,
-                              address: addressTextEditingController.text,
-                              upiId: upiTextEditingController.text,
-                              accountDetails: AccountDetails(
-                                accountHolderName:
-                                    accoundHolderNameTextEditingController
-                                                .text ==
-                                            ''
-                                        ? null
-                                        : accoundHolderNameTextEditingController
-                                            .text,
-                                accountNo:
-                                    accountNoTextEditingController.text == ''
-                                        ? null
-                                        : accountNoTextEditingController.text,
-                                accountIFSC:
-                                    accountIFSCTextEditingController.text == ''
-                                        ? null
-                                        : accountIFSCTextEditingController.text,
-                              ));
+                            admin: {},
+                            courses: null,
+                            accountId: '',
+                            name: nameTextEditingController.text,
+                            address: addressTextEditingController.text,
+                            upiId: upiTextEditingController.text,
+                            accountDetails: AccountDetails(
+                              accountHolderName:
+                                  accoundHolderNameTextEditingController.text,
+                              accountNo: accountNoTextEditingController.text,
+                              accountIFSC:
+                                  accountIFSCTextEditingController.text,
+                            ),
+                          );
                           ref.update(branch.toJson());
                           Navigator.of(context).pop();
                           return;
                         }
 
                         ref.child('name').once().then((value) {
-                          if (value.value != null) {
+                          if (value.snapshot.value != null) {
                             setState(() {
                               errorBox = Container(
                                 height: 40,
@@ -363,47 +356,39 @@ class _BranchRegisterState extends State<BranchRegister> {
                                   "${adminEmailTextEditingController.text.hashCode}":
                                       Admin(
                                     email: adminEmailTextEditingController.text,
-                                  )
+                                    name: '',
+                                  ),
                                 },
+                                accountId: '',
+                                courses: null,
                                 upiId: upiTextEditingController.text,
                                 accountDetails: AccountDetails(
                                   accountHolderName:
                                       accoundHolderNameTextEditingController
-                                                  .text ==
-                                              ''
-                                          ? null
-                                          : accoundHolderNameTextEditingController
-                                              .text,
+                                          .text,
                                   accountNo:
-                                      accountNoTextEditingController.text == ''
-                                          ? null
-                                          : accountNoTextEditingController.text,
-                                  accountIFSC: accountIFSCTextEditingController
-                                              .text ==
-                                          ''
-                                      ? null
-                                      : accountIFSCTextEditingController.text,
+                                      accountNoTextEditingController.text,
+                                  accountIFSC:
+                                      accountIFSCTextEditingController.text,
                                 )).toJson());
-                            if (FireBaseAuth.instance.previlagelevel == 34) {
-                              FireBaseAuth.instance.branchList.add(int.parse(
+                            if (AppwriteAuth.instance.previlagelevel == 34) {
+                              AppwriteAuth.instance.branchList.add(int.parse(
                                   branchCodeTextEditingController.text));
-                              ref
-                                  .parent()
-                                  .parent()
+                              ref.parent!.parent!
                                   .child(
-                                      'midAdmin/${FireBaseAuth.instance.user.uid}/branches')
-                                  .set(FireBaseAuth.instance.branchList
+                                      'midAdmin/${AppwriteAuth.instance.user!.$id}/branches')
+                                  .set(AppwriteAuth.instance.branchList
                                       .toString());
                             }
-                            if (FireBaseAuth.instance.user.email !=
+                            if (AppwriteAuth.instance.user!.email !=
                                 adminEmailTextEditingController.text) {
-                              Firestore.instance
+                              FirebaseFirestore.instance
                                   .collection('institute')
-                                  .document(adminEmailTextEditingController.text
+                                  .doc(adminEmailTextEditingController.text
                                       .split('@')[0])
-                                  .setData({
+                                  .set({
                                 "value":
-                                    "subAdmin_${FireBaseAuth.instance.instituteid}_${branchCodeTextEditingController.text}"
+                                    "subAdmin_${AppwriteAuth.instance.instituteid}_${branchCodeTextEditingController.text}"
                               });
                             }
                             Navigator.of(context).pop();

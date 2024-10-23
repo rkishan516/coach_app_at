@@ -19,15 +19,15 @@ class PlaceholderLines extends StatefulWidget {
 
   final bool animate;
 
-  final Widget customAnimationOverlay;
+  final Widget? customAnimationOverlay;
 
-  final Color animationOverlayColor;
+  final Color? animationOverlayColor;
 
   final bool rebuildOnStateChange;
 
   const PlaceholderLines({
-    Key key,
-    @required this.count,
+    super.key,
+    required this.count,
     this.align = TextAlign.left,
     this.color = const Color(0xFFDEDEDE),
     this.minOpacity = 0.4,
@@ -39,13 +39,9 @@ class PlaceholderLines extends StatefulWidget {
     this.customAnimationOverlay,
     this.animationOverlayColor,
     this.rebuildOnStateChange = false,
-  })  : assert(count is int),
-        assert(minOpacity <= 1 && maxOpacity <= 1),
+  })  : assert(minOpacity <= 1 && maxOpacity <= 1),
         assert(minWidth <= 1 && maxWidth <= 1),
-        assert(minOpacity is double),
-        assert(maxOpacity is double),
-        assert(minOpacity <= maxOpacity),
-        super(key: key);
+        assert(minOpacity <= maxOpacity);
 
   @override
   _PlaceholderLinesState createState() => _PlaceholderLinesState();
@@ -53,13 +49,11 @@ class PlaceholderLines extends StatefulWidget {
 
 class _PlaceholderLinesState extends State<PlaceholderLines>
     with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
-  Animation<RelativeRect> _animation;
-  Map<int, double> _seeds;
+  late AnimationController _animationController;
+  late Animation<RelativeRect> _animation;
+  Map<int, double> _seeds = {};
 
   double get _randomSeed => Random().nextDouble();
-
-  bool _disposed = false;
 
   @override
   void didUpdateWidget(PlaceholderLines oldWidget) {
@@ -75,7 +69,7 @@ class _PlaceholderLinesState extends State<PlaceholderLines>
 
   @override
   void initState() {
-    _seeds = List(widget.count).asMap().map((index, _) {
+    _seeds = List.filled(widget.count, 0).asMap().map((index, _) {
       return MapEntry(index, _randomSeed);
     });
 
@@ -88,17 +82,9 @@ class _PlaceholderLinesState extends State<PlaceholderLines>
     super.initState();
   }
 
-  void _setupAnimation([Duration _]) {
-    if (context == null) {
-      if (!_disposed) {
-        Future.delayed(Duration(seconds: 1)).then(
-          (__) => _setupAnimation(_),
-        );
-      }
-      return;
-    }
-
-    final RenderBox renderO = context.findRenderObject();
+  void _setupAnimation([Duration? duration]) {
+    final renderO = context.findRenderObject() as RenderBox?;
+    if (renderO == null) return;
     final BoxConstraints constraints = renderO.constraints;
     final double maxWidth = _getMaxConstrainedWidth(constraints);
     final CurvedAnimation curvedAnimation = CurvedAnimation(
@@ -151,7 +137,7 @@ class _PlaceholderLinesState extends State<PlaceholderLines>
   List<Widget> _buildLines(BoxConstraints constraints) {
     List<Widget> list = [];
     for (var i = 0; i < widget.count; i++) {
-      double _random = widget.rebuildOnStateChange ? _randomSeed : _seeds[i];
+      double _random = (widget.rebuildOnStateChange ? _randomSeed : _seeds[i])!;
       double _opacity = (widget.maxOpacity -
               ((widget.maxOpacity - widget.minOpacity) * _random))
           .abs();
@@ -168,7 +154,7 @@ class _PlaceholderLinesState extends State<PlaceholderLines>
         ),
       );
       list.add(
-        _animation != null && widget.animate == true
+        widget.animate == true
             ? AnimatedBuilder(
                 animation: _animation,
                 child: staticWidget,
@@ -176,9 +162,8 @@ class _PlaceholderLinesState extends State<PlaceholderLines>
                   return Container(
                     child: ClipRect(
                       child: Stack(
-                        overflow: Overflow.clip,
                         children: <Widget>[
-                          child,
+                          child!,
                           Transform.translate(
                             offset: Offset(_animation.value.left, 0),
                             child: widget.customAnimationOverlay ??
@@ -227,7 +212,6 @@ class _PlaceholderLinesState extends State<PlaceholderLines>
 
   @override
   void dispose() {
-    _disposed = true;
     _animationController.dispose();
     super.dispose();
   }

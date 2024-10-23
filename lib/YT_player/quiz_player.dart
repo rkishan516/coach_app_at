@@ -4,27 +4,22 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
-import 'package:coach_app/courses/FormGeneration/fields/form_builder_checkbox_list.dart';
-import 'package:coach_app/courses/FormGeneration/fields/form_builder_radio.dart';
-import 'package:coach_app/courses/FormGeneration/fields/form_builder_switch.dart';
-import 'package:coach_app/courses/FormGeneration/fields/form_builder_text_field.dart';
-import 'package:coach_app/courses/FormGeneration/form_builder.dart';
-import 'package:coach_app/courses/FormGeneration/form_builder_field_option.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 class Quiz extends StatefulWidget {
   final DatabaseReference reference;
-  Quiz({this.reference});
+  Quiz({required this.reference});
   @override
   _QuizState createState() => _QuizState();
 }
 
 class _QuizState extends State<Quiz> {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
-  String timerCalled;
-  Timer timer;
+  late String timerCalled;
+  Timer? timer;
 
   @override
   void initState() {
@@ -57,28 +52,28 @@ class _QuizState extends State<Quiz> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [Colors.white, Color(0xffF36C24)])),
-        child: StreamBuilder<Event>(
+        child: StreamBuilder<DatabaseEvent>(
             stream: widget.reference.onValue,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 Content quizContent =
-                    Content.fromJson(snapshot.data.snapshot.value);
+                    Content.fromJson(snapshot.data!.snapshot.value as Map);
                 if (timerCalled == 'Not Called') {
                   timerCalled = 'Called';
-                  DateTime endTime = quizContent.quizModel.startTime
-                      .add(quizContent.quizModel.testTime);
+                  DateTime endTime = quizContent.quizModel!.startTime
+                      .add(quizContent.quizModel!.testTime);
                   Duration testDuration = endTime.difference(DateTime.now());
                   timer = Timer(testDuration, () {
                     _fbKey.currentState?.save();
                     widget.reference
                         .child(
-                            'quizModel/result/${FireBaseAuth.instance.user.uid}')
+                            'quizModel/result/${AppwriteAuth.instance.user!.$id}')
                         .update({
-                      "name": FireBaseAuth.instance.user.displayName,
+                      "name": AppwriteAuth.instance.user!.name,
                       "score": -1,
                       "response": _fbKey.currentState?.value
                     });
-                    Navigator?.of(context)?.pop();
+                    Navigator.of(context).pop();
                   });
                 }
                 return ListView(
@@ -101,10 +96,10 @@ class _QuizState extends State<Quiz> {
                               height: 50,
                               child: Center(
                                 child: Text(
-                                  quizContent.quizModel.testTime.inHours
+                                  quizContent.quizModel!.testTime.inHours
                                           .toString() +
                                       ' hr ' +
-                                      (quizContent.quizModel.testTime
+                                      (quizContent.quizModel!.testTime
                                                   .inMinutes %
                                               60)
                                           .toString() +
@@ -127,24 +122,23 @@ class _QuizState extends State<Quiz> {
                     ),
                     FormBuilder(
                       key: _fbKey,
-                      onChanged: (value) {
-                        _fbKey.currentState.save();
+                      onChanged: () {
+                        _fbKey.currentState?.save();
                       },
-                      autovalidate: true,
                       child: ListView.builder(
                         shrinkWrap: true,
                         controller: ScrollController(
                             initialScrollOffset: 0, keepScrollOffset: true),
-                        itemCount: quizContent.quizModel.questions.length,
+                        itemCount: quizContent.quizModel!.questions!.length,
                         itemBuilder: (BuildContext context, int index) => Card(
                           child: Padding(
                             padding: EdgeInsets.only(left: 10.0, top: 10.0),
                             child: getRequiredFormWidget(
-                              quizContent.quizModel.questions[index].type,
-                              quizContent.quizModel.questions[index].question,
+                              quizContent.quizModel!.questions![index].type,
+                              quizContent.quizModel!.questions![index].question,
                               index + 1,
                               choices: quizContent
-                                  .quizModel.questions[index].choices,
+                                  .quizModel!.questions![index].choices,
                             ),
                           ),
                         ),
@@ -152,10 +146,10 @@ class _QuizState extends State<Quiz> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: FlatButton(
+                      child: MaterialButton(
                         color: Colors.white,
                         child: Text('Submit'.tr()),
-                        onPressed: () async{
+                        onPressed: () async {
                           String res = await showDialog(
                               context: context,
                               builder: (context) => AreYouSure());
@@ -165,9 +159,9 @@ class _QuizState extends State<Quiz> {
                           _fbKey.currentState?.save();
                           widget.reference
                               .child(
-                                  'quizModel/result/${FireBaseAuth.instance.user.uid}')
+                                  'quizModel/result/${AppwriteAuth.instance.user!.$id}')
                               .update({
-                            "name": FireBaseAuth.instance.user.displayName,
+                            "name": AppwriteAuth.instance.user!.name,
                             "score": -1,
                             "response": _fbKey.currentState?.value
                           });
@@ -197,21 +191,24 @@ class _QuizState extends State<Quiz> {
     );
   }
 
-  getRequiredFormWidget(String value, String labelText, int index,
-      {List<String> choices}) {
+  getRequiredFormWidget(
+    String value,
+    String labelText,
+    int index, {
+    required List<String> choices,
+  }) {
     switch (value) {
       case 'Short Paragraph':
       case 'Long Paragraph':
       case 'Fill In the Blank':
         return FormBuilderTextField(
-          attribute: labelText,
+          name: labelText,
           decoration:
               InputDecoration(labelText: index.toString() + '. ' + labelText),
-          validators: [],
         );
       case 'Multiple Choice':
-        return FormBuilderCheckboxList(
-          attribute: labelText,
+        return FormBuilderCheckboxGroup(
+          name: labelText,
           decoration:
               InputDecoration(labelText: index.toString() + '. ' + labelText),
           options: choices
@@ -219,14 +216,12 @@ class _QuizState extends State<Quiz> {
                     value: e,
                   ))
               .toList(),
-          validators: [],
         );
       case 'Single Choice':
-        return FormBuilderRadio(
-          attribute: labelText,
+        return FormBuilderRadioGroup(
+          name: labelText,
           decoration:
               InputDecoration(labelText: index.toString() + '. ' + labelText),
-          validators: [],
           options: choices
               .map((choice) =>
                   FormBuilderFieldOption(value: choice, child: Text("$choice")))
@@ -234,8 +229,8 @@ class _QuizState extends State<Quiz> {
         );
       case 'True False':
         return FormBuilderSwitch(
-          label: Text(index.toString() + '. ' + labelText),
-          attribute: labelText,
+          title: Text(index.toString() + '. ' + labelText),
+          name: labelText,
           initialValue: false,
         );
       default:

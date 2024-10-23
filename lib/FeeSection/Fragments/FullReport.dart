@@ -21,26 +21,24 @@ class _FullReportState extends State<FullReport> {
   String _paidInstallment = "0.0 + 0.0";
   _loadFromDatabase() async {
     if (_studentModel.lastpaidInstallment == "OneTime") {
-      DataSnapshot snapshot = await dbref
-          .reference()
+      final snapshot = await dbref
+          .ref()
           .child(
-              "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${_studentModel.uid}/course/${_studentModel.courseID}/fees/Installments/OneTime")
+              "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${_studentModel.uid}/course/${_studentModel.courseID}/fees/Installments/OneTime")
           .once();
-      Map map = snapshot.value;
+      Map map = snapshot.snapshot.value as Map;
       text = map["PaidInstallment"] + " + " + map["PaidFine"];
     }
     setState(() {
       _totalFees = _studentModel.totalFees;
       if (_studentModel.lastpaidInstallment == "OneTime") {
         double totalfees = double.parse(_totalFees);
-        double discount = double.parse(
-            _studentModel.discount != null ? _studentModel.discount : "0.0");
+        double discount = double.parse(_studentModel.discount);
         double fine = double.parse(_studentModel.listInstallment[0].fine != ""
             ? _studentModel.listInstallment[0].fine
             : "0.0");
-        amountPaidstr = _studentModel.discount != null
-            ? (totalfees * (1 - ((discount) / 100)) + fine).toString()
-            : (fine + totalfees).toString();
+        amountPaidstr =
+            (totalfees * (1 - ((discount) / 100)) + fine).toString();
         _paidInstallment = text;
       } else {
         _studentModel.listInstallment.forEach((element) {
@@ -323,7 +321,7 @@ class _FullReportState extends State<FullReport> {
             SizedBox(
               height: 15.0,
             ),
-            _studentModel.discount != null
+            _studentModel.discount != "0"
                 ? Row(
                     children: [
                       Expanded(
@@ -462,7 +460,7 @@ class _FullReportState extends State<FullReport> {
             ),
             Padding(
               padding: EdgeInsets.only(left: 42, right: 42),
-              child: RaisedButton(
+              child: MaterialButton(
                 color: Color(0xffF36C24),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0)),

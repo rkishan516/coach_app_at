@@ -2,38 +2,40 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 
 class Periods {
-  TimeOfDay startTime;
-  TimeOfDay endTime;
-  Periods({this.startTime, this.endTime});
+  late TimeOfDay startTime;
+  late TimeOfDay endTime;
+  Periods({
+    required this.startTime,
+    required this.endTime,
+  });
 }
 
 class TimeTablePage extends StatefulWidget {
   final String courseId;
-  TimeTablePage({@required this.courseId});
+  TimeTablePage({required this.courseId});
   @override
   _TimeTablePageState createState() => _TimeTablePageState();
 }
 
 class _TimeTablePageState extends State<TimeTablePage> {
   int noOfRow = 1;
-  List<Periods> timePeriods;
-  String day1, day2;
-  Courses courses;
-  TimeTable timeTable;
-  PageController pageController;
-  ScrollController controller1,
+  late List<Periods> timePeriods;
+  late String day1, day2;
+  late Courses courses;
+  late TimeTable timeTable;
+  late PageController pageController;
+  late ScrollController controller1,
       controllerMonday,
       controllerTuesday,
       controllerWednesday,
       controllerThursday,
       controllerFriday,
       controllerSaturday;
-  LinkedScrollControllerGroup controllerGroup;
+  late LinkedScrollControllerGroup controllerGroup;
 
   @override
   void initState() {
@@ -46,22 +48,22 @@ class _TimeTablePageState extends State<TimeTablePage> {
     controllerThursday = controllerGroup.addAndGet();
     controllerFriday = controllerGroup.addAndGet();
     controllerSaturday = controllerGroup.addAndGet();
-    timePeriods = List<Periods>();
+    timePeriods = <Periods>[];
     timePeriods
         .add(Periods(startTime: TimeOfDay.now(), endTime: TimeOfDay.now()));
     day1 = "Monday";
     day2 = "Tuesday";
     FirebaseDatabase.instance
-        .reference()
+        .ref()
         .child(
-            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}')
+            'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}')
         .onValue
         .listen((event) {
       setState(() {
-        courses = Courses.fromJson(event.snapshot.value);
+        courses = Courses.fromJson(event.snapshot.value as Map);
         if (courses.timeTable != null && noOfRow == 1) {
-          timeTable = courses.timeTable;
-          timePeriods = List<Periods>();
+          timeTable = courses.timeTable!;
+          timePeriods = <Periods>[];
           timeTable.monday.forEach((timeTableClass) {
             int flag = 0;
             timePeriods.forEach((element) {
@@ -284,7 +286,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
                                 }
                                 return InkWell(
                                   onTap:
-                                      (FireBaseAuth.instance.previlagelevel >=
+                                      (AppwriteAuth.instance.previlagelevel >=
                                               3)
                                           ? () => addTimePeriod(index)
                                           : null,
@@ -357,8 +359,8 @@ class _TimeTablePageState extends State<TimeTablePage> {
               ],
             ),
           ),
-          if (FireBaseAuth.instance.previlagelevel >= 3)
-            RaisedButton(
+          if (AppwriteAuth.instance.previlagelevel >= 3)
+            MaterialButton(
               color: Color(0xffF36C24),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(
@@ -376,8 +378,8 @@ class _TimeTablePageState extends State<TimeTablePage> {
                 style: TextStyle(color: Colors.white),
               ),
             ),
-          if (FireBaseAuth.instance.previlagelevel >= 3)
-            RaisedButton(
+          if (AppwriteAuth.instance.previlagelevel >= 3)
+            MaterialButton(
               color: Color(0xffF36C24),
               padding: EdgeInsets.only(left: 40, right: 40),
               shape: RoundedRectangleBorder(
@@ -426,9 +428,9 @@ class _TimeTablePageState extends State<TimeTablePage> {
           element.endTime == timePeriods.last.endTime),
     );
     FirebaseDatabase.instance
-        .reference()
+        .ref()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/TimeTable")
+            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}/TimeTable")
         .update(timeTable.toJson());
     timePeriods.removeLast();
     noOfRow--;
@@ -436,35 +438,33 @@ class _TimeTablePageState extends State<TimeTablePage> {
 
   Row buildRow(double width, double height, ScrollController controllerDay1,
       ScrollController controllerDay2) {
-    List<TimeTableClass> firstWidget, secondWidget;
+    List<TimeTableClass>? firstWidget, secondWidget;
 
-    if (courses != null) {
-      if (courses.timeTable != null) {
-        if (day1 == "Monday") {
-          if (courses.timeTable.monday != null) {
-            firstWidget = courses.timeTable.monday;
-          }
-        } else if (day1 == "Wednesday") {
-          if (courses.timeTable.wednesday != null) {
-            firstWidget = courses.timeTable.wednesday;
-          }
-        } else if (day1 == "Friday") {
-          if (courses.timeTable.friday != null) {
-            firstWidget = courses.timeTable.friday;
-          }
+    if (courses.timeTable != null) {
+      if (day1 == "Monday") {
+        if (courses.timeTable?.monday != null) {
+          firstWidget = courses.timeTable!.monday;
         }
-        if (day2 == "Tuesday") {
-          if (courses.timeTable.tuesday != null) {
-            secondWidget = courses.timeTable.tuesday;
-          }
-        } else if (day2 == "Thursday") {
-          if (courses.timeTable.thursday != null) {
-            secondWidget = courses.timeTable.thursday;
-          }
-        } else if (day2 == "Saturday") {
-          if (courses.timeTable.saturday != null) {
-            secondWidget = courses.timeTable.saturday;
-          }
+      } else if (day1 == "Wednesday") {
+        if (courses.timeTable?.wednesday != null) {
+          firstWidget = courses.timeTable!.wednesday;
+        }
+      } else if (day1 == "Friday") {
+        if (courses.timeTable?.friday != null) {
+          firstWidget = courses.timeTable!.friday;
+        }
+      }
+      if (day2 == "Tuesday") {
+        if (courses.timeTable?.tuesday != null) {
+          secondWidget = courses.timeTable!.tuesday;
+        }
+      } else if (day2 == "Thursday") {
+        if (courses.timeTable?.thursday != null) {
+          secondWidget = courses.timeTable!.thursday;
+        }
+      } else if (day2 == "Saturday") {
+        if (courses.timeTable?.saturday != null) {
+          secondWidget = courses.timeTable!.saturday;
         }
       }
     }
@@ -479,9 +479,9 @@ class _TimeTablePageState extends State<TimeTablePage> {
             padding: EdgeInsets.all(0),
             itemBuilder: (context, index) {
               String subject = 'Enter Subject';
-              String teacher;
+              String? teacher;
               if (firstWidget != null) {
-                TimeTableClass timeTableClass;
+                TimeTableClass? timeTableClass;
                 firstWidget.forEach((element) {
                   if (element.startTime == timePeriods[index].startTime &&
                       element.endTime == timePeriods[index].endTime) {
@@ -490,12 +490,12 @@ class _TimeTablePageState extends State<TimeTablePage> {
                 });
 
                 if (timeTableClass != null) {
-                  subject = timeTableClass.subjectName;
-                  teacher = timeTableClass.teacherName;
+                  subject = timeTableClass!.subjectName;
+                  teacher = timeTableClass!.teacherName;
                 }
               }
               return InkWell(
-                onTap: (FireBaseAuth.instance.previlagelevel >= 3)
+                onTap: (AppwriteAuth.instance.previlagelevel >= 3)
                     ? () => addTimeTableSubject(0, index)
                     : null,
                 child: Card(
@@ -523,7 +523,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  (FireBaseAuth.instance.previlagelevel >= 3)
+                                  (AppwriteAuth.instance.previlagelevel >= 3)
                                       ? subject
                                       : (subject == "Enter Subject")
                                           ? "Break"
@@ -563,9 +563,9 @@ class _TimeTablePageState extends State<TimeTablePage> {
             itemCount: noOfRow,
             itemBuilder: (context, index) {
               String subject = 'Enter Subject';
-              String teacher;
+              String? teacher;
               if (secondWidget != null) {
-                TimeTableClass timeTableClass;
+                TimeTableClass? timeTableClass;
                 secondWidget.forEach((element) {
                   if (element.startTime == timePeriods[index].startTime &&
                       element.endTime == timePeriods[index].endTime) {
@@ -574,12 +574,12 @@ class _TimeTablePageState extends State<TimeTablePage> {
                 });
 
                 if (timeTableClass != null) {
-                  subject = timeTableClass.subjectName;
-                  teacher = timeTableClass.teacherName;
+                  subject = timeTableClass!.subjectName;
+                  teacher = timeTableClass!.teacherName;
                 }
               }
               return InkWell(
-                onTap: (FireBaseAuth.instance.previlagelevel >= 3)
+                onTap: (AppwriteAuth.instance.previlagelevel >= 3)
                     ? () => addTimeTableSubject(1, index)
                     : null,
                 child: Card(
@@ -616,7 +616,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  (FireBaseAuth.instance.previlagelevel >= 3)
+                                  (AppwriteAuth.instance.previlagelevel >= 3)
                                       ? subject
                                       : (subject == "Enter Subject")
                                           ? "Break"
@@ -659,25 +659,23 @@ class _TimeTablePageState extends State<TimeTablePage> {
           helpText: "Class Start Time",
           initialEntryMode: TimePickerEntryMode.input,
         ) ??
-        timePeriods[i].startTime ??
-        TimeOfDay.now();
+        timePeriods[i].startTime;
     timePeriods[i].endTime = await showTimePicker(
           context: context,
           initialTime: TimeOfDay(hour: 00, minute: 00),
           helpText: "Class End Time",
           initialEntryMode: TimePickerEntryMode.input,
         ) ??
-        timePeriods[i].endTime ??
-        TimeOfDay.now();
+        timePeriods[i].endTime;
     setState(() {});
   }
 
   addTimeTableSubject(int dayLine, int timeLine,
       {String name = '', String mentors = ''}) {
-    Subjects selectedSubject;
-    String selectedSubjectKey;
-    String selectedTeacherKey;
-    Teacher selectedTeacher;
+    Subjects? selectedSubject;
+    String? selectedSubjectKey;
+    String? selectedTeacherKey;
+    Teacher? selectedTeacher;
     Map<String, Teacher> teachers;
     showDialog(
       context: context,
@@ -717,7 +715,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
                         DropdownButton<String>(
                             hint: Text('Select Subject'),
                             value: selectedSubjectKey,
-                            items: courses.subjects.entries
+                            items: courses.subjects?.entries
                                 .map<DropdownMenuItem<String>>((e) =>
                                     DropdownMenuItem<String>(
                                         value: e.key,
@@ -750,15 +748,15 @@ class _TimeTablePageState extends State<TimeTablePage> {
                           SizedBox(
                             height: 10,
                           ),
-                          StreamBuilder<Event>(
+                          StreamBuilder<DatabaseEvent>(
                               stream: FirebaseDatabase.instance
-                                  .reference()
+                                  .ref()
                                   .child(
-                                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers')
+                                      'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/teachers')
                                   .onValue,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                  if (snapshot.data.snapshot.value == null) {
+                                  if (snapshot.data!.snapshot.value == null) {
                                     return Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
@@ -773,7 +771,8 @@ class _TimeTablePageState extends State<TimeTablePage> {
                                     );
                                   } else {
                                     teachers = Map<String, Teacher>();
-                                    snapshot.data.snapshot.value?.forEach(
+                                    (snapshot.data?.snapshot.value as Map?)
+                                        ?.forEach(
                                       (k, v) {
                                         Teacher teacher = Teacher.fromJson(v);
                                         // if (mentors.contains(teacher.email)) {
@@ -781,7 +780,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
                                         // }
                                         teacher.courses?.forEach((course) {
                                           if (course.id == widget.courseId) {
-                                            if (course.subjects
+                                            if (course.subjects!
                                                 .contains(selectedSubjectKey)) {
                                               teachers[k] = teacher;
                                             }
@@ -801,6 +800,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
                                           )
                                           .toList(),
                                       onChanged: (val) {
+                                        if (val == null) return;
                                         setState(() {
                                           selectedTeacherKey = val;
                                           teachers.forEach((key, value) {
@@ -826,7 +826,7 @@ class _TimeTablePageState extends State<TimeTablePage> {
                       children: <Widget>[
                         (name == '')
                             ? Container()
-                            : FlatButton(
+                            : MaterialButton(
                                 onPressed: () async {
                                   String res = await showDialog(
                                       context: context,
@@ -841,16 +841,16 @@ class _TimeTablePageState extends State<TimeTablePage> {
                                   'Remove',
                                 ),
                               ),
-                        FlatButton(
+                        MaterialButton(
                           onPressed: () {
                             TimeTableClass timeTableClass = TimeTableClass(
                                 classType: "class",
                                 startTime: timePeriods[timeLine].startTime,
                                 endTime: timePeriods[timeLine].endTime,
-                                subjectKey: selectedSubjectKey,
-                                subjectName: selectedSubject.name,
-                                teacherKey: selectedTeacherKey,
-                                teacherName: selectedTeacher.name);
+                                subjectKey: selectedSubjectKey!,
+                                subjectName: selectedSubject!.name,
+                                teacherKey: selectedTeacherKey!,
+                                teacherName: selectedTeacher!.name);
                             if (dayLine == 0) {
                               if (day1 == "Monday") {
                                 if (timeTable.monday.length > timeLine) {
@@ -894,9 +894,9 @@ class _TimeTablePageState extends State<TimeTablePage> {
                               }
                             }
                             FirebaseDatabase.instance
-                                .reference()
+                                .ref()
                                 .child(
-                                    "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/TimeTable")
+                                    "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}/TimeTable")
                                 .update(timeTable.toJson());
                             Navigator.of(context).pop();
                           },

@@ -3,9 +3,9 @@ import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Student/all_course_view.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RegistrationPage extends StatefulWidget {
@@ -14,13 +14,13 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
-  TextEditingController nameTextEditingController,
+  late TextEditingController nameTextEditingController,
       addressTextEditingController,
       phoneTextEditingController,
       instituteCodeTextEditingController;
   String status = 'New Student';
-  GlobalKey<FormState> _formKey;
-  GlobalKey<ScaffoldState> _scKey;
+  late GlobalKey<FormState> _formKey;
+  late GlobalKey<ScaffoldState> _scKey;
 
   @override
   void initState() {
@@ -47,7 +47,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
               color: Color(0xffF36C24),
             ),
             onPressed: () {
-              FireBaseAuth.instance.signoutWithGoogle();
+              AppwriteAuth.instance.signoutWithGoogle();
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => WelcomePage()),
                   (route) => false);
@@ -91,7 +91,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     children: <Widget>[
                       TextFormField(
                         validator: (value) {
-                          if (value.isEmpty) {
+                          if (value == null || value.isEmpty) {
                             return 'Please enter your name';
                           }
                           return null;
@@ -116,7 +116,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     children: <Widget>[
                       TextFormField(
                         validator: (value) {
-                          if (value.isEmpty) {
+                          if (value == null || value.isEmpty) {
                             return 'Please enter your institute code';
                           }
                           return null;
@@ -141,7 +141,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     children: <Widget>[
                       TextFormField(
                         validator: (value) {
-                          if (value.isEmpty) {
+                          if (value == null || value.isEmpty) {
                             return 'Please enter your phone number';
                           }
                           if (value.length < 10) {
@@ -163,58 +163,57 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     ],
                   ),
                 ),
-                RaisedButton(
+                MaterialButton(
                   color: Colors.white,
                   elevation: 0.0,
                   onPressed: () async {
-                    if (!_formKey.currentState.validate()) {
+                    if (!_formKey.currentState!.validate()) {
                       return;
                     }
                     if (nameTextEditingController.text != '' &&
                         phoneTextEditingController.text != '' &&
                         instituteCodeTextEditingController.text != '') {
                       Student student = Student(
-                          name: nameTextEditingController.text,
-                          address: addressTextEditingController.text,
-                          phoneNo: phoneTextEditingController.text,
-                          photoURL: FireBaseAuth.instance.user.photoUrl,
-                          email: FireBaseAuth.instance.user.email,
-                          status: status);
+                        name: nameTextEditingController.text,
+                        address: addressTextEditingController.text,
+                        phoneNo: phoneTextEditingController.text,
+                        photoURL: '',
+                        email: AppwriteAuth.instance.user!.email,
+                        status: status,
+                      );
                       var branchCode =
                           instituteCodeTextEditingController.text.substring(4);
-                      DataSnapshot dataSnapshot = await FirebaseDatabase
-                          .instance
-                          .reference()
+                      final dataSnapshot = await FirebaseDatabase.instance
+                          .ref()
                           .child(
                               '/instituteList/${instituteCodeTextEditingController.text.substring(0, 4)}')
                           .once();
-                      if (dataSnapshot.value == null) {
+                      if (dataSnapshot.snapshot.value == null) {
                         Alert.instance
                             .alert(context, 'Wrong Institute Code'.tr());
                         return;
                       }
-                      DataSnapshot dataSnapshot1 = await FirebaseDatabase
-                          .instance
-                          .reference()
+                      final dataSnapshot1 = await FirebaseDatabase.instance
+                          .ref()
                           .child(
-                              '/institute/${dataSnapshot.value}/branches/$branchCode/name')
+                              '/institute/${dataSnapshot.snapshot.value}/branches/$branchCode/name')
                           .once();
-                      if (dataSnapshot1.value == null) {
+                      if (dataSnapshot1.snapshot.value == null) {
                         Alert.instance
                             .alert(context, 'Wrong Institute Code'.tr());
                         return;
                       }
-                      FireBaseAuth.instance.prefs
-                          .setString('insCode', dataSnapshot.value);
-                      FireBaseAuth.instance.prefs
+                      AppwriteAuth.instance.prefs!.setString(
+                          'insCode', dataSnapshot.snapshot.value.toString());
+                      AppwriteAuth.instance.prefs!
                           .setString('branchCode', branchCode);
                       DatabaseReference reference = FirebaseDatabase.instance
-                          .reference()
+                          .ref()
                           .child(
-                              "institute/${dataSnapshot.value}/branches/$branchCode/");
+                              "institute/${dataSnapshot.snapshot.value}/branches/$branchCode/");
 
                       reference
-                          .child('students/${FireBaseAuth.instance.user.uid}')
+                          .child('students/${AppwriteAuth.instance.user!.$id}')
                           .update(student.toJson());
                       Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(builder: (context) {
@@ -223,7 +222,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         );
                       }), (route) => false);
                     } else {
-                      _scKey.currentState.showSnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
                             'Something remains unfilled'.tr(),

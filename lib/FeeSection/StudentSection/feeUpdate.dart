@@ -7,23 +7,27 @@ class FeeUpdate extends StatefulWidget {
   final DatabaseReference ref;
   final String courseID;
   final String keyS;
-  FeeUpdate({this.ref, this.courseID, this.keyS});
+  FeeUpdate({
+    required this.ref,
+    required this.courseID,
+    required this.keyS,
+  });
   @override
   _FeeUpdateState createState() => _FeeUpdateState();
 }
 
 class _FeeUpdateState extends State<FeeUpdate> {
   bool paidOneTime = true;
-  List<bool> installments;
-  Fees fees;
-  DataSnapshot snap;
+  late List<bool> installments;
+  late Fees fees;
+  late DataSnapshot snap;
 
   paidOneTimeS(double totalfees, String duration, String date, String courseId,
       String studentUid) async {
     await FirebaseDatabase.instance
-        .reference()
+        .ref()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/")
+            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/")
         .update({
       "Installments": {
         "OneTime": {
@@ -53,14 +57,14 @@ class _FeeUpdateState extends State<FeeUpdate> {
     for (int i = 0; i < _listInstallment.length; i++) {
       if (i < paidInstallment.length ? !paidInstallment[i] : false) {
         FirebaseDatabase.instance
-            .reference()
+            .ref()
             .child(
-                "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/Installments")
+                "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/Installments")
             .update({
           keys[i]: {
             "Amount":
-                (double.parse(_listInstallment[keys[i]].amount)).toString(),
-            "Duration": _listInstallment[keys[i]].duration,
+                (double.parse(_listInstallment[keys[i]]!.amount)).toString(),
+            "Duration": _listInstallment[keys[i]]!.duration,
             "Status": "Due",
             "PaidTime": "",
             "Fine": ""
@@ -71,14 +75,14 @@ class _FeeUpdateState extends State<FeeUpdate> {
       } else {
         lastPaid = keys[i];
         FirebaseDatabase.instance
-            .reference()
+            .ref()
             .child(
-                "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/Installments")
+                "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/$studentUid/course/$courseId/fees/Installments")
             .update(
           {
             keys[i]: {
-              "Amount": _listInstallment[keys[i]].amount,
-              "Duration": _listInstallment[keys[i]].duration,
+              "Amount": _listInstallment[keys[i]]!.amount,
+              "Duration": _listInstallment[keys[i]]!.duration,
               "Status": "Paid",
               "PaidTime": date,
               "Fine": ""
@@ -95,14 +99,12 @@ class _FeeUpdateState extends State<FeeUpdate> {
   void initState() {
     widget.ref.child("fees").onValue.listen((event) {
       if (event.snapshot.value == null) {
-        fees = null;
         return;
       }
       setState(() {
-        fees = Fees.fromJson(event.snapshot.value);
-        if (installments == null &&
-            (fees.maxInstallment?.isMaxAllowed ?? false)) {
-          installments = List<bool>();
+        fees = Fees.fromJson(event.snapshot.value as Map);
+        if (installments == null && (fees.maxInstallment.isMaxAllowed)) {
+          installments = <bool>[];
           for (int i = 0;
               i < int.parse(fees.maxInstallment.maxAllowedInstallment);
               i++) {
@@ -111,9 +113,7 @@ class _FeeUpdateState extends State<FeeUpdate> {
         }
       });
     });
-    widget.ref
-        .parent()
-        .parent()
+    widget.ref.parent!.parent!
         .child(
             'students/${widget.keyS}/course/${widget.courseID}/fees/Installments')
         .onValue
@@ -123,19 +123,20 @@ class _FeeUpdateState extends State<FeeUpdate> {
       }
       setState(() {
         snap = event.snapshot;
-        if ((fees.oneTime?.isOneTimeAllowed ?? false) &&
-            (fees.maxInstallment?.isMaxAllowed ?? false)) {
+        if ((fees.oneTime.isOneTimeAllowed) &&
+            (fees.maxInstallment.isMaxAllowed)) {
         } else {
-          paidOneTime = fees.oneTime?.isOneTimeAllowed ?? false;
+          paidOneTime = fees.oneTime.isOneTimeAllowed;
         }
-        if (snap.value["AllowedThrough"] == "OneTime") {
+        if ((snap.value as Map)["AllowedThrough"] == "OneTime") {
           paidOneTime = true;
-        } else if (snap.value["AllowedThrough"] == "Installments") {
+        } else if ((snap.value as Map)["AllowedThrough"] == "Installments") {
           paidOneTime = false;
           for (int i = 0; i < installments.length; i++) {
-            if (snap.value["${i + 1}" + "Installment"] != null) {
-              installments[i] =
-                  snap.value["${i + 1}" + "Installment"]["Status"] == "Paid";
+            if ((snap.value as Map)["${i + 1}" + "Installment"] != null) {
+              installments[i] = (snap.value as Map)["${i + 1}" + "Installment"]
+                      ["Status"] ==
+                  "Paid";
             }
           }
         }
@@ -157,12 +158,12 @@ class _FeeUpdateState extends State<FeeUpdate> {
         width: MediaQuery.of(context).size.width,
         child: ListView(
           children: [
-            if (fees?.oneTime?.isOneTimeAllowed ?? false)
+            if (fees.oneTime.isOneTimeAllowed ?? false)
               SwitchListTile.adaptive(
                 title: Text('Paid One Time'),
                 value: paidOneTime,
-                onChanged: ((fees.oneTime?.isOneTimeAllowed ?? false) &&
-                        (fees.maxInstallment?.isMaxAllowed ?? false))
+                onChanged: ((fees.oneTime.isOneTimeAllowed ?? false) &&
+                        (fees.maxInstallment.isMaxAllowed ?? false))
                     ? (val) {
                         setState(() {
                           if (paidOneTime == true) {
@@ -173,12 +174,12 @@ class _FeeUpdateState extends State<FeeUpdate> {
                       }
                     : null,
               ),
-            if (fees?.maxInstallment?.isMaxAllowed ?? false)
+            if (fees.maxInstallment.isMaxAllowed ?? false)
               SwitchListTile.adaptive(
                 title: Text('Paid In Installments'),
                 value: !paidOneTime,
-                onChanged: ((fees.oneTime?.isOneTimeAllowed ?? false) &&
-                        (fees.maxInstallment?.isMaxAllowed ?? false))
+                onChanged: ((fees.oneTime.isOneTimeAllowed ?? false) &&
+                        (fees.maxInstallment.isMaxAllowed ?? false))
                     ? (val) {
                         setState(() {
                           if (paidOneTime == true) {
@@ -192,8 +193,8 @@ class _FeeUpdateState extends State<FeeUpdate> {
             if (!paidOneTime)
               ListView.builder(
                 shrinkWrap: true,
-                itemCount: int.parse(
-                    fees.maxInstallment?.maxAllowedInstallment ?? "0"),
+                itemCount:
+                    int.parse(fees.maxInstallment.maxAllowedInstallment ?? "0"),
                 itemBuilder: (context, index) {
                   return CheckboxListTile(
                     title: Text('Installment ${index + 1}'),
@@ -220,7 +221,7 @@ class _FeeUpdateState extends State<FeeUpdate> {
                   );
                 },
               ),
-            RaisedButton(
+            MaterialButton(
               color: Color(0xffF36C24),
               onPressed: () {
                 DateTime dateTime = DateTime.now();
@@ -232,19 +233,19 @@ class _FeeUpdateState extends State<FeeUpdate> {
                     : dateTime.month.toString();
                 String yyyy = dateTime.year.toString();
                 String date = dd + " " + mm + " " + yyyy;
-                if ((fees.oneTime?.isOneTimeAllowed ?? false) && paidOneTime) {
+                if ((fees.oneTime.isOneTimeAllowed ?? false) && paidOneTime) {
                   paidOneTimeS(
-                    double.parse(fees?.feeSection?.totalFees ?? "0"),
-                    (fees.oneTime?.duration),
+                    double.parse(fees.feeSection.totalFees ?? "0"),
+                    (fees.oneTime.duration),
                     (date),
                     widget.courseID,
                     widget.keyS,
                   );
                 } else if (!paidOneTime &&
-                    (fees.maxInstallment?.isMaxAllowed ?? false)) {
+                    (fees.maxInstallment.isMaxAllowed ?? false)) {
                   _updateList(
                     installments,
-                    fees.maxInstallment?.installment,
+                    fees.maxInstallment.installment,
                     widget.courseID,
                     widget.keyS,
                     date,

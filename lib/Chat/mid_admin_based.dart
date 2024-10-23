@@ -1,45 +1,31 @@
 //for mid admin based
 
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:coach_app/Chat/group_description.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coach_app/Chat/group_description.dart';
 import 'package:coach_app/Chat/models/item_class.dart';
 import 'package:coach_app/Chat/participants.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:flutter/material.dart';
 
-class midAdminBased extends StatefulWidget {
-  final curUser currentUser;
-  midAdminBased({this.currentUser});
+class MidAdminBased extends StatefulWidget {
+  final CurrUser currentUser;
+  MidAdminBased({required this.currentUser});
   @override
-  _midAdminBasedState createState() => _midAdminBasedState(currentUser);
+  _MidAdminBasedState createState() => _MidAdminBasedState(currentUser);
 }
 
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
-}
-
-class _midAdminBasedState extends State<midAdminBased> {
-  final curUser currentUser;
-  _midAdminBasedState(this.currentUser);
+class _MidAdminBasedState extends State<MidAdminBased> {
+  final CurrUser currentUser;
+  _MidAdminBasedState(this.currentUser);
 
   List<Item> itemList = [], tempList = [];
   List<Item> selectedList = [];
-  List<DocumentSnapshot> ulist;
-  StreamSubscription<QuerySnapshot> subscription;
+  List<DocumentSnapshot> ulist = [];
+  late StreamSubscription<QuerySnapshot> subscription;
   CollectionReference collectionReference =
-      Firestore.instance.collection("Mid Admin");
+      FirebaseFirestore.instance.collection("Mid Admin");
 
   @override
   void initState() {
@@ -47,17 +33,17 @@ class _midAdminBasedState extends State<midAdminBased> {
     super.initState();
     subscription = collectionReference.snapshots().listen((snapshot) {
       setState(() {
-        ulist = snapshot.documents;
+        ulist = snapshot.docs;
 
         for (int i = 0; i < ulist.length; i++) {
           String name, photo, uid, deg, code;
           int rank = 0;
-          name = ulist[i].data['name'];
-          photo = ulist[i].data['photoUrl'];
-          uid = ulist[i].data['uid'];
-          deg = ulist[i].data['role'];
+          name = (ulist[i].data as Map)['name'];
+          photo = (ulist[i].data as Map)['photoUrl'];
+          uid = (ulist[i].data as Map)['uid'];
+          deg = (ulist[i].data as Map)['role'];
           rank = i + 1;
-          code = ulist[i].data['code'];
+          code = (ulist[i].data as Map)['code'];
 
           if (uid == currentUser.uid) {
             continue;
@@ -71,12 +57,8 @@ class _midAdminBasedState extends State<midAdminBased> {
   }
 
   loadList() {
-    //itemList = List();
-    List<Item> itemList;
-    selectedList = List();
-
-    String name, deg, photourl, uid;
-    name = ulist[1].data['name'].toString();
+    selectedList = [];
+    final name = (ulist[1].data as Map)['name'].toString();
     print("$name");
   }
 
@@ -96,7 +78,7 @@ class _midAdminBasedState extends State<midAdminBased> {
                 onPressed: () {
                   Navigator.of(context)
                       .push(new MaterialPageRoute(builder: (context) {
-                    return new groupDes(
+                    return new GroupDes(
                       currentUser: currentUser,
                       //sList: selectedList,
                       ch: choose(true, false, false, false, false, false),
@@ -179,7 +161,7 @@ class _midAdminBasedState extends State<midAdminBased> {
                                       Navigator.of(context).push(
                                           new MaterialPageRoute(
                                               builder: (context) {
-                                        return new groupDes(
+                                        return new GroupDes(
                                           currentUser: currentUser,
                                         );
                                       }));

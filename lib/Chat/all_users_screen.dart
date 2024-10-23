@@ -1,50 +1,33 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Authentication/welcome_page.dart';
 import 'package:coach_app/Chat/group_list.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:coach_app/Chat/models/item_class.dart';
 import 'package:coach_app/Chat/pages/chats.dart';
 import 'package:coach_app/Chat/participants.dart';
-
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
-}
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AllUsersScreen extends StatefulWidget {
-  final curUser currentUser;
-  AllUsersScreen({this.currentUser});
+  final CurrUser currentUser;
+  AllUsersScreen({required this.currentUser});
 
   _AllUsersScreenState createState() => _AllUsersScreenState(currentUser);
 }
 
 class _AllUsersScreenState extends State<AllUsersScreen>
     with SingleTickerProviderStateMixin {
-  final curUser currentUser;
+  final CurrUser currentUser;
   _AllUsersScreenState(this.currentUser);
 
-  TabController _tabController;
+  late TabController _tabController;
 
-  String des;
+  late String des;
   int len = 0;
   List<Tab> _tabs = [];
   List<Widget> _chats = [];
 
   final GoogleSignIn googleSignIn = GoogleSignIn();
-  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -73,8 +56,6 @@ class _AllUsersScreenState extends State<AllUsersScreen>
     super.dispose();
   }
 
-  String cat, cd;
-
   @override
   Widget build(BuildContext context) {
     _tabs.clear();
@@ -83,23 +64,23 @@ class _AllUsersScreenState extends State<AllUsersScreen>
     if (des == "Admin") {
       //_chats.clear();
 
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Mid Admin",
         currentUser: currentUser,
       )); //to call different chat screens
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Sub Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Teacher",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Student",
         currentUser: currentUser,
       ));
-      _chats.add(groupList(currentUser: currentUser));
+      _chats.add(GroupList(currentUser: currentUser));
 
       _tabs.clear();
 
@@ -132,27 +113,27 @@ class _AllUsersScreenState extends State<AllUsersScreen>
     if (des == "Mid Admin") {
       //_chats.clear();
 
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Mid Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Sub Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Teacher",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Student",
         currentUser: currentUser,
       ));
-      _chats.add(groupList(currentUser: currentUser));
+      _chats.add(GroupList(currentUser: currentUser));
 
       _tabs.clear();
 
@@ -190,27 +171,27 @@ class _AllUsersScreenState extends State<AllUsersScreen>
     if (des == "Sub Admin") {
       //_chats.clear();
 
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Mid Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Sub Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Teacher",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Student",
         currentUser: currentUser,
       ));
-      _chats.add(groupList(
+      _chats.add(GroupList(
         currentUser: currentUser,
       ));
 
@@ -250,19 +231,19 @@ class _AllUsersScreenState extends State<AllUsersScreen>
     if (des == "Teacher") {
       //_chats.clear();
 
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Sub Admin",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Teacher",
         currentUser: currentUser,
       ));
-      _chats.add(chats(
+      _chats.add(Chats(
         cat: "Student",
         currentUser: currentUser,
       ));
-      _chats.add(groupList(
+      _chats.add(GroupList(
         currentUser: currentUser,
       ));
 
@@ -290,7 +271,7 @@ class _AllUsersScreenState extends State<AllUsersScreen>
                   fontSize: SizeConfig.b * 3.7))));
     }
     if (des == "Student") {
-      _chats.add(groupList(
+      _chats.add(GroupList(
         currentUser: currentUser,
       ));
 
@@ -316,7 +297,7 @@ class _AllUsersScreenState extends State<AllUsersScreen>
           IconButton(
             icon: Icon(Icons.close),
             onPressed: () async {
-              FireBaseAuth.instance.signoutWithGoogle();
+              AppwriteAuth.instance.signoutWithGoogle();
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => WelcomePage()),
                   (Route<dynamic> route) => false);

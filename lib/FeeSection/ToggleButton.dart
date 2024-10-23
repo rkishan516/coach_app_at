@@ -3,9 +3,12 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class ToggleButton extends StatefulWidget {
-  final String studentUid;
-  final String courseId;
-  ToggleButton({this.studentUid, this.courseId});
+  final String? studentUid;
+  final String? courseId;
+  ToggleButton({
+    this.studentUid,
+    this.courseId,
+  });
   @override
   _ToggleButtonState createState() => _ToggleButtonState();
 }
@@ -31,7 +34,8 @@ class _ToggleButtonState extends State<ToggleButton> {
                     "%"),
               );
             }).toList(),
-            onChanged: (String newValueSelected) {
+            onChanged: (String? newValueSelected) {
+              if (newValueSelected == null) return;
               setState(() {
                 this._currentItemSelected = newValueSelected;
                 if (_currentItemSelected == "none") {
@@ -49,7 +53,7 @@ class _ToggleButtonState extends State<ToggleButton> {
             value: _currentItemSelected,
           ),
           actions: <Widget>[
-            new FlatButton(
+            new MaterialButton(
               child: new Text('CANCEL'),
               onPressed: () {
                 Navigator.of(context).pop("cancel");
@@ -64,28 +68,29 @@ class _ToggleButtonState extends State<ToggleButton> {
   @override
   void initState() {
     dbRef
-        .reference()
+        .ref()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coupons")
+            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/coupons")
         .once()
         .then((snapshot) {
-      snapshot.value?.forEach((key, value) {
-        couponslist.add(snapshot.value[key]["discount"]);
+      (snapshot.snapshot.value as Map?)?.forEach((key, value) {
+        couponslist.add((snapshot.snapshot.value as Map)[key]["discount"]);
       });
     });
     dbRef
-        .reference()
+        .ref()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}")
+            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}")
         .child(
             "students/${widget.studentUid}/course/${widget.courseId}/discount")
         .once()
         .then((snapshot) {
       setState(() {
-        if (snapshot.value.toString() != "none" && snapshot.value != null) {
+        if (snapshot.snapshot.value.toString() != "none" &&
+            snapshot.snapshot.value != null) {
           toggleValue = true;
           doOpen = false;
-          _currentItemSelected = snapshot.value.toString();
+          _currentItemSelected = snapshot.snapshot.value.toString();
         } else {
           _currentItemSelected = "none";
         }
@@ -123,7 +128,7 @@ class _ToggleButtonState extends State<ToggleButton> {
         //           if (value == "Selected") {
         //             if (_currentItemSelected != "none")
         //               dbRef
-        //                   .reference()
+        //                   .ref()
         //                   .child(
         //                       "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}")
         //                   .child(
@@ -131,7 +136,7 @@ class _ToggleButtonState extends State<ToggleButton> {
         //                   .update({"discount": _currentItemSelected});
         //             else {
         //               dbRef
-        //                   .reference()
+        //                   .ref()
         //                   .child(
         //                       "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}")
         //                   .child(
@@ -201,9 +206,9 @@ class _ToggleButtonState extends State<ToggleButton> {
         showErrorDialog(context).then((value) {
           if (value == "Selected") {
             dbRef
-                .reference()
+                .ref()
                 .child(
-                    "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}")
+                    "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}")
                 .child(
                     "students/${widget.studentUid}/course/${widget.courseId}")
                 .update({"discount": _currentItemSelected});
@@ -216,9 +221,9 @@ class _ToggleButtonState extends State<ToggleButton> {
         });
       } else {
         dbRef
-            .reference()
+            .ref()
             .child(
-                "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}")
+                "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}")
             .child(
                 "students/${widget.studentUid}/course/${widget.courseId}/discount")
             .remove();

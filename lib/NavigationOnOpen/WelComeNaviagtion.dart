@@ -7,56 +7,58 @@ import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Provider/AdminProvider.dart';
 import 'package:coach_app/Student/WaitScreen.dart';
 import 'package:coach_app/Student/all_course_view.dart';
+import 'package:coach_app/Student/course_page.dart' as st_cp;
 import 'package:coach_app/Student/registration_form.dart';
 import 'package:coach_app/courses/course_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:coach_app/Student/course_page.dart' as st_cp;
 import 'package:provider/provider.dart';
 
 class WelcomeNavigation {
   static signInWithGoogleAndGetPage(BuildContext context) {
     print('WelcomeNavigation');
-    FireBaseAuth.instance.signInWithGoogle(context).then(
+    AppwriteAuth.instance.signInWithGoogle(context).then(
       (value) async {
         if (value == null) {
           return;
         }
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
           builder: (context) {
-            if (FireBaseAuth.instance.previlagelevel == 4) {
+            if (AppwriteAuth.instance.previlagelevel == 4) {
               FirebaseDatabase.instance
-                  .reference()
-                  .child("institute/${FireBaseAuth.instance.instituteid}")
+                  .ref()
+                  .child("institute/${AppwriteAuth.instance.instituteid}")
                   .keepSynced(true);
               return ChangeNotifierProvider(
                 create: (context) => AdminProvider(),
                 child: BranchList(),
               );
-            } else if (FireBaseAuth.instance.previlagelevel == 34) {
+            } else if (AppwriteAuth.instance.previlagelevel == 34) {
               return MidAdminBranchList();
-            } else if (FireBaseAuth.instance.previlagelevel == 3) {
+            } else if (AppwriteAuth.instance.previlagelevel == 3) {
               FirebaseDatabase.instance
-                  .reference()
+                  .ref()
                   .child(
-                      "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}")
+                      "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}")
                   .keepSynced(true);
               return BranchPage();
-            } else if (FireBaseAuth.instance.previlagelevel == 2) {
-              return StreamBuilder<Event>(
+            } else if (AppwriteAuth.instance.previlagelevel == 2) {
+              return StreamBuilder<DatabaseEvent>(
                 stream: FirebaseDatabase.instance
-                    .reference()
+                    .ref()
                     .child(
-                        "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${value.uid}")
+                        "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/teachers/${value.$id}")
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    if (snapshot.data.snapshot.value == null) {
-                      FireBaseAuth.instance.signoutWithGoogle();
+                    if (snapshot.data?.snapshot.value == null) {
+                      AppwriteAuth.instance.signoutWithGoogle();
                       return WelcomePage();
                     }
                     return CoursePage(
-                      teacher: Teacher.fromJson(snapshot.data.snapshot.value),
+                      teacher: Teacher.fromJson(
+                        snapshot.data!.snapshot.value as Map,
+                      ),
                     );
                   } else {
                     return Center(
@@ -65,34 +67,35 @@ class WelcomeNavigation {
                   }
                 },
               );
-            } else if (FireBaseAuth.instance.previlagelevel == 1) {
+            } else if (AppwriteAuth.instance.previlagelevel == 1) {
               FirebaseDatabase.instance
-                  .reference()
+                  .ref()
                   .child(
-                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}')
+                      'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}')
                   .keepSynced(true);
               return st_cp.CoursePage();
             } else {
-              if (FireBaseAuth.instance.prefs.getString('insCode') == null ||
-                  FireBaseAuth.instance.prefs.getString('branchCode') == null) {
+              if (AppwriteAuth.instance.prefs!.getString('insCode') == null ||
+                  AppwriteAuth.instance.prefs!.getString('branchCode') ==
+                      null) {
                 return RegistrationPage();
               }
-              return StreamBuilder<Event>(
+              return StreamBuilder<DatabaseEvent>(
                 stream: FirebaseDatabase.instance
-                    .reference()
+                    .ref()
                     .child(
-                        "institute/${FireBaseAuth.instance.prefs.getString('insCode')}/branches/${FireBaseAuth.instance.prefs.getString('branchCode')}/students/${value.uid}/status")
+                        "institute/${AppwriteAuth.instance.prefs!.getString('insCode')}/branches/${AppwriteAuth.instance.prefs!.getString('branchCode')}/students/${value.$id}/status")
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    if (snapshot.data.snapshot.value == null) {
+                    if (snapshot.data?.snapshot.value == null) {
                       return RegistrationPage();
                     }
-                    if (snapshot.data.snapshot.value == 'New Student') {
+                    if (snapshot.data!.snapshot.value == 'New Student') {
                       return AllCoursePage(
-                          ref: FirebaseDatabase.instance.reference().child(
-                              'institute/${FireBaseAuth.instance.prefs.getString('insCode')}/branches/${FireBaseAuth.instance.prefs.getString('branchCode')}'));
-                    } else if (snapshot.data.snapshot.value ==
+                          ref: FirebaseDatabase.instance.ref().child(
+                              'institute/${AppwriteAuth.instance.prefs!.getString('insCode')}/branches/${AppwriteAuth.instance.prefs!.getString('branchCode')}'));
+                    } else if (snapshot.data!.snapshot.value ==
                         'Existing Student') {
                       return WaitScreen();
                     }

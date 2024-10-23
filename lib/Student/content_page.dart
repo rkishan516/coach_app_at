@@ -7,24 +7,22 @@ import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/YT_player/pdf_player.dart';
 import 'package:coach_app/YT_player/quiz_player.dart';
 import 'package:coach_app/YT_player/yt_player.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class ContentPage extends StatefulWidget {
   final DatabaseReference reference;
   final String title;
   final String passKey;
   ContentPage(
-      {@required this.title, @required this.reference, @required this.passKey});
+      {required this.title, required this.reference, required this.passKey});
   @override
   _ContentPageState createState() => _ContentPageState();
 }
 
 class _ContentPageState extends State<ContentPage> {
-  int length;
-  List<bool> _showCountDot;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,47 +46,48 @@ class _ContentPageState extends State<ContentPage> {
           children: <Widget>[
             Expanded(
               flex: 12,
-              child: StreamBuilder<Event>(
+              child: StreamBuilder<DatabaseEvent>(
                 stream: widget.reference.onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     Chapters chapter =
-                        Chapters.fromJson(snapshot.data.snapshot.value);
+                        Chapters.fromJson(snapshot.data!.snapshot.value as Map);
                     var keys;
                     if (chapter.content != null) {
-                      keys = chapter.content.keys.toList()
-                        ..sort((a, b) => chapter.content[a].title
+                      keys = chapter.content!.keys.toList()
+                        ..sort((a, b) => chapter.content![a]!.title
                             .toLowerCase()
-                            .compareTo(chapter.content[b].title.toLowerCase()));
+                            .compareTo(
+                                chapter.content![b]!.title.toLowerCase()));
                     }
-                    length = chapter.content?.length ?? 0;
-                    _showCountDot = List(length);
-                    for (int i = 0; i < _showCountDot.length; i++) {
-                      _showCountDot[i] = false;
-                    }
+                    final length = chapter.content?.length ?? 0;
+                    final _showCountDot = List.filled(length, false);
 
                     return ListView.builder(
                       itemCount: length,
                       itemBuilder: (BuildContext context, int index) {
                         String checkkey = widget.passKey +
                             "__" +
-                            '${chapter.content[keys.toList()[index]].title}';
+                            '${chapter.content![keys.toList()[index]]!.title}';
 
-                        if (FireBaseAuth.instance.prefs.getInt(checkkey) != 1) {
+                        if (AppwriteAuth.instance.prefs!.getInt(checkkey) !=
+                            1) {
                           _showCountDot[index] = true;
-                          FireBaseAuth.instance.prefs.setInt(checkkey, 1);
+                          AppwriteAuth.instance.prefs!.setInt(checkkey, 1);
                         }
                         bool isEnabled = true;
-                        if (chapter.content[keys.toList()[index]].kind ==
+                        if (chapter.content![keys.toList()[index]]!.kind ==
                             'Quiz') {
                           isEnabled = false;
                           DateTime endTime = chapter
-                              .content[keys.toList()[index]].quizModel.startTime
-                              .add(chapter.content[keys.toList()[index]]
-                                  .quizModel.testTime);
+                              .content![keys.toList()[index]]!
+                              .quizModel!
+                              .startTime
+                              .add(chapter.content![keys.toList()[index]]!
+                                  .quizModel!.testTime);
                           if (DateTime.now().isAfter(chapter
-                                  .content[keys.toList()[index]]
-                                  .quizModel
+                                  .content![keys.toList()[index]]!
+                                  .quizModel!
                                   .startTime) &&
                               DateTime.now().isBefore(endTime)) {
                             isEnabled = true;
@@ -104,10 +103,11 @@ class _ContentPageState extends State<ContentPage> {
                                 backgroundColor:
                                     isEnabled ? Color(0xffF36C24) : null,
                                 child: Icon(
-                                  chapter.content[keys.toList()[index]].kind ==
+                                  chapter.content![keys.toList()[index]]!
+                                              .kind ==
                                           'Youtube Video'
                                       ? Icons.videocam
-                                      : chapter.content[keys.toList()[index]]
+                                      : chapter.content![keys.toList()[index]]!
                                                   .kind ==
                                               'PDF'
                                           ? Icons.library_books
@@ -117,7 +117,7 @@ class _ContentPageState extends State<ContentPage> {
                               ),
                               enabled: isEnabled,
                               title: Text(
-                                '${chapter.content[keys.toList()[index]].title}',
+                                '${chapter.content![keys.toList()[index]]!.title}',
                                 style: TextStyle(color: Colors.blue),
                               ),
                               trailing: Container(
@@ -139,7 +139,7 @@ class _ContentPageState extends State<ContentPage> {
                               ),
                               onTap: () {
                                 if (chapter
-                                        .content[keys.toList()[index]].kind ==
+                                        .content![keys.toList()[index]]!.kind ==
                                     'Youtube Video') {
                                   Navigator.of(context).push(
                                     CupertinoPageRoute(
@@ -147,32 +147,35 @@ class _ContentPageState extends State<ContentPage> {
                                           reference: widget.reference.child(
                                               'content/${keys.toList()[index]}'),
                                           link: chapter
-                                              .content[keys.toList()[index]]
+                                              .content![keys.toList()[index]]!
                                               .ylink),
                                     ),
                                   );
                                 } else if (chapter
-                                        .content[keys.toList()[index]].kind ==
+                                        .content![keys.toList()[index]]!.kind ==
                                     'PDF') {
                                   Navigator.of(context).push(
                                     CupertinoPageRoute(
                                       builder: (context) => PDFPlayer(
                                         link: chapter
-                                            .content[keys.toList()[index]].link,
+                                            .content![keys.toList()[index]]!
+                                            .link,
                                       ),
                                     ),
                                   );
                                 } else if (chapter
-                                        .content[keys.toList()[index]].kind ==
+                                        .content![keys.toList()[index]]!.kind ==
                                     'Quiz') {
-                                  if (snapshot.data.snapshot.value['content']
+                                  if ((snapshot.data!.snapshot.value
+                                                  as Map)['content']
                                               [keys.toList()[index]]
                                           ['quizModel']['result'] !=
                                       null) {
-                                    if (snapshot.data.snapshot.value['content']
+                                    if ((snapshot.data!.snapshot.value
+                                                        as Map)['content']
                                                     [keys.toList()[index]]
                                                 ['quizModel']['result']
-                                            [FireBaseAuth.instance.user.uid] !=
+                                            [AppwriteAuth.instance.user!.$id] !=
                                         null) {
                                       Alert.instance.alert(
                                           context,
@@ -182,15 +185,17 @@ class _ContentPageState extends State<ContentPage> {
                                     }
                                   }
                                   DateTime endTime = chapter
-                                      .content[keys.toList()[index]]
-                                      .quizModel
+                                      .content![keys.toList()[index]]!
+                                      .quizModel!
                                       .startTime
-                                      .add(chapter.content[keys.toList()[index]]
-                                          .quizModel.testTime);
-                                  if (DateTime.now().isAfter(chapter
-                                          .content[keys.toList()[index]]
-                                          .quizModel
-                                          .startTime) &&
+                                      .add(
+                                    chapter.content![keys.toList()[index]]!
+                                        .quizModel!.testTime,
+                                  );
+                                  if (DateTime.now().isAfter(
+                                        chapter.content![keys.toList()[index]]!
+                                            .quizModel!.startTime,
+                                      ) &&
                                       DateTime.now().isBefore(endTime)) {
                                     Navigator.of(context).push(
                                       CupertinoPageRoute(

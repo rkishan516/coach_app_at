@@ -1,11 +1,11 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class MyInstitute extends StatefulWidget {
   @override
@@ -38,7 +38,7 @@ class _MyInstituteState extends State<MyInstitute> {
                     future: FirebaseStorage.instance
                         .ref()
                         .child(
-                            "/instituteLogo/${FireBaseAuth.instance.instituteid}")
+                            "/instituteLogo/${AppwriteAuth.instance.instituteid}")
                         .getDownloadURL(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
@@ -64,14 +64,15 @@ class _MyInstituteState extends State<MyInstitute> {
             ),
           ),
           Expanded(
-            child: StreamBuilder<Event>(
-              stream: FirebaseDatabase.instance.reference()
-                  .child('/institute/${FireBaseAuth.instance.instituteid}/name')
+            child: StreamBuilder<DatabaseEvent>(
+              stream: FirebaseDatabase.instance
+                  .ref()
+                  .child('/institute/${AppwriteAuth.instance.instituteid}/name')
                   .onValue,
               builder: (BuildContext context, snapshot) {
                 if (snapshot.hasData) {
                   return Text(
-                    snapshot.data.snapshot.value,
+                    snapshot.data!.snapshot.value.toString(),
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   );
                 } else {
@@ -84,16 +85,17 @@ class _MyInstituteState extends State<MyInstitute> {
             ),
           ),
           Expanded(
-            child: StreamBuilder<Event>(
+            child: StreamBuilder<DatabaseEvent>(
               stream: FirebaseDatabase.instance
-                  .reference()
+                  .ref()
                   .child(
-                      '/institute/${FireBaseAuth.instance.instituteid}/Phone No')
+                      '/institute/${AppwriteAuth.instance.instituteid}/Phone No')
                   .onValue,
               builder: (BuildContext context, snapshot) {
                 if (snapshot.hasData) {
-                  return Text(
-                      "Contact".tr() + ": " + snapshot.data.snapshot.value);
+                  return Text("Contact".tr() +
+                      ": " +
+                      snapshot.data!.snapshot.value.toString());
                 } else {
                   return PlaceholderLines(
                     count: 1,
@@ -105,33 +107,34 @@ class _MyInstituteState extends State<MyInstitute> {
           ),
           Expanded(
             flex: 5,
-            child: StreamBuilder<Event>(
+            child: StreamBuilder<DatabaseEvent>(
               stream: FirebaseDatabase.instance
-                  .reference()
+                  .ref()
                   .child('/instituteList/')
                   .orderByValue()
-                  .equalTo(FireBaseAuth.instance.instituteid)
+                  .equalTo(AppwriteAuth.instance.instituteid)
                   .onValue,
               builder: (BuildContext context, snap) {
                 if (snap.hasData) {
-                  if (snap.data.snapshot.value == null) {
+                  if (snap.data!.snapshot.value == null) {
                     return Text('Unable to find Institute Code'.tr());
                   }
-                  if (FireBaseAuth.instance.previlagelevel == 4) {
-                    return StreamBuilder<Event>(
+                  if (AppwriteAuth.instance.previlagelevel == 4) {
+                    return StreamBuilder<DatabaseEvent>(
                       stream: FirebaseDatabase.instance
-                          .reference()
+                          .ref()
                           .child(
-                              '/institute/${FireBaseAuth.instance.instituteid}/branches')
+                              '/institute/${AppwriteAuth.instance.instituteid}/branches')
                           .onValue,
                       builder: (BuildContext context, snapshot) {
                         if (snapshot.hasData) {
-                          if (snapshot.data.snapshot.value == null) {
+                          if (snapshot.data!.snapshot.value == null) {
                             return Text('Unable to find Institute Code'.tr());
                           } else {
                             Map<String, Branch> branches =
                                 Map<String, Branch>();
-                            snapshot.data.snapshot.value.forEach((k, b) {
+                            (snapshot.data!.snapshot.value as Map?)
+                                ?.forEach((k, b) {
                               branches[k] = Branch.fromJson(b);
                             });
                             return Padding(
@@ -148,12 +151,12 @@ class _MyInstituteState extends State<MyInstitute> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text('Branch Name'.tr() +
                                             ': ' +
-                                            '${branches[key].name}'),
+                                            '${branches[key]!.name}'),
                                       ),
                                       subtitle: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text('Branch Code'.tr() +
-                                            ' : ${snap.data.snapshot.value.keys.toList()[0] + key}'),
+                                            ' : ${(snap.data!.snapshot.value as Map).keys.toList()[0] + key}'),
                                       ),
                                     ),
                                   );
@@ -169,14 +172,14 @@ class _MyInstituteState extends State<MyInstitute> {
                         }
                       },
                     );
-                  } else if (FireBaseAuth.instance.previlagelevel > 1) {
+                  } else if (AppwriteAuth.instance.previlagelevel > 1) {
                     return Text('Institute Code'.tr() +
-                        ' : ${snap.data.snapshot.value.keys.toList()[0]}${FireBaseAuth.instance.branchid}\n(' +
+                        ' : ${(snap.data!.snapshot.value as Map).keys.toList()[0]}${AppwriteAuth.instance.branchid}\n(' +
                         'Share this code with Student'.tr() +
                         ')');
                   } else {
                     return Text('Institute Code'.tr() +
-                        ' : ${snap.data.snapshot.value.keys.toList()[0]}${FireBaseAuth.instance.branchid}');
+                        ' : ${(snap.data!.snapshot.value as Map).keys.toList()[0]}${AppwriteAuth.instance.branchid}');
                   }
                 } else {
                   return PlaceholderLines(

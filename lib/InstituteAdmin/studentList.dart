@@ -7,13 +7,15 @@ import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/StudentProfilePage.dart';
 import 'package:coach_app/adminSection/addStudent.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class StudentList extends StatefulWidget {
-  final String courseId;
-  StudentList({this.courseId});
+  final String? courseId;
+  StudentList({
+    this.courseId,
+  });
   @override
   _StudentListState createState() => _StudentListState();
 }
@@ -31,7 +33,7 @@ class _StudentListState extends State<StudentList> {
         onTap: () => showDialog(
           context: context,
           builder: (context) => AddStudent(
-            courseId: widget.courseId,
+            courseId: widget.courseId!,
           ),
         ),
         text: 'Add Student',
@@ -78,16 +80,17 @@ class _StudentListState extends State<StudentList> {
             ),
             Expanded(
               flex: 12,
-              child: StreamBuilder<Event>(
+              child: StreamBuilder<DatabaseEvent>(
                 stream: FirebaseDatabase.instance
-                    .reference()
+                    .ref()
                     .child(
-                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students')
+                        'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students')
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     Map<String, Student> students = Map<String, Student>();
-                    snapshot.data.snapshot.value?.forEach((k, student) {
+                    (snapshot.data!.snapshot.value as Map?)
+                        ?.forEach((k, student) {
                       if (widget.courseId != null) {
                         if (searchTextEditingController.text == '') {
                           if (student['course'] != null) {
@@ -104,7 +107,7 @@ class _StudentListState extends State<StudentList> {
                                   searchTextEditingController.text
                                       .toLowerCase()) &&
                               sstudent.course != null) {
-                            if (sstudent.course[widget.courseId] != null &&
+                            if (sstudent.course![widget.courseId] != null &&
                                 sstudent.status == 'Registered') {
                               students[k] = sstudent;
                             }
@@ -141,19 +144,19 @@ class _StudentListState extends State<StudentList> {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ListView.builder(
-                              itemCount: students?.length ?? 0,
+                              itemCount: students.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return Card(
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10)),
                                   child: ListTile(
                                     title: Text(
-                                      '${students[students.keys.toList()[index]].name}',
+                                      '${students[students.keys.toList()[index]]?.name}',
                                       style:
                                           TextStyle(color: Color(0xffF36C24)),
                                     ),
                                     subtitle: Text(
-                                      '${students[students.keys.toList()[index]].email}',
+                                      '${students[students.keys.toList()[index]]?.email}',
                                       style:
                                           TextStyle(color: Color(0xffF36C24)),
                                     ),
@@ -168,14 +171,15 @@ class _StudentListState extends State<StudentList> {
                                           builder: (context) =>
                                               StudentProfilePage(
                                             student: students[
-                                                students.keys.toList()[index]],
+                                                students.keys.toList()[index]]!,
                                             keyS: students.keys.toList()[index],
                                           ),
                                         ),
                                       );
                                     },
                                     onLongPress: () => editStudent(
-                                        students[students.keys.toList()[index]],
+                                        students[
+                                            students.keys.toList()[index]]!,
                                         students.keys.toList()[index]),
                                   ),
                                 );
@@ -216,11 +220,11 @@ class _StudentListState extends State<StudentList> {
   editStudent(Student student, String keyS) {
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     TextEditingController nameTextEditingController = TextEditingController()
-      ..text = student?.name ?? '';
+      ..text = student.name;
     TextEditingController addressTextEditingController = TextEditingController()
-      ..text = student?.address ?? '';
+      ..text = student.address;
     TextEditingController phoneTextEditingController = TextEditingController()
-      ..text = student?.phoneNo ?? '';
+      ..text = student.phoneNo;
     // Courses course;
     showDialog(
       context: context,
@@ -259,7 +263,7 @@ class _StudentListState extends State<StudentList> {
                     children: <Widget>[
                       TextFormField(
                         validator: (value) {
-                          if (value.isEmpty) {
+                          if (value == null || value.isEmpty) {
                             return 'Please enter the name';
                           }
                           return null;
@@ -284,7 +288,7 @@ class _StudentListState extends State<StudentList> {
                     children: <Widget>[
                       TextFormField(
                         validator: (value) {
-                          if (value.isEmpty) {
+                          if (value == null || value.isEmpty) {
                             return 'Please enter the address';
                           }
                           return null;
@@ -309,7 +313,7 @@ class _StudentListState extends State<StudentList> {
                     children: <Widget>[
                       TextFormField(
                         validator: (value) {
-                          if (value.isEmpty) {
+                          if (value == null || value.isEmpty) {
                             return 'Please enter the phone no';
                           }
                           return null;
@@ -333,7 +337,7 @@ class _StudentListState extends State<StudentList> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      FlatButton(
+                      MaterialButton(
                         onPressed: () async {
                           String res = await showDialog(
                               context: context,
@@ -342,9 +346,9 @@ class _StudentListState extends State<StudentList> {
                             return;
                           }
                           FirebaseDatabase.instance
-                              .reference()
+                              .ref()
                               .child(
-                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$keyS')
+                                  'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/$keyS')
                               .remove();
                           Navigator.of(context).pop();
                         },
@@ -352,9 +356,9 @@ class _StudentListState extends State<StudentList> {
                           'Remove'.tr(),
                         ),
                       ),
-                      FlatButton(
+                      MaterialButton(
                         onPressed: () {
-                          if (!_formKey.currentState.validate()) {
+                          if (!_formKey.currentState!.validate()) {
                             return;
                           }
                           if (nameTextEditingController.text == '' ||
@@ -374,9 +378,9 @@ class _StudentListState extends State<StudentList> {
                               classs: student.classs,
                               rollNo: student.rollNo);
                           FirebaseDatabase.instance
-                              .reference()
+                              .ref()
                               .child(
-                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$keyS')
+                                  'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/$keyS')
                               .update(dstudent.toJson());
                           Navigator.of(context).pop();
                         },

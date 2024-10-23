@@ -1,13 +1,18 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+
 import 'AfterSelectCandidate.dart';
 
 class TwoStepSelectCandidate extends StatefulWidget {
   final String type;
   final String leftuids;
   final String firstselecteduids;
-  TwoStepSelectCandidate({this.type, this.leftuids, this.firstselecteduids});
+  TwoStepSelectCandidate({
+    required this.type,
+    required this.leftuids,
+    required this.firstselecteduids,
+  });
   @override
   _SelectCandidateState createState() => _SelectCandidateState();
 }
@@ -19,16 +24,16 @@ class _SelectCandidateState extends State<TwoStepSelectCandidate> {
   String _leftuids = "";
   String _firstselecteduids = "";
   ObjectPass _objectPass = ObjectPass("", "");
-  Map mapofbranches;
-  int previlagelevel = FireBaseAuth.instance.previlagelevel;
+  Map mapofbranches = {};
+  int previlagelevel = AppwriteAuth.instance.previlagelevel;
 
   _loadFromDatabase() async {
     if (widget.type == "SubAdmins within a MidAdmin") {
-      DataSnapshot snapshot = await dbref
-          .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/midAdmin')
+      final snapshot = await dbref
+          .ref()
+          .child('institute/${AppwriteAuth.instance.instituteid}/midAdmin')
           .once();
-      Map map = snapshot.value;
+      Map map = snapshot.snapshot.value as Map;
       map.forEach((key, value) {
         if (key.toString().length >= 25) {
           _list.add(TwoStepSelectedCandidateModel(value["branches"],
@@ -41,11 +46,11 @@ class _SelectCandidateState extends State<TwoStepSelectCandidate> {
       });
     } else if (widget.type == "Authorities of a branch" &&
         previlagelevel == 4) {
-      DataSnapshot snapshot = await dbref
-          .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/branches')
+      final snapshot = await dbref
+          .ref()
+          .child('institute/${AppwriteAuth.instance.instituteid}/branches')
           .once();
-      mapofbranches = snapshot.value;
+      mapofbranches = snapshot.snapshot.value as Map;
       mapofbranches.forEach((key, value) {
         _list.add(TwoStepSelectedCandidateModel(
             key,
@@ -61,26 +66,26 @@ class _SelectCandidateState extends State<TwoStepSelectCandidate> {
     } else if (widget.type == "Authorities of a branch" &&
         previlagelevel == 34) {
       //String _branches="[1515, 1901, 1902, 1404, 1301, 1215, 1101, 1704, 1812, 2014, 2101, 2201, 2301]";
-      String _branches = FireBaseAuth.instance.branchList.toString();
+      String _branches = AppwriteAuth.instance.branchList.toString();
       List<String> _branchlist =
           _branches.replaceAll("[", "").replaceAll("]", "").split(",");
 
       _branchlist.forEach((element) async {
-        DataSnapshot addresssnapshot = await dbref
-            .reference()
+        final addresssnapshot = await dbref
+            .ref()
             .child(
-                'institute/${FireBaseAuth.instance.instituteid}/branches/${element.trim()}/address')
+                'institute/${AppwriteAuth.instance.instituteid}/branches/${element.trim()}/address')
             .once();
-        DataSnapshot namesnapshot = await dbref
-            .reference()
+        final namesnapshot = await dbref
+            .ref()
             .child(
-                'institute/${FireBaseAuth.instance.instituteid}/branches/${element.trim()}/name')
+                'institute/${AppwriteAuth.instance.instituteid}/branches/${element.trim()}/name')
             .once();
 
         _list.add(TwoStepSelectedCandidateModel(
             element.trim(),
-            addresssnapshot.value,
-            namesnapshot.value,
+            addresssnapshot.snapshot.value as String,
+            namesnapshot.snapshot.value as String,
             "https://www.leafstudio.co.uk/wp-content/uploads/2019/11/person-icon-silhouette-png-0.png",
             element.trim()));
         if (widget.firstselecteduids.contains(element))
@@ -94,13 +99,13 @@ class _SelectCandidateState extends State<TwoStepSelectCandidate> {
         });
       });
     } else if (widget.type == "Teachers of a course") {
-      DataSnapshot snapshot = await dbref
-          .reference()
+      final snapshot = await dbref
+          .ref()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList')
+              'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/coursesList')
           .once();
-      Map map = snapshot.value;
-      map?.forEach((key, value) {
+      Map map = snapshot.snapshot.value as Map;
+      map.forEach((key, value) {
         _list.add(TwoStepSelectedCandidateModel(
             key,
             "",
@@ -113,13 +118,13 @@ class _SelectCandidateState extends State<TwoStepSelectCandidate> {
           _correspondingmap[key] = false;
       });
     } else if (widget.type == "Teachers of a subject") {
-      DataSnapshot snapshot = await dbref
-          .reference()
+      final snapshot = await dbref
+          .ref()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList')
+              'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/coursesList')
           .once();
-      Map map = snapshot.value;
-      map?.forEach((key, value) {
+      Map map = snapshot.snapshot.value as Map;
+      map.forEach((key, value) {
         _list.add(TwoStepSelectedCandidateModel(
             key,
             "",
@@ -169,7 +174,7 @@ class _SelectCandidateState extends State<TwoStepSelectCandidate> {
             itemBuilder: (context, index) {
               return ListTile(
                 onLongPress: () {
-                  if (_correspondingmap[_list[index].uid])
+                  if (_correspondingmap[_list[index].uid]!)
                     Navigator.of(context)
                         .push(MaterialPageRoute(
                             builder: (context) => AfterSelectCandidate(
@@ -187,7 +192,8 @@ class _SelectCandidateState extends State<TwoStepSelectCandidate> {
                 ),
                 trailing: Checkbox(
                     value: _correspondingmap[_list[index].uid] ?? false,
-                    onChanged: (bool value) {
+                    onChanged: (bool? value) {
+                      if (value == null) return;
                       setState(() {
                         _correspondingmap.forEach((key, value) {
                           if (value == true) {

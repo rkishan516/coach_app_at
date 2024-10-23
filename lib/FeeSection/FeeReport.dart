@@ -12,7 +12,7 @@ import 'Fragments/StudentModel.dart';
 
 class FeesReport extends StatefulWidget {
   final String courseId;
-  FeesReport({@required this.courseId});
+  FeesReport({required this.courseId});
   @override
   _FlutterreportState createState() => _FlutterreportState();
 }
@@ -36,46 +36,40 @@ class _FlutterreportState extends State<FeesReport> {
     switch (position) {
       case "Payment Report":
         return PayementReport(_listStudentModel);
-        break;
       case "Due Fee Report":
         return DueFeeReport(_listStudentModel);
-        break;
       case "Discount Report":
         return DiscountReport(_listStudentModel);
-        break;
       case "Fine Report":
         return FineReport(_listStudentModel);
-        break;
       case "Paid Report":
         return PaidReport(_listStudentModel);
-        break;
       case "OneTime Paid Report":
         return OneTimeReport(_listStudentModel);
-        break;
       default:
         return "Error Ocurred";
     }
   }
 
   _loadFromDatabase() async {
-    DataSnapshot snapshot = await dbref
-        .reference()
+    final snapshot = await dbref
+        .ref()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students")
+            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students")
         .orderByChild("course/${widget.courseId}/courseID")
         .equalTo("${widget.courseId}")
         .once();
-    DataSnapshot finesnapshot = await dbref
-        .reference()
+    final finesnapshot = await dbref
+        .ref()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/fees")
+            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}/fees")
         .once();
     List<StudentModel> _list = [];
-    Map map = snapshot.value;
-    map?.forEach((key, value) {
+    Map map = snapshot.snapshot.value as Map;
+    map.forEach((key, value) {
       if (value["course"]["${widget.courseId}"]["fees"] != null)
-        _list.add(StudentModel.fromJSON(
-            key, value, finesnapshot.value, "${widget.courseId}"));
+        _list.add(StudentModel.fromJSON(key, value,
+            finesnapshot.snapshot.value as Map, "${widget.courseId}"));
     });
     setState(() {
       _listStudentModel = _list;
@@ -127,7 +121,8 @@ class _FlutterreportState extends State<FeesReport> {
                   child: Text(dropDownStringitem),
                 );
               }).toList(),
-              onChanged: (String newValueSelected) {
+              onChanged: (String? newValueSelected) {
+                if (newValueSelected == null) return;
                 setState(() {
                   this._currentItemSelected = newValueSelected;
                   _selectedDrawerIndex = newValueSelected;

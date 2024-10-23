@@ -19,8 +19,7 @@ class _PayementReportState extends State<PayementReport> {
   _setstudentlist() {
     List<StudentModel> list = [];
     widget._listStudentModel.forEach((element) {
-      if (element.lastpaidInstallment != null &&
-          element.lastpaidInstallment != "") {
+      if (element.lastpaidInstallment != "") {
         list.add(element);
 
         _coresspondingStatus[element.uid] = "Paid";
@@ -96,22 +95,22 @@ class _PayementReportState extends State<PayementReport> {
                 subTitle = "Status: Fine" +
                     "\n" +
                     "Fine Amount: " +
-                    _coresspondingmap[_studentList[index].uid]?.fine +
+                    _coresspondingmap[_studentList[index].uid]!.fine +
                     "Type: " +
-                    _coresspondingmap[_studentList[index].phoneNo]?.sequence;
+                    _coresspondingmap[_studentList[index].phoneNo]!.sequence;
               } else {
                 subTitle = "Status: Due" +
                     "\n" +
                     "Due Amount: " +
-                    _coresspondingmap[_studentList[index].uid]?.amount +
+                    _coresspondingmap[_studentList[index].uid]!.amount +
                     "\n" +
                     "Due Date: " +
-                    _coresspondingmap[_studentList[index].uid]
-                        ?.duration
-                        ?.replaceAll(" ", "/") +
+                    _coresspondingmap[_studentList[index].uid]!
+                        .duration
+                        .replaceAll(" ", "/") +
                     "\n" +
                     "Type: " +
-                    _coresspondingmap[_studentList[index].uid]?.sequence;
+                    _coresspondingmap[_studentList[index].uid]!.sequence;
               }
 
               return Card(
@@ -137,11 +136,10 @@ class _PayementReportState extends State<PayementReport> {
                       children: [
                         Text(
                           (index + 1).toString() +
-                                  ". " +
-                                  _studentList[index]?.name ??
-                              "",
+                              ". " +
+                              _studentList[index].name,
                           style: TextStyle(
-                            color: _studentList[index]?.paymentType == "Online"
+                            color: _studentList[index].paymentType == "Online"
                                 ? Colors.green
                                 : Color(0xffF36C24),
                             fontSize: 16,

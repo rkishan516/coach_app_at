@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class SuccessDialog extends StatelessWidget {
   final String success;
-  SuccessDialog({@required this.success});
+  SuccessDialog({required this.success});
   @override
   Widget build(BuildContext context) {
     return Dialog(

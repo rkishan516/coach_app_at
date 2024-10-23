@@ -32,13 +32,13 @@ class _DueFeeReportState extends State<DueFeeReport> {
           int yyyy = int.parse(dateTime.year.toString());
 
           try {
-            var index = studentmodel.listInstallment?.firstWhere((element) {
+            var index = studentmodel.listInstallment.firstWhere((element) {
               if (element.status == "Due" || element.status == "Fine") {
                 String duration = studentmodel
                     .listInstallment[int.parse(
                             element.sequence.replaceAll("Installment", "")) -
                         2]
-                    ?.duration;
+                    .duration;
 
                 int enddd = int.parse(duration.split(" ")[0]);
                 int endmm = int.parse(duration.split(" ")[1]);
@@ -50,7 +50,7 @@ class _DueFeeReportState extends State<DueFeeReport> {
               } else
                 return false;
             });
-            if (index != null) list.add(studentmodel);
+            list.add(studentmodel);
             _coresspondingmap[studentmodel.uid] = index;
           } catch (e) {}
           setState(() {
@@ -58,9 +58,9 @@ class _DueFeeReportState extends State<DueFeeReport> {
           });
         } else {
           try {
-            var index = studentmodel.listInstallment?.firstWhere((element) =>
+            var index = studentmodel.listInstallment.firstWhere((element) =>
                 element.status == "Due" || element.status == "Fine");
-            if (index != null) list.add(studentmodel);
+            list.add(studentmodel);
             _coresspondingmap[studentmodel.uid] = index;
           } catch (e) {}
 
@@ -94,9 +94,7 @@ class _DueFeeReportState extends State<DueFeeReport> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget._listStudentModel != null) {
-      _setstudentlist();
-    }
+    _setstudentlist();
 
     return Container(
       padding: EdgeInsets.all(8.0),
@@ -107,19 +105,19 @@ class _DueFeeReportState extends State<DueFeeReport> {
         itemBuilder: (context, index) {
           String text = _studentList[index].isinstallmentAllowed
               ? "Type: " +
-                  _coresspondingmap[_studentList[index].uid].sequence +
+                  _coresspondingmap[_studentList[index].uid]!.sequence +
                   "\n" +
                   "Due Date: " +
-                  _coresspondingmap[_studentList[index].uid]
+                  _coresspondingmap[_studentList[index].uid]!
                       .duration
                       .replaceAll(" ", "/") +
                   "\n"
                       "Due Amount: " +
-                  _coresspondingmap[_studentList[index].uid].amount
+                  _coresspondingmap[_studentList[index].uid]!.amount
               : "Due " +
-                  _coresspondingDueMap[_studentList[index].uid].amount +
+                  _coresspondingDueMap[_studentList[index].uid]!.amount +
                   " and Fine " +
-                  _coresspondingDueMap[_studentList[index].uid].fine;
+                  _coresspondingDueMap[_studentList[index].uid]!.fine;
           return Card(
             elevation: 20,
             child: GestureDetector(
@@ -142,9 +140,9 @@ class _DueFeeReportState extends State<DueFeeReport> {
                   shrinkWrap: true,
                   children: [
                     Text(
-                      (index + 1).toString() + ". " + _studentList[index]?.name,
+                      (index + 1).toString() + ". " + _studentList[index].name,
                       style: TextStyle(
-                        color: _studentList[index]?.paymentType == "Online"
+                        color: _studentList[index].paymentType == "Online"
                             ? Colors.green
                             : Color(0xffF36C24),
                         fontSize: 16,

@@ -1,26 +1,26 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class VideoConferencing extends StatefulWidget {
-  final String passVariable;
-  final String room, eventkey;
-  final String subject;
-  final int privilegelevel;
-  final int hostprevilagelevel;
-  final String hostuid;
-  final bool fromcourse;
-  VideoConferencing(
-      {this.passVariable,
-      this.room,
-      this.eventkey,
-      this.subject,
-      this.privilegelevel,
-      this.hostuid,
-      this.hostprevilagelevel,
-      this.fromcourse});
+  final String? passVariable;
+  final String? room, eventkey;
+  final String? subject;
+  final int? privilegelevel;
+  final int? hostprevilagelevel;
+  final String? hostuid;
+  final bool? fromcourse;
+  VideoConferencing({
+    this.passVariable,
+    this.room,
+    this.eventkey,
+    this.subject,
+    this.privilegelevel,
+    this.hostuid,
+    this.hostprevilagelevel,
+    this.fromcourse,
+  });
   @override
   _VideoConferencingState createState() {
     return _VideoConferencingState();
@@ -36,22 +36,23 @@ class _VideoConferencingState extends State<VideoConferencing> {
         automaticallyImplyLeading: false,
       ),
       body: InAppWebView(
-        initialUrl: _joinMeeting(),
-        initialHeaders: {
-          "previlagelevel": FireBaseAuth.instance.previlagelevel.toString(),
-          "photourl": FireBaseAuth.instance.user.photoUrl,
-          "title": 'GuruCoolSession' + widget.eventkey.toString(),
-          "displayName": FireBaseAuth.instance.user.displayName,
-          "eventkey": widget.eventkey.toString(),
-          "email": FireBaseAuth.instance.user.email,
-          "hostPrevilage": widget.hostprevilagelevel.toString(),
-          "ishost":
-              (widget.hostuid == FireBaseAuth.instance.user.uid).toString()
-        },
+        initialUrlRequest: URLRequest(
+          url: Uri.parse(_joinMeeting()),
+          headers: {
+            "previlagelevel": AppwriteAuth.instance.previlagelevel.toString(),
+            "photourl": '',
+            "title": 'GuruCoolSession' + widget.eventkey.toString(),
+            "name": AppwriteAuth.instance.user!.name ?? '',
+            "eventkey": widget.eventkey.toString(),
+            "email": AppwriteAuth.instance.user!.email ?? '',
+            "hostPrevilage": widget.hostprevilagelevel.toString(),
+            "ishost":
+                (widget.hostuid == AppwriteAuth.instance.user!.$id).toString()
+          },
+        ),
         initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
             mediaPlaybackRequiresUserGesture: false,
-            debuggingEnabled: true,
           ),
         ),
         androidOnPermissionRequest: (InAppWebViewController controller,
@@ -65,21 +66,21 @@ class _VideoConferencingState extends State<VideoConferencing> {
   }
 
   _makeupdate() async {
-    if (widget.fromcourse) {
-      if (FireBaseAuth.instance.previlagelevel >= 2) {
+    if (widget.fromcourse ?? true) {
+      if (AppwriteAuth.instance.previlagelevel >= 2) {
         FirebaseDatabase.instance
-            .reference()
+            .ref()
             .child(
-                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events/${widget.passVariable}')
+                'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/events/${widget.passVariable}')
             .update({
           'isStarted': 1,
         });
       }
     } else {
       FirebaseDatabase.instance
-          .reference()
+          .ref()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/events/${widget.passVariable}')
+              'institute/${AppwriteAuth.instance.instituteid}/events/${widget.passVariable}')
           .update({
         'isStarted': 1,
       });
@@ -88,20 +89,20 @@ class _VideoConferencingState extends State<VideoConferencing> {
 
   String _launchURL() {
     bool _ishost = false;
-    if (widget.hostuid == FireBaseAuth.instance.user.uid) _ishost = true;
+    if (widget.hostuid == AppwriteAuth.instance.user!.$id) _ishost = true;
     var midurl = "https://guru-cool-test.web.app?previlagelevel=" +
-        FireBaseAuth.instance.previlagelevel.toString() +
+        AppwriteAuth.instance.previlagelevel.toString() +
         "&photourl=" +
-        FireBaseAuth.instance.user.photoUrl +
+        '' +
         "&title=" +
         'GuruCoolSession' +
         widget.eventkey.toString() +
-        "&displayName=" +
-        FireBaseAuth.instance.user.displayName +
+        "&name=" +
+        AppwriteAuth.instance.user!.name +
         "&eventkey=" +
         widget.eventkey.toString() +
         "&email=" +
-        FireBaseAuth.instance.user.email +
+        AppwriteAuth.instance.user!.email +
         "&hostPrevilage=" +
         widget.hostprevilagelevel.toString() +
         "&ishost=" +

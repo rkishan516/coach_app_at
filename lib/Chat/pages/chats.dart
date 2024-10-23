@@ -1,35 +1,17 @@
-import 'dart:async';
-
-import 'package:flutter/material.dart';
-
 //import 'package:Ui/view/ChatScreen.dart';
 // import 'package:Ui/model/chat_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coach_app/Chat/chat_screen.dart';
 import 'package:coach_app/Chat/models/item_class.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:flutter/material.dart';
 //import 'package:coach_app/Chat/all_users_screen.dart';
 
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
-}
-
-class chats extends StatefulWidget {
+class Chats extends StatefulWidget {
   final String cat;
-  final curUser currentUser;
+  final CurrUser currentUser;
 
-  chats({this.cat, this.currentUser});
+  Chats({required this.cat, required this.currentUser});
 
   @override
   State<StatefulWidget> createState() {
@@ -37,36 +19,34 @@ class chats extends StatefulWidget {
   }
 }
 
-class ChatState extends State<chats> {
+class ChatState extends State<Chats> {
   final String cat;
-  final curUser currentUser;
+  final CurrUser currentUser;
 
   ChatState(this.cat, this.currentUser);
 
-  StreamSubscription<QuerySnapshot> _subscription;
-  List<DocumentSnapshot> userlist;
-
-  CollectionReference _collectionReference;
+  late CollectionReference _collectionReference;
+  List<DocumentSnapshot> userlist = [];
 
   void giveback() {
-    _collectionReference = Firestore.instance.collection(cat);
+    _collectionReference = FirebaseFirestore.instance.collection(cat);
   }
 
   @override
   void initState() {
     super.initState();
     //giveback();
-    _collectionReference = Firestore.instance.collection(cat);
-    _subscription = _collectionReference
+    _collectionReference = FirebaseFirestore.instance.collection(cat);
+    _collectionReference
         .where('code', isEqualTo: currentUser.code)
         .orderBy('name')
         .snapshots()
         .listen((datasnapshot) {
       setState(() {
-        userlist = datasnapshot.documents;
+        userlist = datasnapshot.docs;
 
         for (int i = 0; i < userlist.length; i++) {
-          if (userlist[i].data['uid'] == currentUser.uid) {
+          if ((userlist[i].data as Map)['uid'] == currentUser.uid) {
             userlist.removeAt(i);
             break;
           }
@@ -75,8 +55,6 @@ class ChatState extends State<chats> {
       });
     });
   }
-
-  String role;
 
   @override
   Widget build(BuildContext context) {
@@ -93,15 +71,15 @@ class ChatState extends State<chats> {
                     children: [
                       ListTile(
                           leading: new CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(userlist[index].data['photoUrl']),
+                            backgroundImage: NetworkImage(
+                                (userlist[index].data as Map)['photoUrl']),
                           ),
                           title: Container(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 new Text(
-                                  userlist[index].data['name'],
+                                  (userlist[index].data as Map)['name'],
                                   style: new TextStyle(
                                       fontWeight: FontWeight.w600,
                                       color: Color.fromARGB(255, 242, 108, 37),
@@ -126,10 +104,14 @@ class ChatState extends State<chats> {
                           onTap: () => Navigator.of(context).push(
                                   new MaterialPageRoute(builder: (context) {
                                 return new ChatScreen(
-                                    name: userlist[index].data['name'],
-                                    photoUrl: userlist[index].data['photoUrl'],
-                                    receiverUid: userlist[index].data['uid'],
-                                    role: userlist[index].data['role']);
+                                    name:
+                                        ((userlist[index].data as Map))['name'],
+                                    photoUrl: (userlist[index].data
+                                        as Map)['photoUrl'],
+                                    receiverUid:
+                                        (userlist[index].data as Map)['uid'],
+                                    role:
+                                        (userlist[index].data as Map)['role']);
                               }))),
                     ],
                   ),

@@ -5,10 +5,10 @@ import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/FeeSection/StudentReport/PaymentType.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Student/subject_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class CoursePage extends StatefulWidget {
   final bool isFromDrawer;
@@ -18,8 +18,6 @@ class CoursePage extends StatefulWidget {
 }
 
 class _CoursePageState extends State<CoursePage> {
-  List _list;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,104 +51,101 @@ class _CoursePageState extends State<CoursePage> {
               ),
               Expanded(
                 flex: 12,
-                child: StreamBuilder<Event>(
+                child: StreamBuilder<DatabaseEvent>(
                   stream: FirebaseDatabase.instance
-                      .reference()
+                      .ref()
                       .child(
-                          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}')
+                          'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}')
                       .onValue,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      Student student =
-                          Student.fromJson(snapshot.data.snapshot.value);
-                      student.course.values
+                      Student student = Student.fromJson(
+                          snapshot.data!.snapshot.value as Map);
+                      student.course?.values
                           .toList()
                           .sort((a, b) => a.courseName.compareTo(b.courseName));
 
                       return ListView.builder(
-                        itemCount: student.course.length,
+                        itemCount: student.course?.length ?? 0,
                         itemBuilder: (BuildContext context, int i) {
-                          var index = student.course.keys.toList()[i];
+                          var index = student.course?.keys.toList()[i];
                           return StreamBuilder(
                               stream: FirebaseDatabase.instance
-                                  .reference()
+                                  .ref()
                                   .child(
-                                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${student.course[index].courseID}/subjects/')
+                                      'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${student.course![index]!.courseID}/subjects/')
                                   .onValue,
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                  _list = FireBaseAuth.instance.prefs
+                                  var _list = AppwriteAuth.instance.prefs!
                                       .getKeys()
                                       .where((element) => element.startsWith(
-                                          '${student.course[index].courseName}'))
+                                          '${student.course![index]!.courseName}'))
                                       .toList();
                                   int prevtotallength = _list.length;
 
-                                  Map map = snapshot.data.snapshot.value;
+                                  Map? map =
+                                      snapshot.data!.snapshot.value as Map?;
                                   Map<String, int> _correspondingsubject =
                                       Map();
                                   int _totallength = 0,
                                       _contentlength,
                                       count = 0;
                                   if (map != null) {
-                                    map?.forEach((key1, value) {
+                                    map.forEach((key1, value) {
                                       _contentlength = 0;
                                       String subjectname =
                                           value["name"].toString();
 
                                       Map _chaptermap = value["chapters"];
-                                      if (_chaptermap != null) {
-                                        _chaptermap.forEach((key2, value2) {
-                                          String chaptername =
-                                              value2["name"].toString();
+                                      _chaptermap.forEach((key2, value2) {
+                                        String chaptername =
+                                            value2["name"].toString();
 
-                                          Map _contentmap = value2["content"];
+                                        Map _contentmap = value2["content"];
 
-                                          if (_contentmap != null) {
-                                            _contentlength = _contentlength +
-                                                _contentmap.length;
-                                            _correspondingsubject[subjectname] =
-                                                _contentlength;
-                                            _contentmap.forEach((key3, value3) {
-                                              String contentname =
-                                                  value3["title"].toString();
-                                              String key = student.course[index]
-                                                      .courseName +
-                                                  "__" +
-                                                  subjectname +
-                                                  "__" +
-                                                  chaptername +
-                                                  "__" +
-                                                  contentname;
+                                        _contentlength =
+                                            _contentlength + _contentmap.length;
+                                        _correspondingsubject[subjectname] =
+                                            _contentlength;
+                                        _contentmap.forEach((key3, value3) {
+                                          String contentname =
+                                              value3["title"].toString();
+                                          String key = student
+                                                  .course![index]!.courseName +
+                                              "__" +
+                                              subjectname +
+                                              "__" +
+                                              chaptername +
+                                              "__" +
+                                              contentname;
 
-                                              if (prevtotallength == 0) {
-                                                FireBaseAuth.instance.prefs
-                                                    .setInt(key, 1);
-                                              } else {
-                                                _list.remove(key);
-                                              }
-                                            });
+                                          if (prevtotallength == 0) {
+                                            AppwriteAuth.instance.prefs!
+                                                .setInt(key, 1);
+                                          } else {
+                                            _list.remove(key);
                                           }
                                         });
-                                      }
+                                      });
                                     });
                                     if (_list.length != 0) {
-                                      _list?.forEach((element) {
-                                        FireBaseAuth.instance.prefs
+                                      _list.forEach((element) {
+                                        AppwriteAuth.instance.prefs!
                                             .remove(element);
                                       });
                                     }
                                     if (prevtotallength != 0) {
-                                      map?.forEach((key, value) {
+                                      map.forEach((key, value) {
                                         _totallength = _correspondingsubject[
-                                            value["name"].toString()];
+                                            value["name"].toString()]!;
 
-                                        int _totalContent = _totallength ?? 0;
+                                        int _totalContent = _totallength;
                                         String searchKey =
-                                            student.course[index].courseName +
+                                            student.course![index]!.courseName +
                                                 "__" +
                                                 value["name"].toString();
-                                        _list = FireBaseAuth.instance.prefs
+                                        _list = AppwriteAuth.instance.prefs!
                                             .getKeys()
                                             .where((element) =>
                                                 element.startsWith(searchKey))
@@ -173,7 +168,7 @@ class _CoursePageState extends State<CoursePage> {
                                               BorderRadius.circular(10)),
                                       child: ListTile(
                                         title: Text(
-                                          '${student.course[index].courseName}',
+                                          '${student.course![index]!.courseName}',
                                           style: TextStyle(color: Colors.blue),
                                         ),
                                         trailing: Container(
@@ -196,16 +191,17 @@ class _CoursePageState extends State<CoursePage> {
                                         ),
                                         onTap: () {
                                           if (widget.isFromDrawer) {
-                                            return Navigator.of(context)
+                                            Navigator.of(context)
                                                 .push(
                                               CupertinoPageRoute(
                                                 builder: (context) =>
                                                     PaymentType(
                                                   courseId: student
-                                                      .course[index].courseID
+                                                      .course![index]!.courseID
                                                       .toString(),
                                                   courseName: student
-                                                      .course[index].courseName,
+                                                      .course![index]!
+                                                      .courseName,
                                                   isFromDrawer: true,
                                                 ),
                                               ),
@@ -213,16 +209,18 @@ class _CoursePageState extends State<CoursePage> {
                                                 .then((value) {
                                               setState(() {});
                                             });
+                                            return;
                                           }
-                                          return Navigator.of(context)
+                                          Navigator.of(context)
                                               .push(
                                             CupertinoPageRoute(
                                               builder: (context) => SubjectPage(
-                                                  courseID: student
-                                                      .course[index].courseID
-                                                      .toString(),
-                                                  passKey:
-                                                      '${student.course[index].courseName}'),
+                                                courseID: student
+                                                    .course![index]!.courseID
+                                                    .toString(),
+                                                passKey:
+                                                    '${student.course![index]!.courseName}',
+                                              ),
                                             ),
                                           )
                                               .then((value) {

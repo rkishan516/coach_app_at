@@ -1,7 +1,7 @@
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class RazorPayPayment {
-  Razorpay _razorPay;
+  late Razorpay _razorPay;
   RazorPayPayment(Function _handlePaymentSuccess, Function _handlePaymentError,
       Function _handleExternalWallet) {
     _razorPay = Razorpay();

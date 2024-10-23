@@ -1,26 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:coach_app/Chat/models/item_class.dart';
-
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
-}
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class independent extends StatefulWidget {
-  final curUser currentUser;
-  independent({this.currentUser});
+  final CurrUser currentUser;
+  independent({required this.currentUser});
   @override
   _independentState createState() => new _independentState(currentUser);
 }
@@ -29,7 +14,7 @@ List<String> litems = ["1", "2", "Third", "4"];
 
 class _independentState extends State<independent>
     with TickerProviderStateMixin {
-  final curUser currentUser;
+  final CurrUser currentUser;
   _independentState(this.currentUser);
   @override
   Widget build(BuildContext context) {
@@ -47,7 +32,7 @@ class _independentState extends State<independent>
               child: Column(
                 children: [
                   CircleAvatar(
-                    foregroundColor: Theme.of(context).accentColor,
+                    foregroundColor: Theme.of(context).colorScheme.secondary,
                     backgroundColor: Colors.grey,
                     radius: 27,
                     backgroundImage: AssetImage('images/f.jpg'),
@@ -60,9 +45,7 @@ class _independentState extends State<independent>
             ),
             onTap: () {
               showDialog(
-                barrierDismissible: false,
-                context: context,
-                child: new CupertinoAlertDialog(
+                builder: (context) => new CupertinoAlertDialog(
                   title: new Column(
                     children: <Widget>[
                       new Text("GridView"),
@@ -74,13 +57,15 @@ class _independentState extends State<independent>
                   ),
                   content: new Text("Selected Item $index"),
                   actions: <Widget>[
-                    new FlatButton(
+                    new MaterialButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
                         child: new Text("OK"))
                   ],
                 ),
+                barrierDismissible: false,
+                context: context,
               );
             },
           );

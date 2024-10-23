@@ -1,28 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Message {
-  String senderUid;
-  String receiverUid;
-  String type;
-  String message;
-  FieldValue timestamp;
-  String mediaUrl;
+  final String senderUid;
+  final String receiverUid;
+  final String type;
+  final String? message;
+  final FieldValue timestamp;
+  final String? mediaUrl;
 
-  Message(
-      {this.senderUid,
-      this.receiverUid,
-      this.type,
-      this.message,
-      this.timestamp});
-  Message.withoutMessage(
-      {this.senderUid,
-      this.receiverUid,
-      this.type,
-      this.timestamp,
-      this.mediaUrl,
-      this.message});
+  Message({
+    required this.senderUid,
+    required this.receiverUid,
+    required this.type,
+    required this.message,
+    required this.timestamp,
+    this.mediaUrl,
+  });
+  Message.withoutMessage({
+    required this.senderUid,
+    required this.receiverUid,
+    required this.type,
+    required this.timestamp,
+    required this.mediaUrl,
+    this.message,
+  });
 
-  Map toMap() {
+  Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
     map['senderUid'] = this.senderUid;
     map['receiverUid'] = this.receiverUid;
@@ -33,12 +36,13 @@ class Message {
   }
 
   Message fromMap(Map<String, dynamic> map) {
-    Message _message = Message();
-    _message.senderUid = map['senderUid'];
-    _message.receiverUid = map['receiverUid'];
-    _message.type = map['type'];
-    _message.message = map['message'];
-    _message.timestamp = map['timestamp'];
+    Message _message = Message(
+      senderUid: map['senderUid'],
+      receiverUid: map['receiverUid'],
+      type: map['type'],
+      message: map['message'],
+      timestamp: map['timestamp'],
+    );
     return _message;
   }
 }

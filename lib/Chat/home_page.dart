@@ -1,65 +1,47 @@
-import 'package:coach_app/Chat/all_users_screen.dart';
-import 'package:coach_app/Chat/models/user_details.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
+
+import 'package:appwrite/models.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coach_app/Chat/all_users_screen.dart';
 import 'package:coach_app/Chat/models/item_class.dart';
-
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
-}
+import 'package:coach_app/Chat/models/user_details.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  DocumentReference _documentReference, _documentReference2;
-  UserDetails _userDetails = UserDetails();
   var mapData = Map<String, String>();
-  String uid;
-  curUser currentUser;
-  StreamSubscription<DocumentSnapshot> subscribtion;
 
-  Future<FirebaseUser> signIn() async {
-    GoogleSignInAccount _signInAccount = await _googleSignIn.signIn();
-    GoogleSignInAuthentication _signInAuthentication =
-        await _signInAccount.authentication;
+  Future<User?> signIn() async {
+    GoogleSignInAccount? _signInAccount = await _googleSignIn.signIn();
+    if (_signInAccount == null) return null;
+    // GoogleSignInAuthentication _signInAuthentication =
+    //     await _signInAccount.authentication;
 
-    AuthCredential authCredential = GoogleAuthProvider.getCredential(
-        idToken: _signInAuthentication.idToken,
-        accessToken: _signInAuthentication.accessToken);
+    // final authCredential = GoogleAuthProvider.credential(
+    //     idToken: _signInAuthentication.idToken,
+    //     accessToken: _signInAuthentication.accessToken);
 
-    final FirebaseUser user =
-        (await _firebaseAuth.signInWithCredential(authCredential)).user;
-    print("User Name : ${user.displayName}");
-    return user;
+    // final User? user =
+    //     (await _firebaseAuth.signInWithCredential(authCredential)).user;
+    // print("User Name : ${user?.name}");
+    // return user;
+    return null;
   }
 
-  curUser udetail;
-
   void addDataToDb(
-      FirebaseUser user, ListItem _selectedItem, ListItem _selectedSub, code) {
-    _userDetails.name = user.displayName;
-    _userDetails.emailId = user.email;
-    _userDetails.photoUrl = user.photoUrl;
-    _userDetails.uid = user.uid;
+      User? user, ListItem _selectedItem, ListItem _selectedSub, code) {
+    final _userDetails = UserDetails(
+      name: user!.name,
+      emailId: user.email,
+      photoUrl: '',
+      uid: user.$id,
+    );
 
     var mapD;
     String nAME = _userDetails.name,
@@ -68,56 +50,52 @@ class _HomePageState extends State<HomePage> {
         uID = _userDetails.uid;
     String selRole = _selectedItem.name, selCourse = _selectedSub.name;
 
-    udetail = curUser(uID, nAME, pHOTO, eMAIL, code, selCourse, selRole);
+    final udetail = CurrUser(uID, nAME, pHOTO, eMAIL, code, selCourse, selRole);
 
-    currentUser = udetail;
+    final currentUser = udetail;
 
     mapD = udetail.toMap();
 
     String selSub = _selectedSub.name;
     String selItem = _selectedItem.name;
-    String uid = user.uid;
+    String uid = user.$id;
 
-    _documentReference = Firestore.instance.collection(selItem).document(uid);
+    final _documentReference =
+        FirebaseFirestore.instance.collection(selItem).doc(uid);
 
-    _documentReference2 = Firestore.instance
+    final _documentReference2 = FirebaseFirestore.instance
         .collection("Group")
-        .document(code)
+        .doc(code)
         .collection("Course Groups")
-        .document(selCourse);
+        .doc(selCourse);
 
     // Adding Member in Course Group
-    CollectionReference collectionCheck = Firestore.instance
+    FirebaseFirestore.instance
         .collection("Group")
-        .document(code)
+        .doc(code)
         .collection("Course Group");
 
-    Map<String, dynamic> tempSnap;
+    Map<String, dynamic>? tempSnap;
     subGroup _subGroup;
     List<dynamic> tempMemberList;
     List<String> toAdd = [];
     //String str;
 
-    subscribtion = _documentReference2.snapshots().listen((snapshot) {
-      tempSnap = snapshot.data;
+    _documentReference2.snapshots().listen((snapshot) {
+      tempSnap = snapshot.data();
     });
+    tempMemberList = tempSnap?['memberList'].toList();
 
-    if (tempSnap != null) {
-      tempMemberList = tempSnap['memberList'].toList();
-
-      bool flag = true;
-      for (int i = 0; i < tempMemberList.length; i++) {
-        toAdd.add(tempMemberList[i].toString());
-        if (tempMemberList[i].toString() == eMAIL) {
-          flag = false;
-          break;
-        }
+    bool flag = true;
+    for (int i = 0; i < tempMemberList.length; i++) {
+      toAdd.add(tempMemberList[i].toString());
+      if (tempMemberList[i].toString() == eMAIL) {
+        flag = false;
+        break;
       }
+    }
 
-      if (flag) {
-        toAdd.add(eMAIL);
-      }
-    } else {
+    if (flag) {
       toAdd.add(eMAIL);
     }
 
@@ -126,21 +104,21 @@ class _HomePageState extends State<HomePage> {
         "https://cdn.iconscout.com/icon/premium/png-256-thumb/open-book-1831704-1554648.png";
 
     _subGroup = subGroup(
-        displayName: selCourse,
+        name: selCourse,
         memberList: toAdd,
         photoUrl: photoLink,
         code: code,
         course: selCourse,
         gid: groupID);
 
-    var map2 = _subGroup.toMap();
+    var map2 = Map<Object, Object>.from(_subGroup.toMap());
 
     //Yha tak
 
     _documentReference.get().then((documentSnapshot) {
       if (documentSnapshot.exists) {
       } else {
-        _documentReference.setData(mapD).whenComplete(() {
+        _documentReference.set(mapD).whenComplete(() {
           print("Users Colelction added to Database");
         }).catchError((e) {
           print("Error adding collection to Database $e");
@@ -151,7 +129,7 @@ class _HomePageState extends State<HomePage> {
     _documentReference2.get().then((snapshot) {
       if (snapshot.exists) {
       } else {
-        _documentReference2.updateData(map2).whenComplete(() {
+        _documentReference2.update(map2).whenComplete(() {
           print("Users Colelction added to Group $selSub");
         }).catchError((e) {
           print("Error adding collection to Database $e");
@@ -183,21 +161,21 @@ class _HomePageState extends State<HomePage> {
     ListItem(4, "Biology")
   ];
 
-  List<DropdownMenuItem<ListItem>> _dropdownMenuItems;
-  ListItem _selectedItem;
-  List<DropdownMenuItem<ListItem>> _dropdownMenusubs;
-  ListItem _selectedItemsub;
+  late List<DropdownMenuItem<ListItem>> _dropdownMenuItems;
+  late ListItem _selectedItem;
+  late List<DropdownMenuItem<ListItem>> _dropdownMenusubs;
+  late ListItem _selectedItemsub;
 
   void initState() {
     super.initState();
     _dropdownMenuItems = buildDropDownMenuItems(_dropdownItems);
-    _selectedItem = _dropdownMenuItems[0].value;
+    _selectedItem = _dropdownMenuItems[0].value!;
     _dropdownMenusubs = buildDropDownMenuItems(_dropdownsubs);
-    _selectedItemsub = _dropdownMenusubs[0].value;
+    _selectedItemsub = _dropdownMenusubs[0].value!;
   }
 
   List<DropdownMenuItem<ListItem>> buildDropDownMenuItems(List listItems) {
-    List<DropdownMenuItem<ListItem>> items = List();
+    List<DropdownMenuItem<ListItem>> items = [];
     for (ListItem listItem in listItems) {
       items.add(
         DropdownMenuItem(
@@ -214,7 +192,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<DropdownMenuItem<ListItem>> buildDropDownMenuSubs(List listItemssubs) {
-    List<DropdownMenuItem<ListItem>> items1 = List();
+    List<DropdownMenuItem<ListItem>> items1 = [];
     for (ListItem listItem1 in listItemssubs) {
       items1.add(
         DropdownMenuItem(
@@ -229,7 +207,7 @@ class _HomePageState extends State<HomePage> {
     return items1;
   }
 
-  String code;
+  String code = '';
 
   @override
   Widget build(BuildContext context) {
@@ -288,6 +266,7 @@ class _HomePageState extends State<HomePage> {
                 value: _selectedItem,
                 items: _dropdownMenuItems,
                 onChanged: (value) {
+                  if (value == null) return;
                   setState(() {
                     _selectedItem = value;
                   });
@@ -317,6 +296,8 @@ class _HomePageState extends State<HomePage> {
                         underline: SizedBox(),
                         dropdownColor: Colors.grey[200],
                         onChanged: (value) {
+                          if (value == null) return;
+
                           setState(() {
                             _selectedItemsub = value;
                           });
@@ -325,7 +306,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   )
                 : Text(""),
-            RaisedButton(
+            MaterialButton(
               elevation: 8.0,
               padding: EdgeInsets.all(8.0),
               shape: StadiumBorder(),
@@ -334,7 +315,7 @@ class _HomePageState extends State<HomePage> {
               child: Text('Sign In'),
               splashColor: Colors.red,
               onPressed: () {
-                signIn().then((FirebaseUser user) {
+                signIn().then((User? user) {
                   addDataToDb(user, _selectedItem, _selectedItemsub, code);
                 });
               },
@@ -354,24 +335,25 @@ class ListItem {
 }
 
 class subGroup {
-  String displayName;
+  String name;
   List<String> memberList;
   String photoUrl;
   String code;
   String course;
   String gid;
 
-  subGroup(
-      {this.displayName,
-      this.memberList,
-      this.photoUrl,
-      this.code,
-      this.course,
-      this.gid});
+  subGroup({
+    required this.name,
+    required this.memberList,
+    required this.photoUrl,
+    required this.code,
+    required this.course,
+    required this.gid,
+  });
 
   Map toMap() {
     var map = Map<String, dynamic>();
-    map['name'] = this.displayName;
+    map['name'] = this.name;
     map['memberList'] = this.memberList;
     map['photoUrl'] = this.photoUrl;
     map['code'] = this.code;
@@ -381,13 +363,14 @@ class subGroup {
   }
 
   subGroup fromMap(Map<String, dynamic> map) {
-    subGroup _groupData = subGroup();
-    _groupData.displayName = map['name'];
-    _groupData.memberList = map['memberList'];
-    _groupData.photoUrl = map['photoUrl'];
-    _groupData.code = map['code'];
-    _groupData.course = map['course'];
-    _groupData.gid = map['gid'];
+    subGroup _groupData = subGroup(
+      name: map['name'],
+      memberList: map['memberList'],
+      photoUrl: map['photoUrl'],
+      code: map['code'],
+      course: map['course'],
+      gid: map['gid'],
+    );
     return _groupData;
   }
 }

@@ -6,32 +6,36 @@ import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Dialogs/multiselectDialogs.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class MidAdminRegister extends StatefulWidget {
-  final List<Map<String, String>> branches;
-  final String keyM;
-  final MidAdmin midAdmin;
-  MidAdminRegister({@required this.branches, this.keyM, this.midAdmin});
+  final List<Map<String, String>>? branches;
+  final String? keyM;
+  final MidAdmin? midAdmin;
+  MidAdminRegister({
+    required this.branches,
+    this.keyM,
+    this.midAdmin,
+  });
   @override
   _MidAdminRegisterState createState() => _MidAdminRegisterState();
 }
 
 class _MidAdminRegisterState extends State<MidAdminRegister> {
-  TextEditingController emailTextEditingController,
+  late TextEditingController emailTextEditingController,
       districtTextEditingController,
       nameTextEditingController;
-  List<dynamic> selectedBranch;
-  GlobalKey<FormState> _formKey;
+  late List<dynamic> selectedBranch;
+  late GlobalKey<FormState> _formKey;
   @override
   void initState() {
     _formKey = GlobalKey<FormState>();
-    selectedBranch = List<String>();
+    selectedBranch = <String>[];
     if (widget.midAdmin != null) {
       selectedBranch = JsonCodec()
-          .decode(widget.midAdmin.branches)
+          .decode(widget.midAdmin!.branches)
           .map((e) => e.toString())
           .toList();
     }
@@ -81,7 +85,7 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
                   children: <Widget>[
                     TextFormField(
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value == null || value.isEmpty) {
                           return 'Please enter the name';
                         }
                         return null;
@@ -106,7 +110,7 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
                   children: <Widget>[
                     TextFormField(
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value == null || value.isEmpty) {
                           return 'Please enter the email';
                         }
                         if (!value.endsWith('@gmail.com')) {
@@ -135,7 +139,7 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
                   children: <Widget>[
                     TextFormField(
                       validator: (value) {
-                        if (value.isEmpty) {
+                        if (value == null || value.isEmpty) {
                           return 'Please enter the district';
                         }
                         return null;
@@ -168,7 +172,7 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
                     ),
                     (widget.branches != null)
                         ? MultiSelectFormField(
-                            dataSource: widget.branches,
+                            dataSource: widget.branches ?? [],
                             valueField: 'branchKey',
                             textField: 'branchName',
                             titleText: 'Branches'.tr(),
@@ -181,7 +185,7 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
                             },
                           )
                         : Center(
-                            child: FlatButton(
+                            child: MaterialButton(
                                 onPressed: () {},
                                 child: Text('Add Branch'.tr())))
                   ],
@@ -194,7 +198,7 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
                   children: <Widget>[
                     (widget.keyM == null)
                         ? Container()
-                        : FlatButton(
+                        : MaterialButton(
                             onPressed: () async {
                               String res = await showDialog(
                                   context: context,
@@ -203,9 +207,9 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
                                 return;
                               }
                               FirebaseDatabase.instance
-                                  .reference()
+                                  .ref()
                                   .child(
-                                      'institute/${FireBaseAuth.instance.instituteid}/midAdmin/${widget.keyM}')
+                                      'institute/${AppwriteAuth.instance.instituteid}/midAdmin/${widget.keyM}')
                                   .remove();
 
                               Navigator.of(context).pop();
@@ -214,9 +218,9 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
                               'Remove'.tr(),
                             ),
                           ),
-                    FlatButton(
+                    MaterialButton(
                       onPressed: () {
-                        if (!_formKey.currentState.validate()) {
+                        if (!_formKey.currentState!.validate()) {
                           return;
                         }
                         if (!emailTextEditingController.text
@@ -232,18 +236,18 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
                         }
                         DatabaseReference refe;
                         if (widget.keyM == null) {
-                          Firestore.instance
+                          FirebaseFirestore.instance
                               .collection('institute')
-                              .document(
+                              .doc(
                                   emailTextEditingController.text.split('@')[0])
-                              .setData({
+                              .set({
                             "value":
-                                'midAdmin_${FireBaseAuth.instance.instituteid}_$selectedBranch'
+                                'midAdmin_${AppwriteAuth.instance.instituteid}_$selectedBranch'
                           });
                           refe = FirebaseDatabase.instance
-                              .reference()
+                              .ref()
                               .child(
-                                  'institute/${FireBaseAuth.instance.instituteid}/midAdmin/')
+                                  'institute/${AppwriteAuth.instance.instituteid}/midAdmin/')
                               .push();
                           refe.update(MidAdmin(
                                   name: nameTextEditingController.text,
@@ -252,14 +256,14 @@ class _MidAdminRegisterState extends State<MidAdminRegister> {
                                   branches: selectedBranch.toString())
                               .toJson());
                         } else {
-                          refe = FirebaseDatabase.instance.reference().child(
-                              'institute/${FireBaseAuth.instance.instituteid}/midAdmin/${widget.keyM}');
+                          refe = FirebaseDatabase.instance.ref().child(
+                              'institute/${AppwriteAuth.instance.instituteid}/midAdmin/${widget.keyM}');
                           refe.update(MidAdmin(
-                                  name: nameTextEditingController.text,
-                                  district: districtTextEditingController.text,
-                                  email: emailTextEditingController.text,
-                                  branches: selectedBranch.toString())
-                              .toJson());
+                            name: nameTextEditingController.text,
+                            district: districtTextEditingController.text,
+                            email: emailTextEditingController.text,
+                            branches: selectedBranch.toString(),
+                          ).toJson());
                         }
                         Navigator.of(context).pop();
                       },

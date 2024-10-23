@@ -1,13 +1,17 @@
-import 'package:flutter/material.dart';
-import 'package:coach_app/Chat/group_description.dart';
 import 'package:coach_app/Chat/models/item_class.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:flutter/material.dart';
 
 class GridItem extends StatefulWidget {
   final Key key;
   final Item item;
   final ValueChanged<bool> isSelected;
 
-  GridItem({this.item, this.isSelected, this.key});
+  GridItem({
+    required this.item,
+    required this.isSelected,
+    required this.key,
+  });
 
   @override
   _GridItemState createState() => _GridItemState();

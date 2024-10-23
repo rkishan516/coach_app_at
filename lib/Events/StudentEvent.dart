@@ -4,28 +4,28 @@ import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Events/FirebaseMessaging.dart';
 import 'package:coach_app/Events/videoConferencing.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../Authentication/FirebaseAuth.dart';
 
 class StudentEvent extends StatefulWidget {
   final String courseId;
-  StudentEvent({@required this.courseId});
+  StudentEvent({required this.courseId});
   @override
   _StudentEventState createState() => _StudentEventState();
 }
 
 class _StudentEventState extends State<StudentEvent> {
-  List<EventsModal> _allEvent;
-  Query _query;
-  StreamSubscription<Event> _onDataAddedSubscription;
-  StreamSubscription<Event> _onDataChangedSubscription;
-  StreamSubscription<Event> _onDataRemovedSubscription;
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  late List<EventsModal> _allEvent;
+  late Query _query;
+  late StreamSubscription<DatabaseEvent> _onDataAddedSubscription;
+  late StreamSubscription<DatabaseEvent> _onDataChangedSubscription;
+  late StreamSubscription<DatabaseEvent> _onDataRemovedSubscription;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FirebaseMessagingService _firebaseMessagingService =
       FirebaseMessagingService();
   @override
@@ -39,46 +39,49 @@ class _StudentEventState extends State<StudentEvent> {
   void storeTokenintoDatabase() {
     _firebaseMessaging.getToken().then((token) {
       FirebaseDatabase.instance
-          .reference()
+          .ref()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}')
+              'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}')
           .update({"tokenid": token.toString()});
     });
   }
 
   _initializeevent() {
     //Getting Query
-    _query = FirebaseDatabase.instance.reference().child(
-        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events');
+    _query = FirebaseDatabase.instance.ref().child(
+        'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/events');
 
     //Setting Listener for data add
-    _onDataAddedSubscription = _query.onChildAdded.listen((Event event) {
+    _onDataAddedSubscription =
+        _query.onChildAdded.listen((DatabaseEvent event) {
       setState(() {
         if (event.snapshot.key != null &&
-            event.snapshot.value['courseid'] == widget.courseId) {
-          _allEvent.add(
-              EventsModal.fromJson(event.snapshot.key, event.snapshot.value));
+            (event.snapshot.value as Map)['courseid'] == widget.courseId) {
+          _allEvent.add(EventsModal.fromJson(
+              event.snapshot.key!, event.snapshot.value as Map));
         }
       });
     });
 
     //Setting Listener for data change
-    _onDataChangedSubscription = _query.onChildChanged.listen((Event event) {
+    _onDataChangedSubscription =
+        _query.onChildChanged.listen((DatabaseEvent event) {
       _allEvent.forEach((element) {
-        if (element.eventKey == event.snapshot.value['eventKey']) {
+        if (element.eventKey == (event.snapshot.value as Map)['eventKey']) {
           var index = _allEvent.indexOf(element);
           setState(() {
-            _allEvent[index] =
-                EventsModal.fromJson(event.snapshot.key, event.snapshot.value);
+            _allEvent[index] = EventsModal.fromJson(
+                event.snapshot.key!, event.snapshot.value as Map);
           });
         }
       });
     });
 
     //Setting Listener for data removal
-    _onDataRemovedSubscription = _query.onChildRemoved.listen((Event event) {
+    _onDataRemovedSubscription =
+        _query.onChildRemoved.listen((DatabaseEvent event) {
       _allEvent.forEach((element) {
-        if (element.eventKey == event.snapshot.value['eventKey']) {
+        if (element.eventKey == (event.snapshot.value as Map)['eventKey']) {
           var index = _allEvent.indexOf(element);
           setState(() {
             _allEvent.removeAt(index);
@@ -91,9 +94,9 @@ class _StudentEventState extends State<StudentEvent> {
 
   @override
   void dispose() {
-    _onDataAddedSubscription?.cancel();
-    _onDataChangedSubscription?.cancel();
-    _onDataRemovedSubscription?.cancel();
+    _onDataAddedSubscription.cancel();
+    _onDataChangedSubscription.cancel();
+    _onDataRemovedSubscription.cancel();
     super.dispose();
   }
 
@@ -124,7 +127,7 @@ class _StudentEventState extends State<StudentEvent> {
             colors: [Colors.white, Color(0xffF36C24)],
           ),
         ),
-        child: (_allEvent?.length == 0)
+        child: (_allEvent.length == 0)
             ? Center(
                 child: Text(
                   'Currently no live session is scheduled',

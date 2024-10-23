@@ -1,5 +1,6 @@
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Payment/razorPay.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -11,13 +12,14 @@ class OneTimeInstallment extends StatefulWidget {
   final String displaysum;
   final double paidsum;
   final double paidfine;
-  OneTimeInstallment(
-      {this.toggleValue,
-      this.displaysum,
-      this.paidsum,
-      this.paidfine,
-      this.courseId,
-      this.courseName});
+  OneTimeInstallment({
+    required this.toggleValue,
+    required this.displaysum,
+    required this.paidsum,
+    required this.paidfine,
+    required this.courseId,
+    required this.courseName,
+  });
   @override
   _StuInstallmentState createState() =>
       _StuInstallmentState(toggleValue, paidsum, paidfine);
@@ -50,18 +52,18 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
           String date = dd + " " + mm + " " + yyyy;
           String accountId;
           var value = await FirebaseDatabase.instance
-              .reference()
+              .ref()
               .child(
-                  '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/')
+                  '/institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/')
               .child('accountId')
               .once();
-          accountId = value.value;
+          accountId = value.snapshot.value as String;
 
           void _handlePaymentSuccess(PaymentSuccessResponse response) async {
             await dbref
-                .reference()
+                .ref()
                 .child(
-                    "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees/")
+                    "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}/course/${widget.courseId}/fees/")
                 .update({
               "Installments": {
                 "OneTime": {
@@ -96,10 +98,10 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
 
           _razorPay.checkoutPayment(
               totalfees.toInt() * 100,
-              FireBaseAuth.instance.user.displayName,
+              AppwriteAuth.instance.user!.name,
               'You are purchaing the course ${widget.courseName}.',
-              FireBaseAuth.instance.user.phoneNumber,
-              FireBaseAuth.instance.user.email,
+              AppwriteAuth.instance.user!.phone,
+              AppwriteAuth.instance.user!.email,
               accountId);
         }
       },
@@ -134,20 +136,20 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
   _loadFromDatabase() {
     if (!toggleValue) {
       DateTime dateTime = DateTime.now();
-      int dd = int.parse(dateTime.day.toString()?.length == 1
+      int dd = int.parse(dateTime.day.toString().length == 1
           ? "0" + dateTime.day.toString()
           : dateTime.day.toString());
-      int mm = int.parse(dateTime.month.toString()?.length == 1
+      int mm = int.parse(dateTime.month.toString().length == 1
           ? "0" + dateTime.month.toString()
           : dateTime.month.toString());
       int yyyy = int.parse(dateTime.year.toString());
       dbref
-          .reference()
+          .ref()
           .child(
-              "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/fees")
+              "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}/fees")
           .once()
           .then((snapshot) {
-        Map map = snapshot.value;
+        Map map = snapshot.snapshot.value as Map;
         duration = map["OneTime"]["Duration"];
         int enddd = int.parse(duration.toString().split(" ")[0]);
         int endmm = int.parse(duration.toString().split(" ")[1]);
@@ -166,7 +168,9 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
 
           int durationinDays = period == "Day(s)"
               ? count
-              : period == "Month(s)" ? count * 30 : count * 365;
+              : period == "Month(s)"
+                  ? count * 30
+                  : count * 365;
           double val = 0.0;
           if (durationinDays != 0)
             val = double.parse((((difference / durationinDays)).ceil() *
@@ -178,13 +182,15 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
           });
         }
         dbref
-            .reference()
+            .ref()
             .child(
-                "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/discount")
+                "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}/course/${widget.courseId}/discount")
             .once()
             .then((value) {
           setState(() {
-            discount = value.value == null ? "" : value.value + "%";
+            discount = value.snapshot.value == null
+                ? ""
+                : value.snapshot.value.toString() + "%";
             duration = map["OneTime"]["Duration"];
             totalfees = double.parse(map["FeeSection"]["TotalFees"]);
           });
@@ -192,24 +198,24 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
       });
     } else {
       dbref
-          .reference()
+          .ref()
           .child(
-              "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/fees")
+              "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}/fees")
           .once()
           .then((snapshot) {
-        Map map = snapshot.value;
+        Map map = snapshot.snapshot.value as Map;
         setState(() {
           duration = map["OneTime"]["Duration"].toString();
           totalfees = double.parse(map["FeeSection"]["TotalFees"]);
         });
       });
       dbref
-          .reference()
+          .ref()
           .child(
-              "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees/Installments/OneTime")
+              "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}/course/${widget.courseId}/fees/Installments/OneTime")
           .once()
           .then((value) {
-        Map map = value.value;
+        Map map = value.snapshot.value as Map;
         setState(() {
           fine = map["Fine"];
           paymentDate = map["PaidTime"];
@@ -218,13 +224,15 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
         });
       });
       dbref
-          .reference()
+          .ref()
           .child(
-              "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/discount")
+              "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}/course/${widget.courseId}/discount")
           .once()
           .then((value) {
         setState(() {
-          discount = value.value == null ? "" : value.value + "%";
+          discount = value.snapshot.value == null
+              ? ""
+              : value.snapshot.value.toString() + "%";
         });
       });
     }
@@ -354,7 +362,7 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
                       Text("End Date:    ",
                           style: TextStyle(fontSize: SizeConfig.b * 4.5)),
                       SizedBox(width: SizeConfig.b * 11.5),
-                      Text(duration?.replaceAll(" ", "/"),
+                      Text(duration.replaceAll(" ", "/"),
                           style: TextStyle(
                               color: Color.fromARGB(255, 243, 107, 40),
                               fontWeight: FontWeight.w600,
@@ -369,7 +377,7 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
                         Text("Payment Date:   ",
                             style: TextStyle(fontSize: SizeConfig.b * 4.5)),
                         SizedBox(width: SizeConfig.b * 2.4),
-                        Text(paymentDate?.replaceAll(" ", "/"),
+                        Text(paymentDate.replaceAll(" ", "/"),
                             style: TextStyle(
                                 color: Color.fromARGB(255, 243, 107, 40),
                                 fontWeight: FontWeight.w600,
@@ -399,21 +407,5 @@ class _StuInstallmentState extends State<OneTimeInstallment> {
             ),
           ],
         ));
-  }
-}
-
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
   }
 }

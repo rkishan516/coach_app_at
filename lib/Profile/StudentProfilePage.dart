@@ -3,33 +3,16 @@ import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/FeeSection/StudentSection/feeUpdate.dart';
 import 'package:coach_app/FeeSection/ToggleButton.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
 import 'package:coach_app/Profile/student_performance.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
-}
 
 class StudentProfilePage extends StatelessWidget {
   final Student student;
   final String keyS;
-  StudentProfilePage({@required this.student, @required this.keyS});
+  StudentProfilePage({required this.student, required this.keyS});
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +86,7 @@ class StudentProfilePage extends StatelessWidget {
                                     children: <Widget>[
                                   SizedBox(width: SizeConfig.b * 5.98),
                                   Text(
-                                    student?.phoneNo ?? "Phone No Not given",
+                                    student.phoneNo,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: Colors.white,
@@ -111,7 +94,7 @@ class StudentProfilePage extends StatelessWidget {
                                     ),
                                   ),
                                   SizedBox(width: SizeConfig.b * 0.98),
-                                  RaisedButton(
+                                  MaterialButton(
                                     child: Icon(
                                       Icons.call,
                                       color: Colors.white,
@@ -125,10 +108,10 @@ class StudentProfilePage extends StatelessWidget {
                                     ),
                                     color: Color.fromARGB(255, 243, 106, 38),
                                     onPressed: () async {
-                                      String url =
-                                          'tel:${student?.phoneNo ?? ""}';
-                                      if (await canLaunch(url)) {
-                                        await launch(url);
+                                      Uri url =
+                                          Uri.parse('tel:${student.phoneNo}');
+                                      if (await canLaunchUrl(url)) {
+                                        await launchUrl(url);
                                       } else {
                                         throw 'Could not launch $url';
                                       }
@@ -146,7 +129,7 @@ class StudentProfilePage extends StatelessWidget {
                           SizeConfig.v * 1.25,
                         ),
                         width: MediaQuery.of(context).size.width * 0.35,
-                        child: student.photoURL != null
+                        child: student.photoURL != ''
                             ? CircleAvatar(
                                 radius: SizeConfig.b * 11.1,
                                 backgroundImage: NetworkImage(student.photoURL),
@@ -178,27 +161,27 @@ class StudentProfilePage extends StatelessWidget {
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,
-                  itemCount: student.course.length,
+                  itemCount: student.course!.length,
                   itemBuilder: (context, ind) {
-                    String index = student.course.keys.toList()[ind];
+                    String index = student.course!.keys.toList()[ind];
                     return InkWell(
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => StudentPerformance(
                             uid: keyS,
-                            courseId: student.course[index].courseID,
+                            courseId: student.course![index]!.courseID,
                           ),
                         ),
                       ),
                       onLongPress: () {
-                        if (FireBaseAuth.instance.previlagelevel >= 3) {
-                          return Navigator.of(context).push(
+                        if (AppwriteAuth.instance.previlagelevel >= 3) {
+                          Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => FeeUpdate(
-                                  courseID: student.course[index].courseID,
+                                  courseID: student.course![index]!.courseID,
                                   keyS: keyS,
-                                  ref: FirebaseDatabase.instance.reference().child(
-                                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${student.course[index].courseID}')),
+                                  ref: FirebaseDatabase.instance.ref().child(
+                                      'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${student.course![index]!.courseID}')),
                             ),
                           );
                         }
@@ -233,7 +216,7 @@ class StudentProfilePage extends StatelessWidget {
                                         ),
                                         Expanded(
                                           child: Text(
-                                            "${student.course[index].courseName}",
+                                            "${student.course![index]!.courseName}",
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.white),
@@ -261,7 +244,7 @@ class StudentProfilePage extends StatelessWidget {
                                         Expanded(
                                           flex: 2,
                                           child: Text(
-                                            "${student.course[index].academicYear}",
+                                            "${student.course![index]!.academicYear}",
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.white),
@@ -271,7 +254,7 @@ class StudentProfilePage extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                if (FireBaseAuth.instance.previlagelevel >= 3)
+                                if (AppwriteAuth.instance.previlagelevel >= 3)
                                   Padding(
                                     padding: const EdgeInsets.all(10.0),
                                     child: Container(
@@ -279,7 +262,7 @@ class StudentProfilePage extends StatelessWidget {
                                       child: ToggleButton(
                                         studentUid: keyS,
                                         courseId:
-                                            student.course[index].courseID,
+                                            student.course![index]!.courseID,
                                       ),
                                     ),
                                   ),

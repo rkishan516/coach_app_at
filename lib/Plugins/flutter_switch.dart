@@ -9,27 +9,27 @@ class FlutterSwitch extends StatefulWidget {
       inactiveTextColor,
       toggleColor;
   final double width, height, toggleSize, valueFontSize, borderRadius, padding;
-  final String activeText, inactiveText;
+  final String? activeText, inactiveText;
 
-  const FlutterSwitch(
-      {Key key,
-      this.value,
-      this.onToggle,
-      this.activeColor = Colors.blue,
-      this.inactiveColor = Colors.grey,
-      this.activeTextColor = Colors.white70,
-      this.inactiveTextColor = Colors.white70,
-      this.toggleColor = Colors.white,
-      this.width = 70.0,
-      this.height = 35.0,
-      this.toggleSize = 25.0,
-      this.valueFontSize = 16.0,
-      this.borderRadius = 20.0,
-      this.padding = 4.0,
-      this.showOnOff = false,
-      this.activeText,
-      this.inactiveText})
-      : super(key: key);
+  const FlutterSwitch({
+    super.key,
+    required this.value,
+    required this.onToggle,
+    this.activeColor = Colors.blue,
+    this.inactiveColor = Colors.grey,
+    this.activeTextColor = Colors.white70,
+    this.inactiveTextColor = Colors.white70,
+    this.toggleColor = Colors.white,
+    this.width = 70.0,
+    this.height = 35.0,
+    this.toggleSize = 25.0,
+    this.valueFontSize = 16.0,
+    this.borderRadius = 20.0,
+    this.padding = 4.0,
+    this.showOnOff = false,
+    this.activeText,
+    this.inactiveText,
+  });
 
   @override
   _FlutterSwitchState createState() => _FlutterSwitchState();
@@ -37,8 +37,8 @@ class FlutterSwitch extends StatefulWidget {
 
 class _FlutterSwitchState extends State<FlutterSwitch>
     with SingleTickerProviderStateMixin {
-  Animation _toggleAnimation;
-  AnimationController _animationController;
+  late Animation _toggleAnimation;
+  late AnimationController _animationController;
 
   @override
   void initState() {
@@ -123,7 +123,7 @@ class _FlutterSwitchState extends State<FlutterSwitch>
   Widget get _activeText {
     if (widget.showOnOff) {
       return Text(
-        (widget?.activeText != null) ? widget.activeText : "On",
+        widget.activeText ?? "On",
         style: TextStyle(
           color: widget.activeTextColor,
           fontWeight: FontWeight.w900,
@@ -138,7 +138,7 @@ class _FlutterSwitchState extends State<FlutterSwitch>
   Widget get _inactiveText {
     if (widget.showOnOff) {
       return Text(
-        (widget?.inactiveText != null) ? widget.inactiveText : "Off",
+        widget.inactiveText ?? "Off",
         style: TextStyle(
           color: widget.inactiveTextColor,
           fontWeight: FontWeight.w900,

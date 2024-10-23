@@ -1,58 +1,50 @@
 //group removal page and nami g of group nd photo page
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:coach_app/Chat/group_description_grid.dart';
 import 'package:coach_app/Chat/group_final.dart';
-import 'package:coach_app/Chat/participants.dart';
-import 'participants.dart';
 import 'package:coach_app/Chat/models/item_class.dart';
+import 'package:coach_app/Chat/participants.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:flutter/material.dart';
 
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
-}
-
-class groupDes extends StatefulWidget {
+class GroupDes extends StatefulWidget {
   final List<Item> sList;
-  final choose ch;
-  final String catg;
-  final curUser currentUser;
+  final choose? ch;
+  final String? catg;
+  final CurrUser currentUser;
 
-  groupDes({this.sList, this.catg, this.ch, this.currentUser});
+  GroupDes(
+      {this.sList = const [], this.catg, this.ch, required this.currentUser});
 
   @override
-  _groupDesState createState() {
-    return new _groupDesState(sList, catg, ch, currentUser);
+  _GroupDesState createState() {
+    return new _GroupDesState(
+        sList,
+        catg ?? '',
+        ch ??
+            choose(
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+            ),
+        currentUser);
   }
 }
 
-class _groupDesState extends State<groupDes> {
+class _GroupDesState extends State<GroupDes> {
   List<Item> selItem2 = [];
   String catg;
   choose ch;
-  final curUser currentUser;
+  final CurrUser currentUser;
   int counter = 0;
   String groupName = '';
-  _groupDesState(this.selItem2, this.catg, this.ch, this.currentUser);
+  _GroupDesState(this.selItem2, this.catg, this.ch, this.currentUser);
 
   List<Item> itemList = [];
   List<Item> selectedList2 = [];
-  List<DocumentSnapshot> tempList;
-  CollectionReference collectionReference;
-  StreamSubscription<QuerySnapshot> subscription;
 
   @override
   void initState() {
@@ -72,21 +64,21 @@ class _groupDesState extends State<groupDes> {
   }
 
   void preSelection(String previ) {
-    collectionReference = Firestore.instance.collection(previ);
+    final collectionReference = FirebaseFirestore.instance.collection(previ);
 
-    subscription =
+    final subscription =
         collectionReference.orderBy('name').snapshots().listen((snapshot) {
-      tempList = snapshot.documents;
+      final tempList = snapshot.docs;
 
       for (int i = 0; i < tempList.length; i++) {
         String name, photo, role, uid, code;
         int rank;
-        name = tempList[i].data['name'];
-        photo = tempList[i].data['photoUrl'];
-        role = tempList[i].data['role'];
+        name = (tempList[i].data as Map)['name'];
+        photo = (tempList[i].data as Map)['photoUrl'];
+        role = (tempList[i].data as Map)['role'];
         rank = i + 1;
-        code = tempList[i].data['code'];
-        uid = tempList[i].data['uid'];
+        code = (tempList[i].data as Map)['code'];
+        uid = (tempList[i].data as Map)['uid'];
         Item temp = Item(photo, rank, name, uid, role, code);
         setState(() {
           selectedList2.add(temp);
@@ -97,17 +89,17 @@ class _groupDesState extends State<groupDes> {
 
   void getData(AsyncSnapshot<dynamic> snapshot) async {
     setState(() {
-      tempList = snapshot.data.documents;
+      final tempList = snapshot.data.documents;
 
       for (int i = 0; i < tempList.length; i++) {
         String name, photo, role, uid, code;
         int rank;
-        name = tempList[i].data['name'];
-        photo = tempList[i].data['photoUrl'];
-        role = tempList[i].data['role'];
+        name = (tempList[i].data as Map)['name'];
+        photo = (tempList[i].data as Map)['photoUrl'];
+        role = (tempList[i].data as Map)['role'];
         rank = i + 1;
-        code = tempList[i].data['code'];
-        uid = tempList[i].data['uid'];
+        code = (tempList[i].data as Map)['code'];
+        uid = (tempList[i].data as Map)['uid'];
         Item temp = Item(photo, rank, name, uid, role, code);
         itemList.add(temp);
       }
@@ -134,13 +126,13 @@ class _groupDesState extends State<groupDes> {
             ),
             onPressed: () {
               if (selectedList2.length < 1) {
-                Scaffold.of(context).showSnackBar(SnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text("No participant is selected"),
                 ));
               } else {
                 Navigator.of(context)
                     .push(new MaterialPageRoute(builder: (context) {
-                  return new groupFinal(
+                  return new GroupFinal(
                     preSelectedItem: selectedList2,
                     groupName: groupName,
                     currentUser: currentUser,
@@ -178,7 +170,8 @@ class _groupDesState extends State<groupDes> {
                     new Row(children: <Widget>[
                       SizedBox(width: SizeConfig.b * 3),
                       CircleAvatar(
-                        foregroundColor: Theme.of(context).accentColor,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.secondary,
                         backgroundColor: Colors.grey,
                         radius: SizeConfig.b * 7.63,
                         backgroundImage: AssetImage('images/f.jpg'),
@@ -253,7 +246,7 @@ class _groupDesState extends State<groupDes> {
                         : SizedBox(),
                     ch.mid == true
                         ? StreamBuilder(
-                            stream: Firestore.instance
+                            stream: FirebaseFirestore.instance
                                 .collection("Mid Admin")
                                 .orderBy('name')
                                 .snapshots(),
@@ -286,7 +279,7 @@ class _groupDesState extends State<groupDes> {
                           ),
                     ch.subBased == true
                         ? StreamBuilder(
-                            stream: Firestore.instance
+                            stream: FirebaseFirestore.instance
                                 .collection("Sub Admin")
                                 .orderBy('name')
                                 .snapshots(),
@@ -319,7 +312,7 @@ class _groupDesState extends State<groupDes> {
                           ),
                     ch.teacher == true
                         ? StreamBuilder(
-                            stream: Firestore.instance
+                            stream: FirebaseFirestore.instance
                                 .collection("Teacher")
                                 .orderBy('name')
                                 .snapshots(),
@@ -352,7 +345,7 @@ class _groupDesState extends State<groupDes> {
                           ),
                     ch.ind == true
                         ? StreamBuilder(
-                            stream: Firestore.instance
+                            stream: FirebaseFirestore.instance
                                 .collection("Student")
                                 .orderBy('name')
                                 .snapshots(),

@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.5+12
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=3.3.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -32,24 +32,20 @@ dependencies:
   google_sign_in:
   flutter_signin_button:
   firebase_database:
-  cloud_firestore:
-  firebase_storage:
+  cloud_firestore: ^4.14.0
+  firebase_storage: ^11.6.0
   google_fonts:
-  firebase_auth:
   image_picker:
   easy_localization:
   material_design_icons_flutter:
   razorpay_flutter:
-  esys_flutter_share:
   shared_preferences:
   firebase_messaging:
   flutter_local_notifications:
-  fancy_bottom_navigation:
   flutter_inappwebview:
   intl:
   flutter_svg:
   flare_loading:
-  firebase_admob:
   url_launcher:
   auto_size_text:
   package_info:
@@ -58,19 +54,21 @@ dependencies:
   http:
   file_picker:
   provider:
-  speech_recognition:
-    git:
-        url: https://github.com/webeverde/speech_recognition.git
-        ref: master
   flutter_secure_storage:
   linked_scroll_controller:
   avatar_glow:
   permission_handler:
   flutter_speed_dial:
   flutter_image_compress:
-  circular_check_box:
   chewie:
   linkwell:  
+  flutter_form_builder: ^9.2.1
+  form_builder_validators: ^9.1.0
+  table_calendar: ^3.0.9
+  esys_flutter_share_plus: ^2.2.0
+  speech_to_text: ^6.6.0
+  fancy_bottom_navigation_2: ^0.3.5
+  appwrite: ^12.0.1
 
 dev_dependencies:
   flutter_test:

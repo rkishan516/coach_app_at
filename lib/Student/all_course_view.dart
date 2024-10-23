@@ -10,7 +10,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 class AllCoursePage extends StatefulWidget {
   final DatabaseReference ref;
-  AllCoursePage({@required this.ref});
+  AllCoursePage({required this.ref});
   @override
   _AllCoursePageState createState() => _AllCoursePageState();
 }
@@ -35,7 +35,7 @@ class _AllCoursePageState extends State<AllCoursePage> {
           IconButton(
               icon: Icon(Icons.exit_to_app),
               onPressed: () {
-                FireBaseAuth.instance.signoutWithGoogle();
+                AppwriteAuth.instance.signoutWithGoogle();
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => WelcomePage()),
                     (route) => false);
@@ -62,12 +62,12 @@ class _AllCoursePageState extends State<AllCoursePage> {
             children: <Widget>[
               Expanded(
                 flex: 12,
-                child: StreamBuilder<Event>(
+                child: StreamBuilder<DatabaseEvent>(
                   stream: widget.ref.child('/coursesList').onValue,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       Map<String, String> courses = Map<String, String>();
-                      snapshot.data.snapshot.value?.forEach((k, v) {
+                      (snapshot.data?.snapshot.value as Map?)?.forEach((k, v) {
                         courses[k] = v;
                       });
                       return ListView.builder(
@@ -93,8 +93,8 @@ class _AllCoursePageState extends State<AllCoursePage> {
                                     builder: (context) =>
                                         CourseRegistrationPage(
                                       courseID: courses.keys.toList()[index],
-                                      name:
-                                          courses[courses.keys.toList()[index]],
+                                      name: courses[
+                                          courses.keys.toList()[index]]!,
                                       ref: widget.ref.child(
                                           'courses/${courses.keys.toList()[index]}'),
                                     ),

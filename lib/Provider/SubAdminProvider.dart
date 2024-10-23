@@ -6,16 +6,16 @@ import 'package:flutter/foundation.dart';
 class SubAdminProvider extends ChangeNotifier {
   SubAdminProvider() {
     FirebaseDatabase.instance
-        .reference()
+        .ref()
         .child(
-            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/')
+            'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/')
         .onValue
         .listen((event) {
-      setBranch(Branch.fromJson(event.snapshot.value));
+      setBranch(Branch.fromJson(event.snapshot.value as Map));
     });
   }
-  
-  Branch branch;
+
+  late Branch branch;
 
   setBranch(Branch branch) {
     this.branch = branch;

@@ -14,16 +14,16 @@ class _StatisticsPageState extends State<StatisticsPage> {
   String filter = "";
   @override
   Widget build(BuildContext context) {
-    Map<String, Branch> branches = Map<String, Branch>.from(
-        (FireBaseAuth.instance.previlagelevel == 4)
+    Map<String, Branch> branches =
+        Map<String, Branch>.from((AppwriteAuth.instance.previlagelevel == 4)
             ? Provider.of<AdminProvider>(context).branch
-            : (FireBaseAuth.instance.previlagelevel == 34)
+            : (AppwriteAuth.instance.previlagelevel == 34)
                 ? Provider.of<MidAdminProvider>(context).branches
                 : Map<String, Branch>());
     if (filter != "") {
       branches.removeWhere((key, value) => !filter.contains(key.toString()));
     }
-    Map<String, MidAdmin> midAdmin = (FireBaseAuth.instance.previlagelevel == 4)
+    Map<String, MidAdmin> midAdmin = (AppwriteAuth.instance.previlagelevel == 4)
         ? Provider.of<AdminProvider>(context).midAdmins
         : Map<String, MidAdmin>();
     int teacherCount = 0,
@@ -31,20 +31,18 @@ class _StatisticsPageState extends State<StatisticsPage> {
         branchesCount = 0,
         coursesCount = 0,
         studentRequestCount = 0;
-    branchesCount = branches?.length ?? 0;
-    branches?.forEach((key, value) {
+    branchesCount = branches.length;
+    branches.forEach((key, value) {
       coursesCount += value.courses?.length ?? 0;
-      studentCount += value.students?.values
-              ?.toList()
-              ?.where((element) => element.status == "Registered")
-              ?.length ??
-          0;
-      studentRequestCount += value.students?.values
-              ?.toList()
-              ?.where((element) => element.status == "Existing Student")
-              ?.length ??
-          0;
-      teacherCount += value.teachers?.length ?? 0;
+      studentCount += value.students.values
+          .toList()
+          .where((element) => element.status == "Registered")
+          .length;
+      studentRequestCount += value.students.values
+          .toList()
+          .where((element) => element.status == "Existing Student")
+          .length;
+      teacherCount += value.teachers.length;
     });
     return Scaffold(
       appBar: AppBar(
@@ -77,7 +75,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         child: Stack(
                           children: [
                             Center(child: Text('Total')),
-                            if (FireBaseAuth.instance.previlagelevel == 4)
+                            if (AppwriteAuth.instance.previlagelevel == 4)
                               Align(
                                 alignment: Alignment.centerRight,
                                 child: Padding(
@@ -185,13 +183,13 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                                                 title: Text(midAdmin[
                                                                         midAdmin
                                                                             .keys
-                                                                            .toList()[index]]
+                                                                            .toList()[index]]!
                                                                     .name),
                                                                 onTap: () {
                                                                   setState(() {
                                                                     filter = midAdmin[midAdmin
                                                                             .keys
-                                                                            .toList()[index]]
+                                                                            .toList()[index]]!
                                                                         .branches;
                                                                   });
                                                                   Navigator.of(
@@ -337,7 +335,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                         child: Container(
                           height: 1.15 * MediaQuery.of(context).size.height / 3,
                           child: ListView.builder(
-                              itemCount: branches?.length ?? 0,
+                              itemCount: branches.length,
                               itemBuilder: (context, index) {
                                 return Container(
                                   padding: EdgeInsets.only(top: 12, bottom: 12),
@@ -352,7 +350,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                           child: Center(
                                             child: Text(
                                               branches[branches.keys
-                                                      .toList()[index]]
+                                                      .toList()[index]]!
                                                   .name,
                                               style: TextStyle(
                                                 fontSize: 6,
@@ -367,7 +365,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                         child: Center(
                                           child: Text(
                                             (branches[branches.keys
-                                                            .toList()[index]]
+                                                            .toList()[index]]!
                                                         .courses
                                                         ?.length ??
                                                     0)
@@ -379,10 +377,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                         child: Center(
                                           child: Text(
                                             (branches[branches.keys
-                                                            .toList()[index]]
-                                                        .teachers
-                                                        ?.length ??
-                                                    0)
+                                                        .toList()[index]]!
+                                                    .teachers
+                                                    .length)
                                                 .toString(),
                                           ),
                                         ),
@@ -391,15 +388,14 @@ class _StatisticsPageState extends State<StatisticsPage> {
                                         child: Center(
                                           child: Text(
                                             (branches[branches.keys
-                                                            .toList()[index]]
-                                                        .students
-                                                        ?.values
-                                                        ?.toList()
-                                                        ?.where((element) =>
-                                                            element.status ==
-                                                            "Registered")
-                                                        ?.length ??
-                                                    0)
+                                                        .toList()[index]]!
+                                                    .students
+                                                    .values
+                                                    .toList()
+                                                    .where((element) =>
+                                                        element.status ==
+                                                        "Registered")
+                                                    .length)
                                                 .toString(),
                                           ),
                                         ),
@@ -424,8 +420,12 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
 class StatisticsCapsule extends StatelessWidget {
   final String text, count;
-  final double width;
-  StatisticsCapsule({@required this.text, @required this.count, this.width});
+  final double? width;
+  StatisticsCapsule({
+    required this.text,
+    required this.count,
+    this.width,
+  });
   @override
   Widget build(BuildContext context) {
     return Card(

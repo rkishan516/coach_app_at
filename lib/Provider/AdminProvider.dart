@@ -6,22 +6,26 @@ import 'package:flutter/foundation.dart';
 class AdminProvider extends ChangeNotifier {
   AdminProvider() {
     FirebaseDatabase.instance
-        .reference()
-        .child('institute/${FireBaseAuth.instance.instituteid}')
+        .ref()
+        .child('institute/${AppwriteAuth.instance.instituteid}')
         .onValue
         .listen((event) {
       branch = Map<String, Branch>();
       midAdmins = Map<String, MidAdmin>();
+
+      Map? data = event.snapshot.value as Map?;
       setInstituteDetails(
-          event.snapshot.value['name'], event.snapshot.value['paid']);
-      if (event.snapshot.value != null) {
-        if (event.snapshot.value['branches'] != null) {
-          event.snapshot.value['branches'].forEach((k, v) {
+        data?['name'],
+        data?['paid'],
+      );
+      if (data != null) {
+        if (data['branches'] != null) {
+          data['branches'].forEach((k, v) {
             setBranch(k, Branch.fromJson(v));
           });
         }
-        if (event.snapshot.value['midAdmin'] != null) {
-          event.snapshot.value['midAdmin'].forEach((k, v) {
+        if (data['midAdmin'] != null) {
+          data['midAdmin'].forEach((k, v) {
             setMidAdmin(k, MidAdmin.fromJson(v));
           });
         }
@@ -29,10 +33,10 @@ class AdminProvider extends ChangeNotifier {
     });
   }
 
-  Map<String, Branch> branch;
-  Map<String, MidAdmin> midAdmins;
-  String instituteName;
-  String status;
+  late Map<String, Branch> branch;
+  late Map<String, MidAdmin> midAdmins;
+  late String instituteName;
+  late String status;
 
   setInstituteDetails(String instituteName, String status) {
     this.instituteName = instituteName;

@@ -13,28 +13,22 @@ import 'package:flutter/material.dart';
 
 class FeeReport extends StatelessWidget {
   final String type;
-  FeeReport({@required this.type});
+  FeeReport({required this.type});
 
   _getReportFragment(String position, var _listStudentModel) {
     switch (position) {
       case "Payment Report":
         return PayementReport(_listStudentModel);
-        break;
       case "Due Fee Report":
         return dfr.DueFeeReport(_listStudentModel);
-        break;
       case "Discount Report":
         return DiscountReport(_listStudentModel);
-        break;
       case "Fine Report":
         return FineReport(_listStudentModel);
-        break;
       case "Paid Report":
         return PaidReport(_listStudentModel);
-        break;
       case "OneTime Paid Report":
         return OneTimeReport(_listStudentModel);
-        break;
       default:
         return "Error Ocurred";
     }
@@ -56,18 +50,19 @@ class FeeReport extends StatelessWidget {
           Expanded(
             flex: 8,
             child: Container(
-              child: StreamBuilder<Event>(
+              child: StreamBuilder<DatabaseEvent>(
                   stream: FirebaseDatabase.instance
-                      .reference()
+                      .ref()
                       .child(
-                          "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coursesList")
+                          "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/coursesList")
                       .onValue,
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return UploadDialog(warning: 'Fetching');
                     }
                     Map<String, String> courses = Map<String, String>();
-                    snapshot.data.snapshot.value.forEach((key, value) {
+                    (snapshot.data!.snapshot.value as Map)
+                        .forEach((key, value) {
                       courses[key] = value;
                     });
                     return GridView.builder(
@@ -101,11 +96,11 @@ class FeeReport extends StatelessWidget {
                                 ),
                                 Expanded(
                                   flex: 5,
-                                  child: StreamBuilder<Event>(
+                                  child: StreamBuilder<DatabaseEvent>(
                                       stream: FirebaseDatabase.instance
-                                          .reference()
+                                          .ref()
                                           .child(
-                                              "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students")
+                                              "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students")
                                           .orderByChild(
                                               "course/${courses.keys.toList()[index]}/courseID")
                                           .equalTo(
@@ -115,19 +110,20 @@ class FeeReport extends StatelessWidget {
                                         if (!snapshot.hasData) {
                                           return Container();
                                         }
-                                        return StreamBuilder<Event>(
+                                        return StreamBuilder<DatabaseEvent>(
                                           stream: FirebaseDatabase.instance
-                                              .reference()
+                                              .ref()
                                               .child(
-                                                  "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.keys.toList()[index]}/fees")
+                                                  "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${courses.keys.toList()[index]}/fees")
                                               .onValue,
                                           builder: (context, snapshots) {
                                             if (!snapshots.hasData) {
                                               return Container();
                                             }
                                             List<StudentModel> _list = [];
-                                            snapshot.data.snapshot.value
-                                                ?.forEach((key, value) {
+                                            (snapshot.data!.snapshot.value
+                                                    as Map)
+                                                .forEach((key, value) {
                                               if (value["course"][
                                                           "${courses.keys.toList()[index]}"]
                                                       ["fees"] !=
@@ -136,8 +132,8 @@ class FeeReport extends StatelessWidget {
                                                   StudentModel.fromJSON(
                                                     key,
                                                     value,
-                                                    snapshots
-                                                        .data.snapshot.value,
+                                                    snapshots.data!.snapshot
+                                                        .value as Map,
                                                     "${courses.keys.toList()[index]}",
                                                   ),
                                                 );
@@ -159,7 +155,7 @@ class FeeReport extends StatelessWidget {
                                                             right: 8.0,
                                                             top: 4.0,
                                                             bottom: 4.0),
-                                                    child: RaisedButton(
+                                                    child: MaterialButton(
                                                       shape:
                                                           RoundedRectangleBorder(
                                                         borderRadius:

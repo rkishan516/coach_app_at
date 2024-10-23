@@ -1,36 +1,19 @@
-import 'package:coach_app/Chat/models/item_class.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:circular_check_box/circular_check_box.dart';
 import 'package:coach_app/Chat/group_description.dart';
 import 'package:coach_app/Chat/independent.dart';
 import 'package:coach_app/Chat/mid_admin_based.dart';
-
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
-}
+import 'package:coach_app/Chat/models/item_class.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:flutter/material.dart';
 
 class participants extends StatefulWidget {
-  final curUser currentUser;
-  participants({this.currentUser});
+  final CurrUser currentUser;
+  participants({required this.currentUser});
   _participantState createState() => new _participantState(currentUser);
 }
 
 class _participantState extends State<participants>
     with TickerProviderStateMixin {
-  final curUser currentUser;
+  final CurrUser currentUser;
   _participantState(this.currentUser);
 
   bool monVal = false;
@@ -73,7 +56,7 @@ class _participantState extends State<participants>
                             choose(true, false, false, false, false, false);
                         Navigator.of(context)
                             .push(new MaterialPageRoute(builder: (context) {
-                          return new groupDes(
+                          return new GroupDes(
                               currentUser: currentUser,
                               catg: "Mid Admin",
                               ch: ch1);
@@ -100,15 +83,14 @@ class _participantState extends State<participants>
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  CircularCheckBox(
+                                  Checkbox(
                                     value: monVal,
                                     activeColor:
                                         Color.fromARGB(255, 230, 230, 230),
-                                    inactiveColor:
-                                        Color.fromARGB(255, 230, 230, 230),
                                     checkColor:
                                         Color.fromARGB(255, 242, 108, 37),
-                                    onChanged: (bool value) {
+                                    onChanged: (bool? value) {
+                                      if (value == null) return;
                                       setState(() {
                                         monVal = value;
                                         ch.mid = value;
@@ -145,7 +127,7 @@ class _participantState extends State<participants>
                             choose(false, true, false, false, false, false);
                         Navigator.of(context)
                             .push(new MaterialPageRoute(builder: (context) {
-                          return new groupDes(
+                          return new GroupDes(
                               currentUser: currentUser,
                               catg: "Sub Admin",
                               ch: ch1);
@@ -172,15 +154,14 @@ class _participantState extends State<participants>
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  CircularCheckBox(
+                                  Checkbox(
                                     value: tonVal,
                                     activeColor:
                                         Color.fromARGB(255, 230, 230, 230),
-                                    inactiveColor:
-                                        Color.fromARGB(255, 230, 230, 230),
                                     checkColor:
                                         Color.fromARGB(255, 242, 108, 37),
-                                    onChanged: (bool value) {
+                                    onChanged: (bool? value) {
+                                      if (value == null) return;
                                       setState(() {
                                         tonVal = value;
                                         ch.subBased = !ch.subBased;
@@ -216,7 +197,7 @@ class _participantState extends State<participants>
                         print("Mid-ADmin Based");
                         Navigator.of(context)
                             .push(new MaterialPageRoute(builder: (context) {
-                          return new midAdminBased(
+                          return new MidAdminBased(
                             currentUser: currentUser,
                           );
                         }));
@@ -242,15 +223,14 @@ class _participantState extends State<participants>
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  CircularCheckBox(
+                                  Checkbox(
                                     value: fonVal,
                                     activeColor:
                                         Color.fromARGB(255, 230, 230, 230),
-                                    inactiveColor:
-                                        Color.fromARGB(255, 230, 230, 230),
                                     checkColor:
                                         Color.fromARGB(255, 242, 108, 37),
-                                    onChanged: (bool value) {
+                                    onChanged: (bool? value) {
+                                      if (value == null) return;
                                       setState(() {
                                         fonVal = value;
                                         ch.midBased = !ch.midBased;
@@ -304,15 +284,14 @@ class _participantState extends State<participants>
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  CircularCheckBox(
+                                  Checkbox(
                                     value: thonVal,
                                     activeColor:
                                         Color.fromARGB(255, 230, 230, 230),
-                                    inactiveColor:
-                                        Color.fromARGB(255, 230, 230, 230),
                                     checkColor:
                                         Color.fromARGB(255, 242, 108, 37),
-                                    onChanged: (bool value) {
+                                    onChanged: (bool? value) {
+                                      if (value == null) return;
                                       setState(() {
                                         thonVal = value;
                                         ch.branch = !ch.branch;
@@ -350,7 +329,7 @@ class _participantState extends State<participants>
                             choose(false, false, false, false, true, false);
                         Navigator.of(context)
                             .push(new MaterialPageRoute(builder: (context) {
-                          return new groupDes(
+                          return new GroupDes(
                               currentUser: currentUser,
                               catg: "Teacher",
                               ch: ch1);
@@ -377,15 +356,14 @@ class _participantState extends State<participants>
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  CircularCheckBox(
+                                  Checkbox(
                                     value: thonVal,
                                     activeColor:
                                         Color.fromARGB(255, 230, 230, 230),
-                                    inactiveColor:
-                                        Color.fromARGB(255, 230, 230, 230),
                                     checkColor:
                                         Color.fromARGB(255, 242, 108, 37),
-                                    onChanged: (bool value) {
+                                    onChanged: (bool? value) {
+                                      if (value == null) return;
                                       setState(() {
                                         thonVal = value;
                                         ch.branch = !ch.branch;
@@ -442,12 +420,12 @@ class _participantState extends State<participants>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          CircularCheckBox(
+                          Checkbox(
                             value: sonVal,
                             activeColor: Color.fromARGB(255, 230, 230, 230),
-                            inactiveColor: Color.fromARGB(255, 230, 230, 230),
                             checkColor: Color.fromARGB(255, 242, 108, 37),
-                            onChanged: (bool value) {
+                            onChanged: (bool? value) {
+                              if (value == null) return;
                               setState(() {
                                 sonVal = value;
                                 ch.ind = !ch.ind;
@@ -485,7 +463,7 @@ class _participantState extends State<participants>
 
                 Navigator.of(context)
                     .push(new MaterialPageRoute(builder: (context) {
-                  return new groupDes(
+                  return new GroupDes(
                     catg: catg,
                     ch: ch,
                     currentUser: currentUser,

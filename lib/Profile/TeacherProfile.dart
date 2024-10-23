@@ -2,23 +2,21 @@ import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/Drawer/drawer.dart';
 import 'package:coach_app/Models/model.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double blockSizeHorizontal;
-  static double blockSizeVertical;
-  static double _safeAreaHorizontal;
-  static double _safeAreaVertical;
-  static double b;
-  static double v;
+  static late MediaQueryData _mediaQueryData;
+  static late double screenWidth;
+  static late double screenHeight;
+  static late double blockSizeHorizontal;
+  static late double blockSizeVertical;
+  static late double _safeAreaHorizontal;
+  static late double _safeAreaVertical;
+  static late double b;
+  static late double v;
 
   void init(BuildContext context) {
     _mediaQueryData = MediaQuery.of(context);
@@ -37,19 +35,20 @@ class SizeConfig {
 
 class TeacherProfilePage extends StatelessWidget {
   final DatabaseReference reference;
-  TeacherProfilePage({@required this.reference});
+  TeacherProfilePage({required this.reference});
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
       appBar: getAppBar(context),
-      body: StreamBuilder<Event>(
+      body: StreamBuilder<DatabaseEvent>(
           stream: reference.onValue,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return UploadDialog(warning: 'Fetching'.tr());
             }
-            Teacher teacher = Teacher.fromJson(snapshot.data.snapshot.value);
+            Teacher teacher =
+                Teacher.fromJson(snapshot.data!.snapshot.value as Map);
             return SafeArea(
               child: Column(
                 children: <Widget>[
@@ -105,18 +104,14 @@ class TeacherProfilePage extends StatelessWidget {
                             child: CircleAvatar(
                               radius: SizeConfig.b * 20.1,
                               backgroundColor: Color(0xffe6783e),
-                              backgroundImage: teacher.photoURL == null
-                                  ? null
-                                  : NetworkImage(teacher.photoURL),
-                              child: teacher.photoURL == null
-                                  ? Text(
-                                      '${teacher?.name[0].toUpperCase()}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 22,
-                                      ),
-                                    )
-                                  : null,
+                              backgroundImage: NetworkImage(teacher.photoURL),
+                              child: Text(
+                                '${teacher.name[0].toUpperCase()}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                ),
+                              ),
                             ))
                       ],
                     ),
@@ -128,24 +123,23 @@ class TeacherProfilePage extends StatelessWidget {
                       child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           shrinkWrap: true,
-                          itemCount: teacher.courses.length,
+                          itemCount: teacher.courses?.length ?? 0,
                           itemBuilder: (context, courseIndex) {
-                            return StreamBuilder<Event>(
-                                stream: reference
-                                    .parent()
-                                    .parent()
+                            return StreamBuilder<DatabaseEvent>(
+                                stream: reference.parent!.parent!
                                     .child(
-                                        "courses/${teacher.courses[courseIndex].id}")
+                                        "courses/${teacher.courses![courseIndex].id}")
                                     .onValue,
                                 builder: (context, snapshot) {
                                   if (!snapshot.hasData) {
                                     return Container();
                                   }
-                                  if (snapshot.data.snapshot.value == null) {
+                                  if (snapshot.data!.snapshot.value == null) {
                                     return Container();
                                   }
                                   Courses course = Courses.fromJson(
-                                      snapshot.data.snapshot.value);
+                                    snapshot.data!.snapshot.value as Map,
+                                  );
                                   return Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Container(
@@ -162,7 +156,7 @@ class TeacherProfilePage extends StatelessWidget {
                                         shrinkWrap: true,
                                         children: <Widget>[
                                           SizedBox(height: SizeConfig.v * 0.95),
-                                          Text(course?.name ?? '',
+                                          Text(course.name,
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                   color: Colors.white,
@@ -181,7 +175,7 @@ class TeacherProfilePage extends StatelessWidget {
                                             shrinkWrap: true,
                                             controller: ScrollController(),
                                             itemCount: teacher
-                                                    .courses[courseIndex]
+                                                    .courses?[courseIndex]
                                                     .subjects
                                                     ?.length ??
                                                 0,
@@ -204,10 +198,10 @@ class TeacherProfilePage extends StatelessWidget {
                                                   ),
                                                   Text(
                                                     course
-                                                            .subjects[teacher
-                                                                .courses[
+                                                            .subjects![teacher
+                                                                .courses![
                                                                     courseIndex]
-                                                                .subjects[index]]
+                                                                .subjects![index]]
                                                             ?.name ??
                                                         'Subject deleted',
                                                     style: TextStyle(
@@ -296,7 +290,7 @@ class TeacherProfilePage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: SizeConfig.v * 0.4),
-                  if (FireBaseAuth.instance.previlagelevel != 2)
+                  if (AppwriteAuth.instance.previlagelevel != 2)
                     Container(
                         //width:275,
                         height: SizeConfig.v * 8.5, //10 for example
@@ -307,39 +301,38 @@ class TeacherProfilePage extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Text(
-                                  "Contact no. : ${teacher?.phoneNo ?? "Not Given"}",
+                                  "Contact no. : ${teacher.phoneNo}",
                                   style:
                                       TextStyle(fontSize: SizeConfig.b * 4.55),
                                 )
                               ],
                             ),
                             SizedBox(height: SizeConfig.v * 1.21),
-                            if (teacher.phoneNo != null)
-                              Container(
-                                  width: SizeConfig.b * 37.7,
-                                  alignment: AlignmentDirectional.center,
-                                  height: SizeConfig.v * 4.25,
-                                  child: RaisedButton(
-                                    child: Icon(
-                                      Icons.call,
-                                      color: Colors.white,
-                                      size: SizeConfig.v * 4.2,
-                                    ),
-                                    elevation: 10,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          SizeConfig.v * 2.04),
-                                    ),
-                                    color: Color.fromARGB(255, 243, 106, 38),
-                                    onPressed: () async {
-                                      String url = 'tel:${teacher.phoneNo}';
-                                      if (await canLaunch(url)) {
-                                        await launch(url);
-                                      } else {
-                                        throw 'Could not launch $url';
-                                      }
-                                    },
-                                  ))
+                            Container(
+                                width: SizeConfig.b * 37.7,
+                                alignment: AlignmentDirectional.center,
+                                height: SizeConfig.v * 4.25,
+                                child: MaterialButton(
+                                  child: Icon(
+                                    Icons.call,
+                                    color: Colors.white,
+                                    size: SizeConfig.v * 4.2,
+                                  ),
+                                  elevation: 10,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        SizeConfig.v * 2.04),
+                                  ),
+                                  color: Color.fromARGB(255, 243, 106, 38),
+                                  onPressed: () async {
+                                    String url = 'tel:${teacher.phoneNo}';
+                                    if (await canLaunchUrlString(url)) {
+                                      await launchUrlString(url);
+                                    } else {
+                                      throw 'Could not launch $url';
+                                    }
+                                  },
+                                ))
                           ],
                         ))
                 ],

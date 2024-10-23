@@ -7,16 +7,19 @@ import 'package:coach_app/FeeSection/StudentReport/PaymentType.dart';
 import 'package:coach_app/FeeSection/StudentSection/installmentList.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class CourseRegistrationPage extends StatefulWidget {
   final DatabaseReference ref;
   final String name;
   final String courseID;
-  CourseRegistrationPage(
-      {@required this.ref, @required this.name, @required this.courseID});
+  CourseRegistrationPage({
+    required this.ref,
+    required this.name,
+    required this.courseID,
+  });
   @override
   _CourseRegistrationPageState createState() => _CourseRegistrationPageState();
 }
@@ -26,7 +29,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
 
   @override
   Widget build(BuildContext context) {
-    int price;
+    int? price;
     return Scaffold(
       key: _globalKey,
       appBar: AppBar(
@@ -42,7 +45,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        child: StreamBuilder<Event>(
+        child: StreamBuilder<DatabaseEvent>(
           stream: widget.ref.child('description').onValue,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -66,7 +69,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                             ),
                           ),
                           Text(
-                            snapshot.data.snapshot.value,
+                            snapshot.data!.snapshot.value.toString(),
                             style: TextStyle(
                               color: Colors.white,
                             ),
@@ -149,18 +152,16 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                     flex: 10,
                   ),
                   Expanded(
-                    child: StreamBuilder<Event>(
-                        stream: widget.ref
-                            .parent()
-                            .parent()
+                    child: StreamBuilder<DatabaseEvent>(
+                        stream: widget.ref.parent!.parent!
                             .child(
-                                '/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseID}')
+                                '/students/${AppwriteAuth.instance.user!.$id}/course/${widget.courseID}')
                             .onValue,
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
                             return Container();
                           }
-                          bool isOld = snapshot.data.snapshot.value != null;
+                          bool isOld = snapshot.data?.snapshot.value != null;
                           return ListView(
                             children: <Widget>[
                               Row(
@@ -174,7 +175,7 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                           10,
                                         ),
                                       ),
-                                      child: FlatButton(
+                                      child: MaterialButton(
                                         onPressed: () {
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
@@ -194,17 +195,15 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                         color: Color(0xffF36C24),
                                       ),
                                     ),
-                                  StreamBuilder<Event>(
-                                      stream: widget.ref
-                                          .parent()
-                                          .parent()
+                                  StreamBuilder<DatabaseEvent>(
+                                      stream: widget.ref.parent!.parent!
                                           .child("accountId")
                                           .onValue,
                                       builder: (context, snapshot) {
                                         if (!snapshot.hasData) {
                                           return Container();
                                         }
-                                        if (snapshot.data.snapshot.value ==
+                                        if (snapshot.data?.snapshot.value ==
                                             null) {
                                           return Container();
                                         }
@@ -212,40 +211,44 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(10)),
-                                          child: FlatButton(
+                                          child: MaterialButton(
                                             color: Color(0xffF36C24),
-                                            child: StreamBuilder<Event>(
-                                                stream: widget.ref
-                                                    .child('price')
-                                                    .onValue,
-                                                builder: (context, snapshot) {
-                                                  if (snapshot.hasData) {
-                                                    price = snapshot
-                                                        .data.snapshot.value;
-                                                    return Text(
-                                                      'Buy Course @ Rs.'.tr() +
-                                                          ' ${snapshot.data.snapshot.value}',
-                                                      style: TextStyle(
-                                                          color: Colors.white),
-                                                    );
-                                                  } else {
-                                                    return CircularProgressIndicator();
-                                                  }
-                                                }),
+                                            child: StreamBuilder<DatabaseEvent>(
+                                              stream: widget.ref
+                                                  .child('price')
+                                                  .onValue,
+                                              builder: (context, snapshot) {
+                                                if (snapshot.hasData) {
+                                                  price = snapshot.data!
+                                                      .snapshot.value as int;
+                                                  return Text(
+                                                    'Buy Course @ Rs.'.tr() +
+                                                        ' ${snapshot.data!.snapshot.value}',
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  );
+                                                } else {
+                                                  return CircularProgressIndicator();
+                                                }
+                                              },
+                                            ),
                                             onPressed: () async {
                                               bool isPaid;
-                                              if (FireBaseAuth
+                                              if (AppwriteAuth
                                                       .instance.instituteid ==
                                                   null) {
-                                                FireBaseAuth
+                                                AppwriteAuth
                                                         .instance.instituteid =
-                                                    FireBaseAuth.instance.prefs.get('insCode');
+                                                    AppwriteAuth.instance.prefs!
+                                                        .getString('insCode');
                                               }
-                                              if (FireBaseAuth
+                                              if (AppwriteAuth
                                                       .instance.branchid ==
                                                   null) {
-                                                FireBaseAuth.instance.branchid =
-                                                    FireBaseAuth.instance.prefs.get('branchCode');
+                                                AppwriteAuth.instance.branchid =
+                                                    AppwriteAuth.instance.prefs!
+                                                        .getString(
+                                                            'branchCode');
                                               }
 
                                               await Navigator.of(context).push(
@@ -257,26 +260,24 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                                             courseName:
                                                                 widget.name,
                                                           )));
-                                              await widget.ref
-                                                  .parent()
-                                                  .parent()
+                                              final value = await widget
+                                                  .ref.parent!.parent!
                                                   .child(
-                                                      "students/${FireBaseAuth.instance.user.uid}/course/${widget.courseID}/fees/Installments/AllowedThrough")
-                                                  .once()
-                                                  .then((value) {
-                                                if (value.value != null) {
-                                                  isPaid = true;
-                                                } else {
-                                                  isPaid = false;
-                                                }
-                                              });
+                                                      "students/${AppwriteAuth.instance.user!.$id}/course/${widget.courseID}/fees/Installments/AllowedThrough")
+                                                  .once();
+                                              if (value.snapshot.value !=
+                                                  null) {
+                                                isPaid = true;
+                                              } else {
+                                                isPaid = false;
+                                              }
                                               if (isPaid == false) {
                                                 return;
                                               }
                                               if (price == null) {
                                                 return;
                                               }
-                                              if (price < 1) {
+                                              if (price! < 1) {
                                                 Course rCourse = Course(
                                                   academicYear: DateTime.now()
                                                           .year
@@ -298,18 +299,14 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                                             warning:
                                                                 'Registering, Please do not close'
                                                                     .tr()));
-                                                await widget.ref
-                                                    .parent()
-                                                    .parent()
+                                                await widget.ref.parent!.parent!
                                                     .child(
-                                                      'students/${FireBaseAuth.instance.user.uid}/course/${widget.courseID}',
+                                                      'students/${AppwriteAuth.instance.user!.$id}/course/${widget.courseID}',
                                                     )
                                                     .update(rCourse.toJson());
-                                                await widget.ref
-                                                    .parent()
-                                                    .parent()
+                                                await widget.ref.parent!.parent!
                                                     .child(
-                                                        '/students/${FireBaseAuth.instance.user.uid}')
+                                                        '/students/${AppwriteAuth.instance.user!.$id}')
                                                     .update({
                                                   'status': 'Registered'
                                                 });
@@ -322,17 +319,17 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                               }
                                               if (isPaid) {
                                                 Course rCourse = Course(
-                                                    academicYear: DateTime.now()
-                                                            .year
-                                                            .toString() +
-                                                        '-' +
-                                                        (DateTime.now().year +
-                                                                1)
-                                                            .toString(),
-                                                    courseID: widget.courseID,
-                                                    courseName: widget.name,
-                                                    paymentToken:
-                                                        '${widget.name.hashCode}${widget.courseID.hashCode}${FireBaseAuth.instance.user.uid.hashCode}');
+                                                  academicYear: DateTime.now()
+                                                          .year
+                                                          .toString() +
+                                                      '-' +
+                                                      (DateTime.now().year + 1)
+                                                          .toString(),
+                                                  courseID: widget.courseID,
+                                                  courseName: widget.name,
+                                                  paymentToken:
+                                                      '${widget.name.hashCode}${widget.courseID.hashCode}${AppwriteAuth.instance.user!.$id.hashCode}',
+                                                );
                                                 showDialog(
                                                     context: context,
                                                     builder: (context) =>
@@ -340,22 +337,20 @@ class _CourseRegistrationPageState extends State<CourseRegistrationPage> {
                                                             warning:
                                                                 'Registering'
                                                                     .tr()));
-                                                widget.ref
-                                                    .parent()
-                                                    .parent()
+                                                widget.ref.parent!.parent!
                                                     .child(
-                                                        'students/${FireBaseAuth.instance.user.uid}/course')
+                                                        'students/${AppwriteAuth.instance.user!.$id}/course')
                                                     .child(widget.courseID)
                                                     .update(rCourse.toJson());
                                                 try {
-                                                  await widget.ref
-                                                      .parent()
-                                                      .parent()
+                                                  await widget
+                                                      .ref.parent!.parent!
                                                       .child(
-                                                        '/students/${FireBaseAuth.instance.user.uid}/status',
+                                                        '/students/${AppwriteAuth.instance.user!.$id}/status',
                                                       )
                                                       .set('Registered');
-                                                } catch (e) {} finally {
+                                                } catch (e) {
+                                                } finally {
                                                   Navigator.of(context).pop();
                                                 }
                                                 await Future.delayed(

@@ -1,9 +1,10 @@
 import 'package:coach_app/Meeting/Fragmnets/SelectCandidate.dart';
 import 'package:coach_app/Meeting/Fragmnets/TwoStepSelectCandidate.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
+
 import '../Authentication/FirebaseAuth.dart';
 
 class SessionDetail extends StatefulWidget {
@@ -15,12 +16,12 @@ class SessionDetail extends StatefulWidget {
   final bool fromcourse;
 
   SessionDetail({
-    this.passVaraible,
-    this.eventkey,
-    this.isedit,
-    this.fromcourse,
-    @required this.courseId,
-    @required this.subjectName,
+    required this.passVaraible,
+    required this.eventkey,
+    this.isedit = false,
+    required this.fromcourse,
+    required this.courseId,
+    required this.subjectName,
   });
   @override
   _SessionDetailState createState() => _SessionDetailState();
@@ -30,10 +31,10 @@ class _SessionDetailState extends State<SessionDetail> {
   final titleText = TextEditingController();
   final descriptionText = TextEditingController();
   final dbRef = FirebaseDatabase.instance;
-  int previlagelevel = FireBaseAuth.instance.previlagelevel;
+  int previlagelevel = AppwriteAuth.instance.previlagelevel;
   String previousDescriptionText = "";
   TimeOfDay _time = TimeOfDay.now();
-  TimeOfDay _picked;
+  TimeOfDay? _picked;
   String testtime = "hh:mm";
   var _finallist = ["None"];
   var _currentItemSelected = "None";
@@ -62,56 +63,67 @@ class _SessionDetailState extends State<SessionDetail> {
   _loaddatafromdatabase() async {
     if (widget.fromcourse) {
       dbRef
-          .reference()
+          .ref()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events')
+              'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/events')
           .child(widget.passVaraible)
           .once()
-          .then((DataSnapshot value) {
+          .then((value) {
         setState(() {
-          titleText.text = value.value['title'];
-          descriptionText.text = value.value['description'];
-          testtime = value.value['time'];
+          titleText.text = (value.snapshot.value as Map)['title'];
+          descriptionText.text = (value.snapshot.value as Map)['description'];
+          testtime = (value.snapshot.value as Map)['time'];
           _time = TimeOfDay(
-              hour: int.parse(value.value['time'].toString().split(":")[0]),
-              minute: int.parse(value.value['time'].toString().split(":")[1]));
-          previousDescriptionText = value.value['description'];
+              hour: int.parse((value.snapshot.value as Map)['time']
+                  .toString()
+                  .split(":")[0]),
+              minute: int.parse((value.snapshot.value as Map)['time']
+                  .toString()
+                  .split(":")[1]));
+          previousDescriptionText =
+              (value.snapshot.value as Map)['description'];
         });
       });
     } else {
       dbRef
-          .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/events')
+          .ref()
+          .child('institute/${AppwriteAuth.instance.instituteid}/events')
           .child(widget.passVaraible)
           .once()
-          .then((DataSnapshot value) {
+          .then((value) {
         setState(() {
-          titleText.text = value.value['title'];
-          descriptionText.text = value.value['description'];
+          titleText.text = (value.snapshot.value as Map)['title'];
+          descriptionText.text = (value.snapshot.value as Map)['description'];
           _time = TimeOfDay(
-              hour: int.parse(value.value['time'].toString().split(":")[0]),
-              minute: int.parse(value.value['time'].toString().split(":")[1]));
-          previousDescriptionText = value.value['description'];
-          _currentItemSelected = value.value['type'];
+              hour: int.parse((value.snapshot.value as Map)['time']
+                  .toString()
+                  .split(":")[0]),
+              minute: int.parse((value.snapshot.value as Map)['time']
+                  .toString()
+                  .split(":")[1]));
+          previousDescriptionText =
+              (value.snapshot.value as Map)['description'];
+          _currentItemSelected = (value.snapshot.value as Map)['type'];
           _previoustypeSelected = _currentItemSelected;
-          _leftUids = value.value["leftUids"];
-          _firstselecteduids = value.value["firstselecteduids"];
+          _leftUids = (value.snapshot.value as Map)["leftUids"];
+          _firstselecteduids =
+              (value.snapshot.value as Map)["firstselecteduids"];
         });
       });
     }
   }
 
   _saveintodatabase() async {
-    FireBaseAuth.instance.prefs
+    AppwriteAuth.instance.prefs!
         .setString(descriptionText.text, widget.passVaraible);
     if (widget.isedit && descriptionText.text != previousDescriptionText) {
-      FireBaseAuth.instance.prefs.remove(previousDescriptionText);
+      AppwriteAuth.instance.prefs!.remove(previousDescriptionText);
     }
     if (widget.fromcourse) {
       dbRef
-          .reference()
+          .ref()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events')
+              'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/events')
           .child(widget.passVaraible)
           .update(EventsModal(
             title: titleText.text,
@@ -121,12 +133,12 @@ class _SessionDetailState extends State<SessionDetail> {
             eventKey: widget.eventkey,
             courseid: widget.courseId,
             subject: widget.subjectName,
-            teacheruid: FireBaseAuth.instance.user.uid,
+            teacheruid: AppwriteAuth.instance.user!.$id,
           ).toJson());
     } else {
       dbRef
-          .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/events')
+          .ref()
+          .child('institute/${AppwriteAuth.instance.instituteid}/events')
           .child(widget.passVaraible)
           .update({
         'title': titleText.text,
@@ -135,8 +147,8 @@ class _SessionDetailState extends State<SessionDetail> {
         'eventKey': widget.eventkey,
         'isStarted': 0,
         'hostprevilage': previlagelevel,
-        'hostuid': FireBaseAuth.instance.user.uid,
-        'hostname': FireBaseAuth.instance.user.displayName,
+        'hostuid': AppwriteAuth.instance.user!.$id,
+        'hostname': AppwriteAuth.instance.user!.name,
         "firstselecteduids": _firstselecteduids,
         "leftUids": _leftUids,
         "type": _currentItemSelected
@@ -148,32 +160,31 @@ class _SessionDetailState extends State<SessionDetail> {
   _delfromdatabase() async {
     if (widget.fromcourse) {
       dbRef
-          .reference()
+          .ref()
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events')
+              'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/events')
           .child(widget.passVaraible)
           .remove();
     } else {
       dbRef
-          .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/events')
+          .ref()
+          .child('institute/${AppwriteAuth.instance.instituteid}/events')
           .child(widget.passVaraible)
           .remove();
     }
-    FireBaseAuth.instance.prefs.remove(previousDescriptionText);
+    AppwriteAuth.instance.prefs!.remove(previousDescriptionText);
     Navigator.of(context).pop();
   }
 
   Future<Null> _selectTime(BuildContext context) async {
     _picked = await showTimePicker(context: context, initialTime: _time);
-    if (_picked != null) {
-      setState(
-        () {
-          _time = _picked;
-          testtime = _time.hour.toString() + ":" + _time.minute.toString();
-        },
-      );
-    }
+    if (_picked == null) return;
+    setState(
+      () {
+        _time = _picked!;
+        testtime = _time.hour.toString() + ":" + _time.minute.toString();
+      },
+    );
   }
 
   Widget _dropDownMenu() {
@@ -185,7 +196,8 @@ class _SessionDetailState extends State<SessionDetail> {
             child: Text(dropDownStringitem),
           );
         }).toList(),
-        onChanged: (String newValueSelected) {
+        onChanged: (String? newValueSelected) {
+          if (newValueSelected == null) return;
           setState(() {
             this._currentItemSelected = newValueSelected;
           });

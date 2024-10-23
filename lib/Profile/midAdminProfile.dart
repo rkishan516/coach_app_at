@@ -1,42 +1,26 @@
 import 'package:coach_app/Dialogs/uploadDialog.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
-}
 
 class MidAdminProfile extends StatelessWidget {
   final DatabaseReference databaseReference;
-  MidAdminProfile({this.databaseReference});
+  MidAdminProfile({required this.databaseReference});
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
       body: SafeArea(
-        child: StreamBuilder<Event>(
+        child: StreamBuilder<DatabaseEvent>(
           stream: databaseReference.onValue,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return UploadDialog(warning: 'Fetching'.tr());
             }
-            MidAdmin midAdmin = MidAdmin.fromJson(snapshot.data.snapshot.value);
+            MidAdmin midAdmin =
+                MidAdmin.fromJson(snapshot.data!.snapshot.value as Map);
             return Column(
               children: <Widget>[
                 Container(
@@ -109,10 +93,10 @@ class MidAdminProfile extends StatelessWidget {
                                 radius: SizeConfig.b * 11.1,
                                 backgroundImage: midAdmin.photoUrl == null
                                     ? null
-                                    : NetworkImage(midAdmin.photoUrl),
+                                    : NetworkImage(midAdmin.photoUrl!),
                                 child: midAdmin.photoUrl == null
                                     ? Text(
-                                        '${midAdmin?.name[0].toUpperCase()}',
+                                        '${midAdmin.name[0].toUpperCase()}',
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: SizeConfig.b * 5.53,
@@ -186,10 +170,8 @@ class MidAdminProfile extends StatelessWidget {
                                       color: Colors.black,
                                     ),
                                   ),
-                                  StreamBuilder<Event>(
-                                    stream: databaseReference
-                                        .parent()
-                                        .parent()
+                                  StreamBuilder<DatabaseEvent>(
+                                    stream: databaseReference.parent!.parent!
                                         .child(
                                             "branches/${midAdmin.branches.replaceAll('[', '').replaceAll(']', '').split(',')[index].trim()}/name")
                                         .onValue,
@@ -198,8 +180,12 @@ class MidAdminProfile extends StatelessWidget {
                                         return Container();
                                       }
                                       return Text(
-                                        snapshot.data.snapshot.value.length < 15 ?
-                                        "${snapshot.data.snapshot.value}" : "${snapshot.data.snapshot.value.replaceAll(',','\nt')}",
+                                        (snapshot.data!.snapshot.value
+                                                        as String)
+                                                    .length <
+                                                15
+                                            ? "${snapshot.data!.snapshot.value}"
+                                            : "${(snapshot.data!.snapshot.value! as String).replaceAll(',', '\nt')}",
                                         style: TextStyle(
                                           fontSize: SizeConfig.b * 3.5,
                                           color: Colors.white,

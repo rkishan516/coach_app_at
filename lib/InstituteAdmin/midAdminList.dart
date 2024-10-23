@@ -4,14 +4,14 @@ import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/InstituteAdmin/addMidAdminPage.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/midAdminProfile.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class MidAdminList extends StatefulWidget {
   final List<Map<String, String>> branches;
-  MidAdminList({@required this.branches});
+  MidAdminList({required this.branches});
   @override
   _MidAdminListState createState() => _MidAdminListState();
 }
@@ -65,16 +65,17 @@ class _MidAdminListState extends State<MidAdminList> {
             ),
             Expanded(
               flex: 12,
-              child: StreamBuilder<Event>(
+              child: StreamBuilder<DatabaseEvent>(
                 stream: FirebaseDatabase.instance
-                    .reference()
+                    .ref()
                     .child(
-                        'institute/${FireBaseAuth.instance.instituteid}/midAdmin')
+                        'institute/${AppwriteAuth.instance.instituteid}/midAdmin')
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     Map<String, MidAdmin> midAdmins = Map<String, MidAdmin>();
-                    snapshot.data.snapshot.value?.forEach((k, midAdmin) {
+                    (snapshot.data!.snapshot.value as Map?)
+                        ?.forEach((k, midAdmin) {
                       if (searchTextEditingController.text == '') {
                         midAdmins[k] = MidAdmin.fromJson(midAdmin);
                       } else {
@@ -88,29 +89,27 @@ class _MidAdminListState extends State<MidAdminList> {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ListView.builder(
-                        itemCount: midAdmins?.length ?? 0,
+                        itemCount: midAdmins.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Card(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)),
                             child: ListTile(
                               title: Text(
-                                '${midAdmins[midAdmins.keys.toList()[index]].name}',
+                                '${midAdmins[midAdmins.keys.toList()[index]]?.name}',
                                 style: TextStyle(color: Color(0xffF36C24)),
                               ),
                               subtitle: Text(
-                                '${midAdmins[midAdmins.keys.toList()[index]].email}',
+                                '${midAdmins[midAdmins.keys.toList()[index]]?.email}',
                                 style: TextStyle(color: Color(0xffF36C24)),
                               ),
                               onTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) => MidAdminProfile(
-                                      databaseReference: FirebaseDatabase
-                                          .instance
-                                          .reference()
-                                          .child(
-                                              'institute/${FireBaseAuth.instance.instituteid}/midAdmin/${midAdmins.keys.toList()[index]}'),
+                                      databaseReference:
+                                          FirebaseDatabase.instance.ref().child(
+                                              'institute/${AppwriteAuth.instance.instituteid}/midAdmin/${midAdmins.keys.toList()[index]}'),
                                     ),
                                   ),
                                 );

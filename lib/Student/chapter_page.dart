@@ -14,20 +14,12 @@ class ChapterPage extends StatefulWidget {
   final String title;
   final String passKey;
   ChapterPage(
-      {@required this.title, @required this.reference, @required this.passKey});
+      {required this.title, required this.reference, required this.passKey});
   @override
   _ChapterPageState createState() => _ChapterPageState();
 }
 
 class _ChapterPageState extends State<ChapterPage> {
-  int length;
-  List _list;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,41 +52,38 @@ class _ChapterPageState extends State<ChapterPage> {
             ),
             Expanded(
               flex: 12,
-              child: StreamBuilder<Event>(
+              child: StreamBuilder<DatabaseEvent>(
                   stream: widget.reference.onValue,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      Subjects subjects =
-                          Subjects.fromJson(snapshot.data.snapshot.value);
+                      Subjects subjects = Subjects.fromJson(
+                          snapshot.data!.snapshot.value as Map);
                       var keys;
                       if (subjects.chapters != null) {
-                        keys = subjects.chapters.keys.toList()
-                          ..sort((a, b) => subjects.chapters[a].name
-                              .compareTo(subjects.chapters[b].name));
+                        keys = subjects.chapters!.keys.toList()
+                          ..sort((a, b) => subjects.chapters![a]!.name
+                              .compareTo(subjects.chapters![b]!.name));
                       }
-                      length = subjects.chapters?.length ?? 0;
-                      List<bool> _showCountDot = List(length);
-                      for (int i = 0; i < _showCountDot.length; i++) {
-                        _showCountDot[i] = false;
-                      }
+                      final length = subjects.chapters?.length ?? 0;
+                      List<bool> _showCountDot = List.filled(length, false);
 
                       return ListView.builder(
                         itemCount: length,
                         itemBuilder: (BuildContext context, int index) {
                           String searchkey = widget.passKey +
                               "__" +
-                              '${subjects.chapters[keys.toList()[index]].name}';
-                          _list = FireBaseAuth.instance.prefs
+                              '${subjects.chapters![keys.toList()[index]]!.name}';
+                          final _list = AppwriteAuth.instance.prefs!
                               .getKeys()
                               .where((element) => element.startsWith(searchkey))
                               .toList();
 
                           int _totalContent = subjects
-                                  .chapters[keys.toList()[index]]
+                                  .chapters![keys.toList()[index]]!
                                   .content
                                   ?.length ??
                               0;
-                          int _prevtotalContent = _list.length ?? _totalContent;
+                          int _prevtotalContent = _list.length;
                           if (_prevtotalContent <= _totalContent) {
                             _showCountDot[index] = true;
                           }
@@ -106,7 +95,7 @@ class _ChapterPageState extends State<ChapterPage> {
                                   borderRadius: BorderRadius.circular(10)),
                               child: ListTile(
                                   title: Text(
-                                    '${subjects.chapters[keys.toList()[index]].name}',
+                                    '${subjects.chapters![keys.toList()[index]]!.name}',
                                     style: TextStyle(color: Colors.blue),
                                   ),
                                   trailing: Container(
@@ -134,12 +123,13 @@ class _ChapterPageState extends State<ChapterPage> {
                                     ),
                                   ),
                                   onTap: () {
-                                    return Navigator.of(context)
+                                    Navigator.of(context)
                                         .push(
                                       CupertinoPageRoute(
                                         builder: (context) => ContentPage(
                                             title: subjects
-                                                .chapters[keys.toList()[index]]
+                                                .chapters![
+                                                    keys.toList()[index]]!
                                                 .name,
                                             reference: widget.reference.child(
                                               'chapters/${keys.toList()[index]}',

@@ -1,62 +1,44 @@
+import 'dart:async';
 import 'dart:io';
-import 'package:coach_app/Chat/models/message_ui.dart';
+
+import 'package:appwrite/models.dart' show User;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Chat/full_screen_image.dart';
 import 'package:coach_app/Chat/models/message.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:async';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:coach_app/Chat/models/message_ui.dart';
 import 'package:coach_app/Chat/models/video_player.dart';
-
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
-}
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatScreen extends StatefulWidget {
-  String name;
-  String photoUrl;
-  String receiverUid;
-  String role;
-  ChatScreen({this.name, this.photoUrl, this.receiverUid, this.role});
+  final String name;
+  final String photoUrl;
+  final String receiverUid;
+  final String role;
+  ChatScreen({
+    required this.name,
+    required this.photoUrl,
+    required this.receiverUid,
+    required this.role,
+  });
 
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  Message _message;
+  Message? _message;
   ScrollController _scrollController = new ScrollController();
   var _formKey = GlobalKey<FormState>();
   var map = Map<String, dynamic>();
-  CollectionReference _collectionReference;
-  DocumentReference _receiverDocumentReference;
-  DocumentReference _senderDocumentReference;
-  DocumentReference _documentReference;
-  DocumentSnapshot documentSnapshot;
-  bool _autoValidate = false;
-  FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  String _senderuid;
-  var listItem;
-  String receiverPhotoUrl, senderPhotoUrl, receiverName, senderName;
-  StreamSubscription<DocumentSnapshot> subscription;
-  File imageFile;
-  StorageReference _storageReference;
-  TextEditingController _messageController;
+  String? _senderuid;
+  String? receiverPhotoUrl, senderPhotoUrl, receiverName, senderName;
+  late TextEditingController _messageController;
+
   void tolast() //to call list the other way
   {
     _scrollController.animateTo(
@@ -73,9 +55,9 @@ class _ChatScreenState extends State<ChatScreen> {
     _messageController = TextEditingController();
     getUID().then((user) {
       setState(() {
-        _senderuid = user.uid;
+        _senderuid = user!.$id;
         print("sender uid : $_senderuid");
-        getSenderPhotoUrl(_senderuid).then((snapshot) {
+        getSenderPhotoUrl(_senderuid!).then((snapshot) {
           setState(() {
             senderPhotoUrl = snapshot['photoUrl'];
             senderName = snapshot['name'];
@@ -94,7 +76,6 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void dispose() {
     super.dispose();
-    subscription?.cancel();
   }
 
   void addMessageToDb(Message message) async {
@@ -102,18 +83,18 @@ class _ChatScreenState extends State<ChatScreen> {
     map = message.toMap();
 
     print("Map : ${map}");
-    _collectionReference = Firestore.instance
+    var _collectionReference = FirebaseFirestore.instance
         .collection("messages")
-        .document(message.senderUid)
+        .doc(message.senderUid)
         .collection(widget.receiverUid);
 
     _collectionReference.add(map).whenComplete(() {
       print("Messages added to db");
     });
 
-    _collectionReference = Firestore.instance
+    _collectionReference = FirebaseFirestore.instance
         .collection("messages")
-        .document(widget.receiverUid)
+        .doc(widget.receiverUid)
         .collection(message.senderUid);
 
     _collectionReference.add(map).whenComplete(() {
@@ -207,9 +188,8 @@ class _ChatScreenState extends State<ChatScreen> {
           Flexible(
             child: Container(
               child: TextFormField(
-                autovalidate: _autoValidate,
-                validator: (String input) {
-                  if (input.isEmpty) {
+                validator: (String? input) {
+                  if (input == null || input.isEmpty) {
                     return "Please enter message";
                   }
                   return null;
@@ -234,7 +214,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     onPressed: () {
                       tolast();
-                      if (_formKey.currentState.validate()) {
+                      if (_formKey.currentState!.validate()) {
                         sendMessage();
                       }
                     },
@@ -284,25 +264,23 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<String> pickImage() async {
-    var selectedImage = await ImagePicker.pickImage(
+    var selectedImage = await ImagePicker().pickImage(
       source: ImageSource.gallery,
     );
-
-    print("Original Size: ${selectedImage.lengthSync()}");
+    if (selectedImage == null) {
+      return "";
+    }
 
     var compressedFile = await FlutterImageCompress.compressAndGetFile(
-        selectedImage.path, imageFile.path,
+        selectedImage.path, selectedImage.path,
         quality: 50, minWidth: 720, minHeight: 1280);
 
-    imageFile = compressedFile;
-
-    print("Comressed Size: ${imageFile.lengthSync()}");
-
-    _storageReference = FirebaseStorage.instance
+    final _storageReference = FirebaseStorage.instance
         .ref()
         .child('${DateTime.now().millisecondsSinceEpoch}');
-    StorageUploadTask storageUploadTask = _storageReference.putFile(imageFile);
-    var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+    final storageUploadTask =
+        _storageReference.putFile(File(compressedFile!.path));
+    var url = await (await storageUploadTask).ref.getDownloadURL();
 
     print("URL: $url");
     uploadImageToDb(url);
@@ -310,14 +288,16 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<String> pickVideo() async {
-    File videoFile = await FilePicker.getFile(type: FileType.video);
+    final videoFile = await FilePicker.platform.pickFiles(type: FileType.video);
+    if (videoFile == null || videoFile.count == 0) return '';
 
-    _storageReference = FirebaseStorage.instance
+    final _storageReference = FirebaseStorage.instance
         .ref()
         .child('${DateTime.now().millisecondsSinceEpoch}');
 
-    StorageUploadTask storageUploadTask = _storageReference.putFile(videoFile);
-    var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+    final storageUploadTask =
+        _storageReference.putFile(File(videoFile.files.first.path!));
+    var url = await (await storageUploadTask).ref.getDownloadURL();
 
     print("Video URL : $url");
     uploadVideoToDB(url);
@@ -325,7 +305,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<String> pickDoc() async {
-    File docFile = await FilePicker.getFile(
+    final docFile = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: [
           'pdf',
@@ -336,13 +316,16 @@ class _ChatScreenState extends State<ChatScreen> {
           'ppt',
           'txt'
         ]);
+    if (docFile == null || docFile.count == 0) return '';
 
-    _storageReference = FirebaseStorage.instance
+    final _storageReference = FirebaseStorage.instance
         .ref()
         .child('${DateTime.now().millisecondsSinceEpoch}');
 
-    StorageUploadTask storageUploadTask = _storageReference.putFile(docFile);
-    var url = await (await storageUploadTask.onComplete).ref.getDownloadURL();
+    final storageUploadTask = _storageReference.putFile(
+      File(docFile.files.first.path!),
+    );
+    var url = await (await storageUploadTask).ref.getDownloadURL();
 
     print("Document URl : $url");
     uploadDoctoDb(url);
@@ -355,33 +338,26 @@ class _ChatScreenState extends State<ChatScreen> {
     _message = Message.withoutMessage(
         message: "Doc Title",
         receiverUid: widget.receiverUid,
-        senderUid: _senderuid,
+        senderUid: _senderuid!,
         mediaUrl: downloadUrl,
         timestamp: FieldValue.serverTimestamp(),
         type: 'doc');
 
-    var map = Map<String, dynamic>();
-    map['senderUid'] = _message.senderUid;
-    map['receiverUid'] = _message.receiverUid;
-    map['type'] = _message.type;
-    map['timestamp'] = _message.timestamp;
-    map['mediaUrl'] = _message.mediaUrl;
-    map['message'] = _message.message;
+    var map = _message!.toMap();
 
-    print("Map : ${map}");
-    _collectionReference = Firestore.instance
+    var _collectionReference = FirebaseFirestore.instance
         .collection("messages")
-        .document(_message.senderUid)
+        .doc(_message!.senderUid)
         .collection(widget.receiverUid);
 
     _collectionReference.add(map).whenComplete(() {
       print("Messages added to db");
     });
 
-    _collectionReference = Firestore.instance
+    _collectionReference = FirebaseFirestore.instance
         .collection("messages")
-        .document(widget.receiverUid)
-        .collection(_message.senderUid);
+        .doc(widget.receiverUid)
+        .collection(_message!.senderUid);
 
     _collectionReference.add(map).whenComplete(() {
       print("Messages added to db");
@@ -394,33 +370,27 @@ class _ChatScreenState extends State<ChatScreen> {
     _message = Message.withoutMessage(
         message: "Dummy Video Title",
         receiverUid: widget.receiverUid,
-        senderUid: _senderuid,
+        senderUid: _senderuid!,
         mediaUrl: downloadUrl,
         timestamp: FieldValue.serverTimestamp(),
         type: 'video');
 
-    var map = Map<String, dynamic>();
-    map['message'] = _message.message;
-    map['senderUid'] = _message.senderUid;
-    map['receiverUid'] = _message.receiverUid;
-    map['type'] = _message.type;
-    map['timestamp'] = _message.timestamp;
-    map['mediaUrl'] = _message.mediaUrl;
+    var map = _message!.toMap();
 
     print("Map : ${map}");
-    _collectionReference = Firestore.instance
+    var _collectionReference = FirebaseFirestore.instance
         .collection("messages")
-        .document(_message.senderUid)
+        .doc(_message!.senderUid)
         .collection(widget.receiverUid);
 
     _collectionReference.add(map).whenComplete(() {
       print("Messages added to db");
     });
 
-    _collectionReference = Firestore.instance
+    _collectionReference = FirebaseFirestore.instance
         .collection("messages")
-        .document(widget.receiverUid)
-        .collection(_message.senderUid);
+        .doc(widget.receiverUid)
+        .collection(_message!.senderUid);
 
     _collectionReference.add(map).whenComplete(() {
       print("Messages added to db");
@@ -430,31 +400,26 @@ class _ChatScreenState extends State<ChatScreen> {
   void uploadImageToDb(String downloadUrl) {
     _message = Message.withoutMessage(
         receiverUid: widget.receiverUid,
-        senderUid: _senderuid,
+        senderUid: _senderuid!,
         mediaUrl: downloadUrl,
         timestamp: FieldValue.serverTimestamp(),
         type: 'image');
-    var map = Map<String, dynamic>();
-    map['senderUid'] = _message.senderUid;
-    map['receiverUid'] = _message.receiverUid;
-    map['type'] = _message.type;
-    map['timestamp'] = _message.timestamp;
-    map['mediaUrl'] = _message.mediaUrl;
+    var map = _message!.toMap();
 
     print("Map : ${map}");
-    _collectionReference = Firestore.instance
+    var _collectionReference = FirebaseFirestore.instance
         .collection("messages")
-        .document(_message.senderUid)
+        .doc(_message!.senderUid)
         .collection(widget.receiverUid);
 
     _collectionReference.add(map).whenComplete(() {
       print("Messages added to db");
     });
 
-    _collectionReference = Firestore.instance
+    _collectionReference = FirebaseFirestore.instance
         .collection("messages")
-        .document(widget.receiverUid)
-        .collection(_message.senderUid);
+        .doc(widget.receiverUid)
+        .collection(_message!.senderUid);
 
     _collectionReference.add(map).whenComplete(() {
       print("Messages added to db");
@@ -467,31 +432,29 @@ class _ChatScreenState extends State<ChatScreen> {
     print(text);
     _message = Message(
         receiverUid: widget.receiverUid,
-        senderUid: _senderuid,
+        senderUid: _senderuid!,
         message: text,
         timestamp: FieldValue.serverTimestamp(),
         type: 'text');
     print(
         "receiverUid: ${widget.receiverUid} , senderUid : ${_senderuid} , message: ${text}");
-    print(
-        "timestamp: ${DateTime.now().millisecond}, type: ${text != null ? 'text' : 'image'}");
-    addMessageToDb(_message);
+    print("timestamp: ${DateTime.now().millisecond}, type: text");
+    addMessageToDb(_message!);
   }
 
-  Future<FirebaseUser> getUID() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
-    return user;
+  Future<User?> getUID() async {
+    return AppwriteAuth.instance.user;
   }
 
   Future<DocumentSnapshot> getSenderPhotoUrl(String uid) {
     var senderDocumentSnapshot =
-        Firestore.instance.collection('users').document(uid).get();
+        FirebaseFirestore.instance.collection('users').doc(uid).get();
     return senderDocumentSnapshot;
   }
 
   Future<DocumentSnapshot> getReceiverPhotoUrl(String uid) {
     var receiverDocumentSnapshot =
-        Firestore.instance.collection('users').document(uid).get();
+        FirebaseFirestore.instance.collection('users').doc(uid).get();
     return receiverDocumentSnapshot;
   }
 
@@ -499,9 +462,9 @@ class _ChatScreenState extends State<ChatScreen> {
     print("SENDERUID : $_senderuid");
     return Flexible(
       child: StreamBuilder(
-        stream: Firestore.instance
+        stream: FirebaseFirestore.instance
             .collection('messages')
-            .document(_senderuid)
+            .doc(_senderuid)
             .collection(widget.receiverUid)
             .orderBy('timestamp', descending: false) //to be reviewed
             .snapshots(),
@@ -511,15 +474,14 @@ class _ChatScreenState extends State<ChatScreen> {
               child: CircularProgressIndicator(),
             );
           } else {
-            int rev = snapshot.data.documents.length - 1;
-            listItem = snapshot.data.documents;
+            int rev = snapshot.data!.docs.length - 1;
             return ListView.builder(
               controller: _scrollController,
               padding: EdgeInsets.all(SizeConfig.b * 2.54),
               reverse: true, //reviewed
               itemBuilder: (context, index) =>
-                  chatMessageItem(snapshot.data.documents[rev - index]),
-              itemCount: snapshot.data.documents.length,
+                  chatMessageItem(snapshot.data!.docs[rev - index]),
+              itemCount: snapshot.data!.docs.length,
             );
           }
         },
@@ -742,6 +704,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   Navigator.of(context).push(
                                       new MaterialPageRoute(builder: (context) {
                                     return new ChewieDemo(
+                                      title: '',
                                       dataSource: snapshot['mediaUrl'],
                                     );
                                   }));

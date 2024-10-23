@@ -16,16 +16,16 @@ class _SubAdminProfileState extends State<SubAdminProfile> {
     return Scaffold(
       appBar: getAppBar(context),
       drawer: getDrawer(context),
-      body: StreamBuilder<Event>(
+      body: StreamBuilder<DatabaseEvent>(
         stream: FirebaseDatabase.instance
-            .reference()
+            .ref()
             .child(
-                '/institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/admin')
+                '/institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/admin')
             .onValue,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            String key;
-            snapshot.data.snapshot.value.forEach((k, v) {
+            String? key;
+            (snapshot.data!.snapshot.value as Map?)?.forEach((k, v) {
               if (k.contains(RegExp(r'[A-Za-z]+'))) {
                 key = k;
               }
@@ -43,18 +43,28 @@ class _SubAdminProfileState extends State<SubAdminProfile> {
                   SizedBox(
                     height: 50,
                   ),
-                  if (snapshot.data.snapshot.value[key]['photoUrl'] != null)
+                  if ((snapshot.data!.snapshot.value as Map?)![key]
+                          ['photoUrl'] !=
+                      null)
                     CircleAvatar(
                       radius: 50,
                       backgroundImage: NetworkImage(
-                        snapshot.data.snapshot.value[key]['photoUrl'],
+                        (snapshot.data!.snapshot.value as Map)[key]['photoUrl'],
                       ),
                     ),
                   ListTile(
-                    title: Text('Name'.tr() + ' : ' + (snapshot.data.snapshot.value[key]['name'] ?? '')),
+                    title: Text(
+                      'Name'.tr() +
+                          ' : ' +
+                          ((snapshot.data!.snapshot.value as Map)[key]
+                                  ['name'] ??
+                              ''),
+                    ),
                   ),
                   ListTile(
-                    title: Text('Email'.tr() + ' : ' + snapshot.data.snapshot.value[key]['email']),
+                    title: Text('Email'.tr() +
+                        ' : ' +
+                        (snapshot.data!.snapshot.value as Map)[key]['email']),
                   ),
                 ],
               ),

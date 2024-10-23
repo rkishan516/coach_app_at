@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 
 class InfoDialog extends StatelessWidget {
   final String infoString;
-  InfoDialog({this.infoString});
+  InfoDialog({required this.infoString});
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -57,7 +57,7 @@ class InfoDialog extends StatelessWidget {
                 SizedBox(height: 24.0),
                 Align(
                   alignment: Alignment.bottomRight,
-                  child: FlatButton(
+                  child: MaterialButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },

@@ -19,7 +19,7 @@ class _PayementReportState extends State<OneTimeReport> {
   _setstudentlist() {
     List<StudentModel> list = [];
     widget._listStudentModel.forEach((element) {
-      if (element.lastpaidInstallment != null &&
+      if (element.lastpaidInstallment.isEmpty &&
           element.lastpaidInstallment == "OneTime") {
         list.add(element);
 
@@ -68,12 +68,12 @@ class _PayementReportState extends State<OneTimeReport> {
                 amount;
           } else if (_coresspondingStatus[_studentList[index].uid] == "Fine") {
             subTitle = "Fine of " +
-                _coresspondingmap[_studentList[index].uid].fine +
+                _coresspondingmap[_studentList[index].uid]!.fine +
                 " in " +
-                _coresspondingmap[_studentList[index].phoneNo].sequence;
+                _coresspondingmap[_studentList[index].phoneNo]!.sequence;
           } else {
             subTitle =
-                "Due " + _coresspondingmap[_studentList[index].uid].sequence;
+                "Due " + _coresspondingmap[_studentList[index].uid]!.sequence;
           }
 
           return Card(
@@ -98,12 +98,9 @@ class _PayementReportState extends State<OneTimeReport> {
                   shrinkWrap: true,
                   children: [
                     Text(
-                      (index + 1).toString() +
-                              ". " +
-                              _studentList[index]?.name ??
-                          "",
+                      (index + 1).toString() + ". " + _studentList[index].name,
                       style: TextStyle(
-                        color: _studentList[index]?.paymentType == "Online"
+                        color: _studentList[index].paymentType == "Online"
                             ? Colors.green
                             : Color(0xffF36C24),
                         fontSize: 16,

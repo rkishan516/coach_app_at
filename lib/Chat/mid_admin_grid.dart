@@ -1,13 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:coach_app/Chat/mid_admin_based.dart';
 import 'package:coach_app/Chat/models/item_class.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:flutter/material.dart';
 
 class GridItem extends StatefulWidget {
-  final Key key;
   final Item item;
   final ValueChanged<bool> isSelected;
 
-  GridItem({this.item, this.isSelected, this.key});
+  GridItem({required this.item, required this.isSelected});
 
   @override
   _GridItemState createState() => _GridItemState();
@@ -30,7 +29,7 @@ class _GridItemState extends State<GridItem> {
             child: Row(children: [
               SizedBox(width: SizeConfig.b * 2.54),
               CircleAvatar(
-                  foregroundColor: Theme.of(context).accentColor,
+                  foregroundColor: Theme.of(context).secondaryHeaderColor,
                   backgroundColor: Colors.grey,
                   radius: SizeConfig.b * 6.36,
                   backgroundImage: NetworkImage(widget.item.imageUrl)

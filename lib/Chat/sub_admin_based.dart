@@ -1,30 +1,13 @@
-import 'package:coach_app/Chat/models/item_class.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:async';
+import 'package:coach_app/Chat/models/item_class.dart';
+import 'package:coach_app/Profile/TeacherProfile.dart';
+import 'package:flutter/material.dart';
 
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
-  }
-}
-
-class subAdminBased extends StatefulWidget {
-  final curUser currentUser;
-  subAdminBased({this.currentUser});
+class SubAdminBased extends StatefulWidget {
+  final CurrUser currentUser;
+  SubAdminBased({required this.currentUser});
   @override
-  _subAdminBasedState createState() => new _subAdminBasedState(currentUser);
+  _SubAdminBasedState createState() => new _SubAdminBasedState(currentUser);
 }
 
 List<String> litems = [
@@ -43,28 +26,27 @@ List<String> litems = [
   "25"
 ];
 
-class _subAdminBasedState extends State<subAdminBased>
+class _SubAdminBasedState extends State<SubAdminBased>
     with TickerProviderStateMixin {
-  final curUser currentUser;
-  _subAdminBasedState(this.currentUser);
+  final CurrUser currentUser;
+  _SubAdminBasedState(this.currentUser);
 
-  StreamSubscription<QuerySnapshot> _subscription;
-  List<DocumentSnapshot> userlist;
+  List<DocumentSnapshot> userlist = [];
   CollectionReference _collectionReference =
-      Firestore.instance.collection('Sub Admin');
+      FirebaseFirestore.instance.collection('Sub Admin');
 
   @override
   void initState() {
     super.initState();
-    _subscription = _collectionReference
+    _collectionReference
         .where('code', isEqualTo: currentUser.code)
         .snapshots()
         .listen((datasnapshot) {
       setState(() {
-        userlist = datasnapshot.documents;
+        userlist = datasnapshot.docs;
 
         for (int i = 0; i < userlist.length; i++) {
-          if (userlist[i].data['uid'] == currentUser.uid) {
+          if ((userlist[i].data as Map)['uid'] == currentUser.uid) {
             userlist.removeAt(i);
           }
         }
@@ -135,18 +117,18 @@ class _subAdminBasedState extends State<subAdminBased>
                                 SizedBox(width: SizeConfig.b * 2.54),
                                 CircleAvatar(
                                   foregroundColor:
-                                      Theme.of(context).accentColor,
+                                      Theme.of(context).colorScheme.secondary,
                                   backgroundColor: Colors.grey,
                                   radius: 25,
-                                  backgroundImage: NetworkImage(
-                                      userlist[index].data['photoUrl']),
+                                  backgroundImage: NetworkImage((userlist[index]
+                                      .data as Map)['photoUrl']),
                                 ),
                                 SizedBox(width: SizeConfig.b * 4.07),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(height: SizeConfig.v * 1.08),
-                                    Text(userlist[index].data['name'],
+                                    Text((userlist[index].data as Map)['name'],
                                         style: TextStyle(
                                             fontSize: SizeConfig.b * 4.58,
                                             color: Color.fromARGB(

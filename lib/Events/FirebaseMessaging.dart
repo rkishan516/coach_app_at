@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/random_string.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -8,36 +9,28 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class FirebaseMessagingService {
   final FlutterLocalNotificationsPlugin flutterlocalnotificationplugin =
       new FlutterLocalNotificationsPlugin();
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   FirebaseMessagingService() {
     //initializing setting
     var android = AndroidInitializationSettings('@mipmap/launcher_icon');
-    var ios = IOSInitializationSettings();
-    var initializationSettings = InitializationSettings(android, ios);
+    var ios = DarwinInitializationSettings();
+    var initializationSettings =
+        InitializationSettings(android: android, iOS: ios);
     flutterlocalnotificationplugin.initialize(initializationSettings);
   }
 
   sendNotification() {
-    _firebaseMessaging.requestNotificationPermissions();
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) {
-        showNotification(message['data']['title'], message['data']['body']);
-        return;
-      },
-      onBackgroundMessage: Platform.isIOS ? null : myBackgroundMessageHandler,
-      onResume: (Map<String, dynamic> message) {
-        if (Platform.isIOS) {
-          showNotification(message['data']['title'], message['data']['body']);
-        }
-        return;
-      },
-      onLaunch: (Map<String, dynamic> message) {
-        return;
-      },
-    );
-    _firebaseMessaging.requestNotificationPermissions(
-        const IosNotificationSettings(sound: true, badge: true, alert: true));
+    _firebaseMessaging.requestPermission();
+    FirebaseMessaging.onMessage.listen((event) {
+      final message = event.data;
+      showNotification(message['data']['title'], message['data']['body']);
+      return;
+    });
+    FirebaseMessaging.onBackgroundMessage((message) async {
+      if (Platform.isIOS) return null;
+      myBackgroundMessageHandler(message.data);
+    });
   }
 
   // TOP-LEVEL or STATIC function to handle background messages
@@ -51,18 +44,20 @@ class FirebaseMessagingService {
     FlutterLocalNotificationsPlugin flutterlocalnotificationplugin =
         new FlutterLocalNotificationsPlugin();
     var androidinit = AndroidInitializationSettings('@mipmap/launcher_icon');
-    var ios = IOSInitializationSettings();
-    var initializationSettings = InitializationSettings(androidinit, ios);
+    var ios = DarwinInitializationSettings();
+    var initializationSettings =
+        InitializationSettings(android: androidinit, iOS: ios);
     flutterlocalnotificationplugin.initialize(initializationSettings);
 
     var android = AndroidNotificationDetails(
-        title + randomNumeric(4).toString(),
-        title + randomNumeric(4).toString(),
-        body);
-    var iOS = IOSNotificationDetails();
-    var platform = NotificationDetails(android, iOS);
+      title + randomNumeric(4).toString(),
+      title + randomNumeric(4).toString(),
+      subText: body,
+    );
+    var iOS = DarwinNotificationDetails();
+    var platform = NotificationDetails(android: android, iOS: iOS);
     new Future.delayed(Duration.zero, () {
-      if(body.startsWith("https://firebasestorage.googleapis.com")){
+      if (body.startsWith("https://firebasestorage.googleapis.com")) {
         body = "Notice with content attached";
       }
       flutterlocalnotificationplugin.show(
@@ -73,21 +68,21 @@ class FirebaseMessagingService {
   void storeTokenintoDatabase() async {
     _firebaseMessaging.getToken().then((token) {
       final dbref = FirebaseDatabase.instance
-          .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/');
-      if (FireBaseAuth.instance.previlagelevel == 2) {
+          .ref()
+          .child('institute/${AppwriteAuth.instance.instituteid}/');
+      if (AppwriteAuth.instance.previlagelevel == 2) {
         dbref
             .child(
-                'branches/${FireBaseAuth.instance.branchid}/teachers/${FireBaseAuth.instance.user.uid}')
+                'branches/${AppwriteAuth.instance.branchid}/teachers/${AppwriteAuth.instance.user!.$id}')
             .update({"tokenid": token.toString()});
-      } else if (FireBaseAuth.instance.previlagelevel == 3) {
+      } else if (AppwriteAuth.instance.previlagelevel == 3) {
         dbref
             .child(
-                'branches/${FireBaseAuth.instance.branchid}/admin/${FireBaseAuth.instance.user.uid}')
+                'branches/${AppwriteAuth.instance.branchid}/admin/${AppwriteAuth.instance.user!.$id}')
             .update({"tokenid": token.toString()});
-      } else if (FireBaseAuth.instance.previlagelevel == 4) {
+      } else if (AppwriteAuth.instance.previlagelevel == 4) {
         dbref
-            .child('admin/${FireBaseAuth.instance.user.uid}')
+            .child('admin/${AppwriteAuth.instance.user!.$id}')
             .update({"tokenid": token.toString()});
       }
     });

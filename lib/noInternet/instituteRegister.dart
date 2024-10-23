@@ -10,10 +10,10 @@ import 'package:coach_app/Dialogs/uploadDialog.dart';
 import 'package:coach_app/GlobalFunction/VyCode.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/NavigationOnOpen/WelComeNaviagtion.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:image_picker/image_picker.dart';
 
 class InstituteRegister extends StatefulWidget {
@@ -22,7 +22,7 @@ class InstituteRegister extends StatefulWidget {
 }
 
 class _InstituteRegisterState extends State<InstituteRegister> {
-  TextEditingController nameTextEditingController,
+  late TextEditingController nameTextEditingController,
       phoneNoTextEditingController,
       branch1NameTextEditingController,
       branch1UpiIdTextEditiingController,
@@ -32,17 +32,18 @@ class _InstituteRegisterState extends State<InstituteRegister> {
       accoundHolderNameTextEditingController,
       accountNoTextEditingController,
       accountIFSCTextEditingController;
-  GlobalKey<ScaffoldState> _scKey;
-  GlobalKey<FormState> _formKey;
+  late GlobalKey<ScaffoldState> _scKey;
+  late GlobalKey<FormState> _formKey;
 
-  File _image;
+  File? _image;
 
   Future getImage() async {
-    final pickedFile =
-        await ImagePicker().getImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker.platform
+        .getImageFromSource(source: ImageSource.gallery);
+    if (pickedFile == null) return;
 
     setState(() {
-      _image = File(pickedFile?.path);
+      _image = File(pickedFile.path);
     });
   }
 
@@ -104,7 +105,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                 margin: EdgeInsets.symmetric(vertical: 8),
                 child: TextFormField(
                   validator: (value) {
-                    if (value.isEmpty) {
+                    if (value == null || value.isEmpty) {
                       return 'Please enter your institute name';
                     }
                     return null;
@@ -129,7 +130,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                 margin: EdgeInsets.symmetric(vertical: 8),
                 child: TextFormField(
                   validator: (value) {
-                    if (value.isEmpty) {
+                    if (value == null || value.isEmpty) {
                       return 'Please enter your institute phone number';
                     }
                     return null;
@@ -155,7 +156,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                 margin: EdgeInsets.symmetric(vertical: 8),
                 child: TextFormField(
                   validator: (value) {
-                    if (value.isEmpty) {
+                    if (value == null || value.isEmpty) {
                       return 'Please enter main branch name';
                     }
                     return null;
@@ -180,7 +181,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                 margin: EdgeInsets.symmetric(vertical: 8),
                 child: TextFormField(
                   validator: (value) {
-                    if (value.isEmpty) {
+                    if (value == null || value.isEmpty) {
                       return 'Please enter main branch address';
                     }
                     return null;
@@ -266,7 +267,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                       flex: 4,
                       child: TextFormField(
                         validator: (value) {
-                          if (value.isEmpty) {
+                          if (value == null || value.isEmpty) {
                             return 'Please enter main branch upiId';
                           }
                           return null;
@@ -315,7 +316,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                 margin: EdgeInsets.symmetric(vertical: 8),
                 child: TextFormField(
                   validator: (value) {
-                    if (value.isEmpty) {
+                    if (value == null || value.isEmpty) {
                       return 'Please enter main branch admin email';
                     }
                     return null;
@@ -341,7 +342,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                 margin: EdgeInsets.symmetric(vertical: 8),
                 child: TextFormField(
                   validator: (value) {
-                    if (value.isEmpty) {
+                    if (value == null || value.isEmpty) {
                       return 'Please enter main branch code';
                     }
                     return null;
@@ -373,7 +374,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                     flex: 2,
                     child: Container(
                       margin: EdgeInsets.symmetric(vertical: 8),
-                      child: FlatButton(
+                      child: MaterialButton(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                         color: Color(0xffF36C24),
@@ -392,12 +393,12 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                   Expanded(child: Container(), flex: 1),
                   Expanded(
                     flex: 2,
-                    child: RaisedButton(
+                    child: MaterialButton(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
                       color: Color(0xffF36C24),
                       onPressed: () {
-                        if (!_formKey.currentState.validate()) {
+                        if (!_formKey.currentState!.validate()) {
                           return;
                         }
                         if (nameTextEditingController.text != '' &&
@@ -423,11 +424,11 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                 context, 'Please select Institute Logo'.tr());
                             return;
                           }
-                          FireBaseAuth.instance
+                          AppwriteAuth.instance
                               .signInWithGoogle(context)
                               .then((value) async {
                             if (value != null) {
-                              if (FireBaseAuth.instance.instituteid != null) {
+                              if (AppwriteAuth.instance.instituteid != null) {
                                 WelcomeNavigation.signInWithGoogleAndGetPage(
                                     context);
                                 return;
@@ -439,7 +440,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                       ));
                               DatabaseReference reference = FirebaseDatabase
                                   .instance
-                                  .reference()
+                                  .ref()
                                   .child('/tempInstitute')
                                   .push();
                               reference.update({
@@ -448,16 +449,18 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                 "mainBranchCode":
                                     branch1CodeTextEditingController.text,
                                 "admin": {
-                                  value.uid: Admin(
-                                          email: value.email,
-                                          name: value.displayName)
-                                      .toJson()
+                                  value.$id: Admin(
+                                    email: value.email,
+                                    name: value.name,
+                                  ).toJson()
                                 },
                                 "creationDate": DateTime.now().toString(),
                                 "paid": 'Trial',
                                 "logo": "/instituteLogo/${reference.key}",
                                 "branches": {
                                   branch1CodeTextEditingController.text: Branch(
+                                      courses: null,
+                                      accountId: '',
                                       name:
                                           branch1NameTextEditingController.text,
                                       address:
@@ -466,6 +469,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                       admin: {
                                         "${branch1AdminTextEditingController.text.hashCode}":
                                             Admin(
+                                          name: '',
                                           email:
                                               branch1AdminTextEditingController
                                                   .text,
@@ -476,25 +480,12 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                                       accountDetails: AccountDetails(
                                         accountHolderName:
                                             accoundHolderNameTextEditingController
-                                                        .text ==
-                                                    ''
-                                                ? null
-                                                : accoundHolderNameTextEditingController
-                                                    .text,
+                                                .text,
                                         accountNo:
-                                            accountNoTextEditingController
-                                                        .text ==
-                                                    ''
-                                                ? null
-                                                : accountNoTextEditingController
-                                                    .text,
+                                            accountNoTextEditingController.text,
                                         accountIFSC:
                                             accountIFSCTextEditingController
-                                                        .text ==
-                                                    ''
-                                                ? null
-                                                : accountIFSCTextEditingController
-                                                    .text,
+                                                .text,
                                       )).toJson()
                                 }
                               });
@@ -506,8 +497,7 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                               await FirebaseStorage.instance
                                   .ref()
                                   .child('/instituteLogo/${reference.key}')
-                                  .putFile(_image)
-                                  .onComplete;
+                                  .putFile(_image!);
                               showDialog(
                                 context: context,
                                 builder: (context) => UploadDialog(
@@ -516,30 +506,31 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                               );
                               if (value.email !=
                                   branch1AdminTextEditingController.text) {
-                                Firestore.instance
+                                FirebaseFirestore.instance
                                     .collection('institute')
-                                    .document(branch1AdminTextEditingController
-                                        .text
+                                    .doc(branch1AdminTextEditingController.text
                                         .split('@')[0])
-                                    .setData({
+                                    .set({
                                   "value":
                                       "subAdmin_${reference.key}_${branch1CodeTextEditingController.text}"
                                 });
                               }
-                              DataSnapshot snap = await FirebaseDatabase
+                              DatabaseEvent snap = await FirebaseDatabase
                                   .instance
-                                  .reference()
+                                  .ref()
                                   .child('/instituteList')
                                   .orderByKey()
                                   .limitToLast(1)
                                   .once();
 
                               await FirebaseDatabase.instance
-                                  .reference()
+                                  .ref()
                                   .child('/instituteList')
                                   .update({
                                 VyCode.instance.getNextVyCode(
-                                    snap.value.keys.toList()[0]): reference.key
+                                    (snap.snapshot.value as Map)
+                                        .keys
+                                        .toList()[0]): reference.key
                               });
                               showDialog(
                                   context: context,
@@ -551,12 +542,12 @@ class _InstituteRegisterState extends State<InstituteRegister> {
                               WelcomeNavigation.signInWithGoogleAndGetPage(
                                   context);
                             } else {
-                              _scKey.currentState.showSnackBar(
+                              ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text('Login Failed'.tr())));
                             }
                           });
                         } else {
-                          _scKey.currentState.showSnackBar(SnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text('Something is wrong'.tr())));
                         }
                       },

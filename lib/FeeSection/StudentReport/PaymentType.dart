@@ -9,7 +9,11 @@ class PaymentType extends StatefulWidget {
   final bool isFromDrawer;
   final String courseId;
   final String courseName;
-  PaymentType({this.courseId, this.courseName, this.isFromDrawer = false});
+  PaymentType({
+    required this.courseId,
+    required this.courseName,
+    this.isFromDrawer = false,
+  });
   @override
   _PaymentTypeState createState() => _PaymentTypeState();
 }
@@ -27,31 +31,31 @@ class _PaymentTypeState extends State<PaymentType> {
   final dbref = FirebaseDatabase.instance;
   _loadFromDatabase() async {
     //Checking IsMaxAllowed
-    DataSnapshot _installmentsnapshot = await dbref
-        .reference()
+    final _installmentsnapshot = await dbref
+        .ref()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/fees/MaxInstallment/IsMaxAllowed")
+            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}/fees/MaxInstallment/IsMaxAllowed")
         .once();
     //Checking IsOneTimeAllowed
-    DataSnapshot _onetimesnapshot = await dbref
-        .reference()
+    final _onetimesnapshot = await dbref
+        .ref()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}/fees/OneTime/IsOneTimeAllowed")
+            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}/fees/OneTime/IsOneTimeAllowed")
         .once();
 
     //If Installments are off
-    if (_installmentsnapshot.value != null) {
-      if (!_installmentsnapshot.value) {
+    if (_installmentsnapshot.snapshot.value != null) {
+      if (!(_installmentsnapshot.snapshot.value as bool)) {
         _allowonetime = true;
 
         //Previous payment collection
-        DataSnapshot _onetimesnapshot = await dbref
-            .reference()
+        final _onetimesnapshot = await dbref
+            .ref()
             .child(
-                "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees/Installments")
+                "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}/course/${widget.courseId}/fees/Installments")
             .once();
-        if (_onetimesnapshot.value != null) {
-          Map map = _onetimesnapshot.value;
+        if (_onetimesnapshot.snapshot.value != null) {
+          Map map = _onetimesnapshot.snapshot.value as Map;
           sum = 0.0;
           fine = 0.0;
 
@@ -76,18 +80,18 @@ class _PaymentTypeState extends State<PaymentType> {
     }
 
     //Navigate through last payment method
-    DataSnapshot dataSnapshot = await dbref
-        .reference()
+    final dataSnapshot = await dbref
+        .ref()
         .child(
-            "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/${FireBaseAuth.instance.user.uid}/course/${widget.courseId}/fees/Installments/AllowedThrough")
+            "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/${AppwriteAuth.instance.user!.$id}/course/${widget.courseId}/fees/Installments/AllowedThrough")
         .once();
-    if (dataSnapshot.value == "Installments") {
+    if (dataSnapshot.snapshot.value == "Installments") {
       setState(() {
         toggleValue1 = true;
         toggleValue2 = false;
       });
-      if (_installmentsnapshot.value != null) {
-        if (toggleValue1 && _installmentsnapshot.value) {
+      if (_installmentsnapshot.snapshot.value != null) {
+        if (toggleValue1 && (_installmentsnapshot.snapshot.value as bool)) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (coontext) => StuInstallment(
@@ -100,13 +104,13 @@ class _PaymentTypeState extends State<PaymentType> {
           return;
         }
       }
-    } else if (dataSnapshot.value == "OneTime") {
+    } else if (dataSnapshot.snapshot.value == "OneTime") {
       setState(() {
         toggleValue2 = true;
         toggleValue1 = false;
       });
-      if (_onetimesnapshot.value != null) {
-        if (toggleValue2 && _onetimesnapshot.value)
+      if (_onetimesnapshot.snapshot.value != null) {
+        if (toggleValue2 && (_onetimesnapshot.snapshot.value as bool))
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => OneTimeInstallment(
@@ -128,8 +132,9 @@ class _PaymentTypeState extends State<PaymentType> {
       });
     }
 
-    _showInstallmenttype = _installmentsnapshot.value ?? false;
-    _showOneTimetype = _onetimesnapshot.value ?? false;
+    _showInstallmenttype =
+        (_installmentsnapshot.snapshot.value as bool?) ?? false;
+    _showOneTimetype = (_onetimesnapshot.snapshot.value as bool?) ?? false;
 
     setState(() {
       toggleValue1 = !_showInstallmenttype;
@@ -271,21 +276,5 @@ class _PaymentTypeState extends State<PaymentType> {
         });
       } else {}
     });
-  }
-}
-
-class SizeConfig {
-  static MediaQueryData _mediaQueryData;
-  static double screenWidth;
-  static double screenHeight;
-  static double b;
-  static double v;
-
-  void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    b = screenWidth / 100;
-    v = screenHeight / 100;
   }
 }

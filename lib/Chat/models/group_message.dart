@@ -1,32 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GroupMessage {
-  String senderUid;
-  String type;
-  String message;
-  FieldValue timestamp;
-  String mediaUrl;
-  String gid;
-  String senderName;
+  late String senderUid;
+  late String type;
+  late String? message;
+  late FieldValue timestamp;
+  late String mediaUrl;
+  late String gid;
+  late String senderName;
 
-  GroupMessage(
-      {this.senderUid,
-      this.type,
-      this.message,
-      this.timestamp,
-      this.gid,
-      this.senderName});
+  GroupMessage({
+    required this.senderUid,
+    required this.type,
+    required this.message,
+    required this.timestamp,
+    required this.gid,
+    required this.senderName,
+  });
   GroupMessage.withoutMessage({
-    this.senderUid,
-    this.type,
+    required this.senderUid,
+    required this.type,
     this.message,
-    this.timestamp,
-    this.gid,
-    this.senderName,
-    this.mediaUrl,
+    required this.timestamp,
+    required this.gid,
+    required this.senderName,
+    required this.mediaUrl,
   });
 
-  Map toMap() {
+  Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
     map['senderUid'] = this.senderUid;
     map['type'] = this.type;
@@ -38,13 +39,14 @@ class GroupMessage {
   }
 
   GroupMessage fromMap(Map<String, dynamic> map) {
-    GroupMessage _message = GroupMessage();
-    _message.senderUid = map['senderUid'];
-    _message.type = map['type'];
-    _message.message = map['message'];
-    _message.timestamp = map['timestamp'];
-    _message.gid = map['gid'];
-    _message.senderName = map['senderName'];
+    GroupMessage _message = GroupMessage(
+      senderUid: map['senderUid'],
+      type: map['type'],
+      message: map['message'],
+      timestamp: map['timestamp'],
+      gid: map['gid'],
+      senderName: map['senderName'],
+    );
     return _message;
   }
 }

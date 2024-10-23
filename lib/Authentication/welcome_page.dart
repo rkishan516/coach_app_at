@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class WelcomePage extends StatefulWidget {
-  WelcomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  WelcomePage({super.key});
 
   @override
   _WelcomePageState createState() => _WelcomePageState();
@@ -63,7 +61,10 @@ class _WelcomePageState extends State<WelcomePage> {
                         ),
                       ),
                     ),
-                    Text('Sign in with Google'.tr(),style: TextStyle(color: Colors.white),)
+                    Text(
+                      'Sign in with Google'.tr(),
+                      style: TextStyle(color: Colors.white),
+                    )
                   ],
                 ),
               ),

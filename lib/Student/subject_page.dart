@@ -15,15 +15,14 @@ import 'package:easy_localization/easy_localization.dart';
 class SubjectPage extends StatefulWidget {
   final String courseID;
   final String passKey;
-  SubjectPage({@required this.courseID, @required this.passKey});
+  SubjectPage({required this.courseID, required this.passKey});
   @override
   _SubjectPageState createState() => _SubjectPageState();
 }
 
 class _SubjectPageState extends State<SubjectPage>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
-  List _list;
+  late TabController _tabController;
 
   @override
   void initState() {
@@ -84,21 +83,25 @@ class _SubjectPageState extends State<SubjectPage>
                     ),
                     Expanded(
                       flex: 12,
-                      child: StreamBuilder<Event>(
+                      child: StreamBuilder<DatabaseEvent>(
                         stream: FirebaseDatabase.instance
-                            .reference()
+                            .ref()
                             .child(
-                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseID}')
+                                'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseID}')
                             .onValue,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            Courses courses =
-                                Courses.fromJson(snapshot.data.snapshot.value);
+                            Courses courses = Courses.fromJson(
+                                snapshot.data!.snapshot.value as Map);
                             var keys;
                             if (courses.subjects != null) {
-                              keys = courses.subjects.keys.toList()
-                                ..sort((a, b) => courses.subjects[a].name
-                                    .compareTo(courses.subjects[b].name));
+                              keys = courses.subjects!.keys.toList()
+                                ..sort(
+                                  (a, b) =>
+                                      courses.subjects![a]!.name.compareTo(
+                                    courses.subjects![b]!.name,
+                                  ),
+                                );
                             }
                             length = courses.subjects?.length ?? 0;
 
@@ -108,29 +111,26 @@ class _SubjectPageState extends State<SubjectPage>
                                 int _contentlength = 0;
                                 int _totalContent = 0;
                                 int count = 0;
-                                if (courses.subjects[keys.toList()[index]]
-                                        .chapters !=
-                                    null) {
-                                  courses
-                                      .subjects[keys.toList()[index]].chapters
-                                      .forEach((key, value) {
+                                final subject =
+                                    courses.subjects![keys.toList()[index]]!;
+                                if (subject.chapters != null) {
+                                  subject.chapters!.forEach((key, value) {
                                     int _indvContent =
-                                        value?.content?.length ?? 0;
+                                        value.content?.length ?? 0;
                                     _contentlength = _indvContent;
 
                                     String searchkey = widget.passKey +
                                         "__" +
-                                        '${courses.subjects[keys.toList()[index]].name}' +
+                                        '${subject.name}' +
                                         "__" +
                                         value.name.toString();
-                                    _list = FireBaseAuth.instance.prefs
+                                    final _list = AppwriteAuth.instance.prefs!
                                         .getKeys()
                                         .where((element) =>
                                             element.startsWith(searchkey))
                                         .toList();
                                     _totalContent = _contentlength;
-                                    int _prevtotalContent =
-                                        _list.length ?? _totalContent;
+                                    int _prevtotalContent = _list.length;
                                     if (_prevtotalContent < _totalContent) {
                                       count++;
                                     }
@@ -144,7 +144,7 @@ class _SubjectPageState extends State<SubjectPage>
                                             BorderRadius.circular(10)),
                                     child: ListTile(
                                       title: Text(
-                                        '${courses.subjects[keys.toList()[index]].name}',
+                                        '${subject.name}',
                                         style: TextStyle(color: Colors.blue),
                                       ),
                                       trailing: Container(
@@ -166,22 +166,19 @@ class _SubjectPageState extends State<SubjectPage>
                                         ),
                                       ),
                                       onTap: () {
-                                        return Navigator.of(context)
+                                        Navigator.of(context)
                                             .push(
                                           CupertinoPageRoute(
                                             builder: (context) => ChapterPage(
-                                                title: courses
-                                                    .subjects[
-                                                        keys.toList()[index]]
-                                                    .name,
+                                                title: subject.name,
                                                 reference: FirebaseDatabase
                                                     .instance
-                                                    .reference()
+                                                    .ref()
                                                     .child(
-                                                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${keys.toList()[index]}'),
+                                                        'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${courses.id}/subjects/${keys.toList()[index]}'),
                                                 passKey: widget.passKey +
                                                     "__" +
-                                                    '${courses.subjects[keys.toList()[index]].name}'),
+                                                    '${subject.name}'),
                                           ),
                                         )
                                             .then((value) {

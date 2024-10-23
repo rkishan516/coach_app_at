@@ -4,9 +4,12 @@ class CouponModal {
   final String discountValue;
   final String couponKey;
 
-  CouponModal({this.couponKey, this.discountValue});
+  CouponModal({
+    required this.couponKey,
+    required this.discountValue,
+  });
 
   CouponModal.fromSnapShot(DataSnapshot datasnapshot)
-      : couponKey = datasnapshot.key,
-        discountValue = datasnapshot.value["discount"];
+      : couponKey = datasnapshot.key!,
+        discountValue = (datasnapshot.value as Map)["discount"];
 }

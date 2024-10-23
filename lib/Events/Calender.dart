@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
 import 'package:coach_app/Events/FirebaseMessaging.dart';
@@ -7,51 +8,49 @@ import 'package:coach_app/Events/videoConferencing.dart';
 import 'package:coach_app/GlobalFunction/SlideButton.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Models/random_string.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:coach_app/Events/TableCalender/table_calendar.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 import '../Authentication/FirebaseAuth.dart';
 
 class Calender extends StatefulWidget {
-  final String courseId;
-  final String subjectName;
+  final String? courseId;
+  final String? subjectName;
   final bool fromCourse;
-  Calender({this.courseId, this.subjectName, @required this.fromCourse});
+  Calender({this.courseId, this.subjectName, required this.fromCourse});
   @override
   _CalenderState createState() => _CalenderState();
 }
 
 class _CalenderState extends State<Calender> {
-  CalendarController _calendarController;
   String passVariable = "", previouspassVariable = "", eventkey = "";
   Map<DateTime, List<dynamic>> _events = {};
   final dbRef = FirebaseDatabase.instance;
-  StreamSubscription<Event> _onDataAddedSubscription;
-  StreamSubscription<Event> _onDataChangedSubscription;
-  StreamSubscription<Event> _onDataRemovedSubscription;
+  late StreamSubscription<DatabaseEvent> _onDataAddedSubscription;
+  late StreamSubscription<DatabaseEvent> _onDataChangedSubscription;
+  late StreamSubscription<DatabaseEvent> _onDataRemovedSubscription;
   final FirebaseMessagingService _firebaseMessagingService =
       FirebaseMessagingService();
-  Query _query;
+  late Query _query;
   List<dynamic> _selectedEvents = [];
   final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
-    _calendarController = CalendarController();
     _initializeevent();
   }
 
   _initializeevent() {
     if (widget.fromCourse)
-      _query = dbRef.reference().child(
-          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events');
+      _query = dbRef.ref().child(
+          'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/events');
     else
       _query = dbRef
-          .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}')
+          .ref()
+          .child('institute/${AppwriteAuth.instance.instituteid}')
           .child('events');
 
     _onDataAddedSubscription = _query.onChildAdded.listen(onEventAdded);
@@ -61,35 +60,40 @@ class _CalenderState extends State<Calender> {
     //_firebaseMessagingService.storeTokenintoDatabase();
   }
 
-  onEventAdded(Event event) {
+  onEventAdded(DatabaseEvent event) {
     setState(() {
       if (event.snapshot.key != null) {
-        String str = event.snapshot.key.substring(0, 10) + 'T12:00:00.000Z';
+        String str = event.snapshot.key!.substring(0, 10) + 'T12:00:00.000Z';
         DateTime _key = DateTime.parse(str);
 
         if (widget.fromCourse) {
-          if (event.snapshot.value['teacheruid'] ==
-              "${FireBaseAuth.instance.user.uid}") {
+          if ((event.snapshot.value as Map)['teacheruid'] ==
+              "${AppwriteAuth.instance.user!.$id}") {
             if (_events[_key] == null) {
               _events[_key] = [
-                EventsModal.fromJson(event.snapshot.key, event.snapshot.value)
+                EventsModal.fromJson(
+                    event.snapshot.key!, event.snapshot.value as Map)
               ];
             } else {
-              _events[_key].add(EventsModal.fromJson(
-                  event.snapshot.key, event.snapshot.value));
+              _events[_key]!.add(EventsModal.fromJson(
+                  event.snapshot.key!, event.snapshot.value as Map));
             }
           }
         } else {
-          if (event.snapshot.value['hostuid'] ==
-              FireBaseAuth.instance.user.uid) {
+          if ((event.snapshot.value as Map)['hostuid'] ==
+              AppwriteAuth.instance.user!.$id) {
             if (_events[_key] == null) {
               _events[_key] = [
                 GeneralEventsModal.fromJson(
-                    event.snapshot.key, event.snapshot.value)
+                    event.snapshot.key!, event.snapshot.value as Map)
               ];
             } else {
-              _events[_key].add(GeneralEventsModal.fromJson(
-                  event.snapshot.key, event.snapshot.value));
+              _events[_key]!.add(
+                GeneralEventsModal.fromJson(
+                  event.snapshot.key!,
+                  event.snapshot.value as Map,
+                ),
+              );
             }
           }
         }
@@ -97,34 +101,34 @@ class _CalenderState extends State<Calender> {
     });
   }
 
-  onEventRemoved(Event event) {
+  onEventRemoved(DatabaseEvent event) {
     _showsnackbar(context, "Session is Removed".tr());
-    String str = event.snapshot.key.substring(0, 10) + 'T12:00:00.000Z';
+    String str = event.snapshot.key!.substring(0, 10) + 'T12:00:00.000Z';
     DateTime _key = DateTime.parse(str);
     var index;
-    _events[_key].forEach((element) {
-      if (element.eventKey == event.snapshot.value['eventKey']) {
-        index = _events[_key].indexOf(element);
+    _events[_key]!.forEach((element) {
+      if (element.eventKey == (event.snapshot.value as Map)['eventKey']) {
+        index = _events[_key]!.indexOf(element);
       }
     });
     setState(() {
-      _events[_key].removeAt(index);
+      _events[_key]!.removeAt(index);
     });
   }
 
-  onEventChanged(Event event) {
-    String str = event.snapshot.key.substring(0, 10) + 'T12:00:00.000Z';
+  onEventChanged(DatabaseEvent event) {
+    String str = event.snapshot.key!.substring(0, 10) + 'T12:00:00.000Z';
     DateTime _key = DateTime.parse(str);
-    _events[_key].forEach((element) {
-      if (element.eventKey == event.snapshot.value['eventKey']) {
-        var index = _events[_key].indexOf(element);
+    _events[_key]!.forEach((element) {
+      if (element.eventKey == (event.snapshot.value as Map)['eventKey']) {
+        var index = _events[_key]!.indexOf(element);
         setState(() {
           if (widget.fromCourse)
-            _events[_key][index] =
-                EventsModal.fromJson(event.snapshot.key, event.snapshot.value);
+            _events[_key]![index] = EventsModal.fromJson(
+                event.snapshot.key!, event.snapshot.value as Map);
           else
-            _events[_key][index] = GeneralEventsModal.fromJson(
-                event.snapshot.key, event.snapshot.value);
+            _events[_key]![index] = GeneralEventsModal.fromJson(
+                event.snapshot.key!, event.snapshot.value as Map);
         });
       }
     });
@@ -133,15 +137,14 @@ class _CalenderState extends State<Calender> {
 
   void _showsnackbar(BuildContext context, String message) {
     final snackBar = SnackBar(content: Text(message));
-    _scaffoldkey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
   void dispose() {
-    _calendarController?.dispose();
-    _onDataAddedSubscription?.cancel();
-    _onDataChangedSubscription?.cancel();
-    _onDataRemovedSubscription?.cancel();
+    _onDataAddedSubscription.cancel();
+    _onDataChangedSubscription.cancel();
+    _onDataRemovedSubscription.cancel();
     super.dispose();
   }
 
@@ -164,8 +167,8 @@ class _CalenderState extends State<Calender> {
                     passVaraible: passVariable,
                     eventkey: eventkey,
                     isedit: false,
-                    courseId: widget.courseId,
-                    subjectName: widget.subjectName,
+                    courseId: widget.courseId!,
+                    subjectName: widget.subjectName!,
                     fromcourse: widget.fromCourse,
                   ),
                 ),
@@ -194,58 +197,63 @@ class _CalenderState extends State<Calender> {
             Card(
               color: Colors.white,
               child: TableCalendar(
-                  events: _events,
-                  calendarStyle: CalendarStyle(
-                      todayColor: Color(0xffF36C24),
-                      todayStyle: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.0,
-                          color: Colors.white)),
-                  headerStyle: HeaderStyle(
-                      centerHeaderTitle: true,
-                      formatButtonDecoration: BoxDecoration(
-                        color: Color(0xffF36C24),
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      formatButtonTextStyle: TextStyle(color: Colors.white),
-                      formatButtonShowsNext: false),
-                  onDaySelected: (date, events) {
-                    String _month = date.month.toString();
-                    String _day = date.day.toString();
-                    if (_month.length == 1) {
-                      _month = "0" + _month;
-                    }
-                    if (_day.length == 1) {
-                      _day = "0" + _day;
-                    }
-                    eventkey = randomNumeric(10);
-                    passVariable = date.year.toString() +
-                        "-" +
-                        _month +
-                        "-" +
-                        _day +
-                        eventkey;
-                    previouspassVariable = passVariable;
-                    if (events != null) {
-                      setState(() {
-                        _selectedEvents = events;
-                      });
-                    }
-                  },
-                  builders: CalendarBuilders(
-                      selectedDayBuilder: (context, date, events) {
-                    return Container(
-                      margin: EdgeInsets.all(4.0),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: Color(0xffF36C24), shape: BoxShape.circle),
-                      child: Text(
-                        date.day.toString(),
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    );
-                  }),
-                  calendarController: _calendarController),
+                firstDay: DateTime.now().subtract(const Duration(days: 100)),
+                lastDay: DateTime.now().add(const Duration(days: 100)),
+                focusedDay: DateTime.now(),
+                eventLoader: (day) {
+                  return _events[day] ?? [];
+                },
+                calendarStyle: CalendarStyle(
+                    todayDecoration: BoxDecoration(
+                      color: Color(0xffF36C24),
+                    ),
+                    todayTextStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18.0,
+                        color: Colors.white)),
+                headerStyle: HeaderStyle(
+                    titleCentered: true,
+                    formatButtonDecoration: BoxDecoration(
+                      color: Color(0xffF36C24),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    formatButtonTextStyle: TextStyle(color: Colors.white),
+                    formatButtonShowsNext: false),
+                onDaySelected: (date, focusDay) {
+                  String _month = date.month.toString();
+                  String _day = date.day.toString();
+                  if (_month.length == 1) {
+                    _month = "0" + _month;
+                  }
+                  if (_day.length == 1) {
+                    _day = "0" + _day;
+                  }
+                  eventkey = randomNumeric(10);
+                  passVariable = date.year.toString() +
+                      "-" +
+                      _month +
+                      "-" +
+                      _day +
+                      eventkey;
+                  previouspassVariable = passVariable;
+                  setState(() {
+                    _selectedEvents = _events[date] ?? [];
+                  });
+                },
+                calendarBuilders:
+                    CalendarBuilders(selectedBuilder: (context, date, events) {
+                  return Container(
+                    margin: EdgeInsets.all(4.0),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        color: Color(0xffF36C24), shape: BoxShape.circle),
+                    child: Text(
+                      date.day.toString(),
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                }),
+              ),
             ),
             ..._selectedEvents.map((e) {
               int isStarted = e.isStarted;
@@ -255,8 +263,7 @@ class _CalenderState extends State<Calender> {
                 child: ListTile(
                   onTap: () async {
                     String pass2 =
-                        FireBaseAuth.instance.prefs.getString(e.description);
-                    if (pass2 == null) pass2 = e.meetingkey;
+                        AppwriteAuth.instance.prefs!.getString(e.description)!;
                     if (await Permission.camera.request().isGranted &&
                         await Permission.microphone.request().isGranted) {
                       await Navigator.push(
@@ -275,7 +282,7 @@ class _CalenderState extends State<Calender> {
                             return VideoConferencing(
                               passVariable: pass2,
                               privilegelevel:
-                                  FireBaseAuth.instance.previlagelevel,
+                                  AppwriteAuth.instance.previlagelevel,
                               eventkey: e.eventKey,
                               hostprevilagelevel: e.hostPrevilage,
                               hostuid: e.hostuid,
@@ -297,29 +304,28 @@ class _CalenderState extends State<Calender> {
                     }
                     if (widget.fromCourse)
                       FirebaseDatabase.instance
-                          .reference()
+                          .ref()
                           .child(
-                              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/events/$pass2/')
+                              'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/events/$pass2/')
                           .update({"isStarted": 0});
                     else
                       FirebaseDatabase.instance
-                          .reference()
+                          .ref()
                           .child(
-                              'institute/${FireBaseAuth.instance.instituteid}/events/$pass2/')
+                              'institute/${AppwriteAuth.instance.instituteid}/events/$pass2/')
                           .update({"isStarted": 0});
                   },
                   onLongPress: () {
                     String pass =
-                        FireBaseAuth.instance.prefs.getString(e.description);
-                    if (pass == null) pass = e.meetingkey;
+                        AppwriteAuth.instance.prefs!.getString(e.description)!;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => SessionDetail(
-                          courseId: widget.courseId,
-                          subjectName: widget.subjectName,
+                          courseId: widget.courseId!,
+                          subjectName: widget.subjectName!,
                           passVaraible: pass,
-                          eventkey: pass?.substring(10, pass.length),
+                          eventkey: pass.substring(10, pass.length),
                           isedit: true,
                           fromcourse: widget.fromCourse,
                         ),

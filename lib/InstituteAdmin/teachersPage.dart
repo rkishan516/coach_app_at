@@ -5,14 +5,17 @@ import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Profile/TeacherProfile.dart';
 import 'package:coach_app/adminSection/teacherRegister.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class TeachersList extends StatefulWidget {
-  final String courseId;
-  final String subjectId;
-  TeachersList({this.courseId, this.subjectId});
+  final String? courseId;
+  final String? subjectId;
+  TeachersList({
+    this.courseId,
+    this.subjectId,
+  });
   @override
   _TeachersListState createState() => _TeachersListState();
 }
@@ -64,16 +67,17 @@ class _TeachersListState extends State<TeachersList> {
             ),
             Expanded(
               flex: 12,
-              child: StreamBuilder<Event>(
+              child: StreamBuilder<DatabaseEvent>(
                 stream: FirebaseDatabase.instance
-                    .reference()
+                    .ref()
                     .child(
-                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers')
+                        'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/teachers')
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     Map<String, Teacher> teachers = Map<String, Teacher>();
-                    snapshot.data.snapshot.value?.forEach((k, teacher) {
+                    (snapshot.data!.snapshot.value as Map?)
+                        ?.forEach((k, teacher) {
                       if (widget.courseId == null || widget.subjectId == null) {
                         if (searchTextEditingController.text == '') {
                           teachers[k] = Teacher.fromJson(teacher);
@@ -87,10 +91,10 @@ class _TeachersListState extends State<TeachersList> {
                       } else {
                         if (searchTextEditingController.text == '') {
                           Teacher teach = Teacher.fromJson(teacher);
-                          TCourses tCourses = teach?.courses?.firstWhere(
+                          TCourses? tCourses = teach.courses?.firstWhere(
                               (element) => element.id == widget.courseId);
                           if (tCourses != null) {
-                            if (tCourses.subjects.contains(widget.subjectId)) {
+                            if (tCourses.subjects!.contains(widget.subjectId)) {
                               teachers[k] = teach;
                             }
                           }
@@ -99,10 +103,10 @@ class _TeachersListState extends State<TeachersList> {
                           if (sTeacher.name.toLowerCase().contains(
                                   searchTextEditingController.text
                                       .toLowerCase()) &&
-                              (sTeacher?.courses
+                              (sTeacher.courses
                                       ?.firstWhere((element) =>
                                           element.id == widget.courseId)
-                                      ?.subjects
+                                      .subjects
                                       ?.firstWhere((element) =>
                                           element == widget.subjectId) !=
                                   null)) {
@@ -125,19 +129,19 @@ class _TeachersListState extends State<TeachersList> {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ListView.builder(
-                              itemCount: teachers?.length ?? 0,
+                              itemCount: teachers.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return Card(
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10)),
                                   child: ListTile(
                                     title: Text(
-                                      '${teachers[teachers.keys.toList()[index]].name}',
+                                      '${teachers[teachers.keys.toList()[index]]?.name}',
                                       style:
                                           TextStyle(color: Color(0xffF36C24)),
                                     ),
                                     subtitle: Text(
-                                      '${teachers[teachers.keys.toList()[index]].email}',
+                                      '${teachers[teachers.keys.toList()[index]]?.email}',
                                       style:
                                           TextStyle(color: Color(0xffF36C24)),
                                     ),
@@ -151,9 +155,9 @@ class _TeachersListState extends State<TeachersList> {
                                           builder: (context) =>
                                               TeacherProfilePage(
                                             reference: FirebaseDatabase.instance
-                                                .reference()
+                                                .ref()
                                                 .child(
-                                                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${teachers.keys.toList()[index]}'),
+                                                    'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/teachers/${teachers.keys.toList()[index]}'),
                                           ),
                                         ),
                                       );
@@ -166,7 +170,7 @@ class _TeachersListState extends State<TeachersList> {
                                                 keyT: teachers.keys
                                                     .toList()[index],
                                                 teacher: teachers[teachers.keys
-                                                    .toList()[index]],
+                                                    .toList()[index]]!,
                                               ));
                                     },
                                   ),
@@ -208,8 +212,8 @@ class _TeachersListState extends State<TeachersList> {
         onTap: () => showDialog(
           context: context,
           builder: (context) => TeacherRegister(
-            courseId: widget.courseId,
-            subjectId: widget.subjectId,
+            courseId: widget.courseId!,
+            subjectId: widget.subjectId!,
           ),
         ),
         width: 150,

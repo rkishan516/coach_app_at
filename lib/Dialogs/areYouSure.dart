@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 
 class AreYouSure extends StatelessWidget {
-  final String text;
+  final String? text;
   AreYouSure({this.text});
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class AreYouSure extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              text == null ? 'Are You Sure ?'.tr() : text,
+              text ?? 'Are You Sure ?'.tr(),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16.0,
@@ -49,13 +49,13 @@ class AreYouSure extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  FlatButton(
+                  MaterialButton(
                     onPressed: () {
                       Navigator.of(context).pop('No');
                     },
                     child: Text('No'.tr()),
                   ),
-                  FlatButton(
+                  MaterialButton(
                     color: Color(0xffF36C24),
                     onPressed: () {
                       Navigator.of(context).pop('Yes');

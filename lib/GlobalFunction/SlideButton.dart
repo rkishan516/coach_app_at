@@ -5,14 +5,15 @@ class SlideButton extends StatelessWidget {
   final String text;
   final double width;
   final double height;
-  final Function onTap;
-  final Icon icon;
-  SlideButton(
-      {@required this.text,
-      @required this.onTap,
-      @required this.width,
-      @required this.height,
-      this.icon});
+  final Function() onTap;
+  final Icon? icon;
+  SlideButton({
+    required this.text,
+    required this.onTap,
+    required this.width,
+    required this.height,
+    this.icon,
+  });
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -52,12 +53,12 @@ class SlideButtonR extends StatelessWidget {
   final String text;
   final double width;
   final double height;
-  final Function onTap;
+  final Function() onTap;
   SlideButtonR(
-      {@required this.text,
-      @required this.onTap,
-      @required this.width,
-      @required this.height});
+      {required this.text,
+      required this.onTap,
+      required this.width,
+      required this.height});
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -97,13 +98,13 @@ class SlideButtonCovered extends StatelessWidget {
   final String text;
   final double width;
   final double height;
-  final Function onTap;
-  final Icon icon;
+  final Function() onTap;
+  final Icon? icon;
   SlideButtonCovered(
-      {@required this.text,
-      @required this.onTap,
-      @required this.width,
-      @required this.height,
+      {required this.text,
+      required this.onTap,
+      required this.width,
+      required this.height,
       this.icon});
   @override
   Widget build(BuildContext context) {

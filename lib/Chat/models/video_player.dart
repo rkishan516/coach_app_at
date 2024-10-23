@@ -1,12 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class ChewieDemo extends StatefulWidget {
   final String dataSource;
   final String title;
-  ChewieDemo({this.dataSource, this.title});
+  ChewieDemo({required this.dataSource, required this.title});
   //final String title;
 
   @override
@@ -21,27 +20,17 @@ class _ChewieDemoState extends State<ChewieDemo> {
   _ChewieDemoState(this.dataSource, this.title);
 
   //TargetPlatform _platform;
-  VideoPlayerController _videoPlayerController1;
-  VideoPlayerController _videoPlayerController2;
-  ChewieController _chewieController;
+  late VideoPlayerController _videoPlayerController1;
+  late VideoPlayerController _videoPlayerController2;
+  late ChewieController _chewieController;
 
   @override
   void initState() {
     super.initState();
-    _videoPlayerController1 = VideoPlayerController.network(dataSource);
-    _videoPlayerController2 = VideoPlayerController.network(dataSource);
-  }
-
-  @override
-  void dispose() {
-    _videoPlayerController1.dispose();
-    _videoPlayerController2.dispose();
-    _chewieController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+    _videoPlayerController1 =
+        VideoPlayerController.networkUrl(Uri.parse(dataSource));
+    _videoPlayerController2 =
+        VideoPlayerController.networkUrl(Uri.parse(dataSource));
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController1,
       aspectRatio: 1,
@@ -64,12 +53,23 @@ class _ChewieDemoState extends State<ChewieDemo> {
       ),
       autoInitialize: true,
     );
+  }
 
+  @override
+  void dispose() {
+    _videoPlayerController1.dispose();
+    _videoPlayerController2.dispose();
+    _chewieController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       title: "Chat App",
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(
-        platform: TargetPlatform.iOS ?? Theme.of(context).platform,
+        platform: TargetPlatform.iOS,
       ),
       home: Scaffold(
         backgroundColor: Colors.black,
@@ -94,7 +94,7 @@ class _ChewieDemoState extends State<ChewieDemo> {
             Chewie(controller: _chewieController),
             Row(children: <Widget>[
               Expanded(
-                child: FlatButton(
+                child: MaterialButton(
                   onPressed: () {
                     setState(() {
                       _chewieController.dispose();

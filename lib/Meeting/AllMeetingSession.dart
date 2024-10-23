@@ -14,14 +14,14 @@ class AllMeetingSession extends StatefulWidget {
 }
 
 class _AllMeetingSessionState extends State<AllMeetingSession> {
-  List<GeneralEventsModal> _allEvent;
-  Query _query;
-  int previlagelevel = FireBaseAuth.instance.previlagelevel;
+  List<GeneralEventsModal> _allEvent = [];
+  late Query _query;
+  int previlagelevel = AppwriteAuth.instance.previlagelevel;
   final dbRef = FirebaseDatabase.instance;
-  StreamSubscription<Event> _onDataAddedSubscription;
-  StreamSubscription<Event> _onDataChangedSubscription;
-  StreamSubscription<Event> _onDataRemovedSubscription;
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  late StreamSubscription<DatabaseEvent> _onDataAddedSubscription;
+  late StreamSubscription<DatabaseEvent> _onDataChangedSubscription;
+  late StreamSubscription<DatabaseEvent> _onDataRemovedSubscription;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FirebaseMessagingService _firebaseMessagingService =
       FirebaseMessagingService();
 
@@ -37,12 +37,12 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
 
   void storeTokenintoDatabase() async {
     _firebaseMessaging.getToken().then((token) {
-      final dbref = FirebaseDatabase.instance.reference();
+      final dbref = FirebaseDatabase.instance.ref();
       dbref
           .child(
-              'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}')
+              'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}')
           .child('admin')
-          .child(FireBaseAuth.instance.user.uid)
+          .child(AppwriteAuth.instance.user!.$id)
           .child("tokenid")
           .set(token.toString());
     });
@@ -50,8 +50,8 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
 
   _initializeevent() {
     _query = dbRef
-        .reference()
-        .child('institute/${FireBaseAuth.instance.instituteid}')
+        .ref()
+        .child('institute/${AppwriteAuth.instance.instituteid}')
         .child('events');
     _onDataAddedSubscription = _query.onChildAdded.listen(onEventAdded);
     _onDataChangedSubscription = _query.onChildChanged.listen(onEventChanged);
@@ -59,37 +59,38 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
     //_firebaseMessagingService.sendNotification();
   }
 
-  Future<bool> checkentry(Event event) async {
-    String hostuid = event.snapshot.value['hostuid'];
-    String firstselecteduids = event.snapshot.value['firstselecteduids'];
-    int hostprevilage = event.snapshot.value['hostprevilage'];
-    String leftuids = event.snapshot.value['leftUids'] ?? "";
-    String type = event.snapshot.value['type'];
+  Future<bool> checkentry(DatabaseEvent event) async {
+    final data = event.snapshot.value as Map;
+    String hostuid = data['hostuid'];
+    String firstselecteduids = data['firstselecteduids'];
+    int hostprevilage = data['hostprevilage'];
+    String leftuids = data['leftUids'] ?? "";
+    String type = data['type'];
     if (hostprevilage == 4) {
       if (type == "SubAdmins" &&
           previlagelevel == 3 &&
-          !leftuids.contains(FireBaseAuth.instance.user.uid))
+          !leftuids.contains(AppwriteAuth.instance.user!.$id))
         return true;
       else if (type == "MidAdmins" &&
           previlagelevel == 34 &&
-          !leftuids.contains(FireBaseAuth.instance.user.uid))
+          !leftuids.contains(AppwriteAuth.instance.user!.$id))
         return true;
       else if (type == "SubAdmins within a MidAdmin" &&
           (previlagelevel == 34 || previlagelevel == 3) &&
           !(firstselecteduids == "")) {
         if (previlagelevel == 34 &&
-            firstselecteduids.contains(FireBaseAuth.instance.user.uid))
+            firstselecteduids.contains(AppwriteAuth.instance.user!.$id))
           return true;
         else if (previlagelevel == 3) {
-          DataSnapshot _snapshot = await dbRef
-              .reference()
-              .child('institute/${FireBaseAuth.instance.instituteid}/midAdmin')
+          final _snapshot = await dbRef
+              .ref()
+              .child('institute/${AppwriteAuth.instance.instituteid}/midAdmin')
               .child(firstselecteduids.split(":_:_:")[0])
               .child("branches")
               .once();
-          String branches = _snapshot.value.toString();
-          if (branches.contains(FireBaseAuth.instance.branchid) &&
-              !leftuids.contains(FireBaseAuth.instance.user.uid))
+          String branches = _snapshot.snapshot.value.toString();
+          if (branches.contains(AppwriteAuth.instance.branchid!) &&
+              !leftuids.contains(AppwriteAuth.instance.user!.$id))
             return true;
           else
             return false;
@@ -97,70 +98,70 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
           return false;
       } else if (type == "Authorities of a branch" &&
           (previlagelevel == 2 || previlagelevel == 3) &&
-          firstselecteduids.contains(FireBaseAuth.instance.branchid) &&
-          !leftuids.contains(FireBaseAuth.instance.user.uid))
+          firstselecteduids.contains(AppwriteAuth.instance.branchid!) &&
+          !leftuids.contains(AppwriteAuth.instance.user!.$id))
         return true;
       else
         return false;
     } else if (hostprevilage == 34) {
       if (type == "Other MidAdmins" &&
           previlagelevel == 34 &&
-          !leftuids.contains(FireBaseAuth.instance.user.uid))
+          !leftuids.contains(AppwriteAuth.instance.user!.$id))
         return true;
       else if (type == "SubAdmins" && previlagelevel == 3) {
-        DataSnapshot _snapshot = await dbRef
-            .reference()
-            .child('institute/${FireBaseAuth.instance.instituteid}/midAdmin')
+        final _snapshot = await dbRef
+            .ref()
+            .child('institute/${AppwriteAuth.instance.instituteid}/midAdmin')
             .child(hostuid)
             .child("branches")
             .once();
-        String branches = _snapshot.value.toString();
-        if (branches.contains(FireBaseAuth.instance.branchid) &&
-            !leftuids.contains(FireBaseAuth.instance.user.uid))
+        String branches = _snapshot.snapshot.value.toString();
+        if (branches.contains(AppwriteAuth.instance.branchid!) &&
+            !leftuids.contains(AppwriteAuth.instance.user!.$id))
           return true;
         else
           return false;
       } else if (type == "Authorities of a branch" &&
           (previlagelevel == 2 || previlagelevel == 3) &&
-          firstselecteduids.contains(FireBaseAuth.instance.branchid) &&
-          !leftuids.contains(FireBaseAuth.instance.user.uid))
+          firstselecteduids.contains(AppwriteAuth.instance.branchid!) &&
+          !leftuids.contains(AppwriteAuth.instance.user!.$id))
         return true;
       else
         return false;
     } else if (hostprevilage == 3) {
       if (type == "Teachers" &&
           previlagelevel == 2 &&
-          !leftuids.contains(FireBaseAuth.instance.user.uid))
+          !leftuids.contains(AppwriteAuth.instance.user!.$id))
         return true;
       else if (type == "All students" &&
           previlagelevel == 1 &&
-          !leftuids.contains(FireBaseAuth.instance.user.uid))
+          !leftuids.contains(AppwriteAuth.instance.user!.$id))
         return true;
       else if (type == "Teachers of a course" && previlagelevel == 2) {
-        DataSnapshot _snapshot = await dbRef
-            .reference()
+        final _snapshot = await dbRef
+            .ref()
             .child(
-                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${FireBaseAuth.instance.user.uid}/courses')
+                'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/teachers/${AppwriteAuth.instance.user!.$id}/courses')
             .once();
-        List list = _snapshot.value;
-        list.forEach((element) {
+        List list = _snapshot.snapshot.value as List;
+        for (final element in list) {
           if (firstselecteduids.contains(element["id"]) &&
-              !leftuids.contains(FireBaseAuth.instance.user.uid))
+              !leftuids.contains(AppwriteAuth.instance.user!.$id))
             return true;
           else
             return false;
-        });
+        }
       } else if (type == "Teachers of a subject" && previlagelevel == 2) {
         String courseid = firstselecteduids.split(":_:_:")[0].toString();
-        String email = FireBaseAuth.instance.user.email;
-        DataSnapshot _snapshot = await dbRef
-            .reference()
+        String email = AppwriteAuth.instance.user!.email!;
+        final _snapshot = await dbRef
+            .ref()
             .child(
-                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseid/subjects')
+                'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/$courseid/subjects')
             .orderByChild("mentor/${email.split("@")[0]}")
             .once();
-        if (_snapshot.value != null &&
-            !leftuids.contains(FireBaseAuth.instance.user.uid))
+        if (_snapshot.snapshot.value != null &&
+            !leftuids.contains(AppwriteAuth.instance.user!.$id))
           return true;
         else
           return false;
@@ -171,19 +172,19 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
     return true;
   }
 
-  onEventAdded(Event event) async {
+  onEventAdded(DatabaseEvent event) async {
     bool isallowedtoadd = await checkentry(event);
     if (event.snapshot.key != null && isallowedtoadd) {
       setState(() {
         _allEvent.add(GeneralEventsModal.fromJson(
-            event.snapshot.key, event.snapshot.value));
+            event.snapshot.key!, event.snapshot.value! as Map));
       });
     }
   }
 
-  onEventRemoved(Event event) {
+  onEventRemoved(DatabaseEvent event) {
     _allEvent.forEach((element) {
-      if (element.eventKey == event.snapshot.value['eventKey']) {
+      if (element.eventKey == (event.snapshot.value as Map)['eventKey']) {
         var index = _allEvent.indexOf(element);
 
         setState(() {
@@ -193,16 +194,16 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
     });
   }
 
-  onEventChanged(Event event) {
+  onEventChanged(DatabaseEvent event) {
     _allEvent.forEach((element) async {
-      if (element.eventKey == event.snapshot.value['eventKey']) {
+      if (element.eventKey == (event.snapshot.value as Map)['eventKey']) {
         var index = _allEvent.indexOf(element);
         bool isallowedtoadd = await checkentry(event);
 
         if (isallowedtoadd)
           setState(() {
             _allEvent[index] = GeneralEventsModal.fromJson(
-                event.snapshot.key, event.snapshot.value);
+                event.snapshot.key!, event.snapshot.value as Map);
           });
         else
           setState(() {
@@ -255,7 +256,7 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
                     title: Text(
                       _allEvent[index].title +
                           " (created by " +
-                          _allEvent[index]?.hostname +
+                          _allEvent[index].hostname +
                           ")",
                       style: TextStyle(
                           fontSize: 14.0, fontWeight: FontWeight.w600),
@@ -286,7 +287,7 @@ class _AllMeetingSessionState extends State<AllMeetingSession> {
                             hostuid: _allEvent[index].hostuid,
                             eventkey: _allEvent[index].eventKey,
                             privilegelevel:
-                                FireBaseAuth.instance.previlagelevel,
+                                AppwriteAuth.instance.previlagelevel,
                             fromcourse: false,
                           );
                         }));

@@ -13,7 +13,7 @@ class CouponList extends StatefulWidget {
 
 class _CouponListState extends State<CouponList> {
   final List<CouponModal> _listItem = [];
-  Query _query;
+  late Query _query;
   final dbRef = FirebaseDatabase.instance;
   @override
   void initState() {
@@ -22,19 +22,19 @@ class _CouponListState extends State<CouponList> {
   }
 
   _initializeevent() {
-    _query = dbRef.reference().child(
-        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coupons');
+    _query = dbRef.ref().child(
+        'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/coupons');
     _query.onChildAdded.listen(onCouponAdded);
     _query.onChildRemoved.listen(onCouponRemoved);
   }
 
-  onCouponAdded(Event event) {
+  onCouponAdded(DatabaseEvent event) {
     setState(() {
       _listItem.add(CouponModal.fromSnapShot(event.snapshot));
     });
   }
 
-  onCouponRemoved(Event event) {
+  onCouponRemoved(DatabaseEvent event) {
     var index;
     _listItem.forEach((element) {
       if (element.couponKey == event.snapshot.key) {
@@ -76,9 +76,9 @@ class _CouponListState extends State<CouponList> {
                       return;
                     }
                     dbRef
-                        .reference()
+                        .ref()
                         .child(
-                            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coupons')
+                            'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/coupons')
                         .child(item.couponKey)
                         .remove();
                   },

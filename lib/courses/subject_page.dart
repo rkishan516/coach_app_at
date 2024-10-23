@@ -5,10 +5,10 @@ import 'package:coach_app/InstituteAdmin/studentList.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/TimeTableSection/TimeTablePage.dart';
 import 'package:coach_app/courses/chapter_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 extension StringExtension on String {
   String capitalize() {
@@ -21,25 +21,19 @@ class SubjectPage extends StatefulWidget {
   final Courses course;
   final String passKey;
   SubjectPage(
-      {@required this.tCourse, @required this.course, @required this.passKey});
+      {required this.tCourse, required this.course, required this.passKey});
   @override
   _SubjectPageState createState() => _SubjectPageState();
 }
 
 class _SubjectPageState extends State<SubjectPage>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
-
-  List<bool> _showCountDot;
-  List _list;
+  late TabController _tabController;
+  late List _list;
 
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
-    _showCountDot = List(widget.tCourse.subjects?.length ?? 0);
-    for (int i = 0; i < _showCountDot.length; i++) {
-      _showCountDot[i] = false;
-    }
     super.initState();
   }
 
@@ -107,30 +101,29 @@ class _SubjectPageState extends State<SubjectPage>
                           int count = 0;
                           if (widget
                                   .course
-                                  .subjects[widget.tCourse.subjects[index]]
+                                  .subjects![widget.tCourse.subjects![index]]
                                   ?.chapters !=
                               null) {
                             widget
                                 .course
-                                .subjects[widget.tCourse.subjects[index]]
+                                .subjects![widget.tCourse.subjects![index]]
                                 ?.chapters
                                 ?.forEach((key, value) {
-                              int _indvContent = value?.content?.length ?? 0;
+                              int _indvContent = value.content?.length ?? 0;
                               _contentlength = _indvContent;
 
                               _totalContent = _contentlength;
                               String searchkey = widget.passKey +
                                   "__" +
-                                  '${widget.course.subjects[widget.tCourse.subjects[index]]?.name}' +
+                                  '${widget.course.subjects![widget.tCourse.subjects![index]]?.name}' +
                                   "__" +
                                   value.name.toString();
-                              _list = FireBaseAuth.instance.prefs
+                              _list = AppwriteAuth.instance.prefs!
                                   .getKeys()
                                   .where((element) =>
                                       element.startsWith(searchkey))
                                   .toList();
-                              int _prevtotalContent =
-                                  _list.length ?? _totalContent;
+                              int _prevtotalContent = _list.length;
                               if (_prevtotalContent < _totalContent) {
                                 count++;
                               }
@@ -141,7 +134,7 @@ class _SubjectPageState extends State<SubjectPage>
                             return Container();
                           }
                           if (widget.course
-                                  ?.subjects[widget.tCourse.subjects[index]] ==
+                                  .subjects![widget.tCourse.subjects![index]] ==
                               null) {
                             return Container();
                           }
@@ -152,7 +145,7 @@ class _SubjectPageState extends State<SubjectPage>
                                     borderRadius: BorderRadius.circular(10)),
                                 child: ListTile(
                                   title: Text(
-                                    '${widget.course.subjects[widget.tCourse.subjects[index]]?.name}',
+                                    '${widget.course.subjects![widget.tCourse.subjects![index]]?.name}',
                                     style: TextStyle(color: Colors.blue),
                                   ),
                                   trailing: Container(
@@ -174,28 +167,30 @@ class _SubjectPageState extends State<SubjectPage>
                                     ),
                                   ),
                                   onTap: () {
-                                    return Navigator.of(context)
+                                    Navigator.of(context)
                                         .push(
                                       CupertinoPageRoute(
                                         builder: (context) => ChapterPage(
                                             courseId: widget.course.id,
                                             title: widget
                                                 .course
-                                                .subjects[widget
-                                                    .tCourse.subjects[index]]
+                                                .subjects![widget
+                                                    .tCourse.subjects![index]]!
                                                 .name,
                                             reference: FirebaseDatabase.instance
-                                                .reference()
+                                                .ref()
                                                 .child(
-                                                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.tCourse.id}/subjects/${widget.tCourse.subjects[index]}'),
+                                                    'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.tCourse.id}/subjects/${widget.tCourse.subjects![index]}'),
                                             passKey: widget.passKey +
                                                 "__" +
-                                                '${widget.course.subjects[widget.tCourse.subjects[index]]?.name}'),
+                                                '${widget.course.subjects![widget.tCourse.subjects![index]]?.name}'),
                                       ),
                                     )
-                                        .then((value) {
-                                      setState(() {});
-                                    });
+                                        .then(
+                                      (value) {
+                                        setState(() {});
+                                      },
+                                    );
                                   },
                                 )),
                           );

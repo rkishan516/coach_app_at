@@ -12,11 +12,11 @@ import 'package:coach_app/InstituteAdmin/midAdminList.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/Provider/AdminProvider.dart';
 import 'package:coach_app/adminSection/branchRegister.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -31,23 +31,23 @@ class _BranchListState extends State<BranchList> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     int length = 0;
-    return StreamBuilder<Event>(
+    return StreamBuilder<DatabaseEvent>(
       stream: FirebaseDatabase.instance
-          .reference()
-          .child('institute/${FireBaseAuth.instance.instituteid}/name')
+          .ref()
+          .child('institute/${AppwriteAuth.instance.instituteid}/name')
           .onValue,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           Map<String, Branch> institutes = SplayTreeMap<String, Branch>();
-          List<int> districtWise = List<int>();
-          if (snapshot.data.snapshot.value != null) {
-            Provider.of<AdminProvider>(context).midAdmins?.forEach((k, v) {
+          List<int> districtWise = <int>[];
+          if (snapshot.data!.snapshot.value != null) {
+            Provider.of<AdminProvider>(context).midAdmins.forEach((k, v) {
               if (searchTextEditingController.text.toLowerCase() ==
-                  v.district?.toLowerCase()) {
+                  v.district.toLowerCase()) {
                 districtWise = JsonCodec().decode(v.district).cast<int>();
               }
             });
-            Provider.of<AdminProvider>(context).branch?.forEach((k, v) {
+            Provider.of<AdminProvider>(context).branch.forEach((k, v) {
               if (searchTextEditingController.text == '') {
                 institutes[k] = v;
               } else {
@@ -71,7 +71,7 @@ class _BranchListState extends State<BranchList> {
               title: Padding(
                 padding: const EdgeInsets.only(right: 70.0),
                 child: AutoSizeText(
-                  snapshot.data.snapshot.value ?? '',
+                  (snapshot.data?.snapshot.value ?? '').toString(),
                   maxLines: 2,
                   style: GoogleFonts.portLligatSans(
                     fontWeight: FontWeight.w700,
@@ -103,7 +103,7 @@ class _BranchListState extends State<BranchList> {
                       future: FirebaseStorage.instance
                           .ref()
                           .child(
-                              '/instituteLogo/${FireBaseAuth.instance.instituteid}')
+                              '/instituteLogo/${AppwriteAuth.instance.instituteid}')
                           .getDownloadURL(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
@@ -219,7 +219,7 @@ class _BranchListState extends State<BranchList> {
                                       padding: const EdgeInsets.all(10.0),
                                       child: Center(
                                         child: AutoSizeText(
-                                          '${institutes[institutes.keys.toList()[index]].name}',
+                                          '${institutes[institutes.keys.toList()[index]]?.name}',
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 2,
                                           textAlign: TextAlign.justify,
@@ -233,7 +233,7 @@ class _BranchListState extends State<BranchList> {
                                       padding: const EdgeInsets.all(10.0),
                                       child: Center(
                                         child: AutoSizeText(
-                                          '${institutes[institutes.keys.toList()[index]].address}',
+                                          '${institutes[institutes.keys.toList()[index]]?.address}',
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 3,
                                           textAlign: TextAlign.justify,
@@ -245,7 +245,7 @@ class _BranchListState extends State<BranchList> {
                                 ),
                               ),
                               onTap: () {
-                                FireBaseAuth.instance.branchid =
+                                AppwriteAuth.instance.branchid =
                                     institutes.keys.toList()[index];
                                 Navigator.of(context)
                                     .push(MaterialPageRoute(builder: (context) {
@@ -258,9 +258,9 @@ class _BranchListState extends State<BranchList> {
                                   builder: (context) {
                                     return BranchRegister(
                                       institute: institutes[
-                                          institutes.keys.toList()[index]],
+                                          institutes.keys.elementAt(index)]!,
                                       branchCode:
-                                          institutes.keys.toList()[index],
+                                          institutes.keys.elementAt(index),
                                     );
                                   },
                                 );
@@ -294,7 +294,7 @@ class _BranchListState extends State<BranchList> {
                           return;
                         }
                         List<Map<String, String>> branches =
-                            List<Map<String, String>>();
+                            <Map<String, String>>[];
                         institutes.forEach(
                           (key, value) {
                             branches.add(

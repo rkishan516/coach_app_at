@@ -1,7 +1,8 @@
 import 'dart:collection';
-import 'package:easy_localization/easy_localization.dart';
+
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Models/model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
@@ -9,8 +10,8 @@ class ResponseCheck extends StatefulWidget {
   final DatabaseReference databaseReference;
   final String totalMarks;
   ResponseCheck({
-    @required this.databaseReference,
-    @required this.totalMarks,
+    required this.databaseReference,
+    required this.totalMarks,
   });
   @override
   _ResponseCheckState createState() => _ResponseCheckState();
@@ -27,23 +28,21 @@ class _ResponseCheckState extends State<ResponseCheck> {
   PageController _pageController = PageController();
   int pageNumber = 0;
   bool saveScore = false;
-  String key;
+  late String key;
   _loadDataFromDatabase() async {
-    widget.databaseReference
-        .child('/quizModel')
-        .child('result')
-        .once()
-        .then((DataSnapshot snapshot) {
-      _hashMap = snapshot.value;
-      _hashMap?.forEach((key, value) {
-        _lMap = value['response'];
-        map = _lMap.map((a, b) => MapEntry(a as String, b as String));
-        setState(() {
-          _allStudentResponse
-              .add(Response(key, value['name'], map, value['score']));
+    widget.databaseReference.child('/quizModel').child('result').once().then(
+      (DatabaseEvent snapshot) {
+        _hashMap = snapshot.snapshot.value as LinkedHashMap;
+        _hashMap?.forEach((key, value) {
+          _lMap = value['response'];
+          map = _lMap.map((a, b) => MapEntry(a as String, b as String));
+          setState(() {
+            _allStudentResponse
+                .add(Response(key, value['name'], map, value['score']));
+          });
         });
-      });
-    });
+      },
+    );
   }
 
   _saveScore(uid) async {
@@ -55,9 +54,9 @@ class _ResponseCheckState extends State<ResponseCheck> {
         .update({'score': int.parse(_scoreText.text)});
 
     await dbref
-        .reference()
+        .ref()
         .child(
-            'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/students/$uid/courses/${widget.databaseReference.path.split('/courses/')[1]}')
+            'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/students/$uid/courses/${widget.databaseReference.path.split('/courses/')[1]}')
         .update({'score': score});
     _showsnackbar(context, "Score is Saved".tr());
   }
@@ -69,7 +68,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
 
   void _showsnackbar(BuildContext context, String message) {
     final snackBar = SnackBar(content: Text(message));
-    _scaffoldkey.currentState.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -147,9 +146,11 @@ class _ResponseCheckState extends State<ResponseCheck> {
                                 child: ListTile(
                                   title:
                                       Text((index + 1).toString() + ". " + key),
-                                  subtitle: Text(_allStudentResponse
-                                      .elementAt(position)
-                                      .responses[key]),
+                                  subtitle: Text(
+                                    _allStudentResponse
+                                        .elementAt(position)
+                                        .responses[key]!,
+                                  ),
                                 ),
                               );
                             }),
@@ -175,7 +176,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        RaisedButton(
+                        MaterialButton(
                             color: Color(0xffF36C24),
                             child: Text('Save Score'.tr()),
                             onPressed: () {
@@ -184,7 +185,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
                                   _allStudentResponse.elementAt(position).uid);
                             }),
                         pageNumber + 1 == _allStudentResponse.length
-                            ? RaisedButton(
+                            ? MaterialButton(
                                 color: Color(0xffF36C24),
                                 child: Text('Submit'.tr()),
                                 onPressed: () {
@@ -192,7 +193,7 @@ class _ResponseCheckState extends State<ResponseCheck> {
                                       ? _submitcheck()
                                       : _showsnackbar(
                                           context, "Save Score First".tr());
-                                  FireBaseAuth.instance.prefs.remove(key);
+                                  AppwriteAuth.instance.prefs!.remove(key);
                                 })
                             : Container(),
                       ],

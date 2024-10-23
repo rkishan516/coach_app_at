@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coach_app/Authentication/FirebaseAuth.dart';
 import 'package:coach_app/Dialogs/Alert.dart';
 import 'package:coach_app/Dialogs/areYouSure.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class ReplaceSubAdmin extends StatefulWidget {
   @override
@@ -62,7 +62,7 @@ class _ReplaceSubAdminState extends State<ReplaceSubAdmin> {
             ),
             Align(
               alignment: Alignment.bottomRight,
-              child: FlatButton(
+              child: MaterialButton(
                 onPressed: () async {
                   if (emailTextEditingController.text == '' &&
                       !emailTextEditingController.text.endsWith('@gmail.com')) {
@@ -77,9 +77,9 @@ class _ReplaceSubAdminState extends State<ReplaceSubAdmin> {
                     return;
                   }
                   FirebaseDatabase.instance
-                      .reference()
+                      .ref()
                       .child(
-                          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/')
+                          'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/')
                       .update({
                     "admin": {
                       emailTextEditingController.text.hashCode.toString(): {
@@ -88,13 +88,13 @@ class _ReplaceSubAdminState extends State<ReplaceSubAdmin> {
                     },
                   });
                   if (emailTextEditingController.text !=
-                      FireBaseAuth.instance.user.email) {
-                    Firestore.instance
+                      AppwriteAuth.instance.user!.email) {
+                    FirebaseFirestore.instance
                         .collection('institute')
-                        .document(emailTextEditingController.text.split('@')[0])
-                        .setData({
+                        .doc(emailTextEditingController.text.split('@')[0])
+                        .set({
                       "value":
-                          "subAdmin_${FireBaseAuth.instance.instituteid}_${FireBaseAuth.instance.branchid}"
+                          "subAdmin_${AppwriteAuth.instance.instituteid}_${AppwriteAuth.instance.branchid}"
                     });
                   }
 

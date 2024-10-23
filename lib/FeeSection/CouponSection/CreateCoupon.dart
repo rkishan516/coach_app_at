@@ -69,9 +69,9 @@ class _CreateCouponState extends State<CreateCoupon> {
             onTap: () {
               //Save into database
               dbRef
-                  .reference()
+                  .ref()
                   .child(
-                      'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/coupons')
+                      'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/coupons')
                   .child(couponKey)
                   .update({
                 "discount": _discountText.text,

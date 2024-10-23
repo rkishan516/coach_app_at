@@ -20,25 +20,25 @@ class MidAdminBranchList extends StatefulWidget {
 
 class _MidAdminBranchListState extends State<MidAdminBranchList> {
   int length = 0;
-  List<int> branchesKey;
+  late List<int> branchesKey;
 
   @override
   Widget build(BuildContext context) {
-    branchesKey = FireBaseAuth.instance.branchList;
+    branchesKey = AppwriteAuth.instance.branchList;
     Size size = MediaQuery.of(context).size;
-    length = branchesKey?.length;
+    length = branchesKey.length;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffF36C24),
-        title: StreamBuilder<Event>(
+        title: StreamBuilder<DatabaseEvent>(
           stream: FirebaseDatabase.instance
-              .reference()
-              .child('/institute/${FireBaseAuth.instance.instituteid}/name')
+              .ref()
+              .child('/institute/${AppwriteAuth.instance.instituteid}/name')
               .onValue,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return AutoSizeText(
-                snapshot.data.snapshot.value ?? '',
+                (snapshot.data!.snapshot.value ?? '').toString(),
                 maxLines: 2,
                 style: GoogleFonts.portLligatSans(
                   fontWeight: FontWeight.w700,
@@ -58,7 +58,7 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
                 future: FirebaseStorage.instance
                     .ref()
                     .child(
-                        '/instituteLogo/${FireBaseAuth.instance.instituteid}')
+                        '/instituteLogo/${AppwriteAuth.instance.instituteid}')
                     .getDownloadURL(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -113,16 +113,16 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 color: Color(0xffF36C24),
-                child: StreamBuilder<Event>(
+                child: StreamBuilder<DatabaseEvent>(
                   stream: FirebaseDatabase.instance
-                      .reference()
+                      .ref()
                       .child(
-                          'institute/${FireBaseAuth.instance.instituteid}/branches/${branchesKey[index]}')
+                          'institute/${AppwriteAuth.instance.instituteid}/branches/${branchesKey[index]}')
                       .onValue,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       Branch branch =
-                          Branch.fromJson(snapshot.data.snapshot.value);
+                          Branch.fromJson(snapshot.data?.snapshot.value as Map);
                       return InkWell(
                         child: GridTile(
                           child: ListView(
@@ -177,7 +177,8 @@ class _MidAdminBranchListState extends State<MidAdminBranchList> {
                           ),
                         ),
                         onTap: () {
-                          FireBaseAuth.instance.branchid = branchesKey[index];
+                          AppwriteAuth.instance.branchid =
+                              branchesKey[index].toString();
                           Navigator.of(context)
                               .push(MaterialPageRoute(builder: (context) {
                             return BranchPage();

@@ -7,7 +7,7 @@ import 'package:easy_localization/easy_localization.dart';
 class QuizModalResponse extends StatefulWidget {
   final DatabaseReference databaseReference;
   QuizModalResponse({
-    @required this.databaseReference,
+    required this.databaseReference,
   });
   @override
   _QuizModalState createState() => _QuizModalState();
@@ -17,11 +17,11 @@ class _QuizModalState extends State<QuizModalResponse> {
   TextEditingController _scoretextValue = TextEditingController();
   final dbref = FirebaseDatabase.instance;
   final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
-  String key;
+  late String key;
   bool isQuiz = false;
   _sharedprefinit() async {
     setState(() {
-      _scoretextValue.text = FireBaseAuth.instance.prefs.getString(key);
+      _scoretextValue.text = AppwriteAuth.instance.prefs!.getString(key)!;
     });
   }
 
@@ -90,16 +90,17 @@ class _QuizModalState extends State<QuizModalResponse> {
                       padding: EdgeInsets.all(8.0),
                       child: GestureDetector(
                         onTap: () {
-                          FireBaseAuth.instance.prefs
+                          AppwriteAuth.instance.prefs!
                               .setString(key, _scoretextValue.text);
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ResponseCheck(
-                                      databaseReference:
-                                          widget.databaseReference,
-                                      totalMarks: FireBaseAuth.instance.prefs
-                                          .getString(key))));
+                                builder: (context) => ResponseCheck(
+                                  databaseReference: widget.databaseReference,
+                                  totalMarks: AppwriteAuth.instance.prefs!
+                                      .getString(key)!,
+                                ),
+                              ));
                         },
                         child: Container(
                           decoration: BoxDecoration(

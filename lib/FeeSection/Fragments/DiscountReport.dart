@@ -16,7 +16,7 @@ class _PayementReportState extends State<DiscountReport> {
   _setstudentlist() {
     List<StudentModel> list = [];
     widget._listStudentModel.forEach((element) {
-      if (element.lastpaidInstallment != null && element.discount != null) {
+      if (element.lastpaidInstallment.isEmpty) {
         list.add(element);
       }
     });
@@ -57,7 +57,7 @@ class _PayementReportState extends State<DiscountReport> {
                   shrinkWrap: true,
                   children: [
                     Text(
-                      (index + 1).toString() + ". " + _studentList[index]?.name,
+                      (index + 1).toString() + ". " + _studentList[index].name,
                       style: TextStyle(
                         color: Color(0xffF36C24),
                         fontSize: 16,

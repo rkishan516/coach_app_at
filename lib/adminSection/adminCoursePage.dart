@@ -6,10 +6,10 @@ import 'package:coach_app/GlobalFunction/placeholderLines.dart';
 import 'package:coach_app/Models/model.dart';
 import 'package:coach_app/adminSection/addCourse.dart';
 import 'package:coach_app/adminSection/adminSubjectPage.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class AdminCoursePage extends StatefulWidget {
   @override
@@ -17,8 +17,6 @@ class AdminCoursePage extends StatefulWidget {
 }
 
 class _AdminCoursePageState extends State<AdminCoursePage> {
-  List _list;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,24 +48,26 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
             ),
             Expanded(
               flex: 12,
-              child: StreamBuilder<Event>(
+              child: StreamBuilder<DatabaseEvent>(
                 stream: FirebaseDatabase.instance
-                    .reference()
+                    .ref()
                     .child(
-                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses')
+                        'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses')
                     .onValue,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    List<Courses> courses = List<Courses>();
-                    snapshot.data.snapshot.value?.values?.forEach((course) {
+                    List<Courses> courses = <Courses>[];
+                    (snapshot.data!.snapshot.value as Map?)
+                        ?.values
+                        .forEach((course) {
                       courses.add(Courses.fromJson(course));
                     });
                     courses.sort((a, b) => a.date.compareTo(b.date));
 
                     return ListView.builder(
-                      itemCount: courses?.length,
+                      itemCount: courses.length,
                       itemBuilder: (BuildContext context, int index) {
-                        _list = FireBaseAuth.instance.prefs
+                        final _list = AppwriteAuth.instance.prefs!
                             .getKeys()
                             .where((element) =>
                                 element.startsWith('${courses[index].name}'))
@@ -82,15 +82,15 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                             String subjectname = value.name.toString();
 
                             if (value.chapters != null) {
-                              value.chapters.forEach((key2, value2) {
+                              value.chapters!.forEach((key2, value2) {
                                 String chaptername = value2.name.toString();
 
                                 if (value2.content != null) {
                                   _contentlength =
-                                      _contentlength + value2.content.length;
+                                      _contentlength + value2.content!.length;
                                   _correspondingsubject[subjectname] =
                                       _contentlength;
-                                  value2.content.forEach((key3, value3) {
+                                  value2.content!.forEach((key3, value3) {
                                     String contentname =
                                         value3.title.toString();
                                     String key = courses[index].name +
@@ -102,7 +102,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                         contentname;
 
                                     if (prevtotallength == 0) {
-                                      FireBaseAuth.instance.prefs
+                                      AppwriteAuth.instance.prefs!
                                           .setInt(key, 1);
                                     } else {
                                       _list.remove(key);
@@ -114,21 +114,21 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                           });
 
                           if (_list.length != 0) {
-                            _list?.forEach((element) {
-                              FireBaseAuth.instance.prefs.remove(element);
+                            _list.forEach((element) {
+                              AppwriteAuth.instance.prefs!.remove(element);
                             });
                           }
 
                           if (prevtotallength != 0) {
                             courses[index].subjects?.forEach((key, value) {
                               _totallength =
-                                  _correspondingsubject[value.name.toString()];
+                                  _correspondingsubject[value.name.toString()]!;
 
-                              int _totalContent = _totallength ?? 0;
+                              int _totalContent = _totallength;
                               String searchKey = courses[index].name +
                                   "__" +
                                   value.name.toString();
-                              _list = FireBaseAuth.instance.prefs
+                              final _list = AppwriteAuth.instance.prefs!
                                   .getKeys()
                                   .where((element) =>
                                       element.startsWith(searchKey))
@@ -169,7 +169,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
                                 ),
                               ),
                               onTap: () {
-                                return Navigator.of(context)
+                                Navigator.of(context)
                                     .push(
                                   CupertinoPageRoute(
                                     builder: (context) => AdminSubjectPage(
@@ -223,10 +223,7 @@ class _AdminCoursePageState extends State<AdminCoursePage> {
         width: 150,
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => AddCourse(
-              isEdit: false,
-              course: Courses(),
-            ),
+            builder: (context) => AddCourse(),
           ),
         ),
         text: 'Create Course'.tr(),

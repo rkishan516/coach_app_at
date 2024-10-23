@@ -12,24 +12,24 @@ import 'package:coach_app/TimeTableSection/TimeTablePage.dart';
 import 'package:coach_app/adminSection/teacherRegister.dart';
 import 'package:coach_app/courses/chapter_page.dart';
 import 'package:coach_app/courses/subject_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class AdminSubjectPage extends StatefulWidget {
   final String courseId;
   final passKey;
-  AdminSubjectPage({@required this.courseId, @required this.passKey});
+  AdminSubjectPage({required this.courseId, required this.passKey});
   @override
   _AdminSubjectPageState createState() => _AdminSubjectPageState();
 }
 
 class _AdminSubjectPageState extends State<AdminSubjectPage>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
-  List _list;
-  bool showFAB = true;
+  late TabController _tabController;
+  late List _list;
+  late bool showFAB = true;
 
   @override
   void initState() {
@@ -100,28 +100,28 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                     ),
                     Expanded(
                       flex: 24,
-                      child: StreamBuilder<Event>(
+                      child: StreamBuilder<DatabaseEvent>(
                         stream: FirebaseDatabase.instance
-                            .reference()
+                            .ref()
                             .child(
-                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${widget.courseId}')
+                                'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${widget.courseId}')
                             .onValue,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            Courses courses =
-                                Courses.fromJson(snapshot.data.snapshot.value);
+                            Courses courses = Courses.fromJson(
+                                snapshot.data!.snapshot.value as Map);
                             var keys;
                             if (courses.subjects != null) {
-                              keys = courses.subjects.keys.toList()
-                                ..sort((a, b) => courses.subjects[a].name
-                                    .compareTo(courses.subjects[b].name));
+                              keys = courses.subjects!.keys.toList()
+                                ..sort(
+                                  (a, b) =>
+                                      courses.subjects![a]!.name.compareTo(
+                                    courses.subjects![b]!.name,
+                                  ),
+                                );
                             }
 
                             length = courses.subjects?.length ?? 0;
-                            List<bool> _showCountDot = List(length);
-                            for (int i = 0; i < _showCountDot.length; i++) {
-                              _showCountDot[i] = false;
-                            }
 
                             return ListView.builder(
                               itemCount: length,
@@ -129,30 +129,29 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                 int _contentlength = 0;
                                 int _totalContent = 0;
                                 int count = 0;
-                                if (courses.subjects[keys.toList()[index]]
+                                if (courses.subjects![keys.toList()[index]]!
                                         .chapters !=
                                     null) {
-                                  courses
-                                      .subjects[keys.toList()[index]].chapters
+                                  courses.subjects![keys.toList()[index]]!
+                                      .chapters!
                                       .forEach((key, value) {
                                     int _indvContent =
-                                        value?.content?.length ?? 0;
+                                        value.content?.length ?? 0;
                                     _contentlength = _indvContent;
 
                                     _totalContent = _contentlength;
 
                                     String searchkey = widget.passKey +
                                         "__" +
-                                        '${courses.subjects[keys.toList()[index]].name}' +
+                                        '${courses.subjects![keys.toList()[index]]!.name}' +
                                         "__" +
                                         value.name.toString();
-                                    _list = FireBaseAuth.instance.prefs
+                                    _list = AppwriteAuth.instance.prefs!
                                         .getKeys()
                                         .where((element) =>
                                             element.startsWith(searchkey))
                                         .toList();
-                                    int _prevtotalContent =
-                                        _list.length ?? _totalContent;
+                                    int _prevtotalContent = _list.length;
                                     if (_prevtotalContent < _totalContent) {
                                       count++;
                                     }
@@ -166,7 +165,7 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                               BorderRadius.circular(10)),
                                       child: ListTile(
                                         title: Text(
-                                          '${courses.subjects[keys.toList()[index]].name}',
+                                          '${courses.subjects![keys.toList()[index]]!.name}',
                                           style: TextStyle(
                                               color: Color(0xffF36C24)),
                                         ),
@@ -189,23 +188,23 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                           ),
                                         ),
                                         onTap: () {
-                                          return Navigator.of(context)
+                                          Navigator.of(context)
                                               .push(
                                             CupertinoPageRoute(
                                               builder: (context) => ChapterPage(
                                                   courseId: widget.courseId,
                                                   title: courses
-                                                      .subjects[
-                                                          keys.toList()[index]]
+                                                      .subjects![
+                                                          keys.toList()[index]]!
                                                       .name,
                                                   reference: FirebaseDatabase
                                                       .instance
-                                                      .reference()
+                                                      .ref()
                                                       .child(
-                                                          'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/${courses.id}/subjects/${keys.toList()[index]}'),
+                                                          'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/${courses.id}/subjects/${keys.toList()[index]}'),
                                                   passKey: widget.passKey +
                                                       "__" +
-                                                      '${courses.subjects[keys.toList()[index]].name}'),
+                                                      '${courses.subjects![keys.toList()[index]]!.name}'),
                                             ),
                                           )
                                               .then((value) {
@@ -217,11 +216,11 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
                                           widget.courseId,
                                           key: keys.toList()[index],
                                           name: courses
-                                              .subjects[keys.toList()[index]]
+                                              .subjects![keys.toList()[index]]!
                                               .name,
                                           mentors: courses
-                                              .subjects[keys.toList()[index]]
-                                              .mentor
+                                              .subjects![keys.toList()[index]]!
+                                              .mentor!
                                               .values
                                               .join(','),
                                         ),
@@ -275,13 +274,18 @@ class _AdminSubjectPageState extends State<AdminSubjectPage>
   }
 }
 
-addSubject(BuildContext context, String courseId,
-    {String key, String name = '', String mentors = ''}) {
+addSubject(
+  BuildContext context,
+  String courseId, {
+  String? key,
+  String name = '',
+  String mentors = '',
+}) {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController nameTextEditingController = TextEditingController()
     ..text = name;
-  List selectedTeacher = List();
-  List<Map<String, dynamic>> teachers, initialTeachers;
+  List selectedTeacher = [];
+  List<Map<String, dynamic>> teachers = [], initialTeachers = [];
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -320,7 +324,7 @@ addSubject(BuildContext context, String courseId,
                     children: <Widget>[
                       TextFormField(
                         validator: (value) {
-                          if (value.isEmpty) {
+                          if (value == null || value.isEmpty) {
                             return 'Please enter some text';
                           }
                           return null;
@@ -351,15 +355,15 @@ addSubject(BuildContext context, String courseId,
                       SizedBox(
                         height: 10,
                       ),
-                      StreamBuilder<Event>(
+                      StreamBuilder<DatabaseEvent>(
                           stream: FirebaseDatabase.instance
-                              .reference()
+                              .ref()
                               .child(
-                                  'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers')
+                                  'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/teachers')
                               .onValue,
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
-                              if (snapshot.data.snapshot.value == null) {
+                              if (snapshot.data!.snapshot.value == null) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
@@ -370,7 +374,7 @@ addSubject(BuildContext context, String courseId,
                                         textAlign: TextAlign.center,
                                       ),
                                     ),
-                                    FlatButton(
+                                    MaterialButton(
                                         color: Color(0xfff3f3f4),
                                         onPressed: () => showCupertinoDialog(
                                               context: context,
@@ -381,31 +385,28 @@ addSubject(BuildContext context, String courseId,
                                   ],
                                 );
                               } else {
-                                teachers = List<Map<String, dynamic>>();
-                                initialTeachers = List<Map<String, dynamic>>();
-                                snapshot.data.snapshot.value.forEach(
+                                teachers = <Map<String, dynamic>>[];
+                                initialTeachers = <Map<String, dynamic>>[];
+                                (snapshot.data!.snapshot.value as Map).forEach(
                                   (k, v) {
                                     Teacher teacher = Teacher.fromJson(v);
                                     if (mentors.contains(teacher.email)) {
                                       selectedTeacher.add(teacher);
                                       initialTeachers.add({
                                         "key": k,
-                                        "display": teacher?.email,
+                                        "display": teacher.email,
                                         "value": teacher
                                       });
                                     }
                                     teachers.add({
                                       "key": k,
-                                      "display": teacher?.email,
+                                      "display": teacher.email,
                                       "value": teacher
                                     });
                                   },
                                 );
                                 return MultiSelectFormField(
-                                  dataSource: teachers ??
-                                      [
-                                        {'display': '', 'value': ''}
-                                      ],
+                                  dataSource: teachers,
                                   valueField: 'value',
                                   textField: 'display',
                                   titleText: 'Mentors'.tr(),
@@ -433,7 +434,7 @@ addSubject(BuildContext context, String courseId,
                     children: <Widget>[
                       (name == '')
                           ? Container()
-                          : FlatButton(
+                          : MaterialButton(
                               onPressed: () async {
                                 String res = await showDialog(
                                     context: context,
@@ -442,9 +443,9 @@ addSubject(BuildContext context, String courseId,
                                   return;
                                 }
                                 FirebaseDatabase.instance
-                                    .reference()
+                                    .ref()
                                     .child(
-                                        'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$key')
+                                        'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/$courseId/subjects/$key')
                                     .remove();
 
                                 Navigator.of(context).pop();
@@ -453,9 +454,9 @@ addSubject(BuildContext context, String courseId,
                                 'Remove'.tr(),
                               ),
                             ),
-                      FlatButton(
+                      MaterialButton(
                         onPressed: () {
-                          if (!_formKey.currentState.validate()) {
+                          if (!_formKey.currentState!.validate()) {
                             return;
                           }
                           if (nameTextEditingController.text == '') {
@@ -481,25 +482,23 @@ addSubject(BuildContext context, String courseId,
                           var refe;
                           if (key == null) {
                             refe = FirebaseDatabase.instance
-                                .reference()
+                                .ref()
                                 .child(
-                                    'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/')
+                                    'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/$courseId/subjects/')
                                 .push();
                             key = refe.key;
                           } else {
-                            refe = FirebaseDatabase.instance.reference().child(
-                                'institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/courses/$courseId/subjects/$key');
+                            refe = FirebaseDatabase.instance.ref().child(
+                                'institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/courses/$courseId/subjects/$key');
                           }
                           refe.update(subject.toJson());
                           selectedTeacher.forEach(
                             (element) {
                               for (int i = 0; i < teachers.length; i++) {
                                 if (teachers[i]['value'] == element) {
-                                  DatabaseReference ref = FirebaseDatabase
-                                      .instance
-                                      .reference()
-                                      .child(
-                                          "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${teachers[i]['key']}/courses/");
+                                  DatabaseReference ref =
+                                      FirebaseDatabase.instance.ref().child(
+                                          "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/teachers/${teachers[i]['key']}/courses/");
                                   List subjects = [];
                                   int lengthC =
                                       teachers[i]['value'].courses?.length ?? 0;
@@ -514,15 +513,15 @@ addSubject(BuildContext context, String courseId,
                                     }
                                   }
                                   List<String> d = [];
-                                  if (!subjects.contains(key)) {
-                                    d = [key];
+                                  if (!subjects.contains(key) && key != null) {
+                                    d = [key!];
                                   }
 
                                   ref.child(lengthC.toString()).update({
                                     "id": courseId,
                                     "subjects": subjects + d
                                   });
-                                  initialTeachers?.removeWhere((element) =>
+                                  initialTeachers.removeWhere((element) =>
                                       element["key"] == teachers[i]['key']);
                                 }
                               }
@@ -533,22 +532,22 @@ addSubject(BuildContext context, String courseId,
                             if (key != null) {
                               Teacher teacher = element['value'];
                               for (int i = 0;
-                                  i < teacher?.courses?.length ?? 0;
+                                  i < (teacher.courses?.length ?? 0);
                                   i++) {
-                                if (teacher.courses[i].id == courseId) {
+                                if (teacher.courses![i].id == courseId) {
                                   for (int j = 0;
                                       j <
-                                              teacher.courses[i]?.subjects
+                                          (teacher.courses![i].subjects
                                                   ?.length ??
-                                          0;
+                                              0);
                                       j++) {
-                                    if (teacher.courses[i]?.subjects[j] ==
+                                    if (teacher.courses?[i].subjects?[j] ==
                                         key) {
-                                      teacher.courses[i]?.subjects?.removeAt(j);
+                                      teacher.courses?[i].subjects?.removeAt(j);
                                       break;
                                     }
                                   }
-                                  if ((teacher.courses[i]?.subjects?.length ??
+                                  if ((teacher.courses?[i].subjects?.length ??
                                           0) ==
                                       0) {
                                     teacher.courses?.removeAt(i);
@@ -557,9 +556,9 @@ addSubject(BuildContext context, String courseId,
                                 }
                               }
                               DatabaseReference ref = FirebaseDatabase.instance
-                                  .reference()
+                                  .ref()
                                   .child(
-                                      "institute/${FireBaseAuth.instance.instituteid}/branches/${FireBaseAuth.instance.branchid}/teachers/${element['key']}/");
+                                      "institute/${AppwriteAuth.instance.instituteid}/branches/${AppwriteAuth.instance.branchid}/teachers/${element['key']}/");
                               ref.update(teacher.toJson());
                             }
                           });

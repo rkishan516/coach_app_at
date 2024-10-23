@@ -11,7 +11,7 @@ class SecureStorage {
     await storage.write(key: 'refreshToken', value: refreshToken);
   }
 
-  Future<Map<String, dynamic>> getCredentials() async {
+  Future<Map<String, dynamic>?> getCredentials() async {
     var result = await storage.readAll();
     if (result.length == 0) return null;
     return result;
